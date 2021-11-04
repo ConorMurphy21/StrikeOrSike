@@ -1,0 +1,25 @@
+extends layout
+block head
+  script(src='/javascripts/handleroom.js')
+block content
+  h1= title
+  p Welcome to #{title}
+  #formContent
+    // Tabs Titles
+    #buttons-wrapper
+      h2#joingameBtn.active join game
+      h2#creategameBtn.inactive.underlineHover create game
+    // Login Form
+    form#joingame(method="post", action="/create_game")
+      span#error-nj
+        input#name-join.fadeIn.first(type='text' name='name_join' placeholder='your name' onblur="this.placeholder = 'your name'")
+      span#error-rnj
+        input#room-name-join.fadeIn.second(type='text' name='room_name_join' placeholder='room name' onblur="this.placeholder = 'room name'")
+      input.fadeIn.third(type='submit' value='Join Game')
+    form#creategame(style='display: none;')
+      span#error-nc
+        input#name-create.fadeIn.first(type='text' name='name_create' placeholder='your name' onblur="this.placeholder = 'your name'")
+      span#error-rnc
+        input#room-name-create.fadeIn.second(type='text' name='room_name_create' placeholder='new room name' onblur="this.placeholder = 'new room name'")
+      input.fadeIn.third(type='submit' value='Create Game')
+

@@ -1,30 +1,96 @@
-const players = []
+// map players to rooms
+const players = {}
 
-const addPlayer = (id, name, room) => {
-    const existingUser = players.find(
-        user => user.name.trim().toLowerCase() === name.trim().toLowerCase() &&
-            user.room === user.room
-    )
+// map rooms to players
+const rooms = {}
 
-    if (existingUser) return { error: "Username has already been taken" }
-    if (!name && !room) return { error: "Username and room are required" }
-    if (!name) return { error: "Username is required" }
-    if (!room) return { error: "Room is required" }
-
-    const user = { id, name, room }
-    players.push(user)
-    return { user }
+const DEFAULT_ROOM = {
+    name: "",
+    players: []
 }
 
-const getPlayer = id => {
-    return players.find(user => user.id === id)
+const createRoom = (name, roomName) => {
+    if (rooms[roomName])
+        return { error: "Room has already been taken" };
+    if (!name && !roomName)
+        return { error: "Username and room are required" };
+    if (!name)
+        return { error: "Username is required" };
+    if (!roomName)
+        return { error: "Room is required" };
+
+    // clone default room
+    const room = { ...DEFAULT_ROOM };
+    room.name = roomName;
+    rooms[roomName] = room;
+    room.players.push({
+       id: '',
+       name,
+       leader: true,
+       active: false,
+    });
+    console.log(rooms);
+    return { room };
 }
 
-const deletePlayer = (id) => {
-    const index = players.findIndex((user) => user.id === id);
-    if (index !== -1) return players.splice(index, 1)[0];
+const joinRoom = (id, name, roomName) => {
+    const roomResult = isRoomJoinable(name, roomName);
+    if( roomResult.error ) return roomResult;
+    const room = roomResult.room;
+
+    const existingPlayer = room.players.find(player => player.name === name);
+    if(existingPlayer){
+        // if player disconnected, let them join back in as who they were previously
+        existingPlayer.active = true;
+        existingPlayer.id = id;
+        return { room };
+    }
+    room.players.push({
+        id,
+        name,
+        leader: false,
+        active: true,
+    });
+
+    players[id] = room;
+    return { room }
 }
 
-const getPlayers = (room) => players.filter(user => user.room === room)
+const isRoomJoinable = (name, roomName) => {
+    const room = rooms[roomName];
+    if (!room)
+        return { error: "Room does not exist" };
+    if (!name && !roomName)
+        return { error: "Username and room are required" };
+    if (!name)
+        return { error: "Username is required" };
+    if (!roomName)
+        return { error: "Room is required" };
 
-module.exports = { addUser: addPlayer, getUser: getPlayer, deleteUser: deletePlayer, getUsers: getPlayers }
+    const existingPlayer = room.players.find(player => player.name === name && player.active === true);
+    if(existingPlayer)
+        return {error: "Name already taken"};
+
+    console.log(rooms);
+
+    return { room };
+}
+
+const getRoom = roomName => {
+    return rooms[roomName];
+}
+
+const disconnectPlayer = id => {
+    const room = players[id];
+    const player = room.players.find(player => player.id === id);
+    player.active = false;
+    // if no players are still active delete the room
+    const activePlayer = room.players.find(player => player.active);
+    if(!activePlayer)
+        rooms.remove(room.name);
+    if(player.leader)
+        activePlayer.leader = true;
+}
+
+
+module.exports = {createRoom, joinRoom, getRoom, isRoomJoinable, disconnectPlayer }

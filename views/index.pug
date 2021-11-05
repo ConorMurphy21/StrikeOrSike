@@ -12,9 +12,9 @@ block content
     // Login Form
     form#joingame(method="post", action="/create_game")
       span#error-nj
-        input#name-join.fadeIn.first(type='text' name='name_join' placeholder='your name' onblur="this.placeholder = 'your name'")
+        input#name-join.fadeIn.first(type='text' name='name' placeholder='your name' onblur="this.placeholder = 'your name'")
       span#error-rnj
-        input#room-name-join.fadeIn.second(type='text' name='room_name_join' placeholder='room name' onblur="this.placeholder = 'room name'")
+        input#room-name-join.fadeIn.second(type='text' name='room' placeholder='room name' onblur="this.placeholder = 'room name'")
       input.fadeIn.third(type='submit' value='Join Game')
     form#creategame(style='display: none;')
       span#error-nc

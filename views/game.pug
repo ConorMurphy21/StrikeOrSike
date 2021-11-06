@@ -1,0 +1,17 @@
+extends layout
+
+block head
+  link(rel='stylesheet', href='/stylesheets/game.css')
+
+block content
+  script(type='text/javascript').
+      const USERNAME = '#{name}';
+      const ROOMNAME = '#{roomName}';
+  script(type='text/javascript', src='/socket.io/socket.io.js')
+  script(type='text/javascript', src='/javascripts/game.js')
+
+  .wrapper
+    h1.fadeIn.zeroth
+      span#title-text Hit or Miss
+  .wrapper.fadeInDown
+    #playerlist

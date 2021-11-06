@@ -1,5 +1,5 @@
 var express = require('express');
-const {createRoom, isRoomJoinable, getRoom} = require("../players");
+const {createRoom, isRoomJoinable, getRoom} = require("../models/model");
 var router = express.Router();
 
 /* GET home page. */
@@ -48,10 +48,10 @@ router.get('/:roomName', function (req, res, next) {
         req.session.room = req.params.roomName;
         res.redirect('/');
     }
-    const player = room.players.find(player => player.name = req.session.name);
+    const player = room.players.find(player => player.name === req.session.name);
 
 
-    res.render('hitormiss', {name: req.session.name, room: room, leader: player.leader});
+    res.render('game', {name: req.session.name, roomName: room.name});
 
 });
 

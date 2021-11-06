@@ -1,7 +1,7 @@
-// map players to rooms
-const players = {}
+// map model to rooms
+const model = {}
 
-// map rooms to players
+// map rooms to model
 const rooms = {}
 
 const DEFAULT_ROOM = {
@@ -29,7 +29,6 @@ const createRoom = (name, roomName) => {
        leader: true,
        active: false,
     });
-    console.log(rooms);
     return { room };
 }
 
@@ -52,7 +51,7 @@ const joinRoom = (id, name, roomName) => {
         active: true,
     });
 
-    players[id] = room;
+    model[id] = room;
     return { room }
 }
 
@@ -68,10 +67,11 @@ const isRoomJoinable = (name, roomName) => {
         return { error: "Room is required" };
 
     const existingPlayer = room.players.find(player => player.name === name && player.active === true);
-    if(existingPlayer)
+    if(existingPlayer) {
         return {error: "Name already taken"};
+    }
 
-    console.log(rooms);
+    console.log("is joinable: %o", room);
 
     return { room };
 }
@@ -80,11 +80,19 @@ const getRoom = roomName => {
     return rooms[roomName];
 }
 
+const getPlayer = id => {
+    const room = model[id];
+    if(!room) return undefined;
+    return room.players.find(player => player.id === id);
+}
+
 const disconnectPlayer = id => {
-    const room = players[id];
+    const room = model[id];
+    if(!room)
+        return;
     const player = room.players.find(player => player.id === id);
     player.active = false;
-    // if no players are still active delete the room
+    // if no model are still active delete the room
     const activePlayer = room.players.find(player => player.active);
     if(!activePlayer)
         rooms.remove(room.name);
@@ -93,4 +101,4 @@ const disconnectPlayer = id => {
 }
 
 
-module.exports = {createRoom, joinRoom, getRoom, isRoomJoinable, disconnectPlayer }
+module.exports = {createRoom, joinRoom, getRoom, getPlayer, isRoomJoinable, disconnectPlayer }

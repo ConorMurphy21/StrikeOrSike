@@ -71,8 +71,6 @@ const isRoomJoinable = (name, roomName) => {
         return {error: "Name already taken"};
     }
 
-    console.log("is joinable: %o", room);
-
     return { room };
 }
 

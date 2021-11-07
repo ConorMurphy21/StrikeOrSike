@@ -4,7 +4,7 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-    res.render('index', {title: 'Hit or Miss', room: req.session.room});
+    res.render('index');
 });
 
 router.post('/create_game', function (req, res, next) {
@@ -39,7 +39,7 @@ router.get('/:roomName', function (req, res, next) {
     const room = getRoom(req.params.roomName);
 
     if (!room) {
-        res.redirect('/error');
+        res.redirect('/');
         return;
     }
 
@@ -47,12 +47,11 @@ router.get('/:roomName', function (req, res, next) {
     if(!req.session.name){
         req.session.room = req.params.roomName;
         res.redirect('/');
+        return;
     }
     const player = room.players.find(player => player.name === req.session.name);
 
-
     res.render('game', {name: req.session.name, roomName: room.name});
-
 });
 
 

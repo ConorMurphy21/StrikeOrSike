@@ -24,7 +24,15 @@ var server = http.createServer(app);
 /**
  * Create socket server
  */
-var io = require('socket.io')(server);
+var io = require('socket.io')(server, {
+    cors: {
+        origin: "http://localhost:8080",
+        methods: ["GET", "POST"],
+        credentials: true,
+        transports: ['websocket', 'polling'],
+    },
+    allowEIO3: true
+});
 app.set('socketio', io);
 
 /**

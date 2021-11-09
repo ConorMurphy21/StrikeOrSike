@@ -124,7 +124,7 @@ var checkGame = function (e) {
                         function (e) {
                             $('#error-nj').removeClass('animated shake');
                         });
-                    $("#error-holder").html("you have already joined this game as " + data.oldName + "<br>please navigate to <a href='/" + data.roomName.toLowerCase() + "'>www.codewordsgame.com/" + data.roomName.toLowerCase() + "</a> to resume your game or leave the room");
+                    $("#error-holder").html("you have already joined this game as " + data.oldName + "<br>please navigate to <a href=" + data.roomName.toLowerCase() + "'/'>www.codewordsgame.com/" + data.roomName.toLowerCase() + "</a> to resume your game or leave the room");
                 } else if (data.message === 'player name already in use') {
                     $('#error-nj').addClass("animated shake");
                     $("#name-join").addClass("error");

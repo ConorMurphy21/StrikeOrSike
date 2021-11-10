@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+
 export default {
   data(){
     return{
@@ -32,21 +32,17 @@ export default {
   },
   methods:{
     onSubmit(){
-      if(this.joinGame){
-        axios.post('/api/join_game', this.form)
-            .then(response => {
-              if(response.status === 200){
-                //this.$socket.connect({query: this.form})
-                this.$router.push({name: 'game', params: {roomName: this.form.roomName}})
-              }
-            })
+      console.log("emitting event");
+      const endpoint = this.joinGame ? 'joinRoom' : 'createRoom';
+      this.$socket.emit(endpoint, this.form.name, this.form.roomName);
+    }
+  },
+  sockets:{
+    joinRoom: function(data){
+      if(data.success){
+        this.$router.push({name: 'game', params: {roomName: this.form.roomName}});
       } else {
-        axios.post('/api/create_game', this.form)
-            .then(response => {
-              if(response.status === 200){
-                this.$router.push({name: 'game', params: {roomName: this.form.roomName}})
-              }
-            })
+        // errors!
       }
     }
   }

@@ -1,19 +1,29 @@
-const {joinRoom, disconnectPlayer, getPlayer} = require("../models/model");
+const {joinRoom, disconnectPlayer, getPlayer, createRoom, isRoomJoinable} = require("../models/model");
 
 var socketcalls = function(io) {
     io.on("connection", (socket) => {
-        console.log("socket.connecting:");
-        console.dir(socket.handshake.query);
-        const room = joinRoom(socket.id, socket.handshake.query.name, socket.handshake.query.roomName);
 
-        //todo: better handling for this
-        if(!room)
-            socket.emit("error", "room does not exist");
 
-        // join the socket room
-        socket.join(room.name);
-        socket.to(room.name, "player_joined", socket.handshake.query.name);
+        socket.on("createRoom", (name, roomName) => {
+            console.log("here " + name + " " + roomName);
+            const room = createRoom(name, roomName.toLowerCase());
+            // store name in session variable
+            if (room.error) {
+                socket.emit("joinRoom", room.error);
+            } else {
+                socket.emit("joinRoom", {success: true});
+            }
+        });
 
+
+        socket.on("joinRoom", (name, roomName) => {
+            const room = isRoomJoinable(name, roomName.toLowerCase());
+            if (room.error) {
+                socket.emit("joinRoom", room.error);
+            } else {
+                socket.emit("joinRoom", {success: true});
+            }
+        });
 
         socket.on("disconnect", () => {
             // unnecessary just logging

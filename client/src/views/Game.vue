@@ -1,11 +1,15 @@
+<script setup>
+import Lobby from '@/components/Lobby.vue'
+</script>
+
 <template>
-  <h2>{{roomName}}</h2>
+  <lobby />
 </template>
 
 <script>
 export default {
   props:{
-    roomName: ''
+    roomName: String
   }
 }
 </script>

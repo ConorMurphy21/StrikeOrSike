@@ -1,36 +1,37 @@
-const {joinRoom, disconnectPlayer, getPlayer, createRoom, isRoomJoinable} = require("../models/model");
+const {joinRoom, disconnectPlayer, getPlayerById, createRoom, getRoomById} = require("../models/rooms");
 
 var socketcalls = function(io) {
     io.on("connection", (socket) => {
 
-
         socket.on("createRoom", (name, roomName) => {
-            console.log("here " + name + " " + roomName);
-            const room = createRoom(name, roomName.toLowerCase());
+            const result = createRoom(socket.id, name, roomName);
             // store name in session variable
-            if (room.error) {
-                socket.emit("joinRoom", room.error);
+            if (result.error) {
+                socket.emit("joinRoom", result.error);
             } else {
                 socket.emit("joinRoom", {success: true});
+                socket.emit("updatePlayers", {modifies: result.room.players, deletes: []});
             }
         });
 
-
         socket.on("joinRoom", (name, roomName) => {
-            const room = isRoomJoinable(name, roomName.toLowerCase());
-            if (room.error) {
-                socket.emit("joinRoom", room.error);
+            const result = joinRoom(socket.id, name, roomName);
+            if (result.error) {
+                socket.emit("joinRoom", result.error);
             } else {
+                const room = result.room;
                 socket.emit("joinRoom", {success: true});
+                socket.emit("updatePlayers", {modifies: room.players, deletes: []});
+                socket.to(room.name).emit("updatePlayers", {modifies: [getPlayerById(socket.id)], deletes: []});
             }
         });
 
         socket.on("disconnect", () => {
-            // unnecessary just logging
-            const player = getPlayer(socket.id);
-            if(player)
-                console.log(player.name + " disconnected.");
             disconnectPlayer(socket.id);
+            const room = getRoomById(socket.id);
+            if(room)
+                io.to(room.name).emit("updatePlayers", {modifies: [getPlayerById(socket.id)], deletes: []});
+
         });
     });
 }

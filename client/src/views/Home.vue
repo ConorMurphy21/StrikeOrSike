@@ -1,5 +1,3 @@
-
-
 <template>
   <div class="container">
     <form class="form" v-on:submit.prevent="onSubmit">
@@ -19,7 +17,6 @@
 </template>
 
 <script>
-
 export default {
   data(){
     return{

@@ -1,15 +1,16 @@
 const state = () => ({
-    players: [{name: 'hewwo'}]
+    players: []
 })
 
 const mutations = {
     SOCKET_updatePlayers (state, data) {
         data.modifies.forEach(player => {
-            state.players.filter(p => p.name !== player.name)
-            state.players.push(player)
+            const i = state.players.findIndex(p => p.name !== player.name)
+            state.players[i] = player
         })
         data.deletes.forEach(player => {
-            state.players.filter(p => p.name !== player.name)
+            const i = state.players.findIndex(p => p.name !== player.name)
+            state.players.splice(i, 1);
         })
     }
 }

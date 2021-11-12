@@ -4,11 +4,6 @@ const playerRoom = {}
 // map rooms to model
 const rooms = {}
 
-const DEFAULT_ROOM = {
-    name: "",
-    players: []
-}
-
 const createRoom = (id, name, roomName) => {
     if (rooms[roomName])
         return { error: "roomTaken" };
@@ -19,15 +14,17 @@ const createRoom = (id, name, roomName) => {
     roomName = roomName.toLowerCase();
 
     // clone default room
-    const room = { ...DEFAULT_ROOM };
-    room.name = roomName;
+    const room = {
+        name: roomName,
+        players: [{
+            id,
+            name,
+            leader: true,
+            active: true,
+        }]
+    };
     rooms[roomName] = room;
-    room.players.push({
-       id,
-       name,
-       leader: true,
-       active: true,
-    });
+    playerRoom[id] = room;
     return { room };
 }
 
@@ -73,16 +70,15 @@ const disconnectPlayer = id => {
     const room = playerRoom[id];
     if(!room)
         return;
-    playerRoom.remove(id);
+    delete playerRoom[id];
     const player = room.players.find(player => player.id === id);
     player.active = false;
     // if no model are still active delete the room
     const activePlayer = room.players.find(player => player.active);
     if(!activePlayer)
-        rooms.remove(room.name);
-    if(player.leader)
+        delete rooms[room.name];
+    else if(player.leader)
         activePlayer.leader = true;
-
 }
 
 

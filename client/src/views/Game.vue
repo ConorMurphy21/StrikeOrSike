@@ -1,9 +1,11 @@
 <script setup>
-import Lobby from '@/components/Lobby.vue'
+import Lobby from '@/components/lobby/Lobby.vue'
 </script>
 
 <template>
-  <lobby />
+  <div class="w-75 h-100 border rounded">
+    <lobby />
+  </div>
 </template>
 
 <script>

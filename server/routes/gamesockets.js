@@ -1,4 +1,4 @@
-const {joinRoom, disconnectPlayer, getPlayerById, createRoom, getRoomById} = require("../models/rooms");
+const {joinRoom, disconnectPlayer, createRoom, getRoomById, getRoomByName} = require("../models/rooms");
 
 var socketcalls = function(io) {
     io.on("connection", (socket) => {
@@ -43,12 +43,16 @@ var socketcalls = function(io) {
 }
 
 function disconnect(socket){
+    let room = getRoomById(socket.id);
+    const roomName = room ? room.name : '';
     disconnectPlayer(socket.id);
     // remove socket from room
     socket.leaveAll();
-    const room = getRoomById(socket.id);
-    if(room)
-        socket.to(room.name).emit("updatePlayers", {modifies: [getPlayerById(socket.id)], deletes: []});
+    room = getRoomByName(roomName);
+    if(room) {
+        const player = room.players.find(p => p.id === socket.id);
+        socket.to(room.name).emit("updatePlayers", {modifies: [player], deletes: []});
+    }
 }
 
 module.exports = socketcalls;

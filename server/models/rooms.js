@@ -42,6 +42,7 @@ const joinRoom = (id, name, roomName) => {
         return { error: "nameTaken" };
     } else if(existingPlayer){
         // if player disconnected, let them join back in as who they were previously
+        playerRoom[id] = room;
         existingPlayer.active = true;
         existingPlayer.id = id;
         return { room };
@@ -81,5 +82,11 @@ const disconnectPlayer = id => {
         activePlayer.leader = true;
 }
 
+const printState = () => {
+    console.log("------------------------------------------")
+    console.log("playerRoom: ", JSON.stringify(playerRoom, null, 2));
+    //console.log("rooms: ", JSON.stringify(rooms, null, 2));
+    console.log("------------------------------------------")
+}
 
-module.exports = {createRoom, joinRoom, getRoomById, getRoomByName, disconnectPlayer}
+module.exports = {createRoom, joinRoom, getRoomById, getRoomByName, disconnectPlayer, printState}

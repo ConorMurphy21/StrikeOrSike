@@ -1,6 +1,6 @@
 const {joinRoom, disconnectPlayer, createRoom, getRoomById, getRoomByName} = require("../models/rooms");
 
-var socketcalls = function(io) {
+const socketcalls = function (io) {
     io.on("connection", (socket) => {
 
         socket.on("createRoom", (name, roomName) => {
@@ -9,7 +9,7 @@ var socketcalls = function(io) {
             const result = createRoom(socket.id, name, roomName);
             // store name in session variable
             if (result.error) {
-                socket.emit("joinRoom", result.error);
+                socket.emit("joinRoom", {error: result.error});
             } else {
                 const room = result.room;
                 socket.join(room.name);
@@ -23,7 +23,7 @@ var socketcalls = function(io) {
             disconnect(socket);
             const result = joinRoom(socket.id, name, roomName);
             if (result.error) {
-                socket.emit("joinRoom", result.error);
+                socket.emit("joinRoom", {error: result.error});
             } else {
                 const room = result.room;
                 socket.join(room.name);
@@ -40,18 +40,20 @@ var socketcalls = function(io) {
             disconnect(socket);
         });
     });
-}
+};
 
 function disconnect(socket){
     let room = getRoomById(socket.id);
     const roomName = room ? room.name : '';
     disconnectPlayer(socket.id);
     // remove socket from room
-    socket.leaveAll();
+    socket.leave(roomName);
     room = getRoomByName(roomName);
     if(room) {
         const player = room.players.find(p => p.id === socket.id);
-        socket.to(room.name).emit("updatePlayers", {modifies: [player], deletes: []});
+        // could be modified
+        const leader = room.players.find(p => p.leader);
+        socket.to(room.name).emit("updatePlayers", {modifies: [player, leader], deletes: []});
     }
 }
 

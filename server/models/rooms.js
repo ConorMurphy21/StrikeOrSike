@@ -76,10 +76,12 @@ const disconnectPlayer = id => {
     player.active = false;
     // if no model are still active delete the room
     const activePlayer = room.players.find(player => player.active);
-    if(!activePlayer)
+    if(!activePlayer) {
         delete rooms[room.name];
-    else if(player.leader)
+    } else if(player.leader) {
+        player.leader = false;
         activePlayer.leader = true;
+    }
 }
 
 const printState = () => {

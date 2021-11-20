@@ -23,7 +23,7 @@ const { mapMutations } = createNamespacedHelpers('room')
 export default {
   data(){
     return{
-      joinGame: false,
+      joinGame: true,
       form: {
         name: '',
         roomName: this.$route.query.name

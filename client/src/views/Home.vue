@@ -1,11 +1,9 @@
-
-
 <template>
   <div class="container">
     <form class="form" v-on:submit.prevent="onSubmit">
-      <input type="radio" class="btn-check" name="options" v-bind:value="true" id="join-game" v-model="joinGame">
+      <input type="radio" class="btn-check" name="options" :value="true" id="join-game" v-model="joinGame">
       <label class="btn btn-primary" for="join-game">join game</label>
-      <input type="radio" class="btn-check" name="options" v-bind:value="false" id="create-game" v-model="joinGame">
+      <input type="radio" class="btn-check" name="options" :value="false" id="create-game" v-model="joinGame">
       <label class="btn btn-primary" for="create-game">create game</label> <br>
 
       <label for="username" class="form-label">Name</label>
@@ -19,18 +17,24 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex'
+const { mapMutations } = createNamespacedHelpers('room')
 
 export default {
   data(){
     return{
-      joinGame: false,
+      joinGame: true,
       form: {
         name: '',
-        roomName: ''
+        roomName: this.$route.query.name
       }
     }
   },
   methods:{
+    ...mapMutations([
+      'setName',
+      'setRoomName'
+    ]),
     onSubmit(){
       console.log("emitting event");
       const endpoint = this.joinGame ? 'joinRoom' : 'createRoom';
@@ -40,6 +44,8 @@ export default {
   sockets:{
     joinRoom: function(data){
       if(data.success){
+        this.setName(this.form.name);
+        this.setRoomName(this.form.roomName);
         this.$router.push({name: 'game', params: {roomName: this.form.roomName}});
       } else {
         // errors!

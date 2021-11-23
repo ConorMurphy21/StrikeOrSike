@@ -11,6 +11,10 @@
       <label for="room-name" class="form-label">Room Name</label>
       <input type="text" class="form-control"  id="room-name" placeholder="room name" v-model="form.roomName">
 
+      <!-- Can use either 2 methods to get localization, one looks better, one is faster -->
+      <h4 v-if="error" v-t="error"></h4>
+      <!-- <h4 v-if="error">{{$t(error)}}</h4> -->
+
       <button type="submit" class="btn btn-primary">{{joinGame ? 'join game' : 'create game'}}</button>
     </form>
   </div>
@@ -27,7 +31,8 @@ export default {
       form: {
         name: '',
         roomName: this.$route.query.name
-      }
+      },
+      error: ''
     }
   },
   methods:{
@@ -48,7 +53,7 @@ export default {
         this.setRoomName(this.form.roomName);
         this.$router.push({name: 'game', params: {roomName: this.form.roomName}});
       } else {
-        // errors!
+        this.error = data.error;
       }
     }
   }

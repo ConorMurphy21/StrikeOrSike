@@ -33,13 +33,12 @@ var io = require('socket.io')(server, {
     },
     allowEIO3: true
 });
-app.set('socketio', io);
 
 /**
  * Listen on socket server
  */
-require('../routes/gamesockets')(io);
-
+const registerHandlers = require("../routes/socketio/registerHandlers");
+io.on("connection", (socket) => registerHandlers(io, socket));
 
 /**
  * Listen on provided port, on all network interfaces.

@@ -26,5 +26,7 @@ const actions = {
 
 export default {
     namespaced: true,
-    state
+    state,
+    mutations: socketMutations,
+    actions
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="w-75 h-100 border rounded">
     <form class="form" v-on:submit.prevent="onSubmit">
       <input type="radio" class="btn-check" name="options" :value="true" id="join-game" v-model="joinGame">
       <label class="btn btn-primary" for="join-game">join game</label>

@@ -1,8 +1,10 @@
 <script setup>
 import Lobby from '@/components/lobby/Lobby.vue'
-import {useStore} from "vuex";
+import PromptResponse from '@/components/promptResponse/PromptResponse.vue'
 import {useRouter} from 'vue-router'
 import {defineProps} from 'vue'
+import {useStore} from 'vuex'
+
 const store = useStore()
 const router = useRouter()
 
@@ -17,8 +19,21 @@ if(!store.state.room.roomName){
 
 <template>
   <div class="w-75 h-100 border rounded">
-    <lobby/>
+    <lobby v-if="scene === 'lobby'" />
+    <prompt-response v-if="scene === 'promptResponse'" />
   </div>
 </template>
 
+<script>
+import {createNamespacedHelpers} from "vuex";
+const { mapState } = createNamespacedHelpers('game')
+
+export default {
+  computed: {
+    ...mapState([
+        'scene'
+    ])
+  }
+}
+</script>
 

@@ -1,8 +1,4 @@
-const {getRoomById} = require('./rooms');
 const prompts = require('../resources/prompts.json')
-
-const states = {}
-
 const beginNewPrompt = (state) => {
     state.prompt = prompts[Math.floor(Math.random() * prompts.length)];
     state.stage = 'response';
@@ -20,7 +16,7 @@ const defaultOptions = () => {
 }
 
 const createDefaultState = (room, options) => {
-    states[room.name] = {
+    const state = {
         stage: 'lobby', // enum: 'lobby', 'response', 'selection', 'refute'
         options,
         prompt: '',
@@ -28,7 +24,7 @@ const createDefaultState = (room, options) => {
         selector: 0
     };
     room.players.forEach(player => {
-        states[room.name].players.push(
+        state.players.push(
             {
                 id: player.id,
                 responses: [],
@@ -36,19 +32,7 @@ const createDefaultState = (room, options) => {
             }
         )
     });
-    return states[room.name];
+    return state;
 }
 
-const getStateById = id => {
-    return states[getRoomById(id).name];
-}
-
-const getStateByName = roomName => {
-    return states[roomName];
-}
-
-const deleteState = roomName => {
-    delete states[roomName];
-}
-
-module.exports = {getStateByName, getStateById, deleteState, createDefaultState, defaultOptions, beginNewPrompt}
+module.exports = {createDefaultState, defaultOptions, beginNewPrompt}

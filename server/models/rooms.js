@@ -1,4 +1,4 @@
-const {deleteState} = require('./gameState');
+const {createDefaultState, defaultOptions} = require('./gameState');
 
 // map model to rooms
 const playerRoom = {}
@@ -25,6 +25,7 @@ const createRoom = (id, name, roomName) => {
             active: true,
         }]
     };
+    room.state = createDefaultState(room, defaultOptions());
     rooms[roomName] = room;
     playerRoom[id] = room;
     return { room };
@@ -69,11 +70,6 @@ const getRoomById = id => {
     return playerRoom[id];
 }
 
-const deleteRoom = roomName => {
-    deleteState(roomName);
-    delete rooms[roomName];
-}
-
 const disconnectPlayer = id => {
     const room = playerRoom[id];
     if(!room)
@@ -84,7 +80,7 @@ const disconnectPlayer = id => {
     // if no model are still active delete the room
     const activePlayer = room.players.find(player => player.active);
     if(!activePlayer) {
-        deleteRoom(room.name);
+        delete rooms[room.name];
     } else if(player.leader) {
         player.leader = false;
         activePlayer.leader = true;

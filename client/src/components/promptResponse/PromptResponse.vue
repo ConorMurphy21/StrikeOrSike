@@ -1,11 +1,13 @@
+<script setup>
+import PromptList from "@/components/gameShared/ResponseList.vue";
+</script>
+
 <template>
-  <h1>{{ prompt }}</h1>
-  <ul>
-    <li v-for="response in responses">
-      {{response}}
-    </li>
-  </ul>
-  <input type="text" v-model="response" v-on:keyup.enter="sendResponse"/>
+  <div class="w-100 h-100 d-flex flex-column justify-content-between align-items-center p-3">
+    <h1>{{ prompt }}</h1>
+    <prompt-list/>
+    <input type="text" class="form-control w-75" v-model="response" v-on:keyup.enter="sendResponse"/>
+  </div>
 </template>
 
 <script>
@@ -27,7 +29,7 @@ export default {
     ])
   },
   methods: {
-    sendResponse(){
+    sendResponse() {
       this.$socket.emit("promptResponse", this.response);
       this.response = '';
     }

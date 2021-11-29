@@ -1,5 +1,6 @@
 <script setup>
 import PromptList from "@/components/gameShared/ResponseList.vue";
+import Timer from "@/components/gameShared/Timer.vue";
 </script>
 
 <template>
@@ -7,13 +8,14 @@ import PromptList from "@/components/gameShared/ResponseList.vue";
     <h1>{{ prompt }}</h1>
     <prompt-list/>
     <input type="text" class="form-control w-75" v-model="response" v-on:keyup.enter="sendResponse"/>
+    <timer :time="timer"></timer>
   </div>
 </template>
 
 <script>
 import {createNamespacedHelpers} from "vuex";
 
-const {mapState} = createNamespacedHelpers('game')
+const {mapState, mapActions} = createNamespacedHelpers('game');
 
 export default {
   data() {

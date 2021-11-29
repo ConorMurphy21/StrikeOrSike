@@ -12,6 +12,9 @@ const socketMutations = {
         state.prompt = data.prompt;
         state.timer = data.timer;
         state.responses = [];
+    },
+    SOCKET_promptResponse(state, data){
+        state.responses.push(data);
     }
 }
 

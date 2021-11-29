@@ -11,13 +11,14 @@ import PlayerCard from '@/components/lobby/PlayerCard.vue'
 </template>
 
 <script>
-import {mapState} from 'vuex'
+import {createNamespacedHelpers} from "vuex";
+const { mapState } = createNamespacedHelpers('room')
 
 export default {
   computed: {
-    ...mapState({
-      players: state => state.room.players
-    })
+    ...mapState([
+        'players'
+    ])
   }
 }
 </script>

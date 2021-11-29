@@ -1,4 +1,5 @@
 const prompts = require('../resources/prompts.json')
+
 const beginNewPrompt = (state) => {
     state.prompt = prompts[Math.floor(Math.random() * prompts.length)];
     state.stage = 'response';
@@ -11,7 +12,6 @@ const beginNewPrompt = (state) => {
 const defaultOptions = () => {
     return {
         promptTimer: 45,
-
     }
 }
 

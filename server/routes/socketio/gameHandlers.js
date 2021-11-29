@@ -13,7 +13,9 @@ module.exports = (io, socket) => {
         const state = getRoomById(socket.id).state;
         if(state.stage === "response") {
             const playerState = state.players.find(player => player.id === socket.id);
+            //TODO: check for collisions (no reason to add a word if it is already there)
             playerState.responses.push(response);
+            socket.emit("promptResponse", response);
         }
     });
 }

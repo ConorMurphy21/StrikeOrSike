@@ -2,7 +2,6 @@
 import Lobby from '@/components/lobby/Lobby.vue'
 import PromptResponse from '@/components/promptResponse/PromptResponse.vue'
 import {useRouter} from 'vue-router'
-import {defineProps} from 'vue'
 import {useStore} from 'vuex'
 
 const store = useStore()

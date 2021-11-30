@@ -45,6 +45,28 @@ describe("create/join tests", () => {
         clientSocket1.emit("createRoom", "name1", "room");
     });
 
+    it("join room capitalized 1", (done) => {
+        clientSocket2.on("joinRoom", (arg) => {
+            assert.deepEqual(arg, {success: true});
+            done();
+        });
+        clientSocket1.on("joinRoom", (arg) => {
+            clientSocket2.emit("joinRoom", "name2", "room");
+        });
+        clientSocket1.emit("createRoom", "name1", "Room");
+    });
+
+    it("join room capitalized 2", (done) => {
+        clientSocket2.on("joinRoom", (arg) => {
+            assert.deepEqual(arg, {success: true});
+            done();
+        });
+        clientSocket1.on("joinRoom", (arg) => {
+            clientSocket2.emit("joinRoom", "name2", "ROOM");
+        });
+        clientSocket1.emit("createRoom", "name1", "Room");
+    });
+
     it("join room noRoom", (done) => {
         clientSocket1.on("joinRoom", (arg) => {
             assert.deepEqual(arg, {error: "noRoom"})

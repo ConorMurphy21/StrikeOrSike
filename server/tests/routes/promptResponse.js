@@ -53,4 +53,32 @@ describe("promptResponse tests", () => {
             done();
         }, 500);
     });
+
+    it("promptResponse happy", (done) => {
+        clientSocket1.on("beginPrompt", (data) => {
+            clientSocket1.emit("promptResponse", "response");
+        });
+        clientSocket1.on("promptResponse", response => {
+            assert.strictEqual(response, "response");
+            done();
+        })
+        clientSocket1.emit("startGame");
+    });
+
+    it("promptResponse tooLate", (done) => {
+        clientSocket1.on("beginPrompt", () => {
+            setTimeout(() => {
+                clientSocket1.emit("promptResponse", "response");
+                setTimeout(() => {
+                    done();
+                }, 200);
+            }, 1100);
+        });
+        clientSocket1.on("promptResponse", () => {
+            assert.fail();
+        });
+        clientSocket1.emit("setOptions", {promptTimer: 0}, response => {
+            clientSocket1.emit("startGame");
+        })
+    });
 });

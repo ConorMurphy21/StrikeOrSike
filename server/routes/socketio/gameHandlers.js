@@ -3,6 +3,16 @@ const {beginNewPrompt} = require("../../models/gameState");
 module.exports = (io, socket) => {
     /*** GAME STATE ENDPOINTS ***/
 
+    socket.on("setOptions", (options, callback) => {
+        const room = roomIfLeader(socket.id);
+        if(!room) return;
+        // todo: validation
+        room.state.options = options;
+        callback({
+            success: true
+        })
+    });
+
     socket.on("startGame", () => {
         const room = roomIfLeader(socket.id);
         if (!room) return;

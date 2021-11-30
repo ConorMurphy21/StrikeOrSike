@@ -22,13 +22,6 @@ const mutations = {
 }
 
 const socketMutations = {
-    // SOCKET_beginPrompt(state, data) {
-    //     state.scene = 'promptResponse';
-    //     state.prompt = data.prompt;
-    //     state.timer = data.timer;
-    //     state.responses = [];
-    //
-    // },
     SOCKET_promptResponse(state, data){
         state.responses.push(data);
     }

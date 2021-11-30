@@ -36,7 +36,7 @@ const joinRoom = (id, name, roomName) => {
         return { error: "badRoom" };
     if (!name)
         return { error: "badName" };
-    const room = rooms[roomName];
+    const room = rooms[roomName.toLowerCase()];
     if (!room)
         return { error: "noRoom" };
 

@@ -59,6 +59,8 @@ const joinRoom = (id, name, roomName) => {
     return { room }
 }
 
+
+
 const getRoomByName = roomName => {
     return rooms[roomName];
 }
@@ -66,6 +68,18 @@ const getRoomByName = roomName => {
 const getRoomById = id => {
     return playerRoom[id];
 }
+
+
+const kickPlayer = id =>{
+    const room = playerRoom[id];
+    if(!room)
+        return;
+    delete playerRoom[id];
+    const player = room.players.find(player => player.id === id);
+    player.active = false;
+//Remove player from room
+}
+
 
 const disconnectPlayer = id => {
     const room = playerRoom[id];

@@ -1,3 +1,5 @@
+const {createDefaultState, defaultOptions} = require('./gameState');
+
 // map model to rooms
 const playerRoom = {}
 
@@ -23,6 +25,7 @@ const createRoom = (id, name, roomName) => {
             active: true,
         }]
     };
+    room.state = createDefaultState(room, defaultOptions());
     rooms[roomName] = room;
     playerRoom[id] = room;
     return { room };
@@ -33,7 +36,7 @@ const joinRoom = (id, name, roomName) => {
         return { error: "badRoom" };
     if (!name)
         return { error: "badName" };
-    const room = rooms[roomName];
+    const room = rooms[roomName.toLowerCase()];
     if (!room)
         return { error: "noRoom" };
 

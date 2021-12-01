@@ -1,6 +1,7 @@
 const {createServer} = require("http");
 const {Server} = require("socket.io");
 const Client = require("socket.io-client");
+const registerHandlers = require("../../routes/socketio/registerHandlers");
 const assert = require("chai").assert;
 
 describe("create/join tests", () => {
@@ -10,7 +11,7 @@ describe("create/join tests", () => {
         io = new Server(httpServer);
         httpServer.listen(() => {
             port = httpServer.address().port;
-            require('../../routes/gamesockets')(io);
+            io.on("connection", (socket) => registerHandlers(io, socket));
 
             clientSocket1 = new Client(`http://localhost:${port}`);
             clientSocket1.on("connect", () => {
@@ -42,6 +43,28 @@ describe("create/join tests", () => {
             clientSocket2.emit("joinRoom", "name2", "room");
         });
         clientSocket1.emit("createRoom", "name1", "room");
+    });
+
+    it("join room capitalized 1", (done) => {
+        clientSocket2.on("joinRoom", (arg) => {
+            assert.deepEqual(arg, {success: true});
+            done();
+        });
+        clientSocket1.on("joinRoom", (arg) => {
+            clientSocket2.emit("joinRoom", "name2", "room");
+        });
+        clientSocket1.emit("createRoom", "name1", "Room");
+    });
+
+    it("join room capitalized 2", (done) => {
+        clientSocket2.on("joinRoom", (arg) => {
+            assert.deepEqual(arg, {success: true});
+            done();
+        });
+        clientSocket1.on("joinRoom", (arg) => {
+            clientSocket2.emit("joinRoom", "name2", "ROOM");
+        });
+        clientSocket1.emit("createRoom", "name1", "Room");
     });
 
     it("join room noRoom", (done) => {
@@ -80,6 +103,7 @@ describe("create/join tests", () => {
             done();
         });
         clientSocket1.on("joinRoom", (arg) => {
+            assert.deepEqual(arg, {success: true});
             clientSocket1.disconnect();
         });
         clientSocket1.on("disconnect", () => {

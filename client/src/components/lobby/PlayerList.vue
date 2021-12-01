@@ -13,7 +13,8 @@ import PlayerCard from '@/components/lobby/PlayerCard.vue'
 </template>
 
 <script>
-import {mapState} from 'vuex'
+import {createNamespacedHelpers} from "vuex";
+const { mapState } = createNamespacedHelpers('room')
 
 export default {
   computed: {
@@ -30,6 +31,7 @@ export default {
           this.$socket.emit(endpoint, selectedName, selectedID);   
       }
     }
+
   }
 }
 </script>

@@ -6,7 +6,8 @@ import PlayerList from '@/components/lobby/PlayerList.vue'
   <div class="w-100 h-100 d-flex flex-column justify-content-between align-items-center p-3">
     <player-list/>
 
-    <button class="btn btn-primary w-50 fs-4" :class="{'d-none': !self || !self.leader}">Start</button>
+    <button class="btn btn-primary w-50 fs-4"
+            :class="{'d-none': !self || !self.leader}" v-on:click="startGame">Start</button>
   </div>
 </template>
 
@@ -19,6 +20,11 @@ export default {
     ...mapGetters([
       'self',
     ]),
+  },
+  methods:{
+    startGame(){
+      this.$socket.emit("startGame");
+    }
   }
 }
 </script>

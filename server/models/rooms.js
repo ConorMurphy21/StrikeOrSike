@@ -76,11 +76,12 @@ const getRoomById = id => {
 const kickPlayer = id =>{
     const room = playerRoom[id];
     if(!room)
-        return;
+        return{error: "noRoom"};
     delete playerRoom[id];
-    const player = room.players.find(player => player.id === id);
-    player.active = false;
-//Remove player from room
+    const playerIndex = room.players.findIndex(player => player.id === id);
+    room.players.splice(id,1);
+    return {success: true}
+//Remove player 
 }
 
 
@@ -108,4 +109,4 @@ const printState = () => {
     console.log("------------------------------------------")
 }
 
-module.exports = {createRoom, joinRoom, getRoomById, getRoomByName, disconnectPlayer, printState}
+module.exports = {createRoom, joinRoom, getRoomById, getRoomByName,kickPlayer, disconnectPlayer, printState}

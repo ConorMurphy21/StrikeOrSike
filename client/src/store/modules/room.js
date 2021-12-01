@@ -5,7 +5,7 @@ const state = () => ({
 })
 
 const getters = {
-    self: state => {
+    localPlayer: state => {
         return state.players.find(p => p.name === state.name)
     }
 }

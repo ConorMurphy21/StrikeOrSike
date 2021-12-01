@@ -1,4 +1,4 @@
-const {joinRoom, disconnectPlayer, createRoom, getRoomById, getRoomByName} = require("../../models/rooms");
+const {joinRoom, disconnectPlayer, createRoom, getRoomById, getRoomByName, kickPlayer} = require("../../models/rooms");
 
 module.exports = (io, socket) => {
 
@@ -32,6 +32,22 @@ module.exports = (io, socket) => {
             socket.to(room.name).emit("updatePlayers", {
                 modifies: [room.players.find(p => p.name === name)],
                 deletes: []
+            });
+        }
+    });
+
+    socket.on("kickPlayer", (selectedName, selectedID) => {
+        
+        const result = kickPlayer(selectedID);
+        const room = getRoomById(socket.id);
+        console.log(room);
+        console.log(result);
+        if(result.error){
+            socket.emit("kickPlayer", {error: result.error});
+        }else{
+            io.to(room.name).emit("updatePlayers", {
+                modifies: [],
+                deletes: [selectedID]                    
             });
         }
     });

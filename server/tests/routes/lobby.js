@@ -3,6 +3,7 @@
 const {createServer} = require("http");
 const {Server} = require("socket.io");
 const Client = require("socket.io-client");
+const registerHandlers = require("../../routes/socketio/registerHandlers");
 const assert = require("chai").assert;
 
 describe("lobby tests", () => {
@@ -12,7 +13,8 @@ describe("lobby tests", () => {
         io = new Server(httpServer);
         httpServer.listen(() => {
             const port = httpServer.address().port;
-            require('../../routes/gamesockets')(io);
+            io.on("connection", (socket) => registerHandlers(io, socket));
+
             clientSocket1 = new Client(`http://localhost:${port}`);
             clientSocket1.on("connect", () => {
                 clientSocket2 = new Client(`http://localhost:${port}`);

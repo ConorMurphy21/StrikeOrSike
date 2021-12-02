@@ -29,9 +29,8 @@ const socketMutations = {
                 state.players[i] = player
 
         })
-        data.deletes.forEach(player => {
-            const i = state.players.findIndex(p => p.name !== player.name)
-            state.players.splice(i, 1);
+        state.deletes = state.deletes.filter(player => {
+            data.deletes.find(id => id === player.id);
         })
     }
 }

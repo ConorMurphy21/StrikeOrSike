@@ -1,5 +1,5 @@
 const {getRoomById} = require("../../models/rooms");
-const {beginNewPrompt} = require("../../models/gameState");
+const {beginNewPrompt, createDefaultState} = require("../../models/gameState");
 module.exports = (io, socket) => {
     /*** GAME STATE ENDPOINTS ***/
 
@@ -16,6 +16,7 @@ module.exports = (io, socket) => {
     socket.on("startGame", () => {
         const room = roomIfLeader(socket.id);
         if (!room) return;
+        room.state = createDefaultState(room, room.state.options);
         beginPrompt(io, room.state, room.name);
     });
 

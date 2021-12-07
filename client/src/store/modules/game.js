@@ -18,6 +18,9 @@ const mutations = {
     },
     clearResponses(state){
         state.responses = [];
+    },
+    setSelectionType(state, data){
+        state.selectionType = data;
     }
 }
 
@@ -34,9 +37,18 @@ const socketActions = {
         commit('setTimer', data.timer);
         commit('clearResponses')
         dispatch('startTimer').then(() => {
-            commit('setScene', 'lobby');
+            // commit('setScene', 'lobby');
         })
+    },
+    async SOCKET_nextSelection({state, commit, rootGetters}, data){
+        if(data.selector === rootGetters['room/self'].id){
+            commit('setScene', 'activeSelection');
+        } else {
+            commit('setScene', 'passiveSelection');
+        }
+        commit('setSelectionType', data.selectionType);
     }
+
 }
 
 const actions = {

@@ -29,6 +29,13 @@ module.exports = (io, socket) => {
             socket.emit("promptResponse", response);
         }
     });
+
+    socket.on("selectResponse", (response) => {
+        const state = getRoomById(socket.id).state;
+        if(state.stage === "selection"){
+
+        }
+    });
 }
 
 function beginPrompt(io, room) {

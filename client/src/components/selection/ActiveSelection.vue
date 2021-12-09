@@ -7,7 +7,7 @@ import SelectionType from "@/components/selection/SelectionType.vue";
   <div class="w-100 h-100 d-flex flex-column justify-content-between align-items-center p-3">
     <h1>{{ prompt }}</h1>
     <selection-type/>
-    <response-list :selectable="true"/>
+    <response-list :selectable="true" v-model="response"/>
   </div>
 </template>
 
@@ -19,7 +19,7 @@ const {mapState} = createNamespacedHelpers('game');
 export default {
   data() {
     return {
-      response: ''
+      response: '',
     }
   },
   computed: {
@@ -27,6 +27,10 @@ export default {
       'prompt',
     ])
   },
-  methods: {}
+  watch:{
+    response: function (val) {
+      this.$socket.emit("selectResponse", val);
+    }
+  }
 }
 </script>

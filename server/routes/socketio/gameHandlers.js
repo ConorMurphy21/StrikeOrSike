@@ -1,5 +1,5 @@
 const {getRoomById} = require("../../models/rooms");
-const {beginNewPrompt, createDefaultState, beginSelectionState, nextSelectionState} = require("../../models/gameState");
+const GameState = require("../../models/gameState");
 module.exports = (io, socket) => {
     /*** GAME STATE ENDPOINTS ***/
 
@@ -16,7 +16,7 @@ module.exports = (io, socket) => {
     socket.on("startGame", () => {
         const room = roomIfLeader(socket.id);
         if (!room) return;
-        room.state = createDefaultState(room, room.state.options);
+        room.state = new GameState(room, room.state.options);
         beginPrompt(io, room);
     });
 
@@ -40,7 +40,7 @@ module.exports = (io, socket) => {
 
 function beginPrompt(io, room) {
     const state = room.state;
-    beginNewPrompt(state);
+    state.beginNewPrompt();
     io.to(room.name).emit("beginPrompt", {
         prompt: state.prompt,
         timer: state.options.promptTimer
@@ -52,8 +52,8 @@ function beginPrompt(io, room) {
 }
 
 function beginSelection(io, room) {
-    beginSelectionState(room);
     const state = room.state;
+    state.beginSelection(room);
     io.to(room.name).emit("nextSelection",
         {
             selector: state.players[state.selector].id,
@@ -62,7 +62,7 @@ function beginSelection(io, room) {
 }
 
 function continueSelection(io, room) {
-    if (nextSelectionState(room)) {
+    if (room.state.nextSelection(room)) {
         io.to(room.name).emit("nextSelection",
             {
                 selector: state.players[state.selector].id,

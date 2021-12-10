@@ -1,4 +1,4 @@
-const {createDefaultState, defaultOptions} = require('./gameState');
+const GameState = require('./gameState');
 
 // map model to rooms
 const playerRoom = {}
@@ -25,7 +25,7 @@ const createRoom = (id, name, roomName) => {
             active: true,
         }]
     };
-    room.state = createDefaultState(room, defaultOptions());
+    room.state = new GameState(room);
     rooms[roomName] = room;
     playerRoom[id] = room;
     return { room };

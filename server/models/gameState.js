@@ -21,19 +21,30 @@ const GameState = class {
                 {
                     id: player.id,
                     responses: [],
-                    selected: -1
+                    selected: ''
                 }
             )
         });
     }
 
+    /*** PROMPT RESPONSE state changes ***/
     beginNewPrompt(){
         this.prompt = prompts[Math.floor(Math.random() * prompts.length)];
         this.stage = 'response';
         this.players.forEach(player => {
             player.responses = [];
-            player.selected = -1;
-        })
+        });
+    }
+
+    acceptPromptResponse(id, response){
+        if(this.stage === 'response') {
+            const playerState = this.players.find(player => player.id === id);
+            //TODO: check for collisions (no reason to add a word if it is already there)
+            playerState.responses.push(response);
+        } else {
+            return {error: 'badRequest'}
+        }
+        return {success: true};
     }
 
     randomizeSelectionType() {
@@ -47,10 +58,13 @@ const GameState = class {
         }
     }
 
+
+    /*** PROMPT SELECTION state changes ***/
     beginSelection(room){
+        state.stage = 'selection';
         //clear selections
         this.players.forEach(player => {
-            player.selected = -1;
+            player.selected = '';
         });
 
         // update global state for selection
@@ -68,7 +82,7 @@ const GameState = class {
     nextSelection(room){
         //clear selections
         this.players.forEach(player => {
-            player.selected = -1;
+            player.selected = '';
         });
 
         for(let i = this.selector; i !== this.initialSelector; i = (i + 1) % this.players.length){
@@ -81,6 +95,20 @@ const GameState = class {
         }
         this.initialSelector = (this.initialSelector + 1) % this.players.length;
         return false;
+    }
+
+    acceptResponseSelection(id, response){
+        const selector = this.players[this.selector];
+        if(this.stage === 'selection' && selector.id === id){
+            if(selector.responses.find(r => r === response)){
+                selector.selected = response;
+                this.stage = 'matching'
+            } else {
+                return {error: 'badRequest'}
+            }
+        } else {
+            return {error: 'badRequest'}
+        }
     }
 };
 

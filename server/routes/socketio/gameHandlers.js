@@ -8,9 +8,7 @@ module.exports = (io, socket) => {
         if (!room) return;
         // todo: validation
         room.state.options = options;
-        callback({
-            success: true
-        })
+        callback({success: true});
     });
 
     socket.on("startGame", () => {
@@ -22,18 +20,18 @@ module.exports = (io, socket) => {
 
     socket.on("promptResponse", (response) => {
         const state = getRoomById(socket.id).state;
-        if (state.stage === "response") {
-            const playerState = state.players.find(player => player.id === socket.id);
-            //TODO: check for collisions (no reason to add a word if it is already there)
-            playerState.responses.push(response);
+        const result = state.acceptPromptResponse(socket.id, response);
+        if(result.success){
             socket.emit("promptResponse", response);
         }
     });
 
     socket.on("selectResponse", (response) => {
-        const state = getRoomById(socket.id).state;
-        if(state.stage === "selection"){
-
+        const room = getRoomById(socket.id);
+        const state = room.state;
+        const result = state.acceptResponseSelection(socket.id, response);
+        if(result.success){
+            io.to(room.name).emit("promptResponse", response);
         }
     });
 }
@@ -46,7 +44,6 @@ function beginPrompt(io, room) {
         timer: state.options.promptTimer
     });
     setTimeout(() => {
-        state.stage = 'selection';
         beginSelection(io, room);
     }, state.options.promptTimer * 1000 + 1000);
 }

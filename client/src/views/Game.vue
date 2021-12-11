@@ -22,8 +22,8 @@ if(!store.state.room.roomName){
   <div class="w-75 h-100 border rounded">
     <lobby v-if="scene === 'lobby'" />
     <prompt-response v-if="scene === 'promptResponse'" />
-    <passive-selection v-if="scene === 'activeSelection'" />
-    <active-selection v-if="scene === 'passiveSelection'" />
+    <passive-selection v-if="scene === 'passiveSelection'" />
+    <active-selection v-if="scene === 'activeSelection'" />
   </div>
 </template>
 

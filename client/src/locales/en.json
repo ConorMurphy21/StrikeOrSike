@@ -1,3 +1,4 @@
 {
-  "roomTaken": "A room with that name is already taken"
+  "roomTaken": "A room with that name is already taken",
+  "passiveSelectionMessage": "{player} is trying to {selectionType}"
 }

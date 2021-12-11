@@ -21,7 +21,7 @@ module.exports = (io, socket) => {
     socket.on("promptResponse", (response) => {
         const state = getRoomById(socket.id).state;
         const result = state.acceptPromptResponse(socket.id, response);
-        if(result.success){
+        if (result.success) {
             socket.emit("promptResponse", response);
         }
     });
@@ -30,8 +30,8 @@ module.exports = (io, socket) => {
         const room = getRoomById(socket.id);
         const state = room.state;
         const result = state.acceptResponseSelection(socket.id, response);
-        if(result.success){
-            io.to(room.name).emit("promptResponse", response);
+        if (result.success) {
+            io.to(room.name).emit("beginMatching", response);
         }
     });
 }

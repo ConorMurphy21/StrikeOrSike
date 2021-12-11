@@ -61,7 +61,7 @@ const GameState = class {
 
     /*** PROMPT SELECTION state changes ***/
     beginSelection(room){
-        state.stage = 'selection';
+        this.stage = 'selection';
         //clear selections
         this.players.forEach(player => {
             player.selected = '';
@@ -102,13 +102,14 @@ const GameState = class {
         if(this.stage === 'selection' && selector.id === id){
             if(selector.responses.find(r => r === response)){
                 selector.selected = response;
-                this.stage = 'matching'
+                this.stage = 'matching';
             } else {
-                return {error: 'badRequest'}
+                return {error: 'badRequest'};
             }
         } else {
-            return {error: 'badRequest'}
+            return {error: 'badRequest'};
         }
+        return {success: true};
     }
 };
 

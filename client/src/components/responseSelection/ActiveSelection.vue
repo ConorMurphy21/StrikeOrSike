@@ -1,13 +1,13 @@
 <script setup>
 import ResponseList from "@/components/gameShared/ResponseList.vue";
-import SelectionType from "@/components/selection/SelectionType.vue";
+import SelectionType from "@/components/responseSelection/SelectionType.vue";
 </script>
 
 <template>
   <div class="w-100 h-100 d-flex flex-column justify-content-between align-items-center p-3">
     <h1>{{ prompt }}</h1>
-    <h3 v-t="{ path: 'passiveSelectionMessage', args: { player: selector.name, selectionType } }"></h3>
-    <response-list :selectable="false"/>
+    <selection-type/>
+    <response-list :selectable="true" v-model="response"/>
   </div>
 </template>
 
@@ -19,16 +19,18 @@ const {mapState} = createNamespacedHelpers('game');
 export default {
   data() {
     return {
-      response: ''
+      response: '',
     }
   },
   computed: {
     ...mapState([
       'prompt',
-      'selectionType',
-      'selector'
     ])
   },
-  methods: {}
+  watch:{
+    response: function (val) {
+      this.$socket.emit("selectResponse", val);
+    }
+  }
 }
 </script>

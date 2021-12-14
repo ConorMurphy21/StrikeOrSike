@@ -77,6 +77,7 @@ const disconnectPlayer = id => {
     delete playerRoom[id];
     const player = room.players.find(player => player.id === id);
     player.active = false;
+    room.state.disconnect(id);
     // if no model are still active delete the room
     const activePlayer = room.players.find(player => player.active);
     if(!activePlayer) {

@@ -35,9 +35,7 @@ describe("promptResponse tests", () => {
 
                     });
                     clientSocket2.on("joinRoom", () => {
-                        clientSocket1.emit("setOptions", {promptTimer: 0.1}, response => {
-                            done();
-                        });
+                        clientSocket1.emit("setOptions", {promptTimer: 0}, () => done());
                     });
                     clientSocket1.on("beginPrompt", () => {
                         clientSocket1.emit("promptResponse", SHARED_RESPONSE);

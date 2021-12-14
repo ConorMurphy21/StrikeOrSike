@@ -31,8 +31,10 @@ export default {
   },
   methods: {
     sendResponse() {
-      this.$socket.emit("promptResponse", this.response);
-      this.response = '';
+      if(this.response !== '') {
+        this.$socket.emit("promptResponse", this.response);
+        this.response = '';
+      }
     }
   }
 }

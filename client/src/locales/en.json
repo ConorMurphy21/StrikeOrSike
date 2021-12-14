@@ -1,4 +1,5 @@
 {
   "roomTaken": "A room with that name is already taken",
-  "passiveSelectionMessage": "{player} is trying to {selectionType}"
+  "passiveSelectionMessage": "{player} is trying to {selectionType}",
+  "activeMatchingMessage": "{player} selected {response}, do you have a match?"
 }

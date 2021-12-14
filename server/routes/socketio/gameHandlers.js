@@ -15,6 +15,7 @@ module.exports = (io, socket) => {
         const room = roomIfLeader(socket.id);
         if (!room) return;
         room.state = new GameState(room, room.state.options);
+        registerCallbacks(io, room);
         beginPrompt(io, room);
     });
 
@@ -32,7 +33,39 @@ module.exports = (io, socket) => {
         const result = state.acceptResponseSelection(socket.id, response);
         if (result.success) {
             io.to(room.name).emit("beginMatching", response);
+            state.players.forEach(player => {
+               if(player.match){
+                   io.to(room.name).emit("matchFound", {player: player.id, response: player.match});
+               }
+            });
         }
+    });
+
+    socket.on("selectMatch", (match) => {
+        const room = getRoomById(socket.id);
+        const state = room.state;
+        const result = state.acceptMatch(socket.id, match);
+        if(result.success){
+            io.to(room.name).emit("matchFound", {player: socket.id, response: match});
+        }
+    });
+
+    socket.on("selectionComplete", () => {
+        const room = getRoomById(socket.id);
+        const state = room.state;
+        if(state.matchingComplete() && state.isSelector(socket.id)){
+            continueSelection(io, room);
+        }
+    });
+}
+
+function registerCallbacks(io, room){
+    room.state.registerMatchingCompleteCb(() => {
+        // give a little time to show score before moving on to next selection
+        //setTimeout(() => {continueSelection(io, room)}, 10000);
+    });
+    room.state.registerSelectionUnsuccessfulCb(() => {
+        continueSelection(io, room);
     });
 }
 

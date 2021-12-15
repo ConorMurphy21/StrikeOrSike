@@ -65,7 +65,7 @@ function registerCallbacks(io, room){
         //setTimeout(() => {continueSelection(io, room)}, 10000);
     });
     room.state.registerSelectionUnsuccessfulCb(() => {
-        continueSelection(io, room);
+        //continueSelection(io, room);
     });
 }
 

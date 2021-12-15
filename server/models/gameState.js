@@ -98,11 +98,14 @@ const GameState = class {
         this._resetSelection();
 
         // update global state for responseSelection
-        for (let i = this.initialSelector; ; i = (i + 1) % this.players.length) {
-            const active = room.players.find(player => player.id === this.players[i].id).active;
+        for (let i = 0; i < this.players.length; i++) {
+            const j = (this.initialSelector + i) % this.players.length;
+            const player = room.players.find(player => player.id === this.players[j].id);
+            const active = player && player.active;
+
             if (active) {
-                this.initialSelector = i;
-                this.selector = i;
+                this.initialSelector = j;
+                this.selector = j;
                 this._randomizeSelectionType();
                 return;
             }
@@ -113,11 +116,15 @@ const GameState = class {
         //clear selections
         this._resetSelection();
 
-        for (let i = this.selector; i !== this.initialSelector; i = (i + 1) % this.players.length) {
-            const active = room.players.find(player => player.id === this.players[i].id).active;
+        for (let i = 1; i <= this.players.length; i++) {
+            const j = (this.selector + i) % this.players.length;
+            if(j === this.initialSelector) break;
+            const player = room.players.find(player => player.id === this.players[j].id);
+            const active = player && player.active;
+
             if (active) {
-                this.selector = i;
-                this._randomizeSelectionType(state);
+                this.selector = j;
+                this._randomizeSelectionType();
                 return true;
             }
         }
@@ -146,7 +153,7 @@ const GameState = class {
     }
 
     matchingComplete() {
-        return !!!this.players.find(player => player.active && (!player.matchingComplete || player.selected))
+        return !this.players.find(player => player.active && (!player.matchingComplete || player.selected))
             && this.stage === 'responseMatching';
     }
 

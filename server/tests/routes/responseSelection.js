@@ -10,7 +10,7 @@ const SHARED_RESPONSE = "sharedResponse";
 const C1_RESPONSE = "c1Response";
 const C2_RESPONSE = "c2Response";
 
-describe("promptResponse tests", () => {
+describe("responseSelection tests", () => {
     const roomName = "room";
     let io, clientSocket1, clientSocket2, c1Id, c2Id;
     beforeEach((done) => {

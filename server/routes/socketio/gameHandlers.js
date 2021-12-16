@@ -20,7 +20,9 @@ module.exports = (io, socket) => {
     });
 
     socket.on("promptResponse", (response) => {
-        const state = getRoomById(socket.id).state;
+        const room = getRoomById(socket.id);
+        if(!room) return;
+        const state = room.state;
         const result = state.acceptPromptResponse(socket.id, response);
         if (result.success) {
             socket.emit("promptResponse", response);
@@ -29,12 +31,13 @@ module.exports = (io, socket) => {
 
     socket.on("selectResponse", (response) => {
         const room = getRoomById(socket.id);
+        if(!room) return;
         const state = room.state;
         const result = state.acceptResponseSelection(socket.id, response);
         if (result.success) {
             io.to(room.name).emit("beginMatching", response);
             state.players.forEach(player => {
-               if(player.match){
+               if(player.matchingComplete){
                    io.to(room.name).emit("matchFound", {player: player.id, response: player.match});
                }
             });
@@ -43,6 +46,7 @@ module.exports = (io, socket) => {
 
     socket.on("selectMatch", (match) => {
         const room = getRoomById(socket.id);
+        if(!room) return;
         const state = room.state;
         const result = state.acceptMatch(socket.id, match);
         if(result.success){
@@ -52,6 +56,7 @@ module.exports = (io, socket) => {
 
     socket.on("selectionComplete", () => {
         const room = getRoomById(socket.id);
+        if(!room) return;
         const state = room.state;
         if(state.matchingComplete() && state.isSelector(socket.id)){
             continueSelection(io, room);
@@ -92,7 +97,8 @@ function beginSelection(io, room) {
 }
 
 function continueSelection(io, room) {
-    if (room.state.nextSelection(room)) {
+    const state = room.state;
+    if (state.nextSelection(room)) {
         io.to(room.name).emit("nextSelection",
             {
                 selector: state.players[state.selector].id,

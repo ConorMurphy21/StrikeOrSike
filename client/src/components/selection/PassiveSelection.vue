@@ -1,21 +1,20 @@
 <script setup>
 import ResponseList from "@/components/gameShared/ResponseList.vue";
-import Timer from "@/components/gameShared/Timer.vue";
+import SelectionType from "@/components/selection/SelectionType.vue";
 </script>
 
 <template>
   <div class="w-100 h-100 d-flex flex-column justify-content-between align-items-center p-3">
     <h1>{{ prompt }}</h1>
+    <h3 v-t="{ path: 'passiveSelectionMessage', args: { player: selector.name, selectionType } }"></h3>
     <response-list :selectable="false"/>
-    <input type="text" class="form-control w-75" v-model="response" @keyup.enter="sendResponse"/>
-    <timer :time="timer"></timer>
   </div>
 </template>
 
 <script>
 import {createNamespacedHelpers} from "vuex";
 
-const {mapState, mapActions} = createNamespacedHelpers('game');
+const {mapState} = createNamespacedHelpers('game');
 
 export default {
   data() {
@@ -25,17 +24,11 @@ export default {
   },
   computed: {
     ...mapState([
-      'timer',
-      'prompt'
+      'prompt',
+      'selectionType',
+      'selector'
     ])
   },
-  methods: {
-    sendResponse() {
-      this.$socket.emit("promptResponse", this.response);
-      this.response = '';
-    }
-  }
+  methods: {}
 }
 </script>
-
-

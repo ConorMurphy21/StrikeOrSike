@@ -3,7 +3,8 @@ const state = () => ({
     prompt: '',
     timer: 0,
     responses: [],
-    selectionType: ''
+    selectionType: '',
+    selector: {},
 });
 
 const mutations = {
@@ -18,8 +19,15 @@ const mutations = {
     },
     clearResponses(state){
         state.responses = [];
+    },
+    setSelectionType(state, data){
+        state.selectionType = data;
+    },
+    setSelector(state, data){
+        state.selector = data;
     }
 }
+
 
 const socketMutations = {
     SOCKET_promptResponse(state, data){
@@ -34,9 +42,20 @@ const socketActions = {
         commit('setTimer', data.timer);
         commit('clearResponses')
         dispatch('startTimer').then(() => {
-            commit('setScene', 'lobby');
+            // commit('setScene', 'lobby');
         })
+    },
+    async SOCKET_nextSelection({state, commit, rootGetters, rootState}, data){
+        const selector = rootState.room.players.find(player => player.id === data.selector);
+        commit('setSelector', selector);
+        if(selector.id === rootGetters['room/self'].id){
+            commit('setScene', 'activeSelection');
+        } else {
+            commit('setScene', 'passiveSelection');
+        }
+        commit('setSelectionType', data.selectionType);
     }
+
 }
 
 const actions = {

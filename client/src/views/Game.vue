@@ -1,6 +1,8 @@
 <script setup>
 import Lobby from '@/components/lobby/Lobby.vue'
 import PromptResponse from '@/components/promptResponse/PromptResponse.vue'
+import ActiveSelection from '@/components/selection/ActiveSelection.vue';
+import PassiveSelection from '@/components/selection/PassiveSelection.vue';
 import {useRouter} from 'vue-router'
 import {useStore} from 'vuex'
 
@@ -20,6 +22,8 @@ if(!store.state.room.roomName){
   <div class="w-75 h-100 border rounded">
     <lobby v-if="scene === 'lobby'" />
     <prompt-response v-if="scene === 'promptResponse'" />
+    <passive-selection v-if="scene === 'passiveSelection'" />
+    <active-selection v-if="scene === 'activeSelection'" />
   </div>
 </template>
 

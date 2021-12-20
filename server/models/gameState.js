@@ -1,5 +1,4 @@
 const prompts = require('../resources/prompts.json');
-//const roomsModel = require('./rooms');
 
 const defaultOptions = () => {
     return {
@@ -60,7 +59,7 @@ const GameState = class {
 
         const r = Math.floor(Math.random() * this.unusedPrompts.length);
         this.prompt = prompts[this.unusedPrompts[r]];
-        this.unusedPrompts = this.unusedPrompts.splice(r, 1);
+        this.unusedPrompts.splice(r, 1);
         this.stage = 'response';
         this.players.forEach(player => {
             player.responses = [];

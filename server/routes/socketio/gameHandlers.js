@@ -7,7 +7,7 @@ module.exports = (io, socket) => {
         const room = roomIfLeader(socket.id);
         if (!room) return;
         // todo: validation
-        room.state.options = options;
+        room.state.options = {options};
         callback({success: true});
     });
 
@@ -80,14 +80,18 @@ function registerCallbacks(io, room){
 
 function beginPrompt(io, room) {
     const state = room.state;
-    state.beginNewPrompt();
-    io.to(room.name).emit("beginPrompt", {
-        prompt: state.prompt,
-        timer: state.options.promptTimer
-    });
-    setTimeout(() => {
-        beginSelection(io, room);
-    }, state.options.promptTimer * 1000 + 1000);
+
+    if(state.beginNewPrompt()) {
+        io.to(room.name).emit("beginPrompt", {
+            prompt: state.prompt,
+            timer: state.options.promptTimer
+        });
+        setTimeout(() => {
+            beginSelection(io, room);
+        }, state.options.promptTimer * 1000 + 1000);
+    } else {
+        io.to(room.name).emit("gameOver");
+    }
 }
 
 function beginSelection(io, room) {

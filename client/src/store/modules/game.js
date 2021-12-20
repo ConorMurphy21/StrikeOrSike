@@ -80,6 +80,9 @@ const socketMutations = {
     SOCKET_promptResponse(state, response) {
         state.responses.push(response);
     },
+    SOCKET_gameOver(state) {
+        state.scene = 'lobby';
+    }
 }
 
 const socketActions = {
@@ -94,6 +97,7 @@ const socketActions = {
     },
     async SOCKET_nextSelection({state, commit, rootGetters, rootState}, data) {
         const selector = rootState.room.players.find(player => player.id === data.selector);
+        commit('clearMatches');
         commit('setSelector', selector);
         commit('setSelectionType', data.selectionType);
         if (selector.id === rootGetters['room/self'].id) {

@@ -2,6 +2,7 @@ const {createServer} = require("http");
 const {Server} = require("socket.io");
 const Client = require("socket.io-client");
 const registerHandlers = require("../../routes/socketio/registerHandlers");
+
 const assert = require("chai").assert;
 
 describe("create/join tests", () => {
@@ -28,7 +29,7 @@ describe("create/join tests", () => {
 
     it("create room happy", (done) => {
         clientSocket1.on("joinRoom", (arg) => {
-            assert.deepEqual(arg, {success: true});
+            assert.deepEqual(arg, {success: true, roomName: "room"});
             done();
         });
         clientSocket1.emit("createRoom", "name", "room");
@@ -36,7 +37,7 @@ describe("create/join tests", () => {
 
     it("join room happy", (done) => {
         clientSocket2.on("joinRoom", (arg) => {
-            assert.deepEqual(arg, {success: true});
+            assert.deepEqual(arg, {success: true, roomName: "room"});
             done();
         });
         clientSocket1.on("joinRoom", (arg) => {
@@ -47,7 +48,7 @@ describe("create/join tests", () => {
 
     it("join room capitalized 1", (done) => {
         clientSocket2.on("joinRoom", (arg) => {
-            assert.deepEqual(arg, {success: true});
+            assert.deepEqual(arg, {success: true, roomName: "room"});
             done();
         });
         clientSocket1.on("joinRoom", (arg) => {
@@ -58,7 +59,7 @@ describe("create/join tests", () => {
 
     it("join room capitalized 2", (done) => {
         clientSocket2.on("joinRoom", (arg) => {
-            assert.deepEqual(arg, {success: true});
+            assert.deepEqual(arg, {success: true, roomName: "room"});
             done();
         });
         clientSocket1.on("joinRoom", (arg) => {
@@ -99,11 +100,11 @@ describe("create/join tests", () => {
 
     it("create room roomTaken prev", (done) => {
         clientSocket2.on("joinRoom", (arg) => {
-            assert.deepEqual(arg, {success: true});
+            assert.deepEqual(arg, {success: true, roomName: "room"});
             done();
         });
         clientSocket1.on("joinRoom", (arg) => {
-            assert.deepEqual(arg, {success: true});
+            assert.deepEqual(arg, {success: true, roomName: "room"});
             clientSocket1.disconnect();
         });
         clientSocket1.on("disconnect", () => {
@@ -125,7 +126,7 @@ describe("create/join tests", () => {
                 clientSocket3.emit("joinRoom", "name2", "room");
             });
             clientSocket3.on("joinRoom", (arg) => {
-                assert.deepEqual(arg, {success: true});
+                assert.deepEqual(arg, {success: true, roomName: "room"});
                 done();
             });
         });
@@ -153,7 +154,7 @@ describe("create/join tests", () => {
                     clientSocket4.emit("joinRoom", "name2", "room");
                 });
                 clientSocket4.on("joinRoom", (arg) => {
-                    assert.deepEqual(arg, {success: true});
+                    assert.deepEqual(arg, {success: true, roomName: "room"});
                     done();
                 });
             });

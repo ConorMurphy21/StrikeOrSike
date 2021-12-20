@@ -1,10 +1,37 @@
 const GameState = require('./gameState');
 
+
 // map model to rooms
 const playerRoom = {}
 
 // map rooms to model
 const rooms = {}
+
+/*** Use to check if room name is valid for creating a URL***/
+const isValidInput = (input) => {
+    // test for whitespace
+    if (/\s/.test(input)) {
+        return "spaces";
+    }
+    // todo: add more checks here
+    return true;
+}
+
+const sanitizeRoomName = (roomName) => {
+    let retval = isValidInput(roomName);
+    while(retval !== true){
+        // added this switch in case I add more checks
+        // This is tightly bound to isValidInput()
+        switch (retval){
+            case "spaces":
+                roomName = roomName.split(' ').join('-');
+                break;
+        }
+        retval = isValidInput(roomName)
+    }
+
+    return roomName
+}
 
 const createRoom = (id, name, roomName) => {
     if (rooms[roomName])
@@ -13,8 +40,14 @@ const createRoom = (id, name, roomName) => {
         return { error: "badName" };
     if (!roomName)
         return { error: "badRoom" };
-    roomName = roomName.toLowerCase();
+    if(/^\d/.test(roomName)){
+        return {error: "startsNum"};
+    }
 
+    roomName = sanitizeRoomName(roomName);
+
+    roomName = roomName.toLowerCase();
+    console.log("--room name", roomName);
     // clone default room
     const room = {
         name: roomName,

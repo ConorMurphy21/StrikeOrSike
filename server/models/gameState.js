@@ -184,6 +184,8 @@ const GameState = class {
         }
     }
 
+
+
     acceptMatch(id, match) {
         const selector = this.players[this.selector];
         const matcher = this.players.find(player => player.id === id);
@@ -231,6 +233,8 @@ const GameState = class {
         }
 
     }
+
+
 };
 
 module.exports = GameState;

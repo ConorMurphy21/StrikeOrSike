@@ -65,12 +65,16 @@ module.exports = (io, socket) => {
 }
 
 function registerCallbacks(io, room){
-    room.state.registerMatchingCompleteCb(() => {
+    room.state.registerMatchingCompleteCb((selectorActive) => {
         // give a little time to show score before moving on to next selection
-        //setTimeout(() => {continueSelection(io, room)}, 10000);
+        if(!selectorActive) {
+            setTimeout(() => {
+                continueSelection(io, room);
+            }, 5000);
+        }
     });
     room.state.registerSelectionUnsuccessfulCb(() => {
-        //continueSelection(io, room);
+        continueSelection(io, room);
     });
 }
 
@@ -88,7 +92,7 @@ function beginPrompt(io, room) {
 
 function beginSelection(io, room) {
     const state = room.state;
-    state.beginSelection(room);
+    state.beginSelection();
     io.to(room.name).emit("nextSelection",
         {
             selector: state.players[state.selector].id,
@@ -98,7 +102,7 @@ function beginSelection(io, room) {
 
 function continueSelection(io, room) {
     const state = room.state;
-    if (state.nextSelection(room)) {
+    if (state.nextSelection()) {
         io.to(room.name).emit("nextSelection",
             {
                 selector: state.players[state.selector].id,

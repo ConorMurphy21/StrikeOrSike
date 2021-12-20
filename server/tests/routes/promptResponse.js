@@ -65,17 +65,6 @@ describe("promptResponse tests", () => {
         clientSocket1.emit("startGame");
     });
 
-    it("promptResponse happy", (done) => {
-        clientSocket1.on("beginPrompt", (data) => {
-            clientSocket2.emit("promptResponse", "response");
-        });
-        clientSocket2.on("promptResponse", response => {
-            assert.strictEqual(response, "response");
-            done();
-        })
-        clientSocket1.emit("startGame");
-    });
-
     it("promptResponse tooLate", (done) => {
         clientSocket1.on("beginPrompt", () => {
             setTimeout(() => {

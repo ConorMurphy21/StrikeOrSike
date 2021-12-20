@@ -20,17 +20,17 @@ describe("Selection Rotation tests", () => {
     it("Selection Rotation", () => {
 
         for(let i = 0; i < len; i++){
-            gameState.beginSelection(room);
+            gameState.beginSelection();
             assert.strictEqual(gameState.initialSelector, i);
             assert.strictEqual(gameState.selector, i);
             for(let j = 0; j < len-1; j++){
                 const jj = (j + i + 1) % len;
 
-                assert.strictEqual(gameState.nextSelection(room), true);
+                assert.strictEqual(gameState.nextSelection(), true);
                 assert.strictEqual(gameState.initialSelector, i);
                 assert.strictEqual(gameState.selector, jj);
             }
-            assert.strictEqual(gameState.nextSelection(room), false);
+            assert.strictEqual(gameState.nextSelection(), false);
             assert.strictEqual(gameState.initialSelector, (i+1) % len);
             assert.strictEqual(gameState.selector, (i - 1 + len) % len);
         }
@@ -65,16 +65,16 @@ describe("Selection Rotation tests", () => {
 
     function assertSelectsEvens(){
         for(let i = 0; i < len; i+=2){
-            gameState.beginSelection(room);
+            gameState.beginSelection();
             assert.strictEqual(gameState.initialSelector, i);
             assert.strictEqual(gameState.selector, i);
             for(let j = 0; j < len-2; j += 2){
                 const jj = (j + i + 2) % len;
-                assert.strictEqual(gameState.nextSelection(room), true);
+                assert.strictEqual(gameState.nextSelection(), true);
                 assert.strictEqual(gameState.initialSelector, i);
                 assert.strictEqual(gameState.selector, jj);
             }
-            assert.strictEqual(gameState.nextSelection(room), false);
+            assert.strictEqual(gameState.nextSelection(), false);
             assert.strictEqual(gameState.initialSelector, (i+1) % len);
         }
     }

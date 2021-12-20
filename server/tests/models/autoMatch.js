@@ -11,7 +11,7 @@ describe("Selection Accepting tests", () => {
 
     beforeEach(() => {
         const players = [{id: selectorId, active: true}, {id: matcherId, active: true}];
-        gameState = new GameState({players});
+        gameState = new GameState({players}, null);
         gameState.players[selectorIndex].responses.push(firstResponse);
         gameState.beginSelection({players});
     });

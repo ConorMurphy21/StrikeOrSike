@@ -10,7 +10,7 @@ const state = () => ({
     usedResponses: []
 });
 
-const getters = {
+export const getters = {
     roundPoints(state) {
         if (state.selectionType === 'strike') {
             let count = 0;
@@ -35,11 +35,11 @@ const getters = {
         const self = rootGetters["room/self"].id
         if(state.selector.id !== self) return false;
 
-        let finishedMatching = false;
+        let finishedMatching = true;
         rootState.room.players.forEach(player => {
             if (player.active && player.id !== self) {
-                const match = state.matches.find(match => match.player === player.id);
-                if (!match) finishedMatching = true;
+                const match = state.matches.find(match => match.player.id === player.id);
+                if (!match) finishedMatching = false;
             }
         });
         return finishedMatching;

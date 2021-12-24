@@ -1,6 +1,5 @@
 <script setup>
 import ResponseList from "@/components/gameShared/ResponseList.vue";
-import SelectionType from "@/components/responseSelection/SelectionType.vue";
 </script>
 
 <template>

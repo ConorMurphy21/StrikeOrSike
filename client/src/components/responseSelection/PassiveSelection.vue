@@ -1,8 +1,3 @@
-<script setup>
-import ResponseList from "@/components/gameShared/ResponseList.vue";
-import SelectionType from "@/components/responseSelection/SelectionType.vue";
-</script>
-
 <template>
   <div class="w-100 h-100 d-flex flex-column justify-content-between align-items-center p-3">
     <h1>{{ prompt }}</h1>

@@ -11,6 +11,7 @@ import SelectionType from "@/components/selection/SelectionType.vue";
   </div>
 </template>
 
+<!--suppress JSUnusedGlobalSymbols -->
 <script>
 import {createNamespacedHelpers} from "vuex";
 

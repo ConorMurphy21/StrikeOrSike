@@ -7,7 +7,7 @@ module.exports = (io, socket) => {
         const room = roomIfLeader(socket.id);
         if (!room) return;
         // todo: validation
-        room.state.options = {options};
+        room.state.options = options;
         callback({success: true});
     });
 

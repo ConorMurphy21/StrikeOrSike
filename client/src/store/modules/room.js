@@ -1,3 +1,5 @@
+// noinspection JSUnusedGlobalSymbols
+
 const state = () => ({
     players: [],
     name: '',

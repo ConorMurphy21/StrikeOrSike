@@ -1,6 +1,6 @@
 <script setup>
 import ResponseList from "@/components/gameShared/ResponseList.vue";
-import SelectionType from "@/components/selection/SelectionType.vue";
+import SelectionType from "@/components/responseSelection/SelectionType.vue";
 </script>
 
 <template>
@@ -11,7 +11,6 @@ import SelectionType from "@/components/selection/SelectionType.vue";
   </div>
 </template>
 
-<!--suppress JSUnusedGlobalSymbols -->
 <script>
 import {createNamespacedHelpers} from "vuex";
 

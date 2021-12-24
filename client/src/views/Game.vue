@@ -1,8 +1,4 @@
 <script setup>
-import Lobby from '@/components/lobby/Lobby.vue'
-import PromptResponse from '@/components/promptResponse/PromptResponse.vue'
-import ActiveSelection from '@/components/selection/ActiveSelection.vue';
-import PassiveSelection from '@/components/selection/PassiveSelection.vue';
 import {useRouter} from 'vue-router'
 import {useStore} from 'vuex'
 
@@ -20,18 +16,30 @@ if(!store.state.room.roomName){
 
 <template>
   <div class="w-75 h-100 border rounded">
-    <lobby v-if="scene === 'lobby'" />
-    <prompt-response v-if="scene === 'promptResponse'" />
-    <passive-selection v-if="scene === 'passiveSelection'" />
-    <active-selection v-if="scene === 'activeSelection'" />
+    <component :is="scene"></component>
   </div>
 </template>
 
 <script>
+import Lobby from '@/components/lobby/Lobby.vue'
+import PromptResponse from '@/components/promptResponse/PromptResponse.vue'
+import ActiveSelection from '@/components/responseSelection/ActiveSelection.vue';
+import PassiveSelection from '@/components/responseSelection/PassiveSelection.vue';
+import ActiveMatching from "@/components/responseMatching/ActiveMatching.vue";
+import MatchingSummary from "@/components/responseMatching/MatchingSummary.vue";
+
 import {createNamespacedHelpers} from "vuex";
 const { mapState } = createNamespacedHelpers('game')
 
 export default {
+  components:{
+    Lobby,
+    PromptResponse,
+    ActiveSelection,
+    PassiveSelection,
+    ActiveMatching,
+    MatchingSummary
+  },
   computed: {
     ...mapState([
         'scene'

@@ -10,7 +10,7 @@ const SHARED_RESPONSE = "sharedResponse";
 const C1_RESPONSE = "c1Response";
 const C2_RESPONSE = "c2Response";
 
-describe("promptResponse tests", () => {
+describe("responseSelection tests", () => {
     const roomName = "room";
     let io, clientSocket1, clientSocket2, c1Id, c2Id;
     beforeEach((done) => {
@@ -35,9 +35,7 @@ describe("promptResponse tests", () => {
 
                     });
                     clientSocket2.on("joinRoom", () => {
-                        clientSocket1.emit("setOptions", {promptTimer: 0.1}, response => {
-                            done();
-                        });
+                        clientSocket1.emit("setOptions", {promptTimer: 0}, () => done());
                     });
                     clientSocket1.on("beginPrompt", () => {
                         clientSocket1.emit("promptResponse", SHARED_RESPONSE);

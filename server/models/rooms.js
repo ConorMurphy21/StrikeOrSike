@@ -82,6 +82,7 @@ const disconnectPlayer = id => {
     if(!activePlayer) {
         delete rooms[room.name];
     } else if(player.leader) {
+        room.state.disconnect(id);
         player.leader = false;
         activePlayer.leader = true;
     }

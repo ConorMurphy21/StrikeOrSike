@@ -1,9 +1,9 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="server tests" type="mocha-javascript-test-runner">
     <node-interpreter>project</node-interpreter>
-    <node-options>--trace-warnings</node-options>
+    <node-options />
     <mocha-package>$PROJECT_DIR$/server/node_modules/mocha</mocha-package>
-    <working-directory>$PROJECT_DIR$/server</working-directory>
+    <working-directory>$PROJECT_DIR$</working-directory>
     <pass-parent-env>true</pass-parent-env>
     <ui>bdd</ui>
     <extra-mocha-options />

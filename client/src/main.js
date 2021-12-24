@@ -4,7 +4,6 @@ import store from './store'
 import i18n from './locales'
 import router from './router'
 import VueSocketIO from 'vue-3-socket.io'
-import 'bootstrap/dist/css/bootstrap.css'
 const debug = process.env.NODE_ENV !== 'production'
 
 const app = createApp(App)

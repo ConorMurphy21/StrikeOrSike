@@ -7,12 +7,15 @@ const playerRoom = {}
 // map rooms to model
 const rooms = {}
 
+
 /*** Use to check if room name is valid for creating a URL***/
 const isValidInput = (input) => {
     // test for whitespace
     if (/\s/.test(input)) {
         return "spaces";
     }
+
+
     // todo: add more checks here
     return true;
 }
@@ -41,9 +44,11 @@ const createRoom = (id, name, roomName) => {
     if (!roomName)
         return { error: "badRoom" };
     if(/^\d/.test(roomName)){
-        return {error: "startsNum"};
+        return {error: "roomCannotStartWithNum"};
     }
-
+    if(/^([!#$&-;=?-[]_a-z~]|%[0-9a-fA-F]{2})+$/.test(roomName)){
+        return {error: "invalidCharacter"};
+    }
     roomName = sanitizeRoomName(roomName);
 
     roomName = roomName.toLowerCase();

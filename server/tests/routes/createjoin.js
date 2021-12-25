@@ -5,6 +5,53 @@ const registerHandlers = require("../../routes/socketio/registerHandlers");
 
 const assert = require("chai").assert;
 
+describe("Validation tests", () =>{
+    let io, clientSocket1, clientSocket2, port;
+    beforeEach((done) => {
+        const httpServer = createServer();
+        io = new Server(httpServer);
+        httpServer.listen(() => {
+            port = httpServer.address().port;
+            io.on("connection", (socket) => registerHandlers(io, socket));
+
+            clientSocket1 = new Client(`http://localhost:${port}`);
+            clientSocket1.on("connect", () => {
+                clientSocket2 = new Client(`http://localhost:${port}`);
+                clientSocket2.on("connect", done);
+            });
+        });
+    });
+    afterEach(() => {
+        io.close();
+        clientSocket1.close();
+        clientSocket2.close();
+    });
+    it("room name spaces replaced", (done) => {
+        clientSocket1.on("joinRoom", (arg) => {
+            assert.deepEqual(arg, {success: true, roomName: "hello-world"});
+            done();
+        });
+        clientSocket1.emit("createRoom", "name", "hello world");
+    });
+
+    it("allow non-ascii characters", (done) => {
+        clientSocket1.on("joinRoom", (arg) => {
+            assert.deepEqual(arg, {success: true, roomName: "😅"});
+            done();
+        });
+        clientSocket1.emit("createRoom", "name", "😅");
+    });
+
+    it("allow non-ascii characters with spaces", (done) => {
+        clientSocket1.on("joinRoom", (arg) => {
+            assert.deepEqual(arg, {success: true, roomName: "hello-world-😅"});
+            done();
+        });
+        clientSocket1.emit("createRoom", "name", "hello world 😅");
+    });
+
+})
+
 describe("create/join tests", () => {
     let io, clientSocket1, clientSocket2, port;
     beforeEach((done) => {

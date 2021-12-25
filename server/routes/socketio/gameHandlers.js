@@ -35,12 +35,21 @@ module.exports = (io, socket) => {
         const state = room.state;
         const result = state.acceptResponseSelection(socket.id, response);
         if (result.success) {
-            io.to(room.name).emit("beginMatching", response);
-            state.players.forEach(player => {
-               if(player.matchingComplete){
-                   io.to(room.name).emit("matchFound", {player: player.id, response: player.match});
-               }
-            });
+            if(result.stage === "responseMatching") {
+                beginMatching(io, room);
+            } else if (result.stage === "sikeDispute"){
+                io.to(room.name).emit("beginDispute", response);
+            }
+        }
+    });
+
+    socket.on("sikeVote", (vote) => {
+        const room = getRoomById(socket.id);
+        if(!room) return;
+        const state = room.state;
+        const result = state.acceptDisputeVote(socket.id, vote);
+        if(result.success){
+            applyDisputeAction(io, room, result.action);
         }
     });
 
@@ -65,6 +74,15 @@ module.exports = (io, socket) => {
 }
 
 function registerCallbacks(io, room){
+
+    room.state.registerSelectionUnsuccessfulCb(() => {
+        continueSelection(io, room);
+    });
+
+    room.state.registerDisputeCompleteCb((action) => {
+        applyDisputeAction(io, room, action);
+    });
+
     room.state.registerMatchingCompleteCb((selectorActive) => {
         // give a little time to show score before moving on to next selection
         if(!selectorActive) {
@@ -72,9 +90,6 @@ function registerCallbacks(io, room){
                 continueSelection(io, room);
             }, 5000);
         }
-    });
-    room.state.registerSelectionUnsuccessfulCb(() => {
-        continueSelection(io, room);
     });
 }
 
@@ -99,7 +114,7 @@ function beginSelection(io, room) {
     state.beginSelection();
     io.to(room.name).emit("nextSelection",
         {
-            selector: state.players[state.selector].id,
+            selector: state.selectorId(),
             selectionType: state.selectionType
         });
 }
@@ -109,12 +124,36 @@ function continueSelection(io, room) {
     if (state.nextSelection()) {
         io.to(room.name).emit("nextSelection",
             {
-                selector: state.players[state.selector].id,
+                selector: state.selectorId(),
                 selectionType: state.selectionType
             });
     } else {
         beginPrompt(io, room);
     }
+}
+
+function applyDisputeAction(io, room, action){
+    if(action === 'reSelect'){
+        io.to(room.name).emit("nextSelection",
+            {
+                selector: state.selectorId(),
+                selectionType: state.selectionType
+            });
+    } else if(action === 'nextSelection'){
+        continueSelection(io, room);
+    } else if(action === 'matching'){
+        beginMatching(io, room);
+    }
+}
+
+function beginMatching(io, room){
+    io.to(room.name).emit("beginMatching", room.state.selectedResponse);
+    state.players.forEach(player => {
+        if (player.matchingComplete) {
+            // todo: turn this into 1 message to reduce network traffic
+            io.to(room.name).emit("matchFound", {player: player.id, response: player.match});
+        }
+    });
 }
 
 // return the room only if the user is the party leader

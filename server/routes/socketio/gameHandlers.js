@@ -147,7 +147,8 @@ function applyDisputeAction(io, room, action){
 }
 
 function beginMatching(io, room){
-    io.to(room.name).emit("beginMatching", room.state.selectedResponse);
+    const state = room.state;
+    io.to(room.name).emit("beginMatching", state.selectedResponse());
     state.players.forEach(player => {
         if (player.matchingComplete) {
             // todo: turn this into 1 message to reduce network traffic

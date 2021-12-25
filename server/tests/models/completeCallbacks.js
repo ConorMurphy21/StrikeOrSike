@@ -38,7 +38,7 @@ describe("Complete callback tests", () => {
             done();
         });
         gameState.acceptResponseSelection(selectorId, firstResponse);
-        gameState.acceptMatch(selectorId, '');
+        gameState.acceptMatch(matcherId, '');
     });
 
     it("Last Matcher disconnect selector disconnected", (done) => {
@@ -60,6 +60,6 @@ describe("Complete callback tests", () => {
         gameState.registerSelectionUnsuccessfulCb(() => assert.fail());
         gameState.acceptResponseSelection(selectorId, firstResponse);
         players[selectorIndex].active = false;
-        gameState.acceptMatch(selectorId, '');
+        gameState.acceptMatch(matcherId, '');
     });
 });

@@ -13,7 +13,7 @@ module.exports = (io, socket) => {
         } else {
             const room = result.room;
             socket.join(room.name);
-            socket.emit("joinRoom", {success: true});
+            socket.emit("joinRoom", {success: true, roomName: room.name});
             socket.emit("updatePlayers", {modifies: room.players, deletes: []});
         }
     });
@@ -27,7 +27,7 @@ module.exports = (io, socket) => {
         } else {
             const room = result.room;
             socket.join(room.name);
-            socket.emit("joinRoom", {success: true});
+            socket.emit("joinRoom", {success: true, roomName: room.name});
             socket.emit("updatePlayers", {modifies: room.players, deletes: []});
             socket.to(room.name).emit("updatePlayers", {
                 modifies: [room.players.find(p => p.name === name)],

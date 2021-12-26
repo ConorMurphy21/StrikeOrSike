@@ -37,9 +37,9 @@ module.exports = (io, socket) => {
         if (result.success) {
             io.to(room.name).emit("beginMatching", response);
             state.players.forEach(player => {
-               if(player.matchingComplete){
-                   io.to(room.name).emit("matchFound", {player: player.id, response: player.match});
-               }
+                if(player.matchingComplete){
+                    io.to(room.name).emit("matchFound", {player: player.id, response: player.match});
+                }
             });
         }
     });
@@ -65,30 +65,38 @@ module.exports = (io, socket) => {
 }
 
 function registerCallbacks(io, room){
-    room.state.registerMatchingCompleteCb(() => {
+    room.state.registerMatchingCompleteCb((selectorActive) => {
         // give a little time to show score before moving on to next selection
-        //setTimeout(() => {continueSelection(io, room)}, 10000);
+        if(!selectorActive) {
+            setTimeout(() => {
+                continueSelection(io, room);
+            }, 5000);
+        }
     });
     room.state.registerSelectionUnsuccessfulCb(() => {
-        //continueSelection(io, room);
+        continueSelection(io, room);
     });
 }
 
 function beginPrompt(io, room) {
     const state = room.state;
-    state.beginNewPrompt();
-    io.to(room.name).emit("beginPrompt", {
-        prompt: state.prompt,
-        timer: state.options.promptTimer
-    });
-    setTimeout(() => {
-        beginSelection(io, room);
-    }, state.options.promptTimer * 1000 + 1000);
+
+    if(state.beginNewPrompt()) {
+        io.to(room.name).emit("beginPrompt", {
+            prompt: state.prompt,
+            timer: state.options.promptTimer
+        });
+        setTimeout(() => {
+            beginSelection(io, room);
+        }, state.options.promptTimer * 1000 + 1000);
+    } else {
+        io.to(room.name).emit("gameOver");
+    }
 }
 
 function beginSelection(io, room) {
     const state = room.state;
-    state.beginSelection(room);
+    state.beginSelection();
     io.to(room.name).emit("nextSelection",
         {
             selector: state.players[state.selector].id,
@@ -98,7 +106,7 @@ function beginSelection(io, room) {
 
 function continueSelection(io, room) {
     const state = room.state;
-    if (state.nextSelection(room)) {
+    if (state.nextSelection()) {
         io.to(room.name).emit("nextSelection",
             {
                 selector: state.players[state.selector].id,

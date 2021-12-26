@@ -50,6 +50,29 @@ describe("Validation tests", () =>{
         clientSocket1.emit("createRoom", "name", "hello world 😅");
     });
 
+    it("room name starting with num", (done) => {
+        clientSocket1.on("joinRoom", (arg) => {
+            assert.deepEqual(arg, {error: "roomCannotStartWithNum"});
+            done();
+        });
+        clientSocket1.emit("createRoom", "name", "123 hello");
+    });
+
+    it("room name with numbers", (done) => {
+        clientSocket1.on("joinRoom", (arg) => {
+            assert.deepEqual(arg, {success: true, roomName: "hello123"});
+            done();
+        });
+        clientSocket1.emit("createRoom", "name", "hello123");
+    });
+
+    it("room name with numbers and space combo", (done) => {
+        clientSocket1.on("joinRoom", (arg) => {
+            assert.deepEqual(arg, {success: true, roomName: "hello-123"});
+            done();
+        });
+        clientSocket1.emit("createRoom", "name", "hello 123");
+    });
 })
 
 describe("create/join tests", () => {

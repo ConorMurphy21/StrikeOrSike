@@ -225,6 +225,7 @@ describe("create/join tests", () => {
                 });
                 clientSocket4.on("joinRoom", (arg) => {
                     assert.deepEqual(arg, {success: true, roomName: "room"});
+                    clientSocket4.disconnect();
                     done();
                 });
             });

@@ -52,7 +52,7 @@ const createRoom = (id, name, roomName) => {
     roomName = sanitizeRoomName(roomName);
 
     roomName = roomName.toLowerCase();
-    console.log("--room name", roomName);
+
     // clone default room
     const room = {
         name: roomName,

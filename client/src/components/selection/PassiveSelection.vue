@@ -1,10 +1,16 @@
+<script setup>
+import ResponseList from "@/components/gameShared/ResponseList.vue";
+</script>
+
 <template>
   <div class="w-100 h-100 d-flex flex-column justify-content-between align-items-center p-3">
     <h1>{{ prompt }}</h1>
     <h3 v-t="{ path: 'passiveSelectionMessage', args: { player: selector.name, selectionType } }"></h3>
+    <response-list :selectable="false"/>
   </div>
 </template>
 
+<!--suppress JSUnusedGlobalSymbols -->
 <script>
 import {createNamespacedHelpers} from "vuex";
 

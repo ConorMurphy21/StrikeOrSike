@@ -234,7 +234,53 @@ const GameState = class {
 
     }
 
+    acceptMatch(id, match) {
+        const selector = this.players[this.selector];
+        const matcher = this.players.find(player => player.id === id);
+        if(matcher.matchingComplete) return {error: 'duplicateRequest'};
 
+        // Sike
+        if (match === '') {
+            matcher.matchingComplete = true;
+            if (this.selectionType === 'sike') {
+                selector.points++;
+            }
+            this._cbIfMatchingComplete();
+            return {success: true};
+        }
+
+        // Strike
+        if (this.stage === 'responseMatching' && selector.id !== id) {
+            if (matcher.responses.find(r => r === match) && !matcher.used.find(r => r === match)) {
+                matcher.match = match;
+                matcher.matchingComplete = true;
+                matcher.used.push(match);
+                if (this.selectionType === 'strike') {
+                    selector.points++;
+                }
+                this._cbIfMatchingComplete();
+                return {success: true};
+            }
+        }
+        return {error: 'badRequest'};
+    }
+
+    isSelector(id) {
+        const selector = this.players[this.selector].id;
+        return selector === id;
+    }
+
+    disconnect(id) {
+        if (this.stage === 'responseSelection') {
+            if (this.isSelector(id)) {
+                if(this.selectionUnsuccessfulCb) this.selectionUnsuccessfulCb();
+            }
+        }
+        if (this.stage === 'responseMatching') {
+            this._cbIfMatchingComplete();
+        }
+
+    }
 };
 
 module.exports = GameState;

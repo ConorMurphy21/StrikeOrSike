@@ -1,3 +1,5 @@
+// noinspection JSUnusedGlobalSymbols
+
 const state = () => ({
     scene: 'lobby',
     prompt: '',
@@ -10,7 +12,7 @@ const state = () => ({
     usedResponses: []
 });
 
-const getters = {
+export const getters = {
     roundPoints(state) {
         if (state.selectionType === 'strike') {
             let count = 0;
@@ -35,11 +37,11 @@ const getters = {
         const self = rootGetters["room/self"].id
         if(state.selector.id !== self) return false;
 
-        let finishedMatching = false;
+        let finishedMatching = true;
         rootState.room.players.forEach(player => {
             if (player.active && player.id !== self) {
-                const match = state.matches.find(match => match.player === player.id);
-                if (!match) finishedMatching = true;
+                const match = state.matches.find(match => match.player.id === player.id);
+                if (!match) finishedMatching = false;
             }
         });
         return finishedMatching;
@@ -80,6 +82,9 @@ const socketMutations = {
     SOCKET_promptResponse(state, response) {
         state.responses.push(response);
     },
+    SOCKET_gameOver(state) {
+        state.scene = 'lobby';
+    }
 }
 
 const socketActions = {
@@ -94,6 +99,7 @@ const socketActions = {
     },
     async SOCKET_nextSelection({state, commit, rootGetters, rootState}, data) {
         const selector = rootState.room.players.find(player => player.id === data.selector);
+        commit('clearMatches');
         commit('setSelector', selector);
         commit('setSelectionType', data.selectionType);
         if (selector.id === rootGetters['room/self'].id) {

@@ -15,11 +15,13 @@ describe("Selection Accepting tests", () => {
         gameState = new GameState({players});
         gameState.players[selectorIndex].responses.push(firstResponse);
         gameState.beginSelection({players});
+        gameState.beginSelection();
     });
 
     it("PromptSelection Accept Happy", () => {
         const result = gameState.acceptResponseSelection(selectorId, firstResponse);
-        assert.deepEqual(result, {success: true});
+        assert.isOk(result.success);
+        assert.isNotOk(result.error);
     });
 
     it("PromptSelection Accept NotSelector", () => {
@@ -41,7 +43,8 @@ describe("Selection Accepting tests", () => {
         gameState.players[matcherIndex].responses.push(synonym);
         gameState.acceptResponseSelection(selectorId, firstResponse);
         const result = gameState.acceptMatch(matcherId, synonym);
-        assert.deepEqual(result, {success: true});
+        assert.isOk(result.success);
+        assert.isNotOk(result.error);
     });
 
     it("Match Accept DuplicateRequest", () => {
@@ -50,7 +53,8 @@ describe("Selection Accepting tests", () => {
         gameState.acceptResponseSelection(selectorId, firstResponse);
         gameState.acceptMatch(matcherId, synonym);
         const result = gameState.acceptMatch(matcherId, synonym);
-
+        assert.isNotOk(result.success);
+        assert.isOk(result.error);
     });
 
     it("Match Accept used", () => {

@@ -65,38 +65,30 @@ module.exports = (io, socket) => {
 }
 
 function registerCallbacks(io, room){
-    room.state.registerMatchingCompleteCb((selectorActive) => {
+    room.state.registerMatchingCompleteCb(() => {
         // give a little time to show score before moving on to next selection
-        if(!selectorActive) {
-            setTimeout(() => {
-                continueSelection(io, room);
-            }, 5000);
-        }
+        //setTimeout(() => {continueSelection(io, room)}, 10000);
     });
     room.state.registerSelectionUnsuccessfulCb(() => {
-        continueSelection(io, room);
+        //continueSelection(io, room);
     });
 }
 
 function beginPrompt(io, room) {
     const state = room.state;
-
-    if(state.beginNewPrompt()) {
-        io.to(room.name).emit("beginPrompt", {
-            prompt: state.prompt,
-            timer: state.options.promptTimer
-        });
-        setTimeout(() => {
-            beginSelection(io, room);
-        }, state.options.promptTimer * 1000 + 1000);
-    } else {
-        io.to(room.name).emit("gameOver");
-    }
+    state.beginNewPrompt();
+    io.to(room.name).emit("beginPrompt", {
+        prompt: state.prompt,
+        timer: state.options.promptTimer
+    });
+    setTimeout(() => {
+        beginSelection(io, room);
+    }, state.options.promptTimer * 1000 + 1000);
 }
 
 function beginSelection(io, room) {
     const state = room.state;
-    state.beginSelection();
+    state.beginSelection(room);
     io.to(room.name).emit("nextSelection",
         {
             selector: state.players[state.selector].id,
@@ -106,7 +98,7 @@ function beginSelection(io, room) {
 
 function continueSelection(io, room) {
     const state = room.state;
-    if (state.nextSelection()) {
+    if (state.nextSelection(room)) {
         io.to(room.name).emit("nextSelection",
             {
                 selector: state.players[state.selector].id,

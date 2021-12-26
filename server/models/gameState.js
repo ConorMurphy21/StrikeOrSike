@@ -1,17 +1,19 @@
-const prompts = require('../resources/prompts.json')
+const prompts = require('../resources/prompts.json');
 
 const defaultOptions = () => {
     return {
         promptTimer: 45,
-        numRounds: 5
+        numRounds: 8
     }
 }
 
 const GameState = class {
-    constructor(room, options) {
+    constructor(room, options /* for testing reasons*/) {
+        this.name = room.name;
         this.stage = 'lobby'; // enum: 'lobby', 'response', 'responseSelection', 'responseMatching'
         this.options = options;
         if (!this.options) this.options = defaultOptions();
+        this.room = room;
         this.round = 0;
         this.prompt = '';
         this.players = [];
@@ -57,7 +59,7 @@ const GameState = class {
 
         const r = Math.floor(Math.random() * this.unusedPrompts.length);
         this.prompt = prompts[this.unusedPrompts[r]];
-        this.unusedPrompts = this.unusedPrompts.splice(r, 1);
+        this.unusedPrompts.splice(r, 1);
         this.stage = 'response';
         this.players.forEach(player => {
             player.responses = [];
@@ -73,7 +75,7 @@ const GameState = class {
         if (this.stage === 'response') {
             const playerState = this.players.find(player => player.id === id);
             //TODO: check for collisions (no reason to add a word if it is already there)
-            if (playerState.responses.find(res => response === res)) {
+            if (playerState.responses.find(res => this._matches(res, response))) {
                 return {error: 'duplicateResponse'};
             }
             playerState.responses.push(response);
@@ -103,7 +105,8 @@ const GameState = class {
     }
 
     /*** PROMPT SELECTION state changes ***/
-    beginSelection(room) {
+    beginSelection() {
+        const room = this.room;
         this.stage = 'responseSelection';
         //reset selections and matches
         this._resetSelection();
@@ -123,7 +126,8 @@ const GameState = class {
         }
     }
 
-    nextSelection(room) {
+    nextSelection() {
+        const room = this.room;
         this.stage = 'responseSelection';
         //clear selections
         this._resetSelection();
@@ -131,8 +135,9 @@ const GameState = class {
         for (let i = 1; i <= this.players.length; i++) {
             const j = (this.selector + i) % this.players.length;
             if(j === this.initialSelector) break;
-            const player = room.players.find(player => player.id === this.players[j].id);
-            const active = player && player.active;
+            const player = this.players[j];
+            const playerMeta = room.players.find(player => player.id === player.id);
+            const active = playerMeta && playerMeta.active;
             const hasPossibleSelection = player.responses.length > player.used.length;
             if (active && hasPossibleSelection) {
                 this.selector = j;
@@ -144,15 +149,21 @@ const GameState = class {
         return false;
     }
     // todo: improve automatic match catching
+    _matches(string1, string2){
+        return string1 === string2;
+    }
+
     _autoMatch(selector, response){
         this.players.forEach((player => {
             if(player.id === selector.id) return;
             if(player.responses.length <= player.used.length){
                 player.matchingComplete = true;
-            }
-            if (player.responses.find(r => r === response) && !player.used.find(r => r === response)) {
-                player.match = response;
-                player.matchingComplete = true;
+            } else {
+                const match = player.responses.find(r => this._matches(r, response));
+                if (match && !player.used.find(response => match === response)) {
+                    player.match = match;
+                    player.matchingComplete = true;
+                }
             }
         }))
     }
@@ -180,58 +191,9 @@ const GameState = class {
 
     _cbIfMatchingComplete() {
         if (this.matchingComplete() && this.matchingCompleteCb) {
-            this.matchingCompleteCb();
+            const selector = this.room.players.find(player => player.id === this.players[this.selector].id);
+            this.matchingCompleteCb(selector && selector.active);
         }
-    }
-
-
-
-    acceptMatch(id, match) {
-        const selector = this.players[this.selector];
-        const matcher = this.players.find(player => player.id === id);
-        if(matcher.matchingComplete) return {error: 'duplicateRequest'};
-
-        // Sike
-        if (match === '') {
-            matcher.matchingComplete = true;
-            if (this.selectionType === 'sike') {
-                selector.points++;
-            }
-            this._cbIfMatchingComplete();
-            return {success: true};
-        }
-
-        // Strike
-        if (this.stage === 'responseMatching' && selector.id !== id) {
-            if (matcher.responses.find(r => r === match) && !matcher.used.find(r => r === match)) {
-                matcher.match = match;
-                matcher.matchingComplete = true;
-                matcher.used.push(match);
-                if (this.selectionType === 'strike') {
-                    selector.points++;
-                }
-                this._cbIfMatchingComplete();
-                return {success: true};
-            }
-        }
-        return {error: 'badRequest'};
-    }
-
-    isSelector(id) {
-        const selector = this.players[this.selector].id;
-        return selector === id;
-    }
-
-    disconnect(id) {
-        if (this.stage === 'responseSelection') {
-            if (this.isSelector(id)) {
-                this.selectionUnsuccessfulCb();
-            }
-        }
-        if (this.stage === 'responseMatching') {
-            this._cbIfMatchingComplete();
-        }
-
     }
 
     acceptMatch(id, match) {

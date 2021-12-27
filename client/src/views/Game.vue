@@ -26,11 +26,11 @@ import PromptResponse from '@/components/promptResponse/PromptResponse.vue'
 import ActiveSelection from '@/components/responseSelection/ActiveSelection.vue';
 import PassiveSelection from '@/components/responseSelection/PassiveSelection.vue';
 import ActiveDispute from "@/components/dispute/ActiveDispute.vue";
-import PassiveDispute from "@/components/dispute/PassiveDispute.vue";
-import ActiveMatching from "@/components/responseMatching/ActiveMatching.vue";
-import MatchingSummary from "@/components/responseMatching/MatchingSummary.vue";
+import PassiveDispute from '@/components/dispute/PassiveDispute.vue';
+import ActiveMatching from '@/components/responseMatching/ActiveMatching.vue';
+import MatchingSummary from '@/components/responseMatching/MatchingSummary.vue';
 
-import {createNamespacedHelpers} from "vuex";
+import {createNamespacedHelpers} from 'vuex';
 
 const { mapState } = createNamespacedHelpers('game')
 

@@ -1,5 +1,5 @@
 <script setup>
-import ResponseList from "@/components/gameShared/ResponseList.vue";
+import ResponseList from '@/components/gameShared/ResponseList.vue';
 </script>
 
 <template>
@@ -12,7 +12,7 @@ import ResponseList from "@/components/gameShared/ResponseList.vue";
 
 <!--suppress JSUnusedGlobalSymbols -->
 <script>
-import {createNamespacedHelpers} from "vuex";
+import {createNamespacedHelpers} from 'vuex';
 
 const {mapState} = createNamespacedHelpers('game');
 

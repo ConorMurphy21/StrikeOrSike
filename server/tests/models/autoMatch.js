@@ -1,7 +1,7 @@
-const assert = require("chai").assert;
-const {GameState} = require("../../models/gameState");
+const assert = require('chai').assert;
+const {GameState} = require('../../models/gameState');
 
-describe("Selection Accepting tests", () => {
+describe('Selection Accepting tests', () => {
     const selectorId = 'selector';
     const matcherId = 'matcher';
     const selectorIndex = 0;
@@ -17,13 +17,13 @@ describe("Selection Accepting tests", () => {
         gameState.selectionType = 'strike';
     });
 
-    it("AutoMatch match empty responses", () => {
+    it('AutoMatch match empty responses', () => {
         gameState.acceptResponseSelection(selectorId, firstResponse);
         assert.isTrue(gameState.players[matcherIndex].matchingComplete);
         assert.strictEqual(gameState.players[matcherIndex].match, '');
     });
 
-    it("AutoMatch match all used", () => {
+    it('AutoMatch match all used', () => {
         gameState.players[matcherIndex].responses = [firstResponse, 'abc', 'cde'];
         gameState.players[matcherIndex].used = ['cde', 'abc', firstResponse];
         gameState.acceptResponseSelection(selectorId, firstResponse);
@@ -31,23 +31,23 @@ describe("Selection Accepting tests", () => {
         assert.strictEqual(gameState.players[matcherIndex].match, '');
     });
 
-    it("AutoMatch exactMatch", () => {
+    it('AutoMatch exactMatch', () => {
         gameState.players[matcherIndex].responses = [firstResponse];
         gameState.acceptResponseSelection(selectorId, firstResponse);
         assert.isTrue(gameState.players[matcherIndex].matchingComplete);
         assert.strictEqual(gameState.players[matcherIndex].match, firstResponse);
     });
 
-    it("AutoMatch whiteSpace");
+    it('AutoMatch whiteSpace');
 
-    it("AutoMatch capitalizationMatch");
+    it('AutoMatch capitalizationMatch');
 
-    it("AutoMatch punctuationMatch");
+    it('AutoMatch punctuationMatch');
 
-    it("AutoMatch misSpelledMatch");
+    it('AutoMatch misSpelledMatch');
 
-    it("AutoMatch misSpelledSelection");
+    it('AutoMatch misSpelledSelection');
 
-    it("AutoMatch misSpelledBoth");
+    it('AutoMatch misSpelledBoth');
 
 });

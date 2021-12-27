@@ -1,7 +1,7 @@
-const assert = require("chai").assert;
-const {GameState} = require("../../models/gameState");
+const assert = require('chai').assert;
+const {GameState} = require('../../models/gameState');
 
-describe("Sike Dispute tests", () => {
+describe('Sike Dispute tests', () => {
 
     const selectorId = '0';
     const matcherId = '1';
@@ -30,21 +30,21 @@ describe("Sike Dispute tests", () => {
             gameState.selectionType = 'strike';
         });
 
-        it("PromptSelection Accept Happy", () => {
+        it('PromptSelection Accept Happy', () => {
             const result = gameState.acceptResponseSelection(selectorId, firstResponse);
             assert.isOk(result.success);
             assert.isNotOk(result.error);
             assert.strictEqual(result.stage, 'responseMatching');
         });
 
-        it("PromptSelection Accept NotSelector", () => {
+        it('PromptSelection Accept NotSelector', () => {
             gameState.players[matcherIndex].responses.push(firstResponse);
             const result = gameState.acceptResponseSelection(matcherId, firstResponse);
             assert.isNotOk(result.success);
             assert.isOk(result.error);
         });
 
-        it("PromptSelection Accept used", () => {
+        it('PromptSelection Accept used', () => {
             gameState.players[selectorIndex].used.push(firstResponse);
             const result = gameState.acceptResponseSelection(selectorId, firstResponse);
             assert.isNotOk(result.success);
@@ -59,14 +59,14 @@ describe("Sike Dispute tests", () => {
             gameState.selectionType = 'sike';
         });
 
-        it("PromptSelection Accept Happy", () => {
+        it('PromptSelection Accept Happy', () => {
             const result = gameState.acceptResponseSelection(selectorId, firstResponse);
             assert.isOk(result.success);
             assert.isNotOk(result.error);
             assert.strictEqual(result.stage, 'sikeDispute');
         });
 
-        it("Dispute vote in favor", () => {
+        it('Dispute vote in favor', () => {
             gameState.acceptResponseSelection(selectorId, firstResponse);
             for (let i = 1; i < evenLen-1; i++) {
                 const result = gameState.acceptSikeDisputeVote(i.toString(), !!(i % 2));
@@ -78,7 +78,7 @@ describe("Sike Dispute tests", () => {
             assert.strictEqual(result.action, 'beginMatching');
         });
 
-        it("Dispute vote against", () => {
+        it('Dispute vote against', () => {
             gameState.acceptResponseSelection(selectorId, firstResponse);
             for (let i = 1; i < evenLen-1; i++) {
                 const result = gameState.acceptSikeDisputeVote(i.toString(), !(i % 2));
@@ -90,7 +90,7 @@ describe("Sike Dispute tests", () => {
             assert.strictEqual(result.action, 'nextSelection');
         });
 
-        it("no double counting votes", () => {
+        it('no double counting votes', () => {
             gameState.acceptResponseSelection(selectorId, firstResponse);
             for(let i = 0; i < evenLen; i++){
                 const result = gameState.acceptSikeDisputeVote('2', true);
@@ -99,7 +99,7 @@ describe("Sike Dispute tests", () => {
             }
         });
 
-        it("BadRequest Self Vote", () => {
+        it('BadRequest Self Vote', () => {
             gameState.acceptResponseSelection(selectorId, firstResponse);
             const countBefore = gameState.sikeDisputeUpVotes;
             const result = gameState.acceptSikeDisputeVote('0', true);
@@ -108,7 +108,7 @@ describe("Sike Dispute tests", () => {
             assert.strictEqual(gameState.sikeDisputeUpVotes, countBefore);
         });
 
-        it("Dispute vote in favor w inactivity", () => {
+        it('Dispute vote in favor w inactivity', () => {
             gameState.acceptResponseSelection(selectorId, firstResponse);
             for (let i = 1; i < evenLen-1; i++) {
                 const result = gameState.acceptSikeDisputeVote(i.toString(), !!(i % 2));
@@ -120,7 +120,7 @@ describe("Sike Dispute tests", () => {
             assert.strictEqual(result.action, 'beginMatching');
         });
 
-        it("Dispute vote in favor w inactive", () => {
+        it('Dispute vote in favor w inactive', () => {
             gameState.acceptResponseSelection(selectorId, firstResponse);
             for (let i = 1; i < evenLen-3; i++) {
                 players[i].active = false;
@@ -131,7 +131,7 @@ describe("Sike Dispute tests", () => {
             assert.strictEqual(result.action, 'beginMatching');
         });
 
-        it("Dispute vote in favor evenVoters", () => {
+        it('Dispute vote in favor evenVoters', () => {
             gameState.acceptResponseSelection(selectorId, firstResponse);
             players.splice(evenLen-1, 1);
             const nVoters = evenLen - 2;
@@ -150,7 +150,7 @@ describe("Sike Dispute tests", () => {
             assert.strictEqual(result.action, 'beginMatching');
         });
 
-        it("Dispute vote against evenVoters", () => {
+        it('Dispute vote against evenVoters', () => {
             gameState.acceptResponseSelection(selectorId, firstResponse);
             players.splice(evenLen-1, 1);
             const nVoters = evenLen - 2;
@@ -179,7 +179,7 @@ describe("Sike Dispute tests", () => {
             gameState.selectionType = 'sike';
         });
 
-        it("Dispute vote against with retries happy", () => {
+        it('Dispute vote against with retries happy', () => {
             gameState.acceptResponseSelection(selectorId, firstResponse);
             for (let i = 1; i < evenLen - 1; i++) {
                 const result = gameState.acceptSikeDisputeVote(i.toString(), !(i % 2));
@@ -202,7 +202,7 @@ describe("Sike Dispute tests", () => {
             assert.strictEqual(result.action, 'nextSelection');
         });
 
-        it("Dispute vote against with retries inactive selector", () => {
+        it('Dispute vote against with retries inactive selector', () => {
             gameState.acceptResponseSelection(selectorId, firstResponse);
             players[selectorIndex].active = false;
             gameState.disconnect(selectorId);
@@ -217,7 +217,7 @@ describe("Sike Dispute tests", () => {
             assert.strictEqual(result.action, 'nextSelection');
         });
 
-        it("Dispute vote with retries no other selections", () => {
+        it('Dispute vote with retries no other selections', () => {
             gameState.players[selectorIndex].responses = [firstResponse];
             gameState.acceptResponseSelection(selectorId, firstResponse);
             for (let i = 1; i < evenLen - 1; i++) {
@@ -230,7 +230,7 @@ describe("Sike Dispute tests", () => {
             assert.strictEqual(result.action, 'nextSelection');
         });
 
-        it("Dispute vote against with retries reuse selection", () => {
+        it('Dispute vote against with retries reuse selection', () => {
             gameState.acceptResponseSelection(selectorId, firstResponse);
             for (let i = 1; i < evenLen - 1; i++) {
                 const result = gameState.acceptSikeDisputeVote(i.toString(), !(i % 2));

@@ -1,7 +1,7 @@
-const assert = require("chai").assert;
-const {GameState} = require("../../models/gameState");
+const assert = require('chai').assert;
+const {GameState} = require('../../models/gameState');
 
-describe("Selection Rotation tests", () => {
+describe('Selection Rotation tests', () => {
     let players, room, gameState, len;
 
     beforeEach(() => {
@@ -17,7 +17,7 @@ describe("Selection Rotation tests", () => {
         );
     });
 
-    it("Selection Rotation", () => {
+    it('Selection Rotation', () => {
 
         for(let i = 0; i < len; i++){
             gameState.beginSelection();
@@ -36,21 +36,21 @@ describe("Selection Rotation tests", () => {
         }
     });
 
-    it("Selection Rotation with disconnects", () => {
+    it('Selection Rotation with disconnects', () => {
         for(let i = 1; i < len; i+=2){
             players[i].active = false;
         }
         assertSelectsEvens();
     });
 
-    it("Selection Rotation with emptyResponses", () => {
+    it('Selection Rotation with emptyResponses', () => {
         for(let i = 1; i < len; i+=2){
             gameState.players[i].responses = [];
         }
         assertSelectsEvens();
     });
 
-    it("Selection Rotation with all used responses", () => {
+    it('Selection Rotation with all used responses', () => {
         for(let i = 1; i < len; i+=2){
             gameState.players[i].responses = ['r1', 'r2', 'r3'];
             gameState.players[i].used = ['r1', 'r2', 'r3'];
@@ -58,7 +58,7 @@ describe("Selection Rotation tests", () => {
         assertSelectsEvens();
     });
 
-    it("Selection Rotation with kickedPlayers", () => {
+    it('Selection Rotation with kickedPlayers', () => {
         players = players.filter((player) => parseInt(player.id) % 2 === 0);
         assertSelectsEvens();
     });

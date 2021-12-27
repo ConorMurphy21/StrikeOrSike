@@ -1,6 +1,6 @@
 <script setup>
-import ResponseList from "@/components/gameShared/ResponseList.vue";
-import Timer from "@/components/gameShared/Timer.vue";
+import ResponseList from '@/components/gameShared/ResponseList.vue';
+import Timer from '@/components/gameShared/Timer.vue';
 </script>
 
 <template>
@@ -13,7 +13,7 @@ import Timer from "@/components/gameShared/Timer.vue";
 </template>
 
 <script>
-import {createNamespacedHelpers} from "vuex";
+import {createNamespacedHelpers} from 'vuex';
 
 const {mapState} = createNamespacedHelpers('game');
 
@@ -35,7 +35,7 @@ export default {
   methods: {
     sendResponse() {
       if(this.response !== '') {
-        this.$socket.emit("promptResponse", this.response);
+        this.$socket.emit('promptResponse', this.response);
         this.response = '';
       }
     }

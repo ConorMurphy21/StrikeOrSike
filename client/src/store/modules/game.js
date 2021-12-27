@@ -34,7 +34,7 @@ export const getters = {
         }
     },
     canEndRound(state, getters, rootState, rootGetters) {
-        const self = rootGetters["room/self"].id
+        const self = rootGetters['room/self'].id
         if(state.selector.id !== self) return false;
 
         let finishedMatching = true;
@@ -110,7 +110,7 @@ const socketActions = {
     },
     async SOCKET_beginDispute({state, commit, rootGetters}, response) {
         commit('setSelectedResponse', response);
-        if(state.selector.id === rootGetters["room/self"].id){
+        if(state.selector.id === rootGetters['room/self'].id){
             commit('setScene', 'passiveDispute');
         }else {
             commit('setScene', 'activeDispute');
@@ -118,7 +118,7 @@ const socketActions = {
     },
     async SOCKET_beginMatching({state, commit, rootGetters}, response) {
         commit('setSelectedResponse', response);
-        if(state.selector.id === rootGetters["room/self"].id){
+        if(state.selector.id === rootGetters['room/self'].id){
             commit('setScene', 'matchingSummary');
         }else {
             commit('setScene', 'activeMatching');

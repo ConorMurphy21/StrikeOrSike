@@ -1,7 +1,7 @@
-const assert = require("chai").assert;
-const {GameState} = require("../../models/gameState");
+const assert = require('chai').assert;
+const {GameState} = require('../../models/gameState');
 
-describe("Selection Accepting tests", () => {
+describe('Selection Accepting tests', () => {
 
     const selectorId = 'selector';
     const matcherId = 'matcher';
@@ -23,27 +23,27 @@ describe("Selection Accepting tests", () => {
             gameState.selectionType = 'strike';
         });
 
-        it("PromptSelection Accept Happy", () => {
+        it('PromptSelection Accept Happy', () => {
             const result = gameState.acceptResponseSelection(selectorId, firstResponse);
             assert.isOk(result.success);
             assert.isNotOk(result.error);
         });
 
-        it("PromptSelection Accept NotSelector", () => {
+        it('PromptSelection Accept NotSelector', () => {
             gameState.players[matcherIndex].responses.push(firstResponse);
             const result = gameState.acceptResponseSelection(matcherId, firstResponse);
             assert.isNotOk(result.success);
             assert.isOk(result.error);
         });
 
-        it("PromptSelection Accept used", () => {
+        it('PromptSelection Accept used', () => {
             gameState.players[selectorIndex].used.push(firstResponse);
             const result = gameState.acceptResponseSelection(selectorId, firstResponse);
             assert.isNotOk(result.success);
             assert.isOk(result.error);
         });
 
-        it("Match Accept Happy", () => {
+        it('Match Accept Happy', () => {
             const synonym = '#1Response';
             gameState.players[matcherIndex].responses.push(synonym);
             gameState.acceptResponseSelection(selectorId, firstResponse);
@@ -52,7 +52,7 @@ describe("Selection Accepting tests", () => {
             assert.isNotOk(result.error);
         });
 
-        it("Match Accept DuplicateRequest", () => {
+        it('Match Accept DuplicateRequest', () => {
             const synonym = '#1Response';
             gameState.players[matcherIndex].responses.push(synonym);
             gameState.acceptResponseSelection(selectorId, firstResponse);
@@ -62,7 +62,7 @@ describe("Selection Accepting tests", () => {
             assert.isOk(result.error);
         });
 
-        it("Match Accept used", () => {
+        it('Match Accept used', () => {
             const synonym = '#1Response';
             gameState.players[matcherIndex].responses.push(synonym);
             gameState.players[matcherIndex].used.push(synonym);
@@ -73,13 +73,13 @@ describe("Selection Accepting tests", () => {
         });
     });
 
-    describe("choice selectionType", () => {
+    describe('choice selectionType', () => {
        beforeEach(() => {
           gameState.selectionType = 'choice';
        });
 
-        it("PromptSelection Accept Happy");
+        it('PromptSelection Accept Happy');
 
-        it("PromptSelection Accept No Choice");
+        it('PromptSelection Accept No Choice');
     });
 });

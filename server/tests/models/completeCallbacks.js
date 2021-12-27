@@ -1,7 +1,7 @@
-const {GameState} = require("../../models/gameState");
-const {assert} = require("chai");
+const {GameState} = require('../../models/gameState');
+const {assert} = require('chai');
 
-describe("Complete callback tests", () => {
+describe('Complete callback tests', () => {
     let players;
     const selectorId = 'selector';
     const matcherId = 'matcher';
@@ -23,12 +23,12 @@ describe("Complete callback tests", () => {
         gameState.selectionType = 'strike';
     });
 
-    it("Selector Disconnects while selecting", (done) => {
+    it('Selector Disconnects while selecting', (done) => {
         gameState.registerSelectionUnsuccessfulCb(done);
         gameState.disconnect(selectorId);
     });
 
-    it("Last Matcher disconnects", (done) => {
+    it('Last Matcher disconnects', (done) => {
         gameState.registerMatchingCompleteCb((selectorActive) => {
             assert.isTrue(selectorActive);
             done();
@@ -37,7 +37,7 @@ describe("Complete callback tests", () => {
         gameState.disconnect(matcherId);
     });
 
-    it("Last Matcher matches", (done) => {
+    it('Last Matcher matches', (done) => {
         gameState.registerMatchingCompleteCb((selectorActive) => {
             assert.isTrue(selectorActive);
             done();
@@ -46,7 +46,7 @@ describe("Complete callback tests", () => {
         gameState.acceptMatch(matcherId, '');
     });
 
-    it("Last Matcher disconnect selector disconnected", (done) => {
+    it('Last Matcher disconnect selector disconnected', (done) => {
         gameState.registerMatchingCompleteCb((selectorActive) => {
             assert.isFalse(selectorActive);
             done();
@@ -57,7 +57,7 @@ describe("Complete callback tests", () => {
         gameState.disconnect(matcherId);
     });
 
-    it("Last Matcher matches selector disconnected", (done) => {
+    it('Last Matcher matches selector disconnected', (done) => {
         gameState.registerMatchingCompleteCb((selectorActive) => {
             assert.isFalse(selectorActive);
             done();

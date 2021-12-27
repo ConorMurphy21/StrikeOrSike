@@ -1,9 +1,13 @@
 import 
 <template>
   <div class="w-100 shadow-lg p-3 m-1 rounded" :class="{'bg-danger': !player.active, 'bg-body': player.active}">
+<<<<<<< Updated upstream
   <button v-on:click = "kickPlayer">
     <h4 class="text-center">{{ player.name }}</h4>
   </button>
+=======
+      <h4 class="text-center">{{ player.name }}</h4>
+>>>>>>> Stashed changes
   </div>
 </template>
 
@@ -16,6 +20,7 @@ export default {
   props: {
     player: Object
   },
+<<<<<<< Updated upstream
   computed: {
     ...mapGetters([
       "localPlayer"
@@ -33,5 +38,8 @@ export default {
     }
 
   }
+=======
+
+>>>>>>> Stashed changes
 }
 </script>

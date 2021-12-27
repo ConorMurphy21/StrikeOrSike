@@ -1,5 +1,5 @@
 const {getRoomById} = require("../../models/rooms");
-const GameState = require("../../models/gameState");
+const {GameState} = require("../../models/gameState");
 module.exports = (io, socket) => {
     /*** GAME STATE ENDPOINTS ***/
 
@@ -21,7 +21,7 @@ module.exports = (io, socket) => {
 
     socket.on("promptResponse", (response) => {
         const room = getRoomById(socket.id);
-        if(!room) return;
+        if (!room) return;
         const state = room.state;
         const result = state.acceptPromptResponse(socket.id, response);
         if (result.success) {
@@ -31,13 +31,13 @@ module.exports = (io, socket) => {
 
     socket.on("selectResponse", (response) => {
         const room = getRoomById(socket.id);
-        if(!room) return;
+        if (!room) return;
         const state = room.state;
         const result = state.acceptResponseSelection(socket.id, response);
         if (result.success) {
-            if(result.stage === "responseMatching") {
+            if (result.stage === "responseMatching") {
                 beginMatching(io, room);
-            } else if (result.stage === "sikeDispute"){
+            } else if (result.stage === "sikeDispute") {
                 io.to(room.name).emit("beginDispute", response);
             }
         }
@@ -45,35 +45,35 @@ module.exports = (io, socket) => {
 
     socket.on("sikeVote", (vote) => {
         const room = getRoomById(socket.id);
-        if(!room) return;
+        if (!room) return;
         const state = room.state;
-        const result = state.acceptDisputeVote(socket.id, vote);
-        if(result.success){
+        const result = state.acceptSikeDisputeVote(socket.id, vote);
+        if (result.success) {
             applyDisputeAction(io, room, result.action);
         }
     });
 
     socket.on("selectMatch", (match) => {
         const room = getRoomById(socket.id);
-        if(!room) return;
+        if (!room) return;
         const state = room.state;
         const result = state.acceptMatch(socket.id, match);
-        if(result.success){
+        if (result.success) {
             io.to(room.name).emit("matchFound", {player: socket.id, response: match});
         }
     });
 
     socket.on("selectionComplete", () => {
         const room = getRoomById(socket.id);
-        if(!room) return;
+        if (!room) return;
         const state = room.state;
-        if(state.matchingComplete() && state.isSelector(socket.id)){
+        if (state.matchingComplete() && state.isSelector(socket.id)) {
             continueSelection(io, room);
         }
     });
 }
 
-function registerCallbacks(io, room){
+function registerCallbacks(io, room) {
 
     room.state.registerSelectionUnsuccessfulCb(() => {
         continueSelection(io, room);
@@ -85,7 +85,7 @@ function registerCallbacks(io, room){
 
     room.state.registerMatchingCompleteCb((selectorActive) => {
         // give a little time to show score before moving on to next selection
-        if(!selectorActive) {
+        if (!selectorActive) {
             setTimeout(() => {
                 continueSelection(io, room);
             }, 5000);
@@ -96,7 +96,7 @@ function registerCallbacks(io, room){
 function beginPrompt(io, room) {
     const state = room.state;
 
-    if(state.beginNewPrompt()) {
+    if (state.beginNewPrompt()) {
         io.to(room.name).emit("beginPrompt", {
             prompt: state.prompt,
             timer: state.options.promptTimer
@@ -132,21 +132,21 @@ function continueSelection(io, room) {
     }
 }
 
-function applyDisputeAction(io, room, action){
-    if(action === 'reSelect'){
+function applyDisputeAction(io, room, action) {
+    if (action === 'reSelect') {
         io.to(room.name).emit("nextSelection",
             {
                 selector: state.selectorId(),
                 selectionType: state.selectionType
             });
-    } else if(action === 'nextSelection'){
+    } else if (action === 'nextSelection') {
         continueSelection(io, room);
-    } else if(action === 'matching'){
+    } else if (action === 'matching') {
         beginMatching(io, room);
     }
 }
 
-function beginMatching(io, room){
+function beginMatching(io, room) {
     const state = room.state;
     io.to(room.name).emit("beginMatching", state.selectedResponse());
     state.players.forEach(player => {

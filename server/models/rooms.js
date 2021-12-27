@@ -1,4 +1,4 @@
-const GameState = require('./gameState');
+const {GameState} = require('./gameState');
 
 
 // map model to rooms

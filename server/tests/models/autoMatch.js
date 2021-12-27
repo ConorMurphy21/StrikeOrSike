@@ -1,5 +1,5 @@
 const assert = require("chai").assert;
-const GameState = require("../../models/gameState");
+const {GameState} = require("../../models/gameState");
 
 describe("Selection Accepting tests", () => {
     const selectorId = 'selector';
@@ -37,16 +37,16 @@ describe("Selection Accepting tests", () => {
         assert.strictEqual(gameState.players[matcherIndex].match, firstResponse);
     });
 
-    // it("AutoMatch whiteSpace");
-    //
-    // it("AutoMatch capitalizationMatch");
-    //
-    // it("AutoMatch punctuationMatch");
-    //
-    // it("AutoMatch misSpelledMatch");
-    //
-    // it("AutoMatch misSpelledSelection");
-    //
-    // it("AutoMatch misSpelledBoth");
+    it("AutoMatch whiteSpace");
+
+    it("AutoMatch capitalizationMatch");
+
+    it("AutoMatch punctuationMatch");
+
+    it("AutoMatch misSpelledMatch");
+
+    it("AutoMatch misSpelledSelection");
+
+    it("AutoMatch misSpelledBoth");
 
 });

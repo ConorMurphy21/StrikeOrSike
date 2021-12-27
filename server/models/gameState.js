@@ -23,8 +23,6 @@ const GameState = class {
         this.selector = 0;
         this.selectionType = '';
         this.unusedPrompts = Array.from({length: prompts.length}, (v, i) => i);
-        this.sikeDisputeUpVotes = 0;
-        this.sikeDisputeDownVotes = 0;
         this.remainingSikeRetries = this.options.sikeRetries;
 
         this.selectionUnsuccessfulCb = null;
@@ -39,7 +37,7 @@ const GameState = class {
                     used: [],
                     responses: [],
                     selected: '',
-                    voted: false,
+                    sikeVote: 0,
                     match: '',
                     matchingComplete: false, // set to true if explicitly no match was found or a match was found
                 }
@@ -107,12 +105,10 @@ const GameState = class {
     }
 
     _resetSelection() {
-        this.sikeDisputeUpVotes = 0;
-        this.sikeDisputeDownVotes = 0;
         this.remainingSikeRetries = this.options.sikeRetries;
         this.players.forEach(player => {
             player.selected = '';
-            player.voted = false;
+            player.sikeVote = 0;
             player.match = '';
             player.matchingComplete = false;
         });
@@ -128,8 +124,7 @@ const GameState = class {
         // update global state for responseSelection
         for (let i = 0; i < this.players.length; i++) {
             const j = (this.initialSelector + i) % this.players.length;
-            const player = room.players.find(player => player.id === this.players[j].id);
-            const active = player && player.active;
+            const active = room.players.find(player => player.id === this.players[j].id)?.active;
 
             if (active) {
                 this.initialSelector = j;
@@ -141,7 +136,6 @@ const GameState = class {
     }
 
     nextSelection() {
-        const room = this.room;
         this.stage = 'responseSelection';
         //clear selections
         this._resetSelection();
@@ -150,8 +144,7 @@ const GameState = class {
             const j = (this.selector + i) % this.players.length;
             if (j === this.initialSelector) break;
             const player = this.players[j];
-            const playerMeta = room.players.find(player => player.id === player.id);
-            const active = playerMeta && playerMeta.active;
+            const active = this.isActive(this.players[j].id);
             const hasPossibleSelection = player.responses.length > player.used.length;
             if (active && hasPossibleSelection) {
                 this.selector = j;
@@ -177,7 +170,7 @@ const GameState = class {
                 player.matchingComplete = true;
             } else {
                 const match = player.responses.find(r => this._matches(r, response));
-                if (match && !player.used.find(response => match === response)) {
+                if (match && !player.used.includes(match)) {
                     player.match = match;
                     player.matchingComplete = true;
                 }
@@ -188,7 +181,7 @@ const GameState = class {
     acceptResponseSelection(id, response) {
         const selector = this.players[this.selector];
         if (this.stage === 'responseSelection' && selector.id === id) {
-            if (selector.responses.find(r => r === response) && !selector.used.find(r => r === response)) {
+            if (selector.responses.includes(response) && !selector.used.includes(response)) {
                 selector.selected = response;
                 selector.used.push(response);
                 // automatically match any obvious matches
@@ -206,44 +199,56 @@ const GameState = class {
     }
 
     /*** DISPUTE state changes ***/
-    acceptDisputeVote(id, vote) {
-        const playerState = this.players.find(player => player.id === id);
-        if (playerState.voted) {
+
+    acceptSikeDisputeVote(id, vote) {
+        if(id === this.selectorId()){
             return {error: 'badRequest'};
         }
-        playerState.voted = true;
-
-        if (vote) {
-            this.sikeDisputeUpVotes++;
-        } else {
-            this.sikeDisputeDownVotes++;
+        const playerState = this.players.find(player => player.id === id);
+        if (playerState.sikeVote) {
+            return {error: 'badRequest'};
         }
+        playerState.sikeVote = vote ? 1 : -1;
         return {success: true, action: this._voteUpdateAction()};
     }
 
     _voteUpdateAction() {
-        const majority = this._activePlayerLength() / 2;
-        if (this.sikeDisputeUpVotes > majority) {
+        const numVoters = this._numVoters(this.selectorId());
+        const majorityFavored = Math.ceil(numVoters / 2);
+        const majorityUnfavored = (numVoters % 2) ? majorityFavored : majorityFavored + 1;
+
+        const upVotes = this.players.filter(player => this.isActive(player.id) && player.sikeVote > 0).length;
+        // slightly favor allowing a sike over disallowing
+        if (upVotes >= majorityFavored) {
             this._autoMatch();
             this.stage = 'responseMatching';
             return 'beginMatching';
         }
 
-        this.sikeDisputeDownVotes++;
-        if (this.sikeDisputeDownVotes > majority) {
+        const downVotes = this.players.filter(player => this.isActive(player.id) && player.sikeVote < 0).length;
+        if (downVotes >= majorityUnfavored) {
             if (this.remainingSikeRetries <= 0) {
-                this.stage = 'responseSelection';
-                return 'reSelect';
-            } else {
-                this.remainingSikeRetries--;
                 return 'nextSelection';
+            } else {
+                if(this.isActive(this.selectorId())) {
+                    this.stage = 'responseSelection';
+                    this.remainingSikeRetries--;
+                    this.players.forEach(player => {
+                        player.sikeVote = 0;
+                    });
+                    return 'reSelect';
+                } else {
+                    return 'nextSelection';
+                }
+
             }
         }
+
         return 'noOp';
     }
 
-    _activePlayerLength() {
-        return this.players.filter(player => this.room.players.find(p => p.id === player.id).active).length;
+    _numVoters(excludedId) {
+        return this.players.filter(player => player.id !== excludedId && this.isActive(player.id)).length;
     }
 
     /*** MATCHING state changes ***/
@@ -255,8 +260,7 @@ const GameState = class {
 
     _cbIfMatchingComplete() {
         if (this.matchingComplete() && this.matchingCompleteCb) {
-            const selector = this.room.players.find(player => player.id === this.players[this.selector].id);
-            this.matchingCompleteCb(selector && selector.active);
+            this.matchingCompleteCb(this.isActive(this.selectorId()));
         }
     }
 
@@ -277,7 +281,7 @@ const GameState = class {
         }
 
         // Strike
-        if (matcher.responses.find(r => r === match) && !matcher.used.find(r => r === match)) {
+        if (matcher.responses.includes(match) && !matcher.used.includes(match)) {
             matcher.match = match;
             matcher.matchingComplete = true;
             matcher.used.push(match);
@@ -293,6 +297,10 @@ const GameState = class {
     isSelector(id) {
         const selector = this.players[this.selector].id;
         return selector === id;
+    }
+
+    isActive(id) {
+        return this.room.players.find(player => player.id === id)?.active;
     }
 
     selectedResponse(){
@@ -319,4 +327,4 @@ const GameState = class {
     }
 };
 
-module.exports = GameState;
+module.exports = {GameState, defaultOptions};

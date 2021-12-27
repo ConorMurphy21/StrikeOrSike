@@ -1,5 +1,5 @@
 const assert = require("chai").assert;
-const GameState = require("../../models/gameState");
+const {GameState} = require("../../models/gameState");
 
 describe("Selection Rotation tests", () => {
     let players, room, gameState, len;

@@ -1,4 +1,4 @@
-const GameState = require("../../models/gameState");
+const {GameState} = require("../../models/gameState");
 const {assert} = require("chai");
 describe("Complete callback tests", () => {
     let players;

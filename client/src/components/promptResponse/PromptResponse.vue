@@ -1,13 +1,13 @@
 <script setup>
-import PromptList from "@/components/gameShared/ResponseList.vue";
+import ResponseList from "@/components/gameShared/ResponseList.vue";
 import Timer from "@/components/gameShared/Timer.vue";
 </script>
 
 <template>
   <div class="w-100 h-100 d-flex flex-column justify-content-between align-items-center p-3">
     <h1>{{ prompt }}</h1>
-    <prompt-list/>
-    <input type="text" class="form-control w-75" v-model="response" v-on:keyup.enter="sendResponse"/>
+    <response-list :selectable="false"/>
+    <input type="text" class="form-control w-75" v-model="response" @keyup.enter="sendResponse"/>
     <timer :time="timer"></timer>
   </div>
 </template>
@@ -15,7 +15,7 @@ import Timer from "@/components/gameShared/Timer.vue";
 <script>
 import {createNamespacedHelpers} from "vuex";
 
-const {mapState, mapActions} = createNamespacedHelpers('game');
+const {mapState} = createNamespacedHelpers('game');
 
 export default {
   data() {
@@ -26,14 +26,15 @@ export default {
   computed: {
     ...mapState([
       'timer',
-      'prompt',
-      'responses'
+      'prompt'
     ])
   },
   methods: {
     sendResponse() {
-      this.$socket.emit("promptResponse", this.response);
-      this.response = '';
+      if(this.response !== '') {
+        this.$socket.emit("promptResponse", this.response);
+        this.response = '';
+      }
     }
   }
 }

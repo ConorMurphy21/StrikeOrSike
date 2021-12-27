@@ -1,11 +1,11 @@
-var express = require('express');
+const express = require('express');
 
-var logger = require('morgan');
-var cors = require('cors');
+const logger = require('morgan');
+const cors = require('cors');
 
-var indexRouter = require('./routes/api');
+const indexRouter = require('./routes/api');
 
-var app = express();
+const app = express();
 
 app.use(cors());
 app.use(logger('dev'));

@@ -79,6 +79,6 @@ describe("promptResponse tests", () => {
         });
         clientSocket1.emit("setOptions", {promptTimer: 0}, response => {
             clientSocket1.emit("startGame");
-        })
+        });
     });
 });

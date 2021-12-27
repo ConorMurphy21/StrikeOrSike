@@ -48,10 +48,11 @@ export default {
   },
   sockets:{
     joinRoom: function(data){
+      console.log(data.roomName)
       if(data.success){
         this.setName(this.form.name);
-        this.setRoomName(this.form.roomName);
-        this.$router.push({name: 'game', params: {roomName: this.form.roomName}});
+        this.setRoomName(data.roomName);
+        this.$router.push({name: 'game', params: {roomName: data.roomName}});
       } else {
         this.error = data.error;
       }
@@ -59,3 +60,4 @@ export default {
   }
 }
 </script>
+

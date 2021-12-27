@@ -1,10 +1,40 @@
-const {createDefaultState, defaultOptions} = require('./gameState');
+const GameState = require('./gameState');
+
 
 // map model to rooms
 const playerRoom = {}
 
 // map rooms to model
 const rooms = {}
+
+
+/*** Use to check if room name is valid for creating a URL***/
+const isValidInput = (input) => {
+    // test for whitespace
+    if (/\s/.test(input)) {
+        return "spaces";
+    }
+
+
+    // todo: add more checks here
+    return true;
+}
+
+const sanitizeRoomName = (roomName) => {
+    let retval = isValidInput(roomName);
+    while(retval !== true){
+        // added this switch in case I add more checks
+        // This is tightly bound to isValidInput()
+        switch (retval){
+            case "spaces":
+                roomName = roomName.split(' ').join('-');
+                break;
+        }
+        retval = isValidInput(roomName)
+    }
+
+    return roomName
+}
 
 const createRoom = (id, name, roomName) => {
     if (rooms[roomName])
@@ -13,6 +43,14 @@ const createRoom = (id, name, roomName) => {
         return { error: "badName" };
     if (!roomName)
         return { error: "badRoom" };
+    if(/^\d/.test(roomName)){
+        return {error: "roomCannotStartWithNum"};
+    }
+    if(/^([!#$&-;=?-[]_a-z~]|%[0-9a-fA-F]{2})+$/.test(roomName)){
+        return {error: "invalidCharacter"};
+    }
+    roomName = sanitizeRoomName(roomName);
+
     roomName = roomName.toLowerCase();
 
     // clone default room
@@ -25,7 +63,7 @@ const createRoom = (id, name, roomName) => {
             active: true,
         }]
     };
-    room.state = createDefaultState(room, defaultOptions());
+    room.state = new GameState(room);
     rooms[roomName] = room;
     playerRoom[id] = room;
     return { room };
@@ -62,8 +100,6 @@ const joinRoom = (id, name, roomName) => {
     return { room }
 }
 
-
-
 const getRoomByName = roomName => {
     return rooms[roomName];
 }
@@ -81,7 +117,7 @@ const kickPlayer = id =>{
     const playerIndex = room.players.findIndex(player => player.id === id);
     room.players.splice(id,1);
     return {success: true}
-//Remove player 
+//Remove player
 }
 
 
@@ -97,6 +133,7 @@ const disconnectPlayer = id => {
     if(!activePlayer) {
         delete rooms[room.name];
     } else if(player.leader) {
+        room.state.disconnect(id);
         player.leader = false;
         activePlayer.leader = true;
     }

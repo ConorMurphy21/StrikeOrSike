@@ -1,3 +1,9 @@
 {
-  "roomTaken": "A room with that name is already taken"
+  "roomTaken": "A room with that name is already taken",
+  "passiveSelectionMessage": "{player} is trying to {selectionType}",
+  "activeMatchingMessage": "{player} selected {response}, do you have a match?",
+  "badRoom": "Empty room name",
+  "badName": "Empty name",
+  "roomCannotStartWithNum": "Room name cannot start with a number",
+  "invalidCharacter": "Unrecognized character in room name"
 }

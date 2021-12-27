@@ -7,7 +7,7 @@ import PlayerList from '@/components/lobby/PlayerList.vue'
     <player-list/>
 
     <button class="btn btn-primary w-50 fs-4"
-            :class="{'d-none': !localPlayer || !localPlayer.leader}" v-on:click="startGame">Start</button>
+            :class="{'d-none': !self || !self.leader}" @click="startGame">Start</button>
   </div>
 </template>
 
@@ -18,7 +18,7 @@ const { mapGetters } = createNamespacedHelpers('room')
 export default {
   computed:{
     ...mapGetters([
-      'localPlayer',
+      'self',
     ]),
   },
   methods:{

@@ -2,6 +2,8 @@
   "roomTaken": "A room with that name is already taken",
   "passiveSelectionMessage": "{player} is trying to {selectionType}",
   "activeMatchingMessage": "{player} selected {response}, do you have a match?",
+  "passiveDisputeMessage": "Your friends are deciding if {response} fits the category",
+  "activeDisputeMessage": "Does {response} fit the category?",
   "badRoom": "Empty room name",
   "badName": "Empty name",
   "roomCannotStartWithNum": "Room name cannot start with a number",

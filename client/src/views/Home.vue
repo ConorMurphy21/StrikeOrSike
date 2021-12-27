@@ -41,14 +41,12 @@ export default {
       'setRoomName'
     ]),
     onSubmit(){
-      console.log("emitting event");
-      const endpoint = this.joinGame ? 'joinRoom' : 'createRoom';
-      this.$socket.emit(endpoint, this.form.name, this.form.roomName);
+      const event = this.joinGame ? 'joinRoom' : 'createRoom';
+      this.$socket.emit(event, this.form.name, this.form.roomName);
     }
   },
   sockets:{
     joinRoom: function(data){
-      console.log(data.roomName)
       if(data.success){
         this.setName(this.form.name);
         this.setRoomName(data.roomName);

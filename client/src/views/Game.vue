@@ -25,10 +25,13 @@ import Lobby from '@/components/lobby/Lobby.vue'
 import PromptResponse from '@/components/promptResponse/PromptResponse.vue'
 import ActiveSelection from '@/components/responseSelection/ActiveSelection.vue';
 import PassiveSelection from '@/components/responseSelection/PassiveSelection.vue';
+import ActiveDispute from "@/components/dispute/ActiveDispute.vue";
+import PassiveDispute from "@/components/dispute/PassiveDispute.vue";
 import ActiveMatching from "@/components/responseMatching/ActiveMatching.vue";
 import MatchingSummary from "@/components/responseMatching/MatchingSummary.vue";
 
 import {createNamespacedHelpers} from "vuex";
+
 const { mapState } = createNamespacedHelpers('game')
 
 export default {
@@ -37,8 +40,10 @@ export default {
     PromptResponse,
     ActiveSelection,
     PassiveSelection,
+    ActiveDispute,
+    PassiveDispute,
     ActiveMatching,
-    MatchingSummary
+    MatchingSummary,
   },
   computed: {
     ...mapState([

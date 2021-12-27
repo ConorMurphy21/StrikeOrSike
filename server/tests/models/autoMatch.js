@@ -14,6 +14,7 @@ describe("Selection Accepting tests", () => {
         gameState = new GameState({players});
         gameState.players[selectorIndex].responses.push(firstResponse);
         gameState.beginSelection();
+        gameState.selectionType = 'strike';
     });
 
     it("AutoMatch match empty responses", () => {

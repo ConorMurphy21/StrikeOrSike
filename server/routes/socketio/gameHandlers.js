@@ -136,12 +136,12 @@ function applyDisputeAction(io, room, action) {
     if (action === 'reSelect') {
         io.to(room.name).emit("nextSelection",
             {
-                selector: state.selectorId(),
-                selectionType: state.selectionType
+                selector: room.state.selectorId(),
+                selectionType: room.state.selectionType
             });
     } else if (action === 'nextSelection') {
         continueSelection(io, room);
-    } else if (action === 'matching') {
+    } else if (action === 'beginMatching') {
         beginMatching(io, room);
     }
 }

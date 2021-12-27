@@ -185,7 +185,7 @@ const GameState = class {
                 selector.selected = response;
                 selector.used.push(response);
                 // automatically match any obvious matches
-                if(this.options.sikeDispute && this.selectionType === 'sike'){
+                if (this.options.sikeDispute && this.selectionType === 'sike') {
                     this.stage = 'sikeDispute';
                     return {success: true, stage: this.stage};
                 } else {
@@ -201,13 +201,10 @@ const GameState = class {
     /*** DISPUTE state changes ***/
 
     acceptSikeDisputeVote(id, vote) {
-        if(id === this.selectorId()){
+        if (id === this.selectorId()) {
             return {error: 'badRequest'};
         }
         const playerState = this.players.find(player => player.id === id);
-        if (playerState.sikeVote) {
-            return {error: 'badRequest'};
-        }
         playerState.sikeVote = vote ? 1 : -1;
         return {success: true, action: this._voteUpdateAction()};
     }
@@ -230,7 +227,8 @@ const GameState = class {
             if (this.remainingSikeRetries <= 0) {
                 return 'nextSelection';
             } else {
-                if(this.isActive(this.selectorId())) {
+                if (this.isActive(this.selectorId()) &&
+                    this.players[this.selector].responses.length > this.players[this.selector].used.length) {
                     this.stage = 'responseSelection';
                     this.remainingSikeRetries--;
                     this.players.forEach(player => {
@@ -303,11 +301,11 @@ const GameState = class {
         return this.room.players.find(player => player.id === id)?.active;
     }
 
-    selectedResponse(){
+    selectedResponse() {
         return this.players[this.selector].selected;
     }
 
-    selectorId(){
+    selectorId() {
         return this.players[this.selector].id;
     }
 

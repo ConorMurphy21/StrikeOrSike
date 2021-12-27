@@ -16,6 +16,7 @@ describe("Complete callback tests", () => {
         gameState.players[selectorIndex].responses.push(firstResponse);
         gameState.players[matcherIndex].responses.push(differentResponse);
         gameState.beginSelection();
+        gameState.selectionType = 'strike';
     });
 
     it("Selector Disconnects while selecting", (done) => {

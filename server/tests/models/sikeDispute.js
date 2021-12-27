@@ -90,14 +90,13 @@ describe("Sike Dispute tests", () => {
             assert.strictEqual(result.action, 'nextSelection');
         });
 
-        it("BadRequest double vote", () => {
+        it("no double counting votes", () => {
             gameState.acceptResponseSelection(selectorId, firstResponse);
-            gameState.acceptSikeDisputeVote('2', true);
-            const countBefore = gameState.sikeDisputeUpVotes;
-            const result = gameState.acceptSikeDisputeVote('2', true);
-            assert.isNotOk(result.success);
-            assert.isOk(result.error);
-            assert.strictEqual(gameState.sikeDisputeUpVotes, countBefore);
+            for(let i = 0; i < evenLen; i++){
+                const result = gameState.acceptSikeDisputeVote('2', true);
+                assert.isOk(result.success);
+                assert.strictEqual(result.action, 'noOp');
+            }
         });
 
         it("BadRequest Self Vote", () => {
@@ -208,6 +207,19 @@ describe("Sike Dispute tests", () => {
             players[selectorIndex].active = false;
             gameState.disconnect(selectorId);
 
+            for (let i = 1; i < evenLen - 1; i++) {
+                const result = gameState.acceptSikeDisputeVote(i.toString(), !(i % 2));
+                assert.isOk(result.success);
+                assert.strictEqual(result.action, 'noOp');
+            }
+            let result = gameState.acceptSikeDisputeVote((evenLen - 1).toString(), false);
+            assert.isOk(result.success);
+            assert.strictEqual(result.action, 'nextSelection');
+        });
+
+        it("Dispute vote with retries no other selections", () => {
+            gameState.players[selectorIndex].responses = [firstResponse];
+            gameState.acceptResponseSelection(selectorId, firstResponse);
             for (let i = 1; i < evenLen - 1; i++) {
                 const result = gameState.acceptSikeDisputeVote(i.toString(), !(i % 2));
                 assert.isOk(result.success);

@@ -7,7 +7,7 @@ import Timer from "@/components/gameShared/Timer.vue";
   <div class="w-100 h-100 d-flex flex-column justify-content-between align-items-center p-3">
     <h1>{{ prompt }}</h1>
     <response-list :selectable="false"/>
-    <input type="text" class="form-control w-75" v-model="response" @keyup.enter="sendResponse"/>
+    <input type="text" class="form-control w-75" v-model="response" @keyup.enter="sendResponse" autofocus/>
     <timer :time="timer"></timer>
   </div>
 </template>

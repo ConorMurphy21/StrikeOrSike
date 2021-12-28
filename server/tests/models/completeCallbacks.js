@@ -16,6 +16,7 @@ describe('Complete callback tests', () => {
     beforeEach(() => {
         players = [{id: selectorId, active: true}, {id: matcherId, active: true}, {id: matcher2Id, active: true}];
         gameState = new GameState({players});
+        gameState.options.sikeDispute = true;
         gameState.options.sikeRetries = 0;
         gameState.players[selectorIndex].responses.push(firstResponse);
         gameState.players[matcherIndex].responses.push(differentResponse);

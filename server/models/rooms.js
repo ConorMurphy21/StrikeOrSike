@@ -1,4 +1,4 @@
-const GameState = require('./gameState');
+const {GameState} = require('./gameState');
 
 
 // map model to rooms
@@ -12,7 +12,7 @@ const rooms = {}
 const isValidInput = (input) => {
     // test for whitespace
     if (/\s/.test(input)) {
-        return "spaces";
+        return 'spaces';
     }
 
 
@@ -26,7 +26,7 @@ const sanitizeRoomName = (roomName) => {
         // added this switch in case I add more checks
         // This is tightly bound to isValidInput()
         switch (retval){
-            case "spaces":
+            case 'spaces':
                 roomName = roomName.split(' ').join('-');
                 break;
         }
@@ -38,16 +38,16 @@ const sanitizeRoomName = (roomName) => {
 
 const createRoom = (id, name, roomName) => {
     if (rooms[roomName])
-        return { error: "roomTaken" };
+        return { error: 'roomTaken' };
     if (!name)
-        return { error: "badName" };
+        return { error: 'badName' };
     if (!roomName)
-        return { error: "badRoom" };
+        return { error: 'badRoom' };
     if(/^\d/.test(roomName)){
-        return {error: "roomCannotStartWithNum"};
+        return {error: 'roomCannotStartWithNum'};
     }
     if(/^([!#$&-;=?-[]_a-z~]|%[0-9a-fA-F]{2})+$/.test(roomName)){
-        return {error: "invalidCharacter"};
+        return {error: 'invalidCharacter'};
     }
     roomName = sanitizeRoomName(roomName);
 
@@ -71,16 +71,16 @@ const createRoom = (id, name, roomName) => {
 
 const joinRoom = (id, name, roomName) => {
     if (!roomName)
-        return { error: "badRoom" };
+        return { error: 'badRoom' };
     if (!name)
-        return { error: "badName" };
+        return { error: 'badName' };
     const room = rooms[roomName.toLowerCase()];
     if (!room)
-        return { error: "noRoom" };
+        return { error: 'noRoom' };
 
     const existingPlayer = room.players.find(player => player.name === name);
     if(existingPlayer && existingPlayer.active){
-        return { error: "nameTaken" };
+        return { error: 'nameTaken' };
     } else if(existingPlayer){
         // if player disconnected, let them join back in as who they were previously
         playerRoom[id] = room;
@@ -140,10 +140,10 @@ const disconnectPlayer = id => {
 }
 
 const printState = () => {
-    console.log("------------------------------------------")
-    console.log("playerRoom: ", JSON.stringify(playerRoom, null, 2));
-    //console.log("rooms: ", JSON.stringify(rooms, null, 2));
-    console.log("------------------------------------------")
+    console.log('------------------------------------------')
+    console.log('playerRoom: ', JSON.stringify(playerRoom, null, 2));
+    //console.log('rooms: ', JSON.stringify(rooms, null, 2));
+    console.log('------------------------------------------')
 }
 
 module.exports = {createRoom, joinRoom, getRoomById, getRoomByName,kickPlayer, disconnectPlayer, printState}

@@ -13,7 +13,7 @@ import PlayerCard from '@/components/lobby/PlayerCard.vue'
 </template>
 
 <script>
-import {createNamespacedHelpers} from "vuex";
+import {createNamespacedHelpers} from 'vuex';
 const { mapState } = createNamespacedHelpers('room')
 
 export default {

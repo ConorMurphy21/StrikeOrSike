@@ -4,7 +4,7 @@ const defaultOptions = () => {
     return {
         promptTimer: 45,
         numRounds: 8,
-        sikeDispute: true,
+        sikeDispute: false,
         sikeRetries: 1,
     }
 }

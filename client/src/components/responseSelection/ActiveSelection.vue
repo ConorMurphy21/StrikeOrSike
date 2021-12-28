@@ -1,6 +1,6 @@
 <script setup>
-import ResponseList from "@/components/gameShared/ResponseList.vue";
-import SelectionType from "@/components/responseSelection/SelectionType.vue";
+import ResponseList from '@/components/gameShared/ResponseList.vue';
+import SelectionType from '@/components/responseSelection/SelectionType.vue';
 </script>
 
 <template>
@@ -12,7 +12,7 @@ import SelectionType from "@/components/responseSelection/SelectionType.vue";
 </template>
 
 <script>
-import {createNamespacedHelpers} from "vuex";
+import {createNamespacedHelpers} from 'vuex';
 
 const {mapState} = createNamespacedHelpers('game');
 
@@ -29,7 +29,7 @@ export default {
   },
   watch:{
     response: function (val) {
-      this.$socket.emit("selectResponse", val);
+      this.$socket.emit('selectResponse', val);
     }
   }
 }

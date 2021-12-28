@@ -7,7 +7,7 @@
       <label class="btn btn-primary" for="create-game">create game</label> <br>
 
       <label for="username" class="form-label">Name</label>
-      <input type="text" class="form-control"  id="username" placeholder="your name" v-model="form.name">
+      <input type="text" class="form-control"  id="username" placeholder="your name" v-model="form.name" autofocus>
       <label for="room-name" class="form-label">Room Name</label>
       <input type="text" class="form-control"  id="room-name" placeholder="room name" v-model="form.roomName">
 
@@ -41,14 +41,12 @@ export default {
       'setRoomName'
     ]),
     onSubmit(){
-      console.log("emitting event");
-      const endpoint = this.joinGame ? 'joinRoom' : 'createRoom';
-      this.$socket.emit(endpoint, this.form.name, this.form.roomName);
+      const event = this.joinGame ? 'joinRoom' : 'createRoom';
+      this.$socket.emit(event, this.form.name, this.form.roomName);
     }
   },
   sockets:{
     joinRoom: function(data){
-      console.log(data.roomName)
       if(data.success){
         this.setName(this.form.name);
         this.setRoomName(data.roomName);

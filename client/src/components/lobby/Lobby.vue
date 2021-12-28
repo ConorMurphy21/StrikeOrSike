@@ -12,7 +12,7 @@ import PlayerList from '@/components/lobby/PlayerList.vue'
 </template>
 
 <script>
-import {createNamespacedHelpers} from "vuex";
+import {createNamespacedHelpers} from 'vuex';
 const { mapGetters } = createNamespacedHelpers('room')
 
 export default {
@@ -23,7 +23,7 @@ export default {
   },
   methods:{
     startGame(){
-      this.$socket.emit("startGame");
+      this.$socket.emit('startGame');
     }
   }
 }

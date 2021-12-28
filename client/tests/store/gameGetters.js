@@ -1,7 +1,7 @@
-import {assert} from "chai";
-import {getters} from "../../src/store/modules/game.js";
+import {assert} from 'chai';
+import {getters} from '../../src/store/modules/game.js';
 
-describe("game getters test", () => {
+describe('game getters test', () => {
 
     const len = 8;
     const selfId = '0';
@@ -31,13 +31,13 @@ describe("game getters test", () => {
         };
     });
 
-    it("CanEndRound Happy", () => {
+    it('CanEndRound Happy', () => {
         matches.splice(0,1);
         const result = getters.canEndRound(state, null, rootState, rootGetters);
         assert.isTrue(result);
     });
 
-    it("CanEndRound Inactive Players", () => {
+    it('CanEndRound Inactive Players', () => {
         matches.splice(0,1);
         for(let i = 4; i < len; i++){
             players[i].active = false;
@@ -47,13 +47,13 @@ describe("game getters test", () => {
         assert.isTrue(result);
     });
 
-    it("CantEndRound notSelector", () => {
+    it('CantEndRound notSelector', () => {
         state.selector.id = '3';
         const result = getters.canEndRound(state, null, rootState, rootGetters);
         assert.isFalse(result);
     });
 
-    it("CantEndRound active missing match", () => {
+    it('CantEndRound active missing match', () => {
         matches.splice(len-1);
         const result = getters.canEndRound(state, null, rootState, rootGetters);
         assert.isFalse(result);

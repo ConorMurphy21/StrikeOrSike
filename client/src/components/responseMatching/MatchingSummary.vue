@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import {createNamespacedHelpers} from "vuex";
+import {createNamespacedHelpers} from 'vuex';
 
 const {mapState, mapGetters} = createNamespacedHelpers('game');
 
@@ -36,7 +36,7 @@ export default {
   },
   methods: {
     endRound: function () {
-      this.$socket.emit("selectionComplete");
+      this.$socket.emit('selectionComplete');
     }
   }
 }

@@ -1,4 +1,4 @@
-import { createWebHistory, createRouter } from "vue-router";
+import { createWebHistory, createRouter } from 'vue-router';
 import Home from '@/views/Home.vue'
 import Game from '@/views/Game.vue'
 import NotFound from '@/views/NotFound.vue'

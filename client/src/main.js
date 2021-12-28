@@ -18,8 +18,8 @@ app.use(new VueSocketIO({
     options: {withCredentials: false},
     vuex: {
         store,
-        actionPrefix: "SOCKET_",
-        mutationPrefix: "SOCKET_"
+        actionPrefix: 'SOCKET_',
+        mutationPrefix: 'SOCKET_'
     }
 }))
 app.mount('#app')

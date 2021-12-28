@@ -35,7 +35,7 @@ export const getters = {
     },
     canEndRound(state, getters, rootState, rootGetters) {
         const self = rootGetters['room/self'].id
-        if(state.selector.id !== self) return false;
+        if (state.selector.id !== self) return false;
 
         let finishedMatching = true;
         rootState.room.players.forEach(player => {
@@ -60,6 +60,7 @@ const mutations = {
     },
     clearResponses(state) {
         state.responses = [];
+        state.usedResponses = [];
     },
     setSelectionType(state, data) {
         state.selectionType = data;
@@ -75,6 +76,9 @@ const mutations = {
     },
     clearMatches(state) {
         state.matches = [];
+    },
+    useResponse(state, data) {
+        state.usedResponses.push(data);
     }
 }
 
@@ -110,17 +114,19 @@ const socketActions = {
     },
     async SOCKET_beginDispute({state, commit, rootGetters}, response) {
         commit('setSelectedResponse', response);
-        if(state.selector.id === rootGetters['room/self'].id){
+        if (state.selector.id === rootGetters['room/self'].id) {
+            commit('useResponse', response);
             commit('setScene', 'passiveDispute');
-        }else {
+        } else {
             commit('setScene', 'activeDispute');
         }
     },
     async SOCKET_beginMatching({state, commit, rootGetters}, response) {
         commit('setSelectedResponse', response);
-        if(state.selector.id === rootGetters['room/self'].id){
+        if (state.selector.id === rootGetters['room/self'].id) {
+            commit('useResponse', response);
             commit('setScene', 'matchingSummary');
-        }else {
+        } else {
             commit('setScene', 'activeMatching');
         }
     },
@@ -131,6 +137,7 @@ const socketActions = {
             response: match.response
         });
         if (match.player === rootGetters['room/self'].id) {
+            commit('useResponse', match.response);
             commit('setScene', 'matchingSummary');
         }
     }

@@ -4,7 +4,8 @@
       <div v-for="(response, index) in responses"
            class='list-group-item'
            :class="{'list-group-item-action': selectable,
-                    'active': selected === index}"
+                    'active': selected === index,
+                    'list-group-item-danger': used(response)}"
            @click="select(index, response)">
         {{ response }}
       </div>
@@ -28,18 +29,22 @@ export default {
   emits: ['update:modelValue'],
   computed: {
     ...mapState([
-      'responses'
-    ])
+      'responses',
+      'usedResponses'
+    ]),
   },
   methods: {
     select(index, response) {
-      if (this.selectable) {
+      if (this.selectable && !this.used(response)) {
         if (this.selected !== index) {
           this.selected = index;
         } else {
           this.$emit('update:modelValue', response);
         }
       }
+    },
+    used(response){
+      return this.usedResponses.includes(response);
     }
   }
 }

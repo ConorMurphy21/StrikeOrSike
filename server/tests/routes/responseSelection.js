@@ -83,6 +83,9 @@ describe('responseSelection tests', () => {
                 assert.strictEqual(selectingResponse, response);
                 done();
             });
+            if(data.selectionType === 'choice'){
+                selectingClient.emit('selectSelectionType', 'strike');
+            }
             selectingClient.emit('selectResponse', selectingResponse);
         });
         clientSocket1.emit('startGame');
@@ -106,6 +109,9 @@ describe('responseSelection tests', () => {
             clientSocket2.on('beginMatching', () => {
                 assert.fail();
             });
+            if(data.selectionType === 'choice'){
+                selectingClient.emit('selectSelectionType', 'strike');
+            }
             selectingClient.emit('selectResponse', selectingResponse);
             setTimeout(done, 100);
         });
@@ -130,6 +136,9 @@ describe('responseSelection tests', () => {
             clientSocket2.on('beginMatching', () => {
                 assert.fail();
             });
+            if(data.selectionType === 'choice'){
+                selectingClient.emit('selectSelectionType', 'strike');
+            }
             selectingClient.emit('selectResponse', selectingResponse);
             setTimeout(done, 100);
         });

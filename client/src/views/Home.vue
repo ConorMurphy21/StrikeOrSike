@@ -7,7 +7,7 @@
       <label class="btn btn-primary" for="create-game">create game</label> <br>
 
       <label for="username" class="form-label">Name</label>
-      <input type="text" class="form-control" id="username" placeholder="your name" v-model="form.name" autofocus>
+      <input type="text" class="form-control" id="username" ref="username" placeholder="your name" v-model="form.name">
       <label for="room-name" class="form-label">Room Name</label>
       <input type="text" class="form-control" id="room-name" placeholder="room name" v-model="form.roomName">
 
@@ -35,6 +35,9 @@ export default {
       },
       error: this.$route.query.error
     }
+  },
+  mounted() {
+    this.$refs.username.focus();
   },
   methods: {
     ...mapMutations([

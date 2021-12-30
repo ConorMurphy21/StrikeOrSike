@@ -2,6 +2,14 @@ const {joinRoom, disconnectPlayer, createRoom, getRoomById, getRoomByName} = req
 
 module.exports = (io, socket) => {
 
+    socket.onAny(() => {
+        // update activity
+        const room = getRoomById(socket.id);
+        if(room){
+            room.lastActivity = (new Date()).getTime();
+        }
+    })
+
     /*** CONNECTION AND ROOM CREATION ***/
     socket.on('createRoom', (name, roomName) => {
         // disconnect for cleanup
@@ -43,12 +51,12 @@ module.exports = (io, socket) => {
 };
 
 function disconnect(socket) {
-    let room = getRoomById(socket.id);
-    const roomName = room ? room.name : '';
+    let roomName = getRoomById(socket.id)?.name;
     disconnectPlayer(socket.id);
     // remove socket from room
-    socket.leave(roomName);
-    room = getRoomByName(roomName);
+    if(roomName) socket.leave(roomName);
+
+    const room = getRoomByName(roomName);
     if (room) {
         const player = room.players.find(p => p.id === socket.id);
         // could be modified

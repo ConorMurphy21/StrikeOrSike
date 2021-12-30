@@ -23,8 +23,8 @@ const server = http.createServer(app);
  */
 const io = require('socket.io')(server, {
     cors: {
-        origin: ["http://localhost:8080", "http://localhost:5000"],
-        methods: ["GET", "POST"],
+        origin: ['http://localhost:8080', 'http://localhost:5000'],
+        methods: ['GET', 'POST'],
         credentials: true,
         transports: ['websocket', 'polling'],
     },
@@ -34,8 +34,15 @@ const io = require('socket.io')(server, {
 /**
  * Listen on socket server
  */
-const registerHandlers = require("../routes/socketio/registerHandlers");
-io.on("connection", (socket) => registerHandlers(io, socket));
+const registerHandlers = require('../routes/socketio/registerHandlers');
+io.on('connection', (socket) => registerHandlers(io, socket));
+
+/**
+ * Start room service
+ */
+const roomService = require('../routes/socketio/roomService');
+roomService(io);
+
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -66,7 +73,7 @@ function normalizePort(val) {
 }
 
 /**
- * Event listener for HTTP server "error" event.
+ * Event listener for HTTP server 'error' event.
  */
 
 function onError(error) {
@@ -94,7 +101,7 @@ function onError(error) {
 }
 
 /**
- * Event listener for HTTP server "listening" event.
+ * Event listener for HTTP server 'listening' event.
  */
 
 function onListening() {

@@ -7,47 +7,48 @@
       <label class="btn btn-primary" for="create-game">create game</label> <br>
 
       <label for="username" class="form-label">Name</label>
-      <input type="text" class="form-control"  id="username" placeholder="your name" v-model="form.name" autofocus>
+      <input type="text" class="form-control" id="username" placeholder="your name" v-model="form.name" autofocus>
       <label for="room-name" class="form-label">Room Name</label>
-      <input type="text" class="form-control"  id="room-name" placeholder="room name" v-model="form.roomName">
+      <input type="text" class="form-control" id="room-name" placeholder="room name" v-model="form.roomName">
 
       <!-- Can use either 2 methods to get localization, one looks better, one is faster -->
       <h4 v-if="error" v-t="error"></h4>
       <!-- <h4 v-if="error">{{$t(error)}}</h4> -->
 
-      <button type="submit" class="btn btn-primary">{{joinGame ? 'join game' : 'create game'}}</button>
+      <button type="submit" class="btn btn-primary">{{ joinGame ? 'join game' : 'create game' }}</button>
     </form>
   </div>
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex'
-const { mapMutations } = createNamespacedHelpers('room')
+import {createNamespacedHelpers} from 'vuex'
+
+const {mapMutations} = createNamespacedHelpers('room')
 
 export default {
-  data(){
-    return{
+  data() {
+    return {
       joinGame: true,
       form: {
         name: '',
         roomName: this.$route.query.name
       },
-      error: ''
+      error: this.$route.query.error
     }
   },
-  methods:{
+  methods: {
     ...mapMutations([
       'setName',
       'setRoomName'
     ]),
-    onSubmit(){
+    onSubmit() {
       const event = this.joinGame ? 'joinRoom' : 'createRoom';
       this.$socket.emit(event, this.form.name, this.form.roomName);
     }
   },
-  sockets:{
-    joinRoom: function(data){
-      if(data.success){
+  sockets: {
+    joinRoom: function (data) {
+      if (data.success) {
         this.setName(this.form.name);
         this.setRoomName(data.roomName);
         this.$router.push({name: 'game', params: {roomName: data.roomName}});

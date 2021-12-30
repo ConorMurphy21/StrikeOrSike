@@ -9,7 +9,7 @@ const props = defineProps({
   roomName: String
 })
 
-if(!store.state.room.roomName){
+if (!store.state.room.roomName) {
   router.push({name: 'home', query: {name: props.roomName}})
 }
 </script>
@@ -25,17 +25,17 @@ import Lobby from '@/components/lobby/Lobby.vue'
 import PromptResponse from '@/components/promptResponse/PromptResponse.vue'
 import ActiveSelection from '@/components/responseSelection/ActiveSelection.vue';
 import PassiveSelection from '@/components/responseSelection/PassiveSelection.vue';
-import ActiveDispute from "@/components/dispute/ActiveDispute.vue";
+import ActiveDispute from '@/components/dispute/ActiveDispute.vue';
 import PassiveDispute from '@/components/dispute/PassiveDispute.vue';
 import ActiveMatching from '@/components/responseMatching/ActiveMatching.vue';
 import MatchingSummary from '@/components/responseMatching/MatchingSummary.vue';
 
 import {createNamespacedHelpers} from 'vuex';
 
-const { mapState } = createNamespacedHelpers('game')
+const {mapState} = createNamespacedHelpers('game')
 
 export default {
-  components:{
+  components: {
     Lobby,
     PromptResponse,
     ActiveSelection,
@@ -47,8 +47,13 @@ export default {
   },
   computed: {
     ...mapState([
-        'scene'
+      'scene'
     ])
+  },
+  sockets: {
+    kickPlayer: function (data) {
+      this.$router.push({name: 'home', query: {error: data.error}});
+    }
   }
 }
 </script>

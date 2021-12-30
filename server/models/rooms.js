@@ -56,6 +56,7 @@ const createRoom = (id, name, roomName) => {
     // clone default room
     const room = {
         name: roomName,
+        lastActivity: (new Date()).getTime(),
         players: [{
             id,
             name,
@@ -126,6 +127,30 @@ const disconnectPlayer = id => {
     }
 }
 
+// cleanup all data concerning inactive rooms
+// return list of rooms removed
+const roomService = (maxInactivity) => {
+    const time = (new Date).getTime();
+
+    const inactiveRooms = [];
+    for(const name in rooms){
+        const room = rooms[name];
+        if(time - room.lastActivity > maxInactivity){
+            inactiveRooms.push(name);
+            // delete the player record of the room
+            for(const player in room.players){
+                delete playerRoom[player.id];
+            }
+        }
+    }
+
+    inactiveRooms.forEach((name) => {
+        delete rooms[name];
+    });
+
+    return inactiveRooms;
+}
+
 const printState = () => {
     console.log('------------------------------------------')
     console.log('playerRoom: ', JSON.stringify(playerRoom, null, 2));
@@ -133,4 +158,4 @@ const printState = () => {
     console.log('------------------------------------------')
 }
 
-module.exports = {createRoom, joinRoom, getRoomById, getRoomByName, disconnectPlayer, printState}
+module.exports = {createRoom, joinRoom, getRoomById, getRoomByName, disconnectPlayer, roomService, printState}

@@ -29,13 +29,13 @@ module.exports = (io, socket) => {
         }
     });
 
-    socket.on('selectSelectionType', (selectionType) => {
+    socket.on('selectSelectionType', (isStrike) => {
         const room = getRoomById(socket.id);
         if(!room) return;
         const state = room.state;
-        const result = state.acceptSelectionType(socket.id, selectionType);
+        const result = state.acceptSelectionType(socket.id, isStrike);
         if (result.success) {
-            io.to(room.name).emit('chosenSelectionType', state.selectionType);
+            io.to(room.name).emit('selectionTypeChosen', state.selectionType);
         }
     });
 

@@ -5,6 +5,7 @@ const state = () => ({
     prompt: '',
     timer: 0,
     responses: [],
+    selectionTypeChoice: false,
     selectionType: '',
     selector: {},
     selectedResponse: '',
@@ -65,6 +66,9 @@ const mutations = {
     setSelectionType(state, data) {
         state.selectionType = data;
     },
+    setSelectionTypeChoice(state, isChoice){
+        state.selectionTypeChoice = isChoice;
+    },
     setSelector(state, data) {
         state.selector = data;
     },
@@ -86,6 +90,9 @@ const socketMutations = {
     SOCKET_promptResponse(state, response) {
         state.responses.push(response);
     },
+    SOCKET_selectionTypeChosen(state, selectionType) {
+        state.selectionType = selectionType;
+    },
     SOCKET_gameOver(state) {
         state.scene = 'lobby';
     }
@@ -106,6 +113,11 @@ const socketActions = {
         commit('clearMatches');
         commit('setSelector', selector);
         commit('setSelectionType', data.selectionType);
+        if(data.selectionType === 'choice'){
+            commit('setSelectionTypeChoice', true);
+        } else {
+            commit('setSelectionTypeChoice', false);
+        }
         if (selector.id === rootGetters['room/self'].id) {
             commit('setScene', 'activeSelection');
         } else {

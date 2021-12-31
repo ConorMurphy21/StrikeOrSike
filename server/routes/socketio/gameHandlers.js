@@ -16,6 +16,7 @@ module.exports = (io, socket) => {
         if (!room) return;
         room.state = new GameState(room, room.state.options);
         registerCallbacks(io, room);
+        setOptions(io, room);
         beginPrompt(io, room);
     });
 
@@ -120,6 +121,13 @@ function registerCallbacks(io, room) {
                 continueSelection(io, room);
             }, 5000);
         }
+    });
+}
+
+function setOptions(io, room){
+    const state = room.state;
+    io.to(room.name).emit('setOptions', {
+        skipVoteAllowed: state.options.skipVoteAllowed
     });
 }
 

@@ -21,6 +21,7 @@ describe('Selection Accepting tests', () => {
     describe('Strike selectionType', () => {
         beforeEach(() => {
             gameState.selectionType = 'strike';
+            gameState.selectionTypeChoice = false;
         });
 
         it('PromptSelection Accept Happy', () => {
@@ -74,12 +75,55 @@ describe('Selection Accepting tests', () => {
     });
 
     describe('choice selectionType', () => {
-       beforeEach(() => {
-          gameState.selectionType = 'choice';
-       });
+        beforeEach(() => {
+            gameState.selectionType = 'choice';
+            gameState.selectionTypeChoice = true;
+        });
 
-        it('PromptSelection Accept Happy');
+        it('Accept Happy', () => {
+            let result = gameState.acceptSelectionType(selectorId, true);
+            assert.isOk(result.success);
+            assert.isNotOk(result.error);
+            assert.strictEqual(gameState.selectionType, 'strike');
+            result = gameState.acceptResponseSelection(selectorId, firstResponse);
+            assert.isOk(result.success);
+            assert.isNotOk(result.error);
+            assert.strictEqual(gameState.selectionType, 'strike');
+        });
 
-        it('PromptSelection Accept No Choice');
+        it('Error No Choice', () => {
+            const result = gameState.acceptResponseSelection(selectorId, firstResponse);
+            assert.isNotOk(result.success);
+            assert.isOk(result.error);
+        });
+
+        it('Accept double choice', () => {
+            let result = gameState.acceptSelectionType(selectorId, false);
+            assert.isOk(result.success);
+            assert.isNotOk(result.error);
+            assert.strictEqual(gameState.selectionType, 'sike');
+            result = gameState.acceptSelectionType(selectorId, true);
+            assert.isOk(result.success);
+            assert.isNotOk(result.error);
+            assert.strictEqual(gameState.selectionType, 'strike');
+            result = gameState.acceptResponseSelection(selectorId, firstResponse);
+            assert.isOk(result.success);
+            assert.isNotOk(result.error);
+            assert.strictEqual(gameState.selectionType, 'strike');
+        });
+
+        it('Not selecting', () => {
+            const result = gameState.acceptSelectionType(matcherId, true);
+            assert.isNotOk(result.success);
+            assert.isOk(result.error);
+        });
+
+        it('Not choosing acceptSelectionType', () => {
+            gameState.selectionTypeChoice = false;
+            gameState.selectionType = 'strike';
+            const result = gameState.acceptSelectionType(selectorId, true);
+            assert.isNotOk(result.success);
+            assert.isOk(result.error);
+        });
     });
 });

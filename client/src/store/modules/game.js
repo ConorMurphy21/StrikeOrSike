@@ -10,7 +10,11 @@ const state = () => ({
     selector: {},
     selectedResponse: '',
     matches: [],
-    usedResponses: []
+    usedResponses: [],
+    // optional state
+    skipVoteCount: 0,
+    // options:
+    promptSkipping: false
 });
 
 export const getters = {
@@ -87,6 +91,9 @@ const mutations = {
 }
 
 const socketMutations = {
+    SOCKET_setOptions(state, options){
+        state.promptSkipping = options.promptSkipping;
+    },
     SOCKET_promptResponse(state, response) {
         state.responses.push(response);
     },
@@ -95,6 +102,9 @@ const socketMutations = {
     },
     SOCKET_gameOver(state) {
         state.scene = 'lobby';
+    },
+    SOCKET_setSkipVoteCount(state, count) {
+        state.skipVoteCount = count;
     }
 }
 
@@ -103,6 +113,7 @@ const socketActions = {
         commit('setPrompt', data.prompt);
         commit('setTimer', data.timer);
         commit('clearResponses');
+        commit('SOCKET_setSkipVoteCount', 0);
         commit('setScene', 'promptResponse');
         dispatch('startTimer').then(() => {
             // commit('setScene', 'lobby');

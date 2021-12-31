@@ -6,7 +6,7 @@ const defaultOptions = () => {
         numRounds: 8,
         sikeDispute: false,
         sikeRetries: 0,
-        allowPromptSkipping: false,
+        promptSkipping: false,
     }
 }
 

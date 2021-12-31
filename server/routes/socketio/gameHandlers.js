@@ -40,7 +40,7 @@ module.exports = (io, socket) => {
             if(result.skip) {
                 skipPrompt(io, room);
             } else {
-                io.room.emit('setSkipPromptVoteCount', result.count);
+                io.room.emit('setSkipVoteCount', result.count);
             }
         }
     });
@@ -127,7 +127,7 @@ function registerCallbacks(io, room) {
 function setOptions(io, room){
     const state = room.state;
     io.to(room.name).emit('setOptions', {
-        skipVoteAllowed: state.options.skipVoteAllowed
+        promptSkipping: state.options.promptSkipping
     });
 }
 

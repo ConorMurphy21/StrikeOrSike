@@ -5,7 +5,8 @@ const defaultOptions = () => {
         promptTimer: 45,
         numRounds: 8,
         sikeDispute: false,
-        sikeRetries: 1,
+        sikeRetries: 0,
+        allowPromptSkipping: false,
     }
 }
 
@@ -26,14 +27,19 @@ const GameState = class {
         this.unusedPrompts = Array.from({length: prompts.length}, (v, i) => i);
         this.remainingSikeRetries = this.options.sikeRetries;
 
-        this.selectionUnsuccessfulCb = null;
-        this.matchingCompleteCb = null;
-        this.disputeCompleteCb = null;
+        // keeps track of how long until the response section is over
+        this.promptTimeout = null;
+
+        this._promptSkippedCb = null;
+        this._selectionUnsuccessfulCb = null;
+        this._matchingCompleteCb = null;
+        this._disputeCompleteCb = null;
 
         room.players.forEach(player => {
             this.players.push(
                 {
                     id: player.id,
+                    voteSkipPrompt: false,
                     points: 0,
                     used: [],
                     responses: [],
@@ -47,16 +53,20 @@ const GameState = class {
     }
 
     /*** Callback registry for events that may happen from disconnect ***/
+    registerPromptSkippedCb(cb) {
+        this._promptSkippedCb = cb;
+    }
+
     registerMatchingCompleteCb(cb) {
-        this.matchingCompleteCb = cb;
+        this._matchingCompleteCb = cb;
     }
 
     registerSelectionUnsuccessfulCb(cb) {
-        this.selectionUnsuccessfulCb = cb;
+        this._selectionUnsuccessfulCb = cb;
     }
 
     registerDisputeCompleteCb(cb) {
-        this.disputeCompleteCb = cb;
+        this._disputeCompleteCb = cb;
     }
 
     /*** PROMPT RESPONSE state changes ***/
@@ -92,6 +102,22 @@ const GameState = class {
             return {error: 'badRequest'};
         }
         return {success: true};
+    }
+
+    voteSkipPrompt(id, vote) {
+        if (this.stage !== 'response' || !this.options.allowPromptSkipping) {
+            return {error: 'badRequest'};
+        }
+        const playerState = this.players.find(player => player.id === id);
+        playerState.voteSkipPrompt = !!vote;
+        return this._skipPromptAction();
+    }
+
+    _skipPromptAction() {
+        const numVoters = this._numVoters();
+        const majority = Math.ceil(numVoters / 2);
+        const votes = this.players.filter(player => this.isActive(player.id) && player.voteSkipPrompt).length;
+        return {success: true, count: votes, skip: votes >= majority};
     }
 
     _randomizeSelectionType() {
@@ -186,8 +212,8 @@ const GameState = class {
 
     acceptSelectionType(id, isStrike) {
         const selector = this.players[this.selector];
-        if(this.selectionTypeChoice){
-            if(this.stage === 'responseSelection' && selector.id === id) {
+        if (this.selectionTypeChoice) {
+            if (this.stage === 'responseSelection' && selector.id === id) {
                 this.selectionType = isStrike ? 'strike' : 'sike';
                 return {success: true};
             }
@@ -198,7 +224,7 @@ const GameState = class {
     acceptResponseSelection(id, response) {
         const selector = this.players[this.selector];
         // selectionType needs to be chosen before choosing a response
-        if(this.selectionType === 'choice') return {error: 'badRequest'};
+        if (this.selectionType === 'choice') return {error: 'badRequest'};
 
         // id must be currently selecting
         if (this.stage === 'responseSelection' && selector.id === id) {
@@ -225,7 +251,7 @@ const GameState = class {
     /*** DISPUTE state changes ***/
 
     acceptSikeDisputeVote(id, vote) {
-        if (id === this.selectorId()) {
+        if (id === this.selectorId() || this.stage === 'sikeDispute') {
             return {error: 'badRequest'};
         }
         const playerState = this.players.find(player => player.id === id);
@@ -281,8 +307,8 @@ const GameState = class {
 
 
     _cbIfMatchingComplete() {
-        if (this.matchingComplete() && this.matchingCompleteCb) {
-            this.matchingCompleteCb(this.isActive(this.selectorId()));
+        if (this.matchingComplete() && this._matchingCompleteCb) {
+            this._matchingCompleteCb(this.isActive(this.selectorId()));
         }
     }
 
@@ -334,14 +360,19 @@ const GameState = class {
     }
 
     disconnect(id) {
+        if (this.stage === 'response') {
+            const skipPrompt = this._skipPromptAction().skip;
+            if(skipPrompt) this._promptSkippedCb();
+
+        }
         if (this.stage === 'responseSelection') {
             if (this.isSelector(id)) {
-                if (this.selectionUnsuccessfulCb) this.selectionUnsuccessfulCb();
+                if (this._selectionUnsuccessfulCb) this._selectionUnsuccessfulCb();
             }
         }
         if (this.stage === 'sikeDispute') {
             const action = this._voteUpdateAction();
-            if (action !== 'noOp') this.disputeCompleteCb(action);
+            if (action !== 'noOp') this._disputeCompleteCb(action);
         }
         if (this.stage === 'responseMatching') {
             this._cbIfMatchingComplete();

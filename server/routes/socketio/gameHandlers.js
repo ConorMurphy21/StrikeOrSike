@@ -29,9 +29,24 @@ module.exports = (io, socket) => {
         }
     });
 
+    // true to vote to skip, false to unvote to skip
+    socket.on('voteSkipPrompt', (vote) => {
+        const room = getRoomById(socket.id);
+        if (!room) return;
+        const state = room.state;
+        const result = state.voteSkipPrompt(vote);
+        if (result.success) {
+            if(result.skip) {
+                skipPrompt(io, room);
+            } else {
+                io.room.emit('setSkipPromptVoteCount', result.count);
+            }
+        }
+    });
+
     socket.on('selectSelectionType', (isStrike) => {
         const room = getRoomById(socket.id);
-        if(!room) return;
+        if (!room) return;
         const state = room.state;
         const result = state.acceptSelectionType(socket.id, isStrike);
         if (result.success) {
@@ -84,16 +99,21 @@ module.exports = (io, socket) => {
 }
 
 function registerCallbacks(io, room) {
+    const state = room.state;
 
-    room.state.registerSelectionUnsuccessfulCb(() => {
+    state.registerPromptSkippedCb(() => {
+        skipPrompt(io, room);
+    });
+
+    state.registerSelectionUnsuccessfulCb(() => {
         continueSelection(io, room);
     });
 
-    room.state.registerDisputeCompleteCb((action) => {
+    state.registerDisputeCompleteCb((action) => {
         applyDisputeAction(io, room, action);
     });
 
-    room.state.registerMatchingCompleteCb((selectorActive) => {
+    state.registerMatchingCompleteCb((selectorActive) => {
         // give a little time to show score before moving on to next selection
         if (!selectorActive) {
             setTimeout(() => {
@@ -111,12 +131,21 @@ function beginPrompt(io, room) {
             prompt: state.prompt,
             timer: state.options.promptTimer
         });
-        setTimeout(() => {
+        state.promptTimeout = setTimeout(() => {
             beginSelection(io, room);
         }, state.options.promptTimer * 1000 + 1000);
     } else {
         io.to(room.name).emit('gameOver');
     }
+}
+
+function skipPrompt(io, room) {
+    const state = room.state;
+    if (state.promptTimeout) {
+        clearTimeout(state.promptTimeout);
+        state.promptTimeout = null;
+    }
+    beginPrompt(io, room);
 }
 
 function beginSelection(io, room) {

@@ -251,7 +251,7 @@ const GameState = class {
     /*** DISPUTE state changes ***/
 
     acceptSikeDisputeVote(id, vote) {
-        if (id === this.selectorId() || this.stage === 'sikeDispute') {
+        if (id === this.selectorId() || this.stage !== 'sikeDispute') {
             return {error: 'badRequest'};
         }
         const playerState = this.players.find(player => player.id === id);

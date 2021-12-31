@@ -29,6 +29,16 @@ module.exports = (io, socket) => {
         }
     });
 
+    socket.on('selectSelectionType', (isStrike) => {
+        const room = getRoomById(socket.id);
+        if(!room) return;
+        const state = room.state;
+        const result = state.acceptSelectionType(socket.id, isStrike);
+        if (result.success) {
+            io.to(room.name).emit('selectionTypeChosen', state.selectionType);
+        }
+    });
+
     socket.on('selectResponse', (response) => {
         const room = getRoomById(socket.id);
         if (!room) return;

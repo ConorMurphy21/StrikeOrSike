@@ -21,6 +21,7 @@ const GameState = class {
         this.players = [];
         this.initialSelector = 0;
         this.selector = 0;
+        this.selectionTypeChoice = false;
         this.selectionType = '';
         this.unusedPrompts = Array.from({length: prompts.length}, (v, i) => i);
         this.remainingSikeRetries = this.options.sikeRetries;
@@ -95,13 +96,18 @@ const GameState = class {
 
     _randomizeSelectionType() {
         const r = Math.floor(Math.random() * 6);
+        this.selectionTypeChoice = false;
         if (r < 3) {
             this.selectionType = 'strike';
         } else if (r < 5) {
             this.selectionType = 'sike';
         } else {
             this.selectionType = 'choice';
+            this.selectionTypeChoice = true;
         }
+
+        this.selectionType = 'choice';
+        this.selectionTypeChoice = true;
     }
 
     _resetSelection() {
@@ -178,17 +184,35 @@ const GameState = class {
         }));
     }
 
+    acceptSelectionType(id, isStrike) {
+        const selector = this.players[this.selector];
+        if(this.selectionTypeChoice){
+            if(this.stage === 'responseSelection' && selector.id === id) {
+                this.selectionType = isStrike ? 'strike' : 'sike';
+                return {success: true};
+            }
+        }
+        return {error: 'badRequest'};
+    }
+
     acceptResponseSelection(id, response) {
         const selector = this.players[this.selector];
+        // selectionType needs to be chosen before choosing a response
+        if(this.selectionType === 'choice') return {error: 'badRequest'};
+
+        // id must be currently selecting
         if (this.stage === 'responseSelection' && selector.id === id) {
+            // response must be in selectors responses but not used
             if (selector.responses.includes(response) && !selector.used.includes(response)) {
                 selector.selected = response;
                 selector.used.push(response);
-                // automatically match any obvious matches
+
+                // either transition to sikeDispute if that's set or matching otherwise
                 if (this.options.sikeDispute && this.selectionType === 'sike') {
                     this.stage = 'sikeDispute';
                     return {success: true, stage: this.stage};
                 } else {
+                    // automatically match any obvious matches
                     this._autoMatch();
                     this.stage = 'responseMatching';
                     return {success: true, stage: this.stage};

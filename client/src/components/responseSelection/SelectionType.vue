@@ -13,6 +13,11 @@ import {createNamespacedHelpers} from 'vuex';
 const {mapState} = createNamespacedHelpers('game');
 
 export default {
+  data() {
+    return {
+      lastPicked: false
+    }
+  },
   computed: {
     ...mapState({
       type: 'selectionType',
@@ -21,7 +26,9 @@ export default {
   },
   methods: {
     selectSelectionType(strike) {
-      this.$socket.emit('selectSelectionType', strike);
+      if (this.type !== 'choice' && this.lastPicked !== strike) {
+        this.$socket.emit('selectSelectionType', strike);
+      }
     }
   }
 }

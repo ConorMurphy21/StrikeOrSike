@@ -105,6 +105,9 @@ const GameState = class {
             this.selectionType = 'choice';
             this.selectionTypeChoice = true;
         }
+
+        this.selectionType = 'choice';
+        this.selectionTypeChoice = true;
     }
 
     _resetSelection() {
@@ -181,11 +184,11 @@ const GameState = class {
         }));
     }
 
-    acceptSelectionType(id, selectionType) {
+    acceptSelectionType(id, isStrike) {
         const selector = this.players[this.selector];
         if(this.selectionTypeChoice){
             if(this.stage === 'responseSelection' && selector.id === id) {
-                this.selectionType = selectionType === 'strike' ? 'strike' : 'sike';
+                this.selectionType = isStrike ? 'strike' : 'sike';
                 return {success: true};
             }
         }

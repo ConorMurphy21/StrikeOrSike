@@ -208,6 +208,7 @@ const GameState = class {
             } else {
                 const match = player.responses.find(r => this._matches(r, response));
                 if (match && !player.used.includes(match)) {
+                    player.used.push(match);
                     player.match = match;
                     player.matchingComplete = true;
                 }

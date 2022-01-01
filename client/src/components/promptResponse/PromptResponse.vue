@@ -1,11 +1,13 @@
 <script setup>
 import ResponseList from '@/components/gameShared/ResponseList.vue';
 import Timer from '@/components/gameShared/Timer.vue';
+import VoteSkip from '@/components/promptResponse/VoteSkip.vue';
 </script>
 
 <template>
   <div class="w-100 h-100 d-flex flex-column justify-content-between align-items-center p-3">
     <h1>{{ prompt }}</h1>
+    <vote-skip v-if="promptSkipping"></vote-skip>
     <response-list :selectable="false"/>
     <input ref="resInput" type="text" class="form-control w-75" v-model="response" @keyup.enter="sendResponse"/>
     <timer :time="timer"></timer>
@@ -29,12 +31,13 @@ export default {
   computed: {
     ...mapState([
       'timer',
-      'prompt'
+      'prompt',
+      'promptSkipping'
     ])
   },
   methods: {
     sendResponse() {
-      if(this.response !== '') {
+      if (this.response !== '') {
         this.$socket.emit('promptResponse', this.response);
         this.response = '';
       }

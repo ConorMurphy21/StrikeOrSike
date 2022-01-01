@@ -35,12 +35,12 @@ module.exports = (io, socket) => {
         const room = getRoomById(socket.id);
         if (!room) return;
         const state = room.state;
-        const result = state.voteSkipPrompt(vote);
+        const result = state.voteSkipPrompt(socket.id, vote);
         if (result.success) {
-            if(result.skip) {
+            if (result.skip) {
                 skipPrompt(io, room);
             } else {
-                io.room.emit('setSkipVoteCount', result.count);
+                io.to(room.name).emit('setSkipVoteCount', result.count);
             }
         }
     });
@@ -124,7 +124,7 @@ function registerCallbacks(io, room) {
     });
 }
 
-function setOptions(io, room){
+function setOptions(io, room) {
     const state = room.state;
     io.to(room.name).emit('setOptions', {
         promptSkipping: state.options.promptSkipping
@@ -158,12 +158,15 @@ function skipPrompt(io, room) {
 
 function beginSelection(io, room) {
     const state = room.state;
-    state.beginSelection();
-    io.to(room.name).emit('nextSelection',
-        {
-            selector: state.selectorId(),
-            selectionType: state.selectionType
-        });
+    if (state.beginSelection()) {
+        io.to(room.name).emit('nextSelection',
+            {
+                selector: state.selectorId(),
+                selectionType: state.selectionType
+            });
+    } else {
+        beginPrompt(io, room);
+    }
 }
 
 function continueSelection(io, room) {

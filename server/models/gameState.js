@@ -73,7 +73,6 @@ const GameState = class {
     beginNewPrompt() {
         // check if game is over
         if (this.round >= this.options.numRounds) return false;
-        this.round++;
         // no more unique prompts
         if (!this.unusedPrompts.length) return false;
 
@@ -81,9 +80,11 @@ const GameState = class {
         this.prompt = prompts[this.unusedPrompts[r]];
         this.unusedPrompts.splice(r, 1);
         this.stage = 'response';
+
         this.players.forEach(player => {
             player.responses = [];
             player.used = [];
+            player.voteSkipPrompt = false;
         });
         return true;
     }
@@ -105,7 +106,7 @@ const GameState = class {
     }
 
     voteSkipPrompt(id, vote) {
-        if (this.stage !== 'response' || !this.options.allowPromptSkipping) {
+        if (this.stage !== 'response' || !this.options.promptSkipping) {
             return {error: 'badRequest'};
         }
         const playerState = this.players.find(player => player.id === id);
@@ -132,8 +133,8 @@ const GameState = class {
             this.selectionTypeChoice = true;
         }
 
-        this.selectionType = 'choice';
-        this.selectionTypeChoice = true;
+        //this.selectionType = 'choice';
+        //this.selectionTypeChoice = true;
     }
 
     _resetSelection() {
@@ -148,23 +149,27 @@ const GameState = class {
 
     /*** PROMPT SELECTION state changes ***/
     beginSelection() {
-        const room = this.room;
         this.stage = 'responseSelection';
+
+        // increment round here, this way skipping prompts doesn't increment the round count
+        this.round++;
         //reset selections and matches
         this._resetSelection();
 
         // update global state for responseSelection
         for (let i = 0; i < this.players.length; i++) {
             const j = (this.initialSelector + i) % this.players.length;
-            const active = room.players.find(player => player.id === this.players[j].id)?.active;
-
-            if (active) {
+            const player = this.players[j];
+            const active = this.isActive(player.id);
+            const hasPossibleSelection = player.responses.length > player.used.length;
+            if (active && hasPossibleSelection) {
                 this.initialSelector = j;
                 this.selector = j;
                 this._randomizeSelectionType();
-                return;
+                return true;
             }
         }
+        return false;
     }
 
     nextSelection() {
@@ -176,7 +181,7 @@ const GameState = class {
             const j = (this.selector + i) % this.players.length;
             if (j === this.initialSelector) break;
             const player = this.players[j];
-            const active = this.isActive(this.players[j].id);
+            const active = this.isActive(player.id);
             const hasPossibleSelection = player.responses.length > player.used.length;
             if (active && hasPossibleSelection) {
                 this.selector = j;

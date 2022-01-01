@@ -90,7 +90,7 @@ const GameState = class {
     }
 
     acceptPromptResponse(id, response) {
-        if (response === '') {
+        if (!response) {
             return {error: 'emptyResponse'};
         }
         if (this.stage === 'response') {
@@ -324,7 +324,7 @@ const GameState = class {
         if (this.stage !== 'responseMatching' || selector.id === id) return {error: 'badRequest'};
 
         // Sike
-        if (match === '') {
+        if (!match) {
             matcher.matchingComplete = true;
             if (this.selectionType === 'sike') {
                 selector.points++;
@@ -344,6 +344,8 @@ const GameState = class {
             this._cbIfMatchingComplete();
             return {success: true};
         }
+
+        return {error: 'badRequest'};
     }
 
     /*** UTILS AND DISCONNECT ***/

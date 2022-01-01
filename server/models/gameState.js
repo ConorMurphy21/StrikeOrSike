@@ -133,8 +133,8 @@ const GameState = class {
             this.selectionTypeChoice = true;
         }
 
-        //this.selectionType = 'choice';
-        //this.selectionTypeChoice = true;
+        // this.selectionType = 'choice';
+        // this.selectionTypeChoice = true;
     }
 
     _resetSelection() {

@@ -22,8 +22,9 @@ describe('Complete callback tests', () => {
     });
 
     describe('Prompt Skip Vote', () => {
+
        it('Disconnect non-voter', (done) => {
-           gameState.options.allowPromptSkipping = true;
+           gameState.options.promptSkipping = true;
            gameState.beginNewPrompt();
            gameState.registerPromptSkippedCb(done);
            gameState.voteSkipPrompt(selectorId, true);

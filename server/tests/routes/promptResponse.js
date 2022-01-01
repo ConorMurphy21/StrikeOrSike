@@ -67,17 +67,18 @@ describe('promptResponse tests', () => {
 
     it('promptResponse tooLate', (done) => {
         clientSocket1.on('beginPrompt', () => {
+            clientSocket1.emit('promptResponse', 'forceSelection');
             setTimeout(() => {
                 clientSocket1.emit('promptResponse', 'response');
                 setTimeout(() => {
                     done();
                 }, 200);
-            }, 1100);
+            }, 1200);
         });
-        clientSocket1.on('promptResponse', () => {
-            assert.fail();
+        clientSocket1.on('promptResponse', (response) => {
+            assert.strictEqual(response, 'forceSelection');
         });
-        clientSocket1.emit('setOptions', {promptTimer: 0}, response => {
+        clientSocket1.emit('setOptions', {promptTimer: 0}, () => {
             clientSocket1.emit('startGame');
         });
     });

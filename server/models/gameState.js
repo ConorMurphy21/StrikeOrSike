@@ -1,4 +1,4 @@
-const prompts = require('../resources/prompts.json');
+const prompts = require('../resources/standard.txt');
 
 const defaultOptions = () => {
     return {

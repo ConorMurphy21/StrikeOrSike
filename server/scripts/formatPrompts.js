@@ -5,6 +5,16 @@ const through2 = require('through2');
 const path = require('path');
 const readline = require('readline');
 
+// fs.open('./resources/prompts/en/48_standard.txt', 'r', (err, fd) => {
+//     let buffer = Buffer.alloc(48);
+//     fs.read(fd, buffer, 0, 48,0 * 48, (err, bytesRead, buffer) => {
+//         console.log(buffer.toString().trim());
+//         //console.log(new TextEncoder().encode(buffers[0]).toString().trim());
+//     })
+// });
+//
+// return;
+
 const excludeDirFilter = through2.obj(function (item, enc, next) {
     const basename = path.basename(item.path);
     const c = basename.charAt(0);
@@ -22,9 +32,11 @@ klaw('./resources/prompts/')
         });
         // first pass: get the maximum width line length
         let maxWidth = 0;
+        let height = 0;
         lineReader.on('line', function (line) {
             const width = (new TextEncoder()).encode(line).length;
             if (width > maxWidth) maxWidth = width;
+            height++;
         }).on('close', function () {
             lineReader = readline.createInterface({
                 input: fs.createReadStream(item.path)
@@ -32,7 +44,8 @@ klaw('./resources/prompts/')
             // second pass: write a new file with:
             // width in the filename
             // each line padded to be exactly that width
-            const newName = path.join(path.dirname(item.path), (maxWidth + 1) + '_' + path.basename(item.path));
+            const newName = path.join(path.dirname(item.path),
+                (maxWidth + 1) + 'x' + height + path.basename(item.path));
             const writeStream = fs.createWriteStream(newName);
             lineReader.on('line', function (line) {
                 const width = (new TextEncoder()).encode(line).length;

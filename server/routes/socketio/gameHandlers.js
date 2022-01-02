@@ -16,6 +16,7 @@ module.exports = (io, socket) => {
         if (!room) return;
         room.state = new GameState(room, room.state.options);
         registerCallbacks(io, room);
+        setOptions(io, room);
         beginPrompt(io, room);
     });
 
@@ -29,9 +30,24 @@ module.exports = (io, socket) => {
         }
     });
 
+    // true to vote to skip, false to unvote to skip
+    socket.on('voteSkipPrompt', (vote) => {
+        const room = getRoomById(socket.id);
+        if (!room) return;
+        const state = room.state;
+        const result = state.voteSkipPrompt(socket.id, vote);
+        if (result.success) {
+            if (result.skip) {
+                skipPrompt(io, room);
+            } else {
+                io.to(room.name).emit('setSkipVoteCount', result.count);
+            }
+        }
+    });
+
     socket.on('selectSelectionType', (isStrike) => {
         const room = getRoomById(socket.id);
-        if(!room) return;
+        if (!room) return;
         const state = room.state;
         const result = state.acceptSelectionType(socket.id, isStrike);
         if (result.success) {
@@ -84,22 +100,34 @@ module.exports = (io, socket) => {
 }
 
 function registerCallbacks(io, room) {
+    const state = room.state;
 
-    room.state.registerSelectionUnsuccessfulCb(() => {
+    state.registerPromptSkippedCb(() => {
+        skipPrompt(io, room);
+    });
+
+    state.registerSelectionUnsuccessfulCb(() => {
         continueSelection(io, room);
     });
 
-    room.state.registerDisputeCompleteCb((action) => {
+    state.registerDisputeCompleteCb((action) => {
         applyDisputeAction(io, room, action);
     });
 
-    room.state.registerMatchingCompleteCb((selectorActive) => {
+    state.registerMatchingCompleteCb((selectorActive) => {
         // give a little time to show score before moving on to next selection
         if (!selectorActive) {
             setTimeout(() => {
                 continueSelection(io, room);
             }, 5000);
         }
+    });
+}
+
+function setOptions(io, room) {
+    const state = room.state;
+    io.to(room.name).emit('setOptions', {
+        promptSkipping: state.options.promptSkipping
     });
 }
 
@@ -111,7 +139,7 @@ function beginPrompt(io, room) {
             prompt: state.prompt,
             timer: state.options.promptTimer
         });
-        setTimeout(() => {
+        state.promptTimeout = setTimeout(() => {
             beginSelection(io, room);
         }, state.options.promptTimer * 1000 + 1000);
     } else {
@@ -119,14 +147,26 @@ function beginPrompt(io, room) {
     }
 }
 
+function skipPrompt(io, room) {
+    const state = room.state;
+    if (state.promptTimeout) {
+        clearTimeout(state.promptTimeout);
+        state.promptTimeout = null;
+    }
+    beginPrompt(io, room);
+}
+
 function beginSelection(io, room) {
     const state = room.state;
-    state.beginSelection();
-    io.to(room.name).emit('nextSelection',
-        {
-            selector: state.selectorId(),
-            selectionType: state.selectionType
-        });
+    if (state.beginSelection()) {
+        io.to(room.name).emit('nextSelection',
+            {
+                selector: state.selectorId(),
+                selectionType: state.selectionType
+            });
+    } else {
+        beginPrompt(io, room);
+    }
 }
 
 function continueSelection(io, room) {

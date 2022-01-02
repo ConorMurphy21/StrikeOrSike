@@ -1,7 +1,7 @@
 const assert = require('chai').assert;
 const {GameState} = require('../../models/gameState');
 
-describe('Selection Accepting tests', () => {
+describe('Automatch tests', () => {
     const selectorId = 'selector';
     const matcherId = 'matcher';
     const selectorIndex = 0;

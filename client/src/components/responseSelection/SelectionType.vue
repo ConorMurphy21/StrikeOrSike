@@ -26,8 +26,9 @@ export default {
   },
   methods: {
     selectSelectionType(strike) {
-      if (this.type !== 'choice' && this.lastPicked !== strike) {
+      if (this.type === 'choice' || this.lastPicked !== strike) {
         this.$socket.emit('selectSelectionType', strike);
+        this.lastPicked = strike;
       }
     }
   }

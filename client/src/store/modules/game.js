@@ -10,7 +10,11 @@ const state = () => ({
     selector: {},
     selectedResponse: '',
     matches: [],
-    usedResponses: []
+    usedResponses: [],
+    // optional state
+    skipVoteCount: 0,
+    // options:
+    promptSkipping: false
 });
 
 export const getters = {
@@ -66,7 +70,7 @@ const mutations = {
     setSelectionType(state, data) {
         state.selectionType = data;
     },
-    setSelectionTypeChoice(state, isChoice){
+    setSelectionTypeChoice(state, isChoice) {
         state.selectionTypeChoice = isChoice;
     },
     setSelector(state, data) {
@@ -87,6 +91,9 @@ const mutations = {
 }
 
 const socketMutations = {
+    SOCKET_setOptions(state, options) {
+        state.promptSkipping = options.promptSkipping;
+    },
     SOCKET_promptResponse(state, response) {
         state.responses.push(response);
     },
@@ -95,25 +102,29 @@ const socketMutations = {
     },
     SOCKET_gameOver(state) {
         state.scene = 'lobby';
+    },
+    SOCKET_setSkipVoteCount(state, count) {
+        state.skipVoteCount = count;
     }
 }
 
 const socketActions = {
     async SOCKET_beginPrompt({state, commit, dispatch}, data) {
         commit('setPrompt', data.prompt);
+        const currentTimer = state.timer;
         commit('setTimer', data.timer);
         commit('clearResponses');
+        commit('SOCKET_setSkipVoteCount', 0);
         commit('setScene', 'promptResponse');
-        dispatch('startTimer').then(() => {
-            // commit('setScene', 'lobby');
-        })
+        // Only start timer if it's not already started
+        if(currentTimer === 0) dispatch('startTimer');
     },
     async SOCKET_nextSelection({state, commit, rootGetters, rootState}, data) {
         const selector = rootState.room.players.find(player => player.id === data.selector);
         commit('clearMatches');
         commit('setSelector', selector);
         commit('setSelectionType', data.selectionType);
-        if(data.selectionType === 'choice'){
+        if (data.selectionType === 'choice') {
             commit('setSelectionTypeChoice', true);
         } else {
             commit('setSelectionTypeChoice', false);
@@ -157,13 +168,10 @@ const socketActions = {
 
 const actions = {
     async startTimer({state, commit}) {
-        return new Promise(async (resolve) => {
-            while (state.timer > 0) {
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                commit('setTimer', state.timer - 1);
-            }
-            resolve();
-        })
+        while (state.timer > 0) {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            commit('setTimer', state.timer - 1);
+        }
     }
 }
 

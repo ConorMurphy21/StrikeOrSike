@@ -1,47 +1,54 @@
 // retrieve meta data
 const fs = require('fs');
-const through2 = require('through2');
 const path = require('path');
-const klaw = require('klaw');
+const klawSync = require('klaw-sync');
 
-const excludeDirFilter = through2.obj(function (item, enc, next) {
+
+const regex = /^([\d]*)x([\d]*)(.*).txt$/
+
+const walkFilter = (item) => {
     const basename = path.basename(item.path);
-    const c = basename.charAt(0);
-    const startsNumeric = c >= '0' && c <= '9';
-    if (!item.stats.isDirectory() && startsNumeric) this.push(item);
-    next();
-});
+    return regex.test(basename);
+};
 
 // retrieve meta info for what prompts can be served
-const metas = []
-const promptsPath = './resources/prompts/';
-klaw(promptsPath)
-    .pipe(excludeDirFilter)
-    .on('data', item => {
+const retrieveMetas = (root) => {
+    const metas = []
+
+    const items = klawSync(root,{nodir: true}).filter(walkFilter);
+
+    items.forEach(item => {
         const lang = path.basename(path.dirname(item.path));
         const basename = path.basename(item.path);
-        const regex = /^([\d]*)x([\d]*)(.*).txt$/
-        const [_, width, height, underscoredName] = basename.match(regex);
-        const name = underscoredName.split('_').join(' ');
+        const [_, width, height, name] = basename.match(regex);
+        const test = parseInt(width);
         metas.push({
             lang,
             path: item.path,
-            width,
-            height,
+            width: parseInt(width),
+            height: parseInt(height),
             name
         });
     });
 
+    return metas;
+}
+
+const promptsRoot = './resources/prompts/';
+
 const Prompts = class {
+
+    static metas = retrieveMetas(promptsRoot);
+
     constructor(packNames, customPrompts) {
         this.customPrompts = customPrompts;
-        this.numPrompts = customPrompts.length;
+        this.numPrompts = customPrompts?.length ?? 0;
         this.packs = [];
         this.used = [];
         this.remaining = [];
         // retrieve meta for each pack
         packNames.forEach((name) => {
-            const meta = metas.find(meta => meta.name === name);
+            const meta = Prompts.metas.find(meta => meta.name === name);
             this.packs.push(meta);
             this.numPrompts += meta.height;
         });

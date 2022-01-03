@@ -4,44 +4,6 @@ const klaw = require('klaw');
 const through2 = require('through2');
 const path = require('path');
 const readline = require('readline');
-const klawSync = require('klaw-sync');
-
-// fs.open('./resources/prompts/en/48_standard.txt', 'r', (err, fd) => {
-//     let buffer = Buffer.alloc(48);
-//     fs.read(fd, buffer, 0, 48,0 * 48, (err, bytesRead, buffer) => {
-//         console.log(buffer.toString().trim());
-//         //console.log(new TextEncoder().encode(buffers[0]).toString().trim());
-//     })
-// });
-//
-// return;
-const regex = /^([\d]*)x([\d]*)(.*).txt$/
-
-const walkFilter = (item) => {
-    const basename = path.basename(item.path);
-    return regex.test(basename);
-};
-
-const metas = [];
-
-const items = klawSync('./resources/prompts/', {nodir: true}).filter(walkFilter);
-
-items.forEach(item => {
-    const lang = path.basename(path.dirname(item.path));
-    const basename = path.basename(item.path);
-    const regex = /^([\d]*)x([\d]*)(.*).txt$/
-    const [_, width, height, underscoredName] = basename.match(regex);
-    const name = underscoredName;
-    metas.push({
-        lang,
-        path: item.path,
-        width,
-        height,
-        name
-    });
-});
-
-return metas;
 
 const excludeDirFilter = through2.obj(function (item, enc, next) {
     const basename = path.basename(item.path);

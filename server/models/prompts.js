@@ -21,7 +21,6 @@ const retrieveMetas = (root) => {
         const lang = path.basename(path.dirname(item.path));
         const basename = path.basename(item.path);
         const [_, width, height, name] = basename.match(regex);
-        const test = parseInt(width);
         metas.push({
             lang,
             path: item.path,
@@ -40,7 +39,7 @@ const Prompts = class {
 
     static metas = retrieveMetas(promptsRoot);
 
-    constructor(packNames, customPrompts) {
+    constructor(packNames, customPrompts, lang = 'en') {
         this.customPrompts = customPrompts;
         this.numPrompts = customPrompts?.length ?? 0;
         this.packs = [];
@@ -48,41 +47,38 @@ const Prompts = class {
         this.remaining = [];
         // retrieve meta for each pack
         packNames.forEach((name) => {
-            const meta = Prompts.metas.find(meta => meta.name === name);
+            const meta = Prompts.metas.find(meta => meta.name === name && meta.lang === lang);
             this.packs.push(meta);
             this.numPrompts += meta.height;
         });
     }
 
-
     newPrompt() {
-        // wrap in promise to avoid blocking
-        return new Promise((resolve) => {
-            let r;
-            if(this.used.length === this.numPrompts){
-                resolve('');
-            }
-            if (this.used.length > this.numPrompts * 3 / 4) {
-                r = this._chooseFromRemaining();
-            } else {
-                r = this._chooseRegular();
-            }
+        if(this.used.length === this.numPrompts){
+            return Promise.resolve('');
+        }
+        const r = this._chooseRandomIndex();
+        return this._getPrompt(r);
+    }
+
+    _getPrompt(index) {
+        return new Promise(resolve => {
             let resolved = false;
             this.packs.forEach((pack) => {
-                if(resolved || r >= pack.height) {
-                    r -= pack.height;
+                if(resolved || index >= pack.height) {
+                    index -= pack.height;
                     return;
                 }
                 resolved = true;
-                this._getPrompt(pack, r).then(value => resolve(value));
+                this._getPromptFromPack(pack, index).then(value => resolve(value));
             });
             if(!resolved){
-                resolve(this.customPrompts[r]);
+                resolve(this.customPrompts[index]);
             }
         });
     }
 
-    _getPrompt(pack, index) {
+    _getPromptFromPack(pack, index) {
         return new Promise((resolve) => {
             fs.open(pack.path, 'r', (err, fd) => {
                 let buffer = Buffer.alloc(pack.width);
@@ -92,6 +88,14 @@ const Prompts = class {
                 });
             });
         });
+    }
+
+    _chooseRandomIndex(){
+        if (this.used.length > this.numPrompts * 3 / 4) {
+            return this._chooseFromRemaining();
+        } else {
+            return this._chooseRegular();
+        }
     }
 
     // non-deterministic but with enough prompts should be better
@@ -118,4 +122,4 @@ const Prompts = class {
     }
 }
 
-module.exports = {Prompts};
+module.exports = {Prompts, retrieveMetas};

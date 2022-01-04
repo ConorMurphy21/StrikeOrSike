@@ -29,6 +29,11 @@ describe('prompts tests', () => {
             Prompts.metas = retrieveMetas('./tests/resources/prompts');
         });
 
+        after(() => {
+            Prompts.metas = retrieveMetas('./resources/prompts');
+        });
+
+
         it('pack indexing', (done) => {
             test_pack_indexing(done);
         });

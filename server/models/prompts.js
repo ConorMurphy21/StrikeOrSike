@@ -110,14 +110,14 @@ const Prompts = class {
 
     // more consistent but more memory usage, avoided if possible but fallback on if the number of prompts is small
     _chooseFromRemaining() {
-        if (!this.remaining) {
+        if (!this.remaining.length) {
             this.remaining = Array.from({length: this.numPrompts}, (v, i) => i)
                 .filter(index => !this.used.includes(index));
         }
-        const rr = Math.floor(Math.random() * this.remaining);
+        const rr = Math.floor(Math.random() * this.remaining.length);
         const r = this.remaining[rr];
         this.used.push(r);
-        this.remaining.splice(r, 1);
+        this.remaining.splice(rr, 1);
         return r;
     }
 }

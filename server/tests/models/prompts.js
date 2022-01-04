@@ -29,18 +29,35 @@ describe('prompts tests', () => {
             Prompts.metas = retrieveMetas('./tests/resources/prompts');
         });
 
-        it('mock pack indexing', (done) => {
+        it('pack indexing', (done) => {
             test_pack_indexing(done);
         });
 
-        it('mock indexing wo customPrompts', (done) => {
+        it('indexing wo customPrompts', (done) => {
             test_indexing(done, []);
         });
 
-        it('mock indexing w customPrompts', (done) => {
+        it('indexing w customPrompts', (done) => {
             const customPrompts = ['test1', 'test2', 'test3', 'test4', 'test5'];
             test_indexing(done, customPrompts);
         });
+    });
+
+    describe('random numbers', () => {
+
+        it('all numbers used', () => {
+            const len = 300;
+            const customPrompts = [];
+            customPrompts.length = len;
+            const prompts = new Prompts([], customPrompts);
+            const used = [];
+            for(let i = 0; i < len; i++){
+                const index = prompts._chooseRandomIndex();
+                assert.notInclude(used, index);
+                used.push(index);
+            }
+        });
+
     });
 
 
@@ -58,7 +75,7 @@ function test_indexing(done, customPrompts) {
 
     let promise = Promise.resolve();
     langs.forEach(lang => {
-        promise = promise.then(test_indexing_lang(done, customPrompts, lang));
+        promise = promise.then(() => test_indexing_lang(customPrompts, lang));
     });
     promise.then(done);
 }
@@ -86,7 +103,6 @@ function test_indexing_lang(customPrompts, lang) {
             });
         });
     });
-
     return promise;
 }
 
@@ -95,22 +111,21 @@ function test_pack_indexing(done) {
         done();
         return;
     }
+    let promise = Promise.resolve();
     Prompts.metas.forEach(meta => {
         const lines = fs.readFileSync(meta.path, 'utf-8').split('\n').filter(Boolean);
-        const prompts = new Prompts([meta.name]);
-        let promise = Promise.resolve();
+        const prompts = new Prompts([meta.name], [], meta.lang);
         lines.forEach((prompt, index) => {
             promise = promise.then(() => {
                 return new Promise((resolve) => {
                     prompts._getPrompt(index).then(value => {
                         assert.strictEqual(value, prompt.trim());
-                        if (index === lines.length - 1) {
-                            done();
-                        }
+                        console.log('compare: ' + value + ' ' + prompt.trim());
                         resolve();
                     });
                 });
-            });
+            }).catch(assert.fail);
         });
     });
+    promise.then(done);
 }

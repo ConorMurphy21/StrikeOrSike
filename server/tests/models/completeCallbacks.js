@@ -25,11 +25,12 @@ describe('Complete callback tests', () => {
 
        it('Disconnect non-voter', (done) => {
            gameState.options.promptSkipping = true;
-           gameState.beginNewPrompt();
-           gameState.registerPromptSkippedCb(done);
-           gameState.voteSkipPrompt(selectorId, true);
-           players[matcherIndex].active = false;
-           gameState.disconnect(matcherId);
+           gameState.beginNewPrompt().then(() => {
+               gameState.registerPromptSkippedCb(done);
+               gameState.voteSkipPrompt(selectorId, true);
+               players[matcherIndex].active = false;
+               gameState.disconnect(matcherId);
+           });
        });
     });
 

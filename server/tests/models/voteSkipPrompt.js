@@ -8,13 +8,13 @@ describe('voteSkipPrompt tests', () => {
     const players = [];
     let gameState;
 
-    beforeEach(() => {
+    beforeEach((done) => {
         for (let i = 0; i < evenLen; i++) {
             players[i] = {id: i.toString(), active: true};
         }
         gameState = new GameState({players});
         gameState.options.promptSkipping = true;
-        gameState.beginNewPrompt();
+        gameState.beginNewPrompt().then(() => done());
     });
 
     it('VoteSkip Happy', () => {

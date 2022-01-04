@@ -1,4 +1,4 @@
-const prompts = require('../resources/prompts.json');
+const {Prompts} = require('./prompts');
 
 const defaultOptions = () => {
     return {
@@ -16,6 +16,7 @@ const GameState = class {
         this.stage = 'lobby'; // enum: 'lobby', 'response', 'responseSelection', 'responseMatching'
         this.options = options;
         if (!this.options) this.options = defaultOptions();
+        this.prompts = new Prompts(['standard']);
         this.room = room;
         this.round = 0;
         this.prompt = '';
@@ -24,7 +25,6 @@ const GameState = class {
         this.selector = 0;
         this.selectionTypeChoice = false;
         this.selectionType = '';
-        this.unusedPrompts = Array.from({length: prompts.length}, (v, i) => i);
         this.remainingSikeRetries = this.options.sikeRetries;
 
         // keeps track of how long until the response section is over
@@ -71,22 +71,23 @@ const GameState = class {
 
     /*** PROMPT RESPONSE state changes ***/
     beginNewPrompt() {
-        // check if game is over
-        if (this.round >= this.options.numRounds) return false;
-        // no more unique prompts
-        if (!this.unusedPrompts.length) return false;
+        // wrap in promise to avoid blocking
+        return new Promise((resolve) => {
+            // check if game is over
+            if (this.round >= this.options.numRounds) resolve(false);
+            // no more unique prompts
+            this.prompts.newPrompt().then(prompt => {
+                this.prompt = prompt;
+                this.stage = 'response';
 
-        const r = Math.floor(Math.random() * this.unusedPrompts.length);
-        this.prompt = prompts[this.unusedPrompts[r]];
-        this.unusedPrompts.splice(r, 1);
-        this.stage = 'response';
-
-        this.players.forEach(player => {
-            player.responses = [];
-            player.used = [];
-            player.voteSkipPrompt = false;
+                this.players.forEach(player => {
+                    player.responses = [];
+                    player.used = [];
+                    player.voteSkipPrompt = false;
+                });
+                resolve(true);
+            });
         });
-        return true;
     }
 
     acceptPromptResponse(id, response) {

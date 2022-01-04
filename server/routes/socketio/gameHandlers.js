@@ -133,18 +133,19 @@ function setOptions(io, room) {
 
 function beginPrompt(io, room) {
     const state = room.state;
-
-    if (state.beginNewPrompt()) {
-        io.to(room.name).emit('beginPrompt', {
-            prompt: state.prompt,
-            timer: state.options.promptTimer
-        });
-        state.promptTimeout = setTimeout(() => {
-            beginSelection(io, room);
-        }, state.options.promptTimer * 1000 + 1000);
-    } else {
-        io.to(room.name).emit('gameOver');
-    }
+    state.beginNewPrompt().then(contGame => {
+        if (contGame) {
+            io.to(room.name).emit('beginPrompt', {
+                prompt: state.prompt,
+                timer: state.options.promptTimer
+            });
+            state.promptTimeout = setTimeout(() => {
+                beginSelection(io, room);
+            }, state.options.promptTimer * 1000 + 1000);
+        } else {
+            io.to(room.name).emit('gameOver');
+        }
+    });
 }
 
 function skipPrompt(io, room) {

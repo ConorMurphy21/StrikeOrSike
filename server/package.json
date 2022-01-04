@@ -1,23 +1,26 @@
 {
-  "name": "hitormiss",
+  "name": "strikeorsike-server",
   "version": "0.0.0",
   "private": true,
   "scripts": {
     "start": "node bin/www",
-    "test": "mocha tests --recursive --exit"
+    "test": "mocha tests --recursive --exit",
+    "formatPrompts": "node scripts/formatPrompts"
   },
   "dependencies": {
     "cors": "^2.8.5",
     "debug": "~2.6.9",
     "express": "~4.16.1",
+    "klaw-sync": "^6.0.0",
     "morgan": "~1.9.1",
     "socket.io": "^4.3.2"
   },
   "devDependencies": {
     "chai": "^4.3.4",
     "express-session": "^1.17.2",
+    "klaw": "^4.0.1",
     "mocha": "^9.1.3",
-    "socket.io-client": "^4.4.0"
+    "socket.io-client": "^4.4.0",
+    "through2": "^4.0.2"
   }
-
 }

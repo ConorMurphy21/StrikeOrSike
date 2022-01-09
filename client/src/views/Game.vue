@@ -15,7 +15,7 @@ if (!store.state.room.roomName) {
 </script>
 
 <template>
-  <div class="w-75 h-100 border rounded">
+  <div class="w-75 h-100 border rounded bg-secondary">
     <component :is="scene"></component>
   </div>
 </template>

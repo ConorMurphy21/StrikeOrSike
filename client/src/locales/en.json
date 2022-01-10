@@ -6,6 +6,14 @@
   "activeDisputeMessage": "Does {response} fit the category?",
   "skipPrompt": "Vote Skip",
 
+  "*** HOME STRINGS ***": "",
+  "usernameLabel": "Name",
+  "usernamePlaceholder": "your name",
+  "roomNameLabel": "Room Name",
+  "roomNamePlaceholder": "room name",
+  "joinGame": "Join Game",
+  "createGame": "Create Game",
+
   "*** HOME ERRORS ***": "",
   "roomTaken": "A room with that name is already taken",
   "badRoom": "Empty room name",

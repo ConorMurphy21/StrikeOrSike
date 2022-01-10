@@ -5,19 +5,20 @@
       <h4 class="mb-3" v-if="error" v-t="error"/>
 
       <div class="mb-3">
-        <label for="username" class="form-label">Name</label>
-        <input type="text" class="form-control" id="username" ref="username" placeholder="your name"
-               v-model="form.name">
+        <label for="username" class="form-label" v-t="'usernameLabel'"/>
+        <input type="text" class="form-control" id="username" ref="username"
+               :placeholder="$t('usernamePlaceholder')" v-model="form.name">
       </div>
 
       <div class="mb-3">
-        <label for="room-name" class="form-label">Room Name</label>
-        <input type="text" class="form-control" id="room-name" placeholder="room name" v-model="form.roomName">
+        <label for="room-name" class="form-label" v-t="'roomNameLabel'"/>
+        <input type="text" class="form-control" id="room-name"
+               :placeholder="$t('roomNamePlaceholder')" v-model="form.roomName">
       </div>
 
       <div class="d-flex flex-row justify-content-around align-items-center mt-5">
-        <button type="submit" class="btn btn-blue">Join Game</button>
-        <button type="button" @click="onSubmit(false)" class="btn btn-red">Create Game</button>
+        <button type="submit" class="btn btn-blue" v-t="'joinGame'"/>
+        <button type="button" @click="onSubmit(false)" class="btn btn-red" v-t="'createGame'"/>
       </div>
     </form>
   </div>
@@ -67,7 +68,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 .main-content {
   min-width: 350px;
   width: 50%;
@@ -100,7 +100,5 @@ h4 {
   min-width: 150px;
   height: 60px;
 }
-
-
 </style>
 

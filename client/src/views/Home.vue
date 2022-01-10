@@ -1,21 +1,25 @@
 <template>
-  <div class="w-75 h-100 border rounded">
-    <form class="form" v-on:submit.prevent="onSubmit">
-      <input type="radio" class="btn-check" name="options" :value="true" id="join-game" v-model="joinGame">
-      <label class="btn btn-primary" for="join-game">join game</label>
-      <input type="radio" class="btn-check" name="options" :value="false" id="create-game" v-model="joinGame">
-      <label class="btn btn-primary" for="create-game">create game</label> <br>
+  <div class="main-content w-50 p-5">
+    <form class="form" @submit.prevent="onSubmit(true)">
 
-      <label for="username" class="form-label">Name</label>
-      <input type="text" class="form-control" id="username" ref="username" placeholder="your name" v-model="form.name">
-      <label for="room-name" class="form-label">Room Name</label>
-      <input type="text" class="form-control" id="room-name" placeholder="room name" v-model="form.roomName">
+      <h4 class="mb-3" v-if="error" v-t="error"/>
 
-      <!-- Can use either 2 methods to get localization, one looks better, one is faster -->
-      <h4 v-if="error" v-t="error"></h4>
-      <!-- <h4 v-if="error">{{$t(error)}}</h4> -->
+      <div class="mb-3">
+        <label for="username" class="form-label" v-t="'usernameLabel'"/>
+        <input type="text" class="form-control" id="username" ref="username"
+               :placeholder="$t('usernamePlaceholder')" v-model="form.name">
+      </div>
 
-      <button type="submit" class="btn btn-primary">{{ joinGame ? 'join game' : 'create game' }}</button>
+      <div class="mb-3">
+        <label for="room-name" class="form-label" v-t="'roomNameLabel'"/>
+        <input type="text" class="form-control" id="room-name"
+               :placeholder="$t('roomNamePlaceholder')" v-model="form.roomName">
+      </div>
+
+      <div class="d-flex flex-row justify-content-around align-items-center mt-5">
+        <button type="submit" class="btn btn-blue" v-t="'joinGame'"/>
+        <button type="button" @click="onSubmit(false)" class="btn btn-red" v-t="'createGame'"/>
+      </div>
     </form>
   </div>
 </template>
@@ -28,7 +32,6 @@ const {mapMutations} = createNamespacedHelpers('room')
 export default {
   data() {
     return {
-      joinGame: true,
       form: {
         name: '',
         roomName: this.$route.query.name
@@ -44,13 +47,14 @@ export default {
       'setName',
       'setRoomName'
     ]),
-    onSubmit() {
-      const event = this.joinGame ? 'joinRoom' : 'createRoom';
+    onSubmit(joinGame) {
+      const event = joinGame ? 'joinRoom' : 'createRoom';
       this.$socket.emit(event, this.form.name, this.form.roomName);
     }
   },
   sockets: {
     joinRoom: function (data) {
+      console.dir(data);
       if (data.success) {
         this.setName(this.form.name);
         this.setRoomName(data.roomName);
@@ -62,4 +66,39 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.main-content {
+  min-width: 350px;
+  width: 50%;
+}
+
+input {
+  background-color: $primary;
+  color: $gray-800 !important;
+  text-align: center;
+  height: 70px;
+}
+
+input::placeholder {
+  color: $gray-700;
+}
+
+input:focus {
+  background-color: $primary;
+}
+
+h4 {
+  text-align: center;
+  color: $red;
+  font: inherit;
+  font-size: 1.6rem;
+}
+
+.btn {
+  width: 30%;
+  min-width: 150px;
+  height: 60px;
+}
+</style>
 

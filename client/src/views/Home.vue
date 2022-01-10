@@ -2,6 +2,8 @@
   <div class="main-content w-50 p-5">
     <form class="form" @submit.prevent="onSubmit(true)">
 
+      <h4 class="mb-3" v-if="error" v-t="error"/>
+
       <div class="mb-3">
         <label for="username" class="form-label">Name</label>
         <input type="text" class="form-control" id="username" ref="username" placeholder="your name"
@@ -12,10 +14,6 @@
         <label for="room-name" class="form-label">Room Name</label>
         <input type="text" class="form-control" id="room-name" placeholder="room name" v-model="form.roomName">
       </div>
-
-      <!-- Can use either 2 methods to get localization, one looks better, one is faster -->
-      <h4 v-if="error" v-t="error"/>
-      <!-- <h4 v-if="error">{{$t(error)}}</h4> -->
 
       <div class="d-flex flex-row justify-content-around align-items-center mt-5">
         <button type="submit" class="btn btn-blue">Join Game</button>
@@ -92,6 +90,9 @@ input:focus {
 
 h4 {
   text-align: center;
+  color: $red;
+  font: inherit;
+  font-size: 1.6rem;
 }
 
 .btn {

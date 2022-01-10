@@ -1,6 +1,6 @@
 <template>
-  <div class="container">
-    <div class="vh-100 d-flex flex-column justify-content-center align-items-center">
+  <div class="container vh-100">
+    <div class="h-100 d-flex flex-column justify-content-center align-items-center">
       <header>
         <h1 class="text-center mb-5 text-primary" style="min-height: 20%">
           Strike or Sike
@@ -10,12 +10,12 @@
         <router-view/>
       </main>
       <!-- A really jenky way to approximately center the router-->
-      <div style="min-height: 10%" />
+      <div style="min-height: 10%"/>
     </div>
   </div>
 </template>
 
 <style lang="scss">
-  @import '@/styles/app';
+@import '@/styles/app';
 </style>
 

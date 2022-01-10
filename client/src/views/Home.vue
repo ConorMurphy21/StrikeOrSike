@@ -1,12 +1,6 @@
 <template>
-  <div class="w-50 h-100 border-boi bg-secondary p-5">
-    <form class="form" v-on:submit.prevent="onSubmit">
-      <div class="mb-3">
-        <input type="radio" class="btn-check" name="options" :value="true" id="join-game" v-model="joinGame">
-        <label class="btn btn-strike w-25 mx-2" for="join-game">join game</label>
-        <input type="radio" class="btn-check" name="options" :value="false" id="create-game" v-model="joinGame">
-        <label class="btn btn-sike w-25 mx-2" for="create-game">create game</label> <br>
-      </div>
+  <div class="w-50 border-boi bg-secondary p-5">
+    <form class="form" @submit.prevent="onSubmit(true)">
 
       <div class="mb-3">
         <label for="username" class="form-label">Name</label>
@@ -23,7 +17,10 @@
       <h4 v-if="error" v-t="error"></h4>
       <!-- <h4 v-if="error">{{$t(error)}}</h4> -->
 
-      <button type="submit" class="btn btn-strike w-25">{{ joinGame ? 'join game' : 'create game' }}</button>
+      <div class="d-flex flex-row justify-content-around align-items-center">
+        <button type="submit" class="btn btn-sike w-25">Join Game</button>
+        <button @click="onSubmit(false)" class="btn btn-strike w-25">Create Game</button>
+      </div>
     </form>
   </div>
 </template>
@@ -36,7 +33,6 @@ const {mapMutations} = createNamespacedHelpers('room')
 export default {
   data() {
     return {
-      joinGame: true,
       form: {
         name: '',
         roomName: this.$route.query.name
@@ -52,8 +48,8 @@ export default {
       'setName',
       'setRoomName'
     ]),
-    onSubmit() {
-      const event = this.joinGame ? 'joinRoom' : 'createRoom';
+    onSubmit(joinGame) {
+      const event = joinGame ? 'joinRoom' : 'createRoom';
       this.$socket.emit(event, this.form.name, this.form.roomName);
     }
   },
@@ -73,15 +69,15 @@ export default {
 
 <style lang="scss" scoped>
 .border-boi {
-  border: 7px solid $cyan;
+  //border: 5px solid $gray-400;
   border-radius: 15px;
-  box-shadow: 7px 7px 5px $gray-400;
+  box-shadow: 7px 7px 5px 2px $gray-400;
 }
 
 input {
   background-color: $primary;
   color: $sike !important;
-  font-size: 14px;
+  font-size: 20px;
   font-weight: bold;
 }
 

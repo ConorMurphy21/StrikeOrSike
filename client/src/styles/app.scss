@@ -2,6 +2,38 @@
 @import "variables";
 
 
+@font-face {
+  font-family: "Pacifico";
+  src: local("Pacifico"),   url(@/fonts/Pacifico/Pacifico-regular.ttf) format("truetype");
+}
+
+
+@font-face {
+  font-family: "Quicksand";
+  src: local("Quicksand"),   url(@/fonts/Quicksand/Quicksand-VariableFont_wght.ttf) format("truetype");
+}
+
+
+
 body {
   background-color: #810515;
+  font-family: $main-font;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.main-content {
+  border-radius: 15px;
+  box-shadow: 7px 7px 5px 2px $gray-500;
+  background-color: $secondary;
+}
+
+.btn {
+  border-radius: 0.7rem;
+  font: inherit;
+}
+
+.form-control {
+  border-radius: 0.7rem;
+  font: inherit;
 }

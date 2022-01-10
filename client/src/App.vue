@@ -1,19 +1,18 @@
 <template>
-  <div class="container vh-100">
-    <div class="h-100 d-flex flex-column justify-content-center align-items-center">
-      <header>
-        <h1 class="text-center mb-5 text-primary" style="min-height: 20%">
-          Strike or Sike
-        </h1>
-      </header>
-      <main class="w-100 mb-5 d-flex justify-content-center align-items-center" style="min-height: 70%;">
-        <router-view/>
-      </main>
+  <div class="container vh-100 d-flex flex-column justify-content-top align-items-center">
+    <img class="my-3" src="@/assets/logo.png" alt="Strike Or Sike">
+    <router-view/>
+    <img class="my-3 d-none" src="@/assets/logo.png" alt="Strike Or Sike">
       <!-- A really jenky way to approximately center the router-->
-      <div style="min-height: 10%"/>
-    </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+img {
+  min-width: 350px;
+  width: 55%;
+}
+</style>
 
 <style lang="scss">
 @import '@/styles/app';

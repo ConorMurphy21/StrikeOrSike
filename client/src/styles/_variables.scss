@@ -3,19 +3,23 @@
 @import "~bootstrap/scss/functions";
 
 // 2. Include any default variable overrides here
-$strike: #ff6415;
-$sike: #165dcf;
-$primary: $strike;
+$orange: #ff6415;
+$blue: #165dcf;
+$red: #eb233d;
+$primary: $orange;
 $secondary: #f6f3f0;
-$neutral: #eb233d;
+$dark: #212529;
+
+$main-font: Quicksand, "Lucida Handwriting", cursive;
+$header-font: Pacifico, "Brush Script MT", cursive;
 
 $theme-colors: (
         "primary":    $primary,
         "secondary":  $secondary,
-        "strike":     $strike,
-        "sike":       $sike,
-        "neutral":    $neutral
-
+        "orange":     $orange,
+        "blue":       $blue,
+        "red":        $red,
+        "dark":       $dark
 );
 
 // 3. Include remainder of required Bootstrap stylesheets

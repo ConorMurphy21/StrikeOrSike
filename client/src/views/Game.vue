@@ -15,7 +15,7 @@ if (!store.state.room.roomName) {
 </script>
 
 <template>
-  <div class="w-75 h-100 border rounded bg-secondary">
+  <div class="main-content w-75">
     <component :is="scene"></component>
   </div>
 </template>
@@ -58,3 +58,8 @@ export default {
 }
 </script>
 
+<style lang="scss" scoped>
+.main-content {
+  height: 70vh;
+}
+</style>

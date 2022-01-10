@@ -1,5 +1,5 @@
 <template>
-  <div class="w-50 border-boi bg-secondary p-5">
+  <div class="main-content w-50 p-5">
     <form class="form" @submit.prevent="onSubmit(true)">
 
       <div class="mb-3">
@@ -14,12 +14,12 @@
       </div>
 
       <!-- Can use either 2 methods to get localization, one looks better, one is faster -->
-      <h4 v-if="error" v-t="error"></h4>
+      <h4 v-if="error" v-t="error"/>
       <!-- <h4 v-if="error">{{$t(error)}}</h4> -->
 
-      <div class="d-flex flex-row justify-content-around align-items-center">
-        <button type="submit" class="btn btn-sike w-25">Join Game</button>
-        <button @click="onSubmit(false)" class="btn btn-strike w-25">Create Game</button>
+      <div class="d-flex flex-row justify-content-around align-items-center mt-5">
+        <button type="submit" class="btn btn-blue">Join Game</button>
+        <button type="button" @click="onSubmit(false)" class="btn btn-red">Create Game</button>
       </div>
     </form>
   </div>
@@ -55,6 +55,7 @@ export default {
   },
   sockets: {
     joinRoom: function (data) {
+      console.dir(data);
       if (data.success) {
         this.setName(this.form.name);
         this.setRoomName(data.roomName);
@@ -68,21 +69,37 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.border-boi {
-  //border: 5px solid $gray-400;
-  border-radius: 15px;
-  box-shadow: 7px 7px 5px 2px $gray-400;
+
+.main-content {
+  min-width: 350px;
+  width: 50%;
 }
 
 input {
   background-color: $primary;
-  color: $sike !important;
-  font-size: 20px;
-  font-weight: bold;
+  color: $gray-800 !important;
+  text-align: center;
+  height: 70px;
+}
+
+input::placeholder {
+  color: $gray-700;
 }
 
 input:focus {
   background-color: $primary;
 }
+
+h4 {
+  text-align: center;
+}
+
+.btn {
+  width: 30%;
+  min-width: 150px;
+  height: 60px;
+}
+
+
 </style>
 

@@ -1,11 +1,4 @@
 {
-  "*** GAME MESSAGES ***": "",
-  "passiveSelectionMessage": "{player} is trying to {selectionType}",
-  "activeMatchingMessage": "{player} selected {response}, do you have a match?",
-  "passiveDisputeMessage": "Your friends are deciding if {response} fits the category",
-  "activeDisputeMessage": "Does {response} fit the category?",
-  "skipPrompt": "Vote Skip",
-
   "*** HOME STRINGS ***": "",
   "usernameLabel": "Name",
   "usernamePlaceholder": "your name",
@@ -20,5 +13,15 @@
   "badName": "Empty name",
   "roomCannotStartWithNum": "Room name cannot start with a number",
   "invalidCharacter": "Unrecognized character in room name",
-  "inactiveRoom": "Room closed due to inactivity"
+  "inactiveRoom": "Room closed due to inactivity",
+
+  "*** LOBBY STRINGS ***": "",
+  "players": "Players",
+
+  "*** GAME MESSAGES ***": "",
+  "passiveSelectionMessage": "{player} is trying to {selectionType}",
+  "activeMatchingMessage": "{player} selected {response}, do you have a match?",
+  "passiveDisputeMessage": "Your friends are deciding if {response} fits the category",
+  "activeDisputeMessage": "Does {response} fit the category?",
+  "skipPrompt": "Vote Skip"
 }

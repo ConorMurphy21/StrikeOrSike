@@ -3,22 +3,37 @@ import PlayerCard from '@/components/lobby/PlayerCard.vue'
 </script>
 
 <template>
-  <div class="w-100 d-flex flex-column justify-content-center align-items-center mb-5">
-    <div v-for="player in players" class="w-75">
-      <player-card v-bind:player="player"/>
+  <div class="player-list d-flex flex-row justify-content-evenly w-100 gap-4 px-4 flex-grow-1">
+    <div class="d-flex flex-column justify-content-start align-items-center w-50 gap-4" v-for="column in columns">
+      <player-card v-for="player in column" :player="player"/>
     </div>
   </div>
 </template>
 
 <script>
 import {createNamespacedHelpers} from 'vuex';
-const { mapState } = createNamespacedHelpers('room')
+
+const {mapState} = createNamespacedHelpers('room')
 
 export default {
   computed: {
     ...mapState([
-        'players'
-    ])
+      'players'
+    ]),
+    columns() {
+      const columns = [[], []]
+      for (let i = 0; i < this.players.length; i++) {
+        columns[i % 2].push(this.players[i]);
+      }
+      return columns;
+    }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.player-list {
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+</style>

@@ -13,27 +13,24 @@
   src: local("Quicksand"),   url(@/fonts/Quicksand/Quicksand-VariableFont_wght.ttf) format("truetype");
 }
 
-
-
 body {
-  background-color: #810515;
+  background-color: $burgundy;
   font-family: $main-font;
-  font-size: 1.2rem;
   font-weight: 700;
+  font-size: 1.2rem;
 }
 
 .main-content {
   border-radius: 15px;
-  box-shadow: 7px 7px 5px 2px $gray-500;
+  box-shadow: 6px 6px 6px 2px $gray-600;
   background-color: $secondary;
 }
 
-.btn {
-  border-radius: 0.7rem;
+.form-control, .btn {
+  border-radius: $border-radius;
   font: inherit;
 }
 
-.form-control {
-  border-radius: 0.7rem;
+h1, h2, h3, h4, h5, h6 {
   font: inherit;
 }

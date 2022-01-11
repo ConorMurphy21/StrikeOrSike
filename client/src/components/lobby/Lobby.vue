@@ -3,10 +3,12 @@ import PlayerList from '@/components/lobby/PlayerList.vue'
 </script>
 
 <template>
-  <div class="w-100 h-100 d-flex flex-column justify-content-between align-items-center p-3">
+  <div class="w-100 h-100 d-flex flex-column justify-content-between align-items-center gap-3 pt-1 pb-4">
+    <h1 v-t="'players'"/>
+
     <player-list/>
 
-    <button class="btn btn-primary w-50 fs-4"
+    <button class="btn btn-blue fs-4"
             :class="{'d-none': !self || !self.leader}" @click="startGame">Start</button>
   </div>
 </template>
@@ -28,3 +30,17 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+h1 {
+  font-family: $header-font !important;
+  font-size: 4rem;
+  font-weight: normal;
+  color: $red;
+}
+
+.btn {
+  height: 60px;
+  width: 30%;
+}
+</style>

@@ -46,4 +46,11 @@ export default {
 }
 </script>
 
+<style>
+h1 {
+  font-size: 2.75rem;
+  font-weight: 650;
+}
+</style>
+
 

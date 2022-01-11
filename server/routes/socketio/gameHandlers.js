@@ -103,6 +103,7 @@ function registerCallbacks(io, room) {
     const state = room.state;
 
     state.registerPromptSkippedCb(() => {
+        console.log('skipping from cb');
         skipPrompt(io, room);
     });
 
@@ -140,6 +141,7 @@ function beginPrompt(io, room) {
                 timer: state.options.promptTimer
             });
             state.promptTimeout = setTimeout(() => {
+                console.log(new Date());
                 beginSelection(io, room);
             }, state.options.promptTimer * 1000 + 1000);
         } else {
@@ -154,6 +156,7 @@ function skipPrompt(io, room) {
         clearTimeout(state.promptTimeout);
         state.promptTimeout = null;
     }
+    console.log('skipping prompt');
     beginPrompt(io, room);
 }
 
@@ -166,6 +169,7 @@ function beginSelection(io, room) {
                 selectionType: state.selectionType
             });
     } else {
+        console.log('selection failed to start');
         beginPrompt(io, room);
     }
 }

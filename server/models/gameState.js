@@ -96,6 +96,9 @@ const GameState = class {
         }
         if (this.stage === 'response') {
             const playerState = this.players.find(player => player.id === id);
+            if (!playerState){
+                return {error: 'spectator'};
+            }
             if (playerState.responses.find(res => this._matches(res, response))) {
                 return {error: 'duplicateResponse'};
             }
@@ -111,6 +114,7 @@ const GameState = class {
             return {error: 'badRequest'};
         }
         const playerState = this.players.find(player => player.id === id);
+        if(!playerState) return {error: 'spectator'};
         playerState.voteSkipPrompt = !!vote;
         return this._skipPromptAction();
     }
@@ -262,6 +266,7 @@ const GameState = class {
             return {error: 'badRequest'};
         }
         const playerState = this.players.find(player => player.id === id);
+        if(!playerState) return {error: 'spectator'};
         playerState.sikeVote = vote ? 1 : -1;
         return {success: true, action: this._voteUpdateAction()};
     }
@@ -322,6 +327,7 @@ const GameState = class {
     acceptMatch(id, match) {
         const selector = this.players[this.selector];
         const matcher = this.players.find(player => player.id === id);
+        if(!matcher) return {error: 'spectator'};
         if (matcher.matchingComplete) return {error: 'duplicateRequest'};
         if (this.stage !== 'responseMatching' || selector.id === id) return {error: 'badRequest'};
 

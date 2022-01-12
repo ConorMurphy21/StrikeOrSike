@@ -19,7 +19,8 @@
   "players": "Players",
 
   "*** GAME MESSAGES ***": "",
-  "passiveSelectionMessage": "{player} is trying to {selectionType}",
+  "activeSelectionMessage": "You are selecting a...",
+  "passiveSelectionMessage": "{player} is selecting a...",
   "activeMatchingMessage": "{player} selected {response}, do you have a match?",
   "passiveDisputeMessage": "Your friends are deciding if {response} fits the category",
   "activeDisputeMessage": "Does {response} fit the category?",

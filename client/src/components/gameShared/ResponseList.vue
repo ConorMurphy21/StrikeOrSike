@@ -3,9 +3,9 @@
     <div class="list-group w-100 h-100">
       <div v-for="(response, index) in responses"
            class='list-group-item'
-           :class="{'list-group-item-action': selectable,
+           :class="{'list-group-item-action': selectable && !used(response),
                     'active': selected === index,
-                    'list-group-item-danger': used(response)}"
+                    'list-group-item-red': used(response)}"
            @click="select(index, response)">
         {{ response }}
       </div>
@@ -43,10 +43,11 @@ export default {
         }
       }
     },
-    used(response){
+    used(response) {
       return this.usedResponses.includes(response);
     }
   }
 }
 </script>
+
 

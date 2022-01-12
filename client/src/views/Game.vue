@@ -23,8 +23,7 @@ if (!store.state.room.roomName) {
 <script>
 import Lobby from '@/components/lobby/Lobby.vue'
 import PromptResponse from '@/components/promptResponse/PromptResponse.vue'
-import ActiveSelection from '@/components/responseSelection/ActiveSelection.vue';
-import PassiveSelection from '@/components/responseSelection/PassiveSelection.vue';
+import Selection from '@/components/responseSelection/Selection.vue';
 import ActiveDispute from '@/components/dispute/ActiveDispute.vue';
 import PassiveDispute from '@/components/dispute/PassiveDispute.vue';
 import ActiveMatching from '@/components/responseMatching/ActiveMatching.vue';
@@ -38,8 +37,7 @@ export default {
   components: {
     Lobby,
     PromptResponse,
-    ActiveSelection,
-    PassiveSelection,
+    Selection,
     ActiveDispute,
     PassiveDispute,
     ActiveMatching,

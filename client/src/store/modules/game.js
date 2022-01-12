@@ -20,6 +20,9 @@ const state = () => ({
 });
 
 export const getters = {
+    isSelector(state, getters, rootState, rootGetters) {
+        return state.selector.id === rootGetters['room/self'].id;
+    },
     roundPoints(state) {
         if (state.selectionType === 'strike') {
             let count = 0;
@@ -134,11 +137,7 @@ const socketActions = {
         } else {
             commit('setSelectionTypeChoice', false);
         }
-        if (selector.id === rootGetters['room/self'].id) {
-            commit('setScene', 'activeSelection');
-        } else {
-            commit('setScene', 'passiveSelection');
-        }
+        commit('setScene', 'Selection');
     },
     async SOCKET_beginDispute({state, commit, rootGetters}, response) {
         commit('setSelectedResponse', response);
@@ -179,7 +178,7 @@ const actions = {
         const maxTick = initialTimer * (1000 / interval);
         let expected = Date.now() + interval;
         let dt = 0;
-        for (let tick = 0; tick <= maxTick; tick++) {
+        for (let tick = 1; tick <= maxTick; tick++) {
             await new Promise(resolve => {
                 const timeoutId = setTimeout(resolve, Math.max(0, interval - dt));
                 commit('setTimeoutId', timeoutId);

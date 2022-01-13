@@ -5,9 +5,9 @@ import SelectionType from '@/components/responseSelection/SelectionType.vue';
 
 <template>
   <div class="w-100 h-100 d-flex flex-column justify-content-start align-items-center p-3">
-    <h1>{{ prompt }}</h1>
-    <h3 v-if="!isSelector" v-t="{ path: 'passiveSelectionMessage', args: { player: selector.name} }"/>
-    <h3 v-else v-t="'activeSelectionMessage'"/>
+    <h1 class="text-center">{{ prompt }}</h1>
+    <h3 class="text-center" v-if="!isSelector" v-t="{ path: 'passiveSelectionMessage', args: { player: selector.name} }"/>
+    <h3 class="text-center" v-else v-t="'activeSelectionMessage'"/>
     <selection-type/>
     <response-list :selectable="isSelector" v-model="response"/>
   </div>

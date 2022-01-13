@@ -6,7 +6,7 @@ import VoteSkip from '@/components/promptResponse/VoteSkip.vue';
 
 <template>
   <div class="w-100 h-100 d-flex flex-column justify-content-between align-items-center p-3">
-    <h1>{{ prompt }}</h1>
+    <h1 class="text-center">{{ prompt }}</h1>
     <vote-skip v-if="promptSkipping"></vote-skip>
     <response-list :selectable="false"/>
     <input ref="resInput" type="text" class="form-control w-75" v-model="response" @keyup.enter="sendResponse"/>

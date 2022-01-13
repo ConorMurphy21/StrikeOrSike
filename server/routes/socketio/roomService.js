@@ -1,9 +1,9 @@
 
 const {roomService} = require('../../models/rooms');
 // 1 minute
-//const TIMEOUT = 60 * 1000;
+const TIMEOUT = 60 * 1000;
 // 1 second
-const TIMEOUT = 1000;
+//const TIMEOUT = 1000;
 // 10 minutes
 const MAX_INACTIVITY = 10 * 60 * 1000;
 // 30 seconds

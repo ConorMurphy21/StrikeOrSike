@@ -137,7 +137,6 @@ const GameState = class {
             this.selectionType = 'choice';
             this.selectionTypeChoice = true;
         }
-
         // this.selectionType = 'choice';
         // this.selectionTypeChoice = true;
     }

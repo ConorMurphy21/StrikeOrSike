@@ -14,6 +14,7 @@ import {createNamespacedHelpers} from 'vuex';
 const {mapState, mapGetters} = createNamespacedHelpers('game');
 import StrikeImg from '@/assets/strike.png';
 import SikeImg from '@/assets/sike.png';
+import ChoiceImg from '@/assets/choice.png';
 
 export default {
   data() {
@@ -35,6 +36,7 @@ export default {
       } else if(this.type === 'sike'){
         return SikeImg;
       }
+      return ChoiceImg;
     }
 
   },
@@ -51,7 +53,8 @@ export default {
 
 <style lang="scss" scoped>
 button{
-  font: $header-font;
+  font-family: $main-font;
+  font-size: 1.4rem;
 }
 img{
   max-width: 35%;

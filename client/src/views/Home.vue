@@ -41,6 +41,7 @@ export default {
   },
   mounted() {
     this.$refs.username.focus();
+    this.$store.reset();
   },
   methods: {
     ...mapMutations([

@@ -1,9 +1,9 @@
 <template>
   <div class="d-flex flex-row align-items-center justify-content-around w-75">
-    <button v-if="choice && isSelector" class="btn btn-primary w-25"
+    <button v-if="choice && isSelector" class="btn btn-red w-25"
             @click="selectSelectionType(true)">Strike</button>
-    <h1>{{ type }}</h1>
-    <button v-if="choice && isSelector" class="btn btn-primary w-25"
+    <img :src="typeImg" :alt="$t(type)">
+    <button v-if="choice && isSelector" class="btn btn-blue w-25"
             @click="selectSelectionType(false)">Sike</button>
   </div>
 </template>
@@ -12,6 +12,8 @@
 import {createNamespacedHelpers} from 'vuex';
 
 const {mapState, mapGetters} = createNamespacedHelpers('game');
+import StrikeImg from '@/assets/strike.png';
+import SikeImg from '@/assets/sike.png';
 
 export default {
   data() {
@@ -26,7 +28,15 @@ export default {
     }),
     ...mapGetters([
         'isSelector'
-    ])
+    ]),
+    typeImg(){
+      if(this.type === 'strike'){
+        return StrikeImg;
+      } else if(this.type === 'sike'){
+        return SikeImg;
+      }
+    }
+
   },
   methods: {
     selectSelectionType(strike) {
@@ -38,4 +48,18 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+button{
+  font: $header-font;
+}
+img{
+  max-width: 35%;
+  color: $black;
+  font-family: $header-font !important;
+  font-weight: normal;
+  font-size: 3rem;
+  text-align: center;
+}
+</style>
 

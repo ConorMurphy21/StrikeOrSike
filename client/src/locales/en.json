@@ -1,4 +1,9 @@
 {
+  "strikeOrSike": "Strike or Sike",
+  "strike": "Strike",
+  "sike": "Sike",
+  "choice": "Choice",
+
   "*** HOME STRINGS ***": "",
   "usernameLabel": "Name",
   "usernamePlaceholder": "your name",
@@ -17,6 +22,7 @@
 
   "*** LOBBY STRINGS ***": "",
   "players": "Players",
+  "startGame": "Start",
 
   "*** GAME MESSAGES ***": "",
   "activeSelectionMessage": "You are selecting a...",

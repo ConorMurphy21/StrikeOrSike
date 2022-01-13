@@ -1,6 +1,6 @@
 <template>
   <div class="container vh-100 d-flex flex-column justify-content-top align-items-center">
-    <img class="my-3" src="@/assets/logo.png" alt="Strike Or Sike">
+    <img class="my-3" src="@/assets/logo.png" :alt="$t('strikeOrSike')">
     <router-view/>
   </div>
 </template>

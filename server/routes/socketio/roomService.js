@@ -5,9 +5,9 @@ const {roomService} = require('../../models/rooms');
 // 1 second
 const TIMEOUT = 1000;
 // 10 minutes
-//const MAX_INACTIVITY = 10 * 60 * 1000;
+const MAX_INACTIVITY = 10 * 60 * 1000;
 // 30 seconds
-const MAX_INACTIVITY = 30 * 1000;
+//const MAX_INACTIVITY = 30 * 1000;
 
 module.exports = (io) => {
     setInterval(() => cleanup(io), TIMEOUT);

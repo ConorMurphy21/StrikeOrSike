@@ -74,14 +74,14 @@ function test_indexing(done, customPrompts) {
         return;
     }
     const langs = [];
-    Prompts.metas.forEach(meta => {
+    for (const meta of Prompts.metas) {
         if(!langs.includes(meta.lang)) langs.push(meta.lang);
-    });
+    }
 
     let promise = Promise.resolve();
-    langs.forEach(lang => {
+    for (const lang of langs) {
         promise = promise.then(() => test_indexing_lang(customPrompts, lang));
-    });
+    }
     promise.then(done);
 }
 
@@ -90,15 +90,16 @@ function test_indexing_lang(customPrompts, lang) {
     let lines = [];
     const packs = [];
 
-    Prompts.metas.filter(meta => meta.lang === lang).forEach(meta => {
-        packs.push(meta.name);
-        lines = lines.concat(fs.readFileSync(meta.path, 'utf-8').split('\n').filter(Boolean));
-    });
+    for (const meta1 of Prompts.metas.filter(meta => meta.lang === lang)) {
+        packs.push(meta1.name);
+        lines = lines.concat(fs.readFileSync(meta1.path, 'utf-8').split('\n').filter(Boolean));
+    }
     lines = lines.concat(customPrompts);
 
     const prompts = new Prompts(packs, customPrompts, lang);
     let promise = Promise.resolve();
-    lines.forEach((prompt, index) => {
+    for (const prompt of lines) {
+        const index = lines.indexOf(prompt);
         promise = promise.then(() => {
             return new Promise((resolve) => {
                 prompts._getPrompt(index).then(value => {
@@ -107,7 +108,7 @@ function test_indexing_lang(customPrompts, lang) {
                 });
             });
         });
-    });
+    }
     return promise;
 }
 
@@ -117,7 +118,7 @@ function test_pack_indexing(done) {
         return;
     }
     let promise = Promise.resolve();
-    Prompts.metas.forEach(meta => {
+    for (const meta of Prompts.metas) {
         const lines = fs.readFileSync(meta.path, 'utf-8').split('\n').filter(Boolean);
         const prompts = new Prompts([meta.name], [], meta.lang);
         lines.forEach((prompt, index) => {
@@ -125,12 +126,11 @@ function test_pack_indexing(done) {
                 return new Promise((resolve) => {
                     prompts._getPrompt(index).then(value => {
                         assert.strictEqual(value, prompt.trim());
-                        console.log('compare: ' + value + ' ' + prompt.trim());
                         resolve();
                     });
                 });
             }).catch(assert.fail);
         });
-    });
+    }
     promise.then(done);
 }

@@ -12,7 +12,7 @@ import SikeImg from '@/assets/sike.png';
         <span class="player">{{ selector.name }}</span>
       </template>
       <template v-slot:response>
-        <span class="response">{{ selectedResponse }}</span>
+        <span class="responseMessage">{{ selectedResponse }}</span>
       </template>
     </i18n-t>
     <button class="btn btn-primary w-50 fs-4" @click="noMatch"><img :src="SikeImg" :alt="$t('sike')"></button>
@@ -56,5 +56,10 @@ export default {
 <style lang="scss" scoped>
 img{
   width: 25%;
+}
+.responseMessage{
+  font-weight: 900;
+  font-size: 1.6rem;
+  color: $red;
 }
 </style>

@@ -50,14 +50,14 @@ export default {
 <style lang="scss" scoped>
 .activeMessage{
   font-size: 1.8rem;
-  color: $red;
 }
 .activeSelector{
-  font-size: 1.8rem;
+  color: $red;
+  font-size: 2.4rem;
   font-weight: 900;
   padding-left: 2px;
   padding-right: 2px;
-  background-color: $blue;
+  text-decoration: 3px underline;
 }
 
 </style>

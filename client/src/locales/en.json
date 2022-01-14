@@ -1,4 +1,9 @@
 {
+  "strikeOrSike": "Strike or Sike",
+  "strike": "Strike!",
+  "sike": "Sike!",
+  "choice": "Choice!",
+
   "*** HOME STRINGS ***": "",
   "usernameLabel": "Name",
   "usernamePlaceholder": "your name",
@@ -17,9 +22,15 @@
 
   "*** LOBBY STRINGS ***": "",
   "players": "Players",
+  "startGame": "Start",
 
   "*** GAME MESSAGES ***": "",
-  "passiveSelectionMessage": "{player} is trying to {selectionType}",
+  "selection": {
+    "message": "{player} is picking a word to...",
+    "selfMessage": "{self} are picking a word to...",
+    "self": "You"
+  },
+
   "activeMatchingMessage": "{player} selected {response}, do you have a match?",
   "passiveDisputeMessage": "Your friends are deciding if {response} fits the category",
   "activeDisputeMessage": "Does {response} fit the category?",

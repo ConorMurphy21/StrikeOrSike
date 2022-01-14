@@ -10,15 +10,14 @@ const MAX_INACTIVITY = 10 * 60 * 1000;
 //const MAX_INACTIVITY = 30 * 1000;
 
 module.exports = (io) => {
-    setTimeout(() => cleanup(io), TIMEOUT);
+    setInterval(() => cleanup(io), TIMEOUT);
 }
 
 const cleanup = (io) => {
     const inactiveRoomNames = roomService(MAX_INACTIVITY);
-    inactiveRoomNames.forEach((name) => {
+    for (const name of inactiveRoomNames) {
         // send a kick event to all the players in that room
         io.to(name).emit('kickPlayer', {error: 'inactiveRoom'});
         io.in(name).socketsLeave(name);
-    });
-    setTimeout(() => cleanup(io), TIMEOUT);
+    }
 }

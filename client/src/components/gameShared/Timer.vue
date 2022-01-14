@@ -1,5 +1,7 @@
 <template>
-  <h1>{{time}}</h1>
+  <div>
+    <h1>{{$n(time)}}</h1>
+  </div>
 </template>
 
 <script>
@@ -15,3 +17,12 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+h1 {
+
+  font-size: 3.25rem;
+  color: black;
+}
+
+</style>

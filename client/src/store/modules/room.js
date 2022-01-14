@@ -30,10 +30,8 @@ const socketMutations = {
             else
                 state.players[i] = player
 
-        })
-        state.deletes = state.deletes.filter(player => {
-            data.deletes.find(id => id === player.id);
-        })
+        });
+        state.players = state.players.filter(player => !data.deletes.includes(player.id));
     }
 }
 

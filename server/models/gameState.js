@@ -2,7 +2,7 @@ const {Prompts} = require('./prompts');
 
 const defaultOptions = () => {
     return {
-        promptTimer: 45,
+        promptTimer: 30,
         numRounds: 8,
         sikeDispute: false,
         sikeRetries: 0,
@@ -35,7 +35,7 @@ const GameState = class {
         this._matchingCompleteCb = null;
         this._disputeCompleteCb = null;
 
-        room.players.forEach(player => {
+        for (const player of room.players) {
             this.players.push(
                 {
                     id: player.id,
@@ -49,7 +49,7 @@ const GameState = class {
                     matchingComplete: false, // set to true if explicitly no match was found or a match was found
                 }
             )
-        });
+        }
     }
 
     /*** Callback registry for events that may happen from disconnect ***/
@@ -80,11 +80,11 @@ const GameState = class {
                 this.prompt = prompt;
                 this.stage = 'response';
 
-                this.players.forEach(player => {
+                for (const player of this.players) {
                     player.responses = [];
                     player.used = [];
                     player.voteSkipPrompt = false;
-                });
+                }
                 resolve(true);
             });
         });
@@ -96,6 +96,9 @@ const GameState = class {
         }
         if (this.stage === 'response') {
             const playerState = this.players.find(player => player.id === id);
+            if (!playerState){
+                return {error: 'spectator'};
+            }
             if (playerState.responses.find(res => this._matches(res, response))) {
                 return {error: 'duplicateResponse'};
             }
@@ -111,6 +114,7 @@ const GameState = class {
             return {error: 'badRequest'};
         }
         const playerState = this.players.find(player => player.id === id);
+        if(!playerState) return {error: 'spectator'};
         playerState.voteSkipPrompt = !!vote;
         return this._skipPromptAction();
     }
@@ -133,19 +137,18 @@ const GameState = class {
             this.selectionType = 'choice';
             this.selectionTypeChoice = true;
         }
-
         // this.selectionType = 'choice';
         // this.selectionTypeChoice = true;
     }
 
     _resetSelection() {
         this.remainingSikeRetries = this.options.sikeRetries;
-        this.players.forEach(player => {
+        for (const player of this.players) {
             player.selected = '';
             player.sikeVote = 0;
             player.match = '';
             player.matchingComplete = false;
-        });
+        }
     }
 
     /*** PROMPT SELECTION state changes ***/
@@ -262,6 +265,7 @@ const GameState = class {
             return {error: 'badRequest'};
         }
         const playerState = this.players.find(player => player.id === id);
+        if(!playerState) return {error: 'spectator'};
         playerState.sikeVote = vote ? 1 : -1;
         return {success: true, action: this._voteUpdateAction()};
     }
@@ -288,9 +292,9 @@ const GameState = class {
                     this.players[this.selector].responses.length > this.players[this.selector].used.length) {
                     this.stage = 'responseSelection';
                     this.remainingSikeRetries--;
-                    this.players.forEach(player => {
+                    for (const player of this.players) {
                         player.sikeVote = 0;
-                    });
+                    }
                     return 'reSelect';
                 } else {
                     return 'nextSelection';
@@ -322,6 +326,7 @@ const GameState = class {
     acceptMatch(id, match) {
         const selector = this.players[this.selector];
         const matcher = this.players.find(player => player.id === id);
+        if(!matcher) return {error: 'spectator'};
         if (matcher.matchingComplete) return {error: 'duplicateRequest'};
         if (this.stage !== 'responseMatching' || selector.id === id) return {error: 'badRequest'};
 

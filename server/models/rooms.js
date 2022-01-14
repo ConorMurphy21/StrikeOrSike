@@ -119,6 +119,7 @@ const disconnectPlayer = id => {
     // if no model are still active delete the room
     const activePlayer = room.players.find(player => player.active);
     if(!activePlayer) {
+        clearTimeout(room.state.promptTimeout);
         delete rooms[room.name];
     } else if(player.leader) {
         room.state.disconnect(id);
@@ -137,16 +138,16 @@ const roomService = (maxInactivity) => {
         const room = rooms[name];
         if(time - room.lastActivity > maxInactivity){
             inactiveRooms.push(name);
+            clearTimeout(room.state.promptTimeout);
             // delete the player record of the room
-            for(const player in room.players){
+            for(const player of room.players){
                 delete playerRoom[player.id];
             }
         }
     }
-
-    inactiveRooms.forEach((name) => {
+    for(const name of inactiveRooms){
         delete rooms[name];
-    });
+    }
 
     return inactiveRooms;
 }

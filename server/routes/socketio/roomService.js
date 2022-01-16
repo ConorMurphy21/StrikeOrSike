@@ -5,7 +5,7 @@ const TIMEOUT = 60 * 1000;
 // 1 second
 //const TIMEOUT = 1000;
 // 10 minutes
-const MAX_INACTIVITY = 10 * 60 * 1000;
+const MAX_INACTIVITY = 200 * 60 * 1000;
 // 30 seconds
 //const MAX_INACTIVITY = 30 * 1000;
 

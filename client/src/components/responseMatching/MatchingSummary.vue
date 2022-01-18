@@ -1,23 +1,27 @@
 <template>
-  <div class="w-100 h-100 d-flex align-items-center justify-content-start">
-    <prompt :prompt="prompt"/>
+  <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-between gap-2 my-3">
 
-    <h3 v-if="isSelector" class="m-5 score-message">
-      {{ $t('selfScoreMessage', {score: $n(roundPoints)})}}
-    </h3>
-    <h3 v-else class="m-5 score-message">
-      {{ $t('scoreMessage', {player: selector.name, score: $n(roundPoints)})}}
-    </h3>
-    <h2 class="selected-response">{{ selectedResponse }}</h2>
 
-    <div v-for="row in rows()" class="d-flex flex-column">
-      <div class="d-flex flex-row">
-        <match-card v-for="player in row"/>
+    <div class="d-flex flex-column align-items-center justify-content-start">
+      <prompt :prompt="prompt"/>
+      <h3 v-if="isSelector" class="score-message">
+        {{ $t('selfScoreMessage', {score: $n(roundPoints)}) }}
+      </h3>
+      <h3 v-else class="score-message">
+        {{ $t('scoreMessage', {player: selector.name, score: $n(roundPoints)}) }}
+      </h3>
+      <h2 class="selected-response">{{ selectedResponse }}</h2>
+    </div>
+
+    <div v-for="row in rows()" class="d-flex flex-column w-75">
+      <div class="d-flex flex-row gap-2 justify-content-evenly align-items-center w-100">
+        <match-card v-for="player in row" :player="player" :match="match(player)"/>
       </div>
     </div>
 
+
     <button class="btn btn-primary w-50 fs-4 m-5"
-            :class="{'d-none': !canEndRound}" @click="endRound">Next Person
+            :class="{'invisible': !canEndRound}" @click="endRound">Next Person
     </button>
   </div>
 </template>
@@ -39,7 +43,7 @@ export default {
   },
   computed: {
     ...room.mapState([
-       'players'
+      'players'
     ]),
     ...game.mapState([
       'prompt',
@@ -52,19 +56,24 @@ export default {
       'roundPoints',
       'canEndRound',
       'isSelector'
-    ])
+    ]),
+
   },
   methods: {
     endRound: function () {
       this.$socket.emit('selectionComplete');
     },
-    rows: function() {
-      if(this.players.length < 5){
-        return [this.players];
+    rows: function () {
+      const matchers = this.players.filter(player => player.id !== this.selector.id);
+      if (matchers.length < 5) {
+        return [matchers];
       } else {
-        const med = Math.ceil(this.players.length/2);
-        return [this.players.slice(0, med), this.players.slice(med)]
+        const med = Math.ceil(this.players.length / 2);
+        return [matchers.slice(0, med), matchers.slice(med)];
       }
+    },
+    match(player) {
+      return this.matches.find(match => player.id === match.player.id);
     }
   }
 }

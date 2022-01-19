@@ -38,11 +38,26 @@ describe('Automatch tests', () => {
         assert.strictEqual(gameState.players[matcherIndex].match, firstResponse);
     });
 
-    it('AutoMatch whiteSpace');
+    it('AutoMatch whiteSpace', () => {
+        gameState.players[matcherIndex].responses = [firstResponse + ' '];
+        gameState.acceptResponseSelection(selectorId, firstResponse);
+        assert.isTrue(gameState.players[matcherIndex].matchingComplete);
+        assert.strictEqual(gameState.players[matcherIndex].match, firstResponse + ' ');
+    });
 
-    it('AutoMatch capitalizationMatch');
+    it('AutoMatch capitalizationMatch', () => {
+        gameState.players[matcherIndex].responses = [firstResponse.toUpperCase()];
+        gameState.acceptResponseSelection(selectorId, firstResponse);
+        assert.isTrue(gameState.players[matcherIndex].matchingComplete);
+        assert.strictEqual(gameState.players[matcherIndex].match, firstResponse.toUpperCase());
+    });
 
-    it('AutoMatch punctuationMatch');
+    it('AutoMatch punctuationMatch', () => {
+        gameState.players[matcherIndex].responses = [firstResponse + '!!!'];
+        gameState.acceptResponseSelection(selectorId, firstResponse);
+        assert.isTrue(gameState.players[matcherIndex].matchingComplete);
+        assert.strictEqual(gameState.players[matcherIndex].match, firstResponse + '!!!');
+    });
 
     it('AutoMatch misSpelledMatch');
 

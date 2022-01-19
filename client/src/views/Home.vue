@@ -50,7 +50,7 @@ export default {
     ]),
     onSubmit(joinGame) {
       const event = joinGame ? 'joinRoom' : 'createRoom';
-      this.$socket.emit(event, this.form.name, this.form.roomName, navigator.language);
+      this.$socket.emit(event, this.form.name, this.form.roomName, navigator.languages);
     }
   },
   sockets: {

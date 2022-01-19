@@ -1,6 +1,8 @@
 const {GameState} = require('./gameState');
 const parameterize = require('parameterize');
+const locale = require("locale");
 
+const supportedLocales = new locale.Locales(['en']);
 
 // map model to rooms
 const playerRoom = {}
@@ -32,7 +34,7 @@ const isValidRoomName = (name) => {
 }
 
 
-const createRoom = (id, name, roomName, lang) => {
+const createRoom = (id, name, roomName, langs) => {
     let result = isValidName(name);
     if (!result.success)
         return result;
@@ -41,11 +43,13 @@ const createRoom = (id, name, roomName, lang) => {
     if (!result.success)
         return result;
 
+    const locales = new locale.Locales(langs);
+
     // clone default room
     const room = {
         name: roomName,
         lastActivity: (new Date()).getTime(),
-        lang: lang,
+        lang: locales.best(supportedLocales),
         players: [{
             id,
             name,

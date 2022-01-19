@@ -34,30 +34,6 @@ describe('Validation tests', () =>{
         clientSocket1.emit('createRoom', 'name', 'hello world');
     });
 
-    it('allow non-ascii characters', (done) => {
-        clientSocket1.on('joinRoom', (arg) => {
-            assert.deepEqual(arg, {success: true, roomName: '😅'});
-            done();
-        });
-        clientSocket1.emit('createRoom', 'name', '😅');
-    });
-
-    it('allow non-ascii characters with spaces', (done) => {
-        clientSocket1.on('joinRoom', (arg) => {
-            assert.deepEqual(arg, {success: true, roomName: 'hello-world-😅'});
-            done();
-        });
-        clientSocket1.emit('createRoom', 'name', 'hello world 😅');
-    });
-
-    it('room name starting with num', (done) => {
-        clientSocket1.on('joinRoom', (arg) => {
-            assert.deepEqual(arg, {error: 'roomCannotStartWithNum'});
-            done();
-        });
-        clientSocket1.emit('createRoom', 'name', '123 hello');
-    });
-
     it('room name with numbers', (done) => {
         clientSocket1.on('joinRoom', (arg) => {
             assert.deepEqual(arg, {success: true, roomName: 'hello123'});
@@ -73,6 +49,31 @@ describe('Validation tests', () =>{
         });
         clientSocket1.emit('createRoom', 'name', 'hello 123');
     });
+
+    it('room name caps to lower', (done) => {
+        clientSocket1.on('joinRoom', (arg) => {
+            assert.deepEqual(arg, {success: true, roomName: 'hello-123'});
+            done();
+        });
+        clientSocket1.emit('createRoom', 'name', 'HELLO 123');
+    });
+
+    it('room name whitespace trim', (done) => {
+        clientSocket1.on('joinRoom', (arg) => {
+            assert.deepEqual(arg, {success: true, roomName: 'hello-world'});
+            done();
+        });
+        clientSocket1.emit('createRoom', 'name', '  hello world   ');
+    });
+
+    it('room name remove accents', (done) => {
+        clientSocket1.on('joinRoom', (arg) => {
+            assert.deepEqual(arg, {success: true, roomName: 'resume'});
+            done();
+        });
+        clientSocket1.emit('createRoom', 'name', 'Résumé');
+    });
+
 })
 
 describe('create/join tests', () => {

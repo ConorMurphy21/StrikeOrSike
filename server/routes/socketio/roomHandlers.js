@@ -11,10 +11,10 @@ module.exports = (io, socket) => {
     })
 
     /*** CONNECTION AND ROOM CREATION ***/
-    socket.on('createRoom', (name, roomName) => {
+    socket.on('createRoom', (name, roomName, lang) => {
         // disconnect for cleanup
         disconnect(socket);
-        const result = createRoom(socket.id, name, roomName);
+        const result = createRoom(socket.id, name, roomName, lang);
         // store name in session variable
         if (result.error) {
             socket.emit('joinRoom', {error: result.error});

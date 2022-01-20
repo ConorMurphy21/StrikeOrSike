@@ -11,7 +11,7 @@ describe('Automatch tests', () => {
 
     beforeEach(() => {
         const players = [{id: selectorId, active: true}, {id: matcherId, active: true}];
-        gameState = new GameState({players});
+        gameState = new GameState({players, lang: 'en'});
         gameState.players[selectorIndex].responses.push(firstResponse);
         gameState.beginSelection();
         gameState.selectionType = 'strike';
@@ -59,10 +59,34 @@ describe('Automatch tests', () => {
         assert.strictEqual(gameState.players[matcherIndex].match, firstResponse + '!!!');
     });
 
-    it('AutoMatch misSpelledMatch');
+    it('AutoMatch misSpelledMatch', () => {
+        const selectorResponse = 'response';
+        const matcherResponse = 'rsponse';
+        gameState.players[selectorIndex].responses = [selectorResponse];
+        gameState.players[matcherIndex].responses = [matcherResponse];
+        gameState.acceptResponseSelection(selectorId, selectorResponse);
+        assert.isTrue(gameState.players[matcherIndex].matchingComplete);
+        assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
+    });
 
-    it('AutoMatch misSpelledSelection');
+    it('AutoMatch misSpelledMatch2', () => {
+        const selectorResponse = 'rsponse';
+        const matcherResponse = 'response';
+        gameState.players[selectorIndex].responses = [selectorResponse];
+        gameState.players[matcherIndex].responses = [matcherResponse];
+        gameState.acceptResponseSelection(selectorId, selectorResponse);
+        assert.isTrue(gameState.players[matcherIndex].matchingComplete);
+        assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
+    });
 
-    it('AutoMatch misSpelledBoth');
+    it('AutoMatch misSpelledMatch3', () => {
+        const selectorResponse = 'rsponse';
+        const matcherResponse = 'respanse';
+        gameState.players[selectorIndex].responses = [selectorResponse];
+        gameState.players[matcherIndex].responses = [matcherResponse];
+        gameState.acceptResponseSelection(selectorId, selectorResponse);
+        assert.isTrue(gameState.players[matcherIndex].matchingComplete);
+        assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
+    });
 
 });

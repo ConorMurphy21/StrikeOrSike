@@ -1,4 +1,5 @@
 const {Prompts} = require('./prompts');
+const misspellMatch = require('./misspellMatch');
 
 const defaultOptions = () => {
     return {
@@ -209,7 +210,7 @@ const GameState = class {
         const exact = string1.localeCompare(string2, this.room.lang,
             { sensitivity: 'base', ignorePunctuation: true, usage: 'search'});
         if(exact === 0) return 1;
-        return 0;
+        return misspellMatch(string1, string2, this.room.lang);
     }
 
     _autoMatch() {

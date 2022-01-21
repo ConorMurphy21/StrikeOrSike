@@ -13,6 +13,7 @@ const state = () => ({
     selectedResponse: '',
     matches: [],
     usedResponses: [],
+    scores: [],
     // optional state
     skipVoteCount: 0,
     // options:
@@ -95,6 +96,9 @@ const mutations = {
     },
     useResponse(state, data) {
         state.usedResponses.push(data);
+    },
+    setScores(state, data) {
+        state.scores = data;
     }
 }
 
@@ -108,9 +112,7 @@ const socketMutations = {
     SOCKET_selectionTypeChosen(state, selectionType) {
         state.selectionType = selectionType;
     },
-    SOCKET_gameOver(state) {
-        state.scene = 'lobby';
-    },
+
     SOCKET_setSkipVoteCount(state, count) {
         state.skipVoteCount = count;
     }
@@ -167,7 +169,11 @@ const socketActions = {
             commit('useResponse', match.response);
             commit('setScene', 'matchingSummary');
         }
-    }
+    },
+    async SOCKET_gameOver({state, commit}, data) {
+        commit('setScene', 'endGame');
+        commit('setScores', data);
+    },
 }
 
 const actions = {

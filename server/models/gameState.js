@@ -369,6 +369,15 @@ const GameState = class {
         return {error: 'badRequest'};
     }
 
+    /*** MATCHING state changes ***/
+    gameOver(){
+        this.stage = 'lobby';
+        const scores = this.players.map(player => {
+            return {id: player.id, score: player.score};
+        }).sort((a, b) => b.score - a.score);
+        return {scores};
+    }
+
     /*** UTILS AND DISCONNECT ***/
     isSelector(id) {
         const selector = this.players[this.selector].id;

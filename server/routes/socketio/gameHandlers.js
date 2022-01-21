@@ -26,7 +26,7 @@ module.exports = (io, socket) => {
         const state = room.state;
         const result = state.acceptPromptResponse(socket.id, response);
         if (result.success) {
-            socket.emit('promptResponse', response);
+            socket.emit('promptResponse', result.response);
         }
     });
 

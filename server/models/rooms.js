@@ -1,5 +1,8 @@
 const {GameState} = require('./gameState');
+const parameterize = require('parameterize');
+const locale = require("locale");
 
+const supportedLocales = new locale.Locales(['en']);
 
 // map model to rooms
 const playerRoom = {}
@@ -7,56 +10,46 @@ const playerRoom = {}
 // map rooms to model
 const rooms = {}
 
+const isValidName = (name) => {
+    if(typeof name !== 'string')
+        return { error: 'noName' };
+    if(name.length < 2)
+        return { error: 'shortName' };
+    if(name.length > 20)
+        return { error: 'longName' };
 
-/*** Use to check if room name is valid for creating a URL***/
-const isValidInput = (input) => {
-    // test for whitespace
-    if (/\s/.test(input)) {
-        return 'spaces';
-    }
-
-
-    // todo: add more checks here
-    return true;
+    return { success: true };
 }
 
-const sanitizeRoomName = (roomName) => {
-    let retval = isValidInput(roomName);
-    while(retval !== true){
-        // added this switch in case I add more checks
-        // This is tightly bound to isValidInput()
-        switch (retval){
-            case 'spaces':
-                roomName = roomName.split(' ').join('-');
-                break;
-        }
-        retval = isValidInput(roomName)
-    }
-
-    return roomName
-}
-
-const createRoom = (id, name, roomName) => {
-    if (rooms[roomName])
+const isValidRoomName = (name) => {
+    if(typeof name !== 'string')
+        return { error: 'noRoomName' };
+    if(name.length < 2)
+        return { error: 'shortRoomName' };
+    if(name.length > 15)
+        return { error: 'longRoomName' };
+    if (rooms[name])
         return { error: 'roomTaken' };
-    if (!name)
-        return { error: 'badName' };
-    if (!roomName)
-        return { error: 'badRoom' };
-    if(/^\d/.test(roomName)){
-        return {error: 'roomCannotStartWithNum'};
-    }
-    if(/^([!#$&-;=?-[]_a-z~]|%[0-9a-fA-F]{2})+$/.test(roomName)){
-        return {error: 'invalidCharacter'};
-    }
-    roomName = sanitizeRoomName(roomName);
+    return { success: true };
+}
 
-    roomName = roomName.toLowerCase();
+
+const createRoom = (id, name, roomName, langs) => {
+    let result = isValidName(name);
+    if (!result.success)
+        return result;
+    roomName = parameterize(roomName);
+    result = isValidRoomName(roomName);
+    if (!result.success)
+        return result;
+
+    const locales = new locale.Locales(langs);
 
     // clone default room
     const room = {
         name: roomName,
         lastActivity: (new Date()).getTime(),
+        lang: locales.best(supportedLocales),
         players: [{
             id,
             name,
@@ -71,11 +64,10 @@ const createRoom = (id, name, roomName) => {
 }
 
 const joinRoom = (id, name, roomName) => {
-    if (!roomName)
-        return { error: 'badRoom' };
-    if (!name)
-        return { error: 'badName' };
-    const room = rooms[roomName.toLowerCase()];
+    let result = isValidName(name);
+    if (!result.success)
+        return result;
+    const room = rooms[parameterize(roomName)];
     if (!room)
         return { error: 'noRoom' };
 

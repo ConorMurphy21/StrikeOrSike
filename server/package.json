@@ -12,8 +12,11 @@
     "debug": "~2.6.9",
     "express": "~4.16.1",
     "klaw-sync": "^6.0.0",
+    "locale": "^0.1.0",
     "morgan": "~1.9.1",
-    "socket.io": "^4.3.2"
+    "parameterize": "^1.0.0",
+    "socket.io": "^4.3.2",
+    "spellchecker": "^3.7.1"
   },
   "devDependencies": {
     "chai": "^4.3.4",

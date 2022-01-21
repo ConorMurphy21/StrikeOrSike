@@ -1,20 +1,18 @@
-const Spellchecker = require('hunspell-spellchecker');
-const fs = require('fs');
-const spellchecker = new Spellchecker();
-
-const en_CA = spellchecker.parse({
-    aff: fs.readFileSync("./resources/dictionaries/en_CA.aff"),
-    dic: fs.readFileSync("./resources/dictionaries/en_CA.dic")});
-const misspellMatch = { en: en_CA };
-
+const Spellchecker = require('spellchecker');
+const en = new Spellchecker.Spellchecker();
+en.setSpellcheckerType(Spellchecker.ALWAYS_USE_HUNSPELL);
+en.setDictionary('en_CA', './resources/dictionaries');
+spellcheckers = {
+    en
+}
 module.exports = (string1, string2, lang) => {
-    spellchecker.use(misspellMatch[lang]);
-    const mis1 = !spellchecker.check(string1);
-    const mis2 = !spellchecker.check(string2);
-    const len = 5;
+    if(string1.includes(' ') || string2.includes(' ')) return 0;
+    const spellchecker = spellcheckers[lang] ?? en;
+    const mis1 = spellchecker.isMisspelled(string1);
+    const mis2 = spellchecker.isMisspelled(string2);
     if(mis1 && mis2){
-        const options1 = spellchecker.suggest(string1, len);
-        const options2 = spellchecker.suggest(string2, len);
+        const options1 = spellchecker.getCorrectionsForMisspelling(string1);
+        const options2 = spellchecker.getCorrectionsForMisspelling(string2);
         const intersection = options1.filter(element => options2.includes(element));
         let percent = 1;
         for(const element of intersection){
@@ -25,9 +23,9 @@ module.exports = (string1, string2, lang) => {
     } else if(mis1 || mis2){
         const mis = mis1 ? string1 : string2;
         const correct = mis1 ? string2 : string1;
-        const options = spellchecker.suggest(mis, len);
+        const options = spellchecker.getCorrectionsForMisspelling(mis);
         const index = options.indexOf(correct);
-        return 0.95 - index * 0.03;
+        return index === undefined ? 0 : 0.95 - index * 0.03;
     }
     return 0;
 }

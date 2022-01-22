@@ -170,9 +170,16 @@ const socketActions = {
             commit('setScene', 'matchingSummary');
         }
     },
-    async SOCKET_gameOver({state, commit}, data) {
+    async SOCKET_gameOver({state, commit, rootState}, data) {
         commit('setScene', 'endGame');
-        commit('setScores', data);
+        const scores = [];
+        for (const score of data) {
+            scores.push({
+                player: rootState.room.players.find(player => player.id === score.player),
+                points: score.points
+            });
+        }
+        commit('setScores', scores);
     },
 }
 

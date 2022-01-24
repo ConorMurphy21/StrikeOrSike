@@ -28,8 +28,9 @@ import ActiveDispute from '@/components/dispute/ActiveDispute.vue';
 import PassiveDispute from '@/components/dispute/PassiveDispute.vue';
 import ActiveMatching from '@/components/responseMatching/ActiveMatching.vue';
 import MatchingSummary from '@/components/responseMatching/MatchingSummary.vue';
-
+import EndGame from '@/components/endGame/EndGame.vue';
 import {createNamespacedHelpers} from 'vuex';
+
 
 const {mapState} = createNamespacedHelpers('game')
 
@@ -42,6 +43,7 @@ export default {
     PassiveDispute,
     ActiveMatching,
     MatchingSummary,
+    EndGame
   },
   computed: {
     ...mapState([

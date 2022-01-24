@@ -4,7 +4,7 @@ const misspellMatch = require('./misspellMatch');
 const defaultOptions = () => {
     return {
         promptTimer: 30,
-        numRounds: 8,
+        numRounds: 1,
         sikeDispute: false,
         sikeRetries: 0,
         promptSkipping: false,
@@ -367,6 +367,14 @@ const GameState = class {
         }
 
         return {error: 'badRequest'};
+    }
+
+    /*** MATCHING state changes ***/
+    gameOver(){
+        this.stage = 'lobby';
+        return this.players.map(player => {
+            return {player: player.id, points: player.points};
+        }).sort((a, b) => b.points - a.points);
     }
 
     /*** UTILS AND DISCONNECT ***/

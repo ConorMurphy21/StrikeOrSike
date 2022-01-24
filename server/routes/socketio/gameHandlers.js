@@ -143,7 +143,7 @@ function beginPrompt(io, room) {
                 beginSelection(io, room);
             }, state.options.promptTimer * 1000 + 1000);
         } else {
-            io.to(room.name).emit('gameOver');
+            io.to(room.name).emit('gameOver', state.gameOver());
         }
     });
 }

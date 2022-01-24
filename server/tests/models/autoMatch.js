@@ -17,13 +17,13 @@ describe('Automatch tests', () => {
         gameState.selectionType = 'strike';
     });
 
-    it('AutoMatch match empty responses', () => {
+    it('match empty responses', () => {
         gameState.acceptResponseSelection(selectorId, firstResponse);
         assert.isTrue(gameState.players[matcherIndex].matchingComplete);
         assert.strictEqual(gameState.players[matcherIndex].match, '');
     });
 
-    it('AutoMatch match all used', () => {
+    it('match all used', () => {
         gameState.players[matcherIndex].responses = [firstResponse, 'abc', 'cde'];
         gameState.players[matcherIndex].used = ['cde', 'abc', firstResponse];
         gameState.acceptResponseSelection(selectorId, firstResponse);
@@ -31,35 +31,35 @@ describe('Automatch tests', () => {
         assert.strictEqual(gameState.players[matcherIndex].match, '');
     });
 
-    it('AutoMatch exactMatch', () => {
+    it('exactMatch', () => {
         gameState.players[matcherIndex].responses = [firstResponse];
         gameState.acceptResponseSelection(selectorId, firstResponse);
         assert.isTrue(gameState.players[matcherIndex].matchingComplete);
         assert.strictEqual(gameState.players[matcherIndex].match, firstResponse);
     });
 
-    it('AutoMatch whiteSpace', () => {
+    it('whiteSpace', () => {
         gameState.players[matcherIndex].responses = [firstResponse + ' '];
         gameState.acceptResponseSelection(selectorId, firstResponse);
         assert.isTrue(gameState.players[matcherIndex].matchingComplete);
         assert.strictEqual(gameState.players[matcherIndex].match, firstResponse + ' ');
     });
 
-    it('AutoMatch capitalizationMatch', () => {
+    it('capitalization', () => {
         gameState.players[matcherIndex].responses = [firstResponse.toUpperCase()];
         gameState.acceptResponseSelection(selectorId, firstResponse);
         assert.isTrue(gameState.players[matcherIndex].matchingComplete);
         assert.strictEqual(gameState.players[matcherIndex].match, firstResponse.toUpperCase());
     });
 
-    it('AutoMatch punctuationMatch', () => {
+    it('punctuation', () => {
         gameState.players[matcherIndex].responses = [firstResponse + '!!!'];
         gameState.acceptResponseSelection(selectorId, firstResponse);
         assert.isTrue(gameState.players[matcherIndex].matchingComplete);
         assert.strictEqual(gameState.players[matcherIndex].match, firstResponse + '!!!');
     });
 
-    it('AutoMatch misSpelledMatch', () => {
+    it('misspelled matcher', () => {
         const selectorResponse = 'response';
         const matcherResponse = 'rsponse';
         gameState.players[selectorIndex].responses = [selectorResponse];
@@ -69,7 +69,7 @@ describe('Automatch tests', () => {
         assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
     });
 
-    it('AutoMatch misSpelledMatch2', () => {
+    it('misspelled selector', () => {
         const selectorResponse = 'rsponse';
         const matcherResponse = 'response';
         gameState.players[selectorIndex].responses = [selectorResponse];
@@ -79,7 +79,7 @@ describe('Automatch tests', () => {
         assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
     });
 
-    it('AutoMatch misSpelledMatch3', () => {
+    it('misspelled both', () => {
         const selectorResponse = 'rsponse';
         const matcherResponse = 'respanse';
         gameState.players[selectorIndex].responses = [selectorResponse];
@@ -89,7 +89,7 @@ describe('Automatch tests', () => {
         assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
     });
 
-    it('AutoMatch misSpelledMatch false positive', () => {
+    it('misspelled false positive', () => {
         const selectorResponse = 'clothes';
         const matcherResponse = 'weedwacker';
         gameState.players[selectorIndex].responses = [selectorResponse];
@@ -97,6 +97,26 @@ describe('Automatch tests', () => {
         gameState.acceptResponseSelection(selectorId, selectorResponse);
         assert.isFalse(gameState.players[matcherIndex].matchingComplete);
         assert.strictEqual(gameState.players[matcherIndex].match, '');
+    });
+
+    it('misspelled both + capitalization', () => {
+        const selectorResponse = 'rsponse';
+        const matcherResponse = 'Respanse';
+        gameState.players[selectorIndex].responses = [selectorResponse];
+        gameState.players[matcherIndex].responses = [matcherResponse];
+        gameState.acceptResponseSelection(selectorId, selectorResponse);
+        assert.isTrue(gameState.players[matcherIndex].matchingComplete);
+        assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
+    });
+
+    it('misspelled selector + capitalization', () => {
+        const selectorResponse = 'rsponse';
+        const matcherResponse = 'Response';
+        gameState.players[selectorIndex].responses = [selectorResponse];
+        gameState.players[matcherIndex].responses = [matcherResponse];
+        gameState.acceptResponseSelection(selectorId, selectorResponse);
+        assert.isTrue(gameState.players[matcherIndex].matchingComplete);
+        assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
     });
 
 });

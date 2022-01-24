@@ -89,4 +89,14 @@ describe('Automatch tests', () => {
         assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
     });
 
+    it('AutoMatch misSpelledMatch false positive', () => {
+        const selectorResponse = 'clothes';
+        const matcherResponse = 'weedwacker';
+        gameState.players[selectorIndex].responses = [selectorResponse];
+        gameState.players[matcherIndex].responses = [matcherResponse];
+        gameState.acceptResponseSelection(selectorId, selectorResponse);
+        assert.isFalse(gameState.players[matcherIndex].matchingComplete);
+        assert.strictEqual(gameState.players[matcherIndex].match, '');
+    });
+
 });

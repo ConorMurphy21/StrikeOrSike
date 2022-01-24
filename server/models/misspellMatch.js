@@ -25,7 +25,7 @@ module.exports = (string1, string2, lang) => {
         const correct = mis1 ? string2 : string1;
         const options = spellchecker.getCorrectionsForMisspelling(mis);
         const index = options.indexOf(correct);
-        return index === undefined ? 0 : 0.95 - index * 0.03;
+        return index === -1 ? 0 : 0.95 - index * 0.03;
     }
     return 0;
 }

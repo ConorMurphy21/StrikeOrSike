@@ -220,6 +220,9 @@ const GameState = class {
             if (player.id === selector.id) return;
             if (player.responses.length <= player.used.length) {
                 player.matchingComplete = true;
+                if(this.selectionType === 'sike'){
+                    this.players[this.selector].points++;
+                }
             } else {
                 const match = player.responses.map(r => {
                     return {value: r, chance: this._match_chance(r, response)};
@@ -229,6 +232,9 @@ const GameState = class {
                     player.used.push(match.value);
                     player.match = match.value;
                     player.matchingComplete = true;
+                    if(this.selectionType === 'strike'){
+                        this.players[this.selector].points++;
+                    }
                 }
             }
         }));

@@ -9,7 +9,7 @@
     </div>
 
     <div class="flex-grow-1"/>
-    <button class="btn btn-blue mb-5" @click="setScene('lobby')">Back to Lobby</button>
+    <button class="btn btn-blue mb-5" @click="setScene('lobby')" v-t="'toLobby'"/>
   </div>
 </template>
 

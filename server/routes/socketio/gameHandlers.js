@@ -117,7 +117,7 @@ function registerCallbacks(io, room) {
     state.registerMatchingCompleteCb((selectorActive) => {
         // give a little time to show score before moving on to next selection
         if (!selectorActive) {
-            setTimeout(() => {
+            state.promptTimeout = setTimeout(() => {
                 continueSelection(io, room);
             }, 5000);
         }

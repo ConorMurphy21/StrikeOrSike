@@ -3,6 +3,7 @@
   "strike": "Strike!",
   "sike": "Sike!",
   "choice": "Choice!",
+  "continue": "Continue",
 
   "*** HOME STRINGS ***": "",
   "usernameLabel": "Name",
@@ -31,11 +32,14 @@
     "self": "You"
   },
 
-  "*** LOBBY STRINGS ***": "",
+  "*** END GAME STRINGS ***": "",
   "playerScores": "Player Scores",
+  "toLobby": "Back to Lobby",
 
   "activeMatchingMessage": "{player} selected {response}, do you have a match?",
   "passiveDisputeMessage": "Your friends are deciding if {response} fits the category",
   "activeDisputeMessage": "Does {response} fit the category?",
-  "skipPrompt": "Vote Skip"
+  "skipPrompt": "Vote Skip",
+  "scoreMessage": "{player}'s Score: {score}",
+  "selfScoreMessage": "Your Score: {score}"
 }

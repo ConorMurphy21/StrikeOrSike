@@ -21,7 +21,7 @@
 
 
     <button class="btn btn-blue w-50 fs-4 m-5"
-            :class="{'invisible': !canEndRound}" @click="endRound">Next Person
+            :class="{'invisible': !canEndRound}" @click="endRound" v-t="'continue'">
     </button>
   </div>
 </template>

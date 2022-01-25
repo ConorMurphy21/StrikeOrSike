@@ -3,6 +3,7 @@
   "strike": "Strike!",
   "sike": "Sike!",
   "choice": "Choice!",
+  "continue": "Continue",
 
   "*** HOME STRINGS ***": "",
   "usernameLabel": "Name",
@@ -31,8 +32,9 @@
     "self": "You"
   },
 
-  "*** LOBBY STRINGS ***": "",
+  "*** END GAME STRINGS ***": "",
   "playerScores": "Player Scores",
+  "toLobby": "Back to Lobby",
 
   "activeMatchingMessage": "{player} selected {response}, do you have a match?",
   "passiveDisputeMessage": "Your friends are deciding if {response} fits the category",

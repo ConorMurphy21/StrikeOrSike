@@ -12,9 +12,9 @@ describe('Selection Rotation tests', () => {
         }
         room = {players};
         gameState = new GameState(room);
-        gameState.players.forEach(player =>
-            player.responses.push('response')
-        );
+        for (const player of gameState.players) {
+            player.responses.push('response');
+        }
     });
 
     it('Selection Rotation', () => {

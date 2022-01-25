@@ -17,7 +17,7 @@ const retrieveMetas = (root) => {
 
     const items = klawSync(root,{nodir: true}).filter(walkFilter);
 
-    items.forEach(item => {
+    for (const item of items) {
         const lang = path.basename(path.dirname(item.path));
         const basename = path.basename(item.path);
         const [_, width, height, name] = basename.match(regex);
@@ -28,7 +28,7 @@ const retrieveMetas = (root) => {
             height: parseInt(height),
             name
         });
-    });
+    }
 
     return metas;
 }
@@ -46,11 +46,11 @@ const Prompts = class {
         this.used = [];
         this.remaining = [];
         // retrieve meta for each pack
-        packNames.forEach((name) => {
+        for (const name of packNames) {
             const meta = Prompts.metas.find(meta => meta.name === name && meta.lang === lang);
             this.packs.push(meta);
             this.numPrompts += meta.height;
-        });
+        }
     }
 
     newPrompt() {
@@ -64,14 +64,14 @@ const Prompts = class {
     _getPrompt(index) {
         return new Promise(resolve => {
             let resolved = false;
-            this.packs.forEach((pack) => {
+            for (const pack of this.packs) {
                 if(resolved || index >= pack.height) {
                     index -= pack.height;
-                    return;
+                    continue;
                 }
                 resolved = true;
                 this._getPromptFromPack(pack, index).then(value => resolve(value));
-            });
+            }
             if(!resolved){
                 resolve(this.customPrompts[index]);
             }

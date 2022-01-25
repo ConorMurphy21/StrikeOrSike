@@ -1,15 +1,23 @@
 <script setup>
 import ResponseList from '@/components/gameShared/ResponseList.vue';
-import SelectionType from '@/components/responseSelection/SelectionType.vue';
+import Prompt from '@/components/gameShared/Prompt.vue';
+import SikeImg from '@/assets/sike.png';
 </script>
 
 <template>
-  <div class="w-100 h-100 d-flex flex-column justify-content-between align-items-center p-3">
-    <h1>{{ prompt }}</h1>
-    <button class="btn btn-primary w-50 fs-4" @click="noMatch">Sike!</button>
-    <h3 v-t="{ path: 'activeMatchingMessage',
-    args: { player: selector.name, selectionType, response: selectedResponse } }"></h3>
+  <div class="w-100 h-100 d-flex flex-column justify-content-start align-items-center p-3">
+    <prompt :prompt="prompt"/>
+    <i18n-t keypath="activeMatchingMessage" tag="p">
+      <template v-slot:player>
+        <span class="player">{{ selector.name }}</span>
+      </template>
+      <template v-slot:response>
+        <span class="responseMessage">{{ selectedResponse }}</span>
+      </template>
+    </i18n-t>
+    <button class="btn btn-primary w-50 fs-4" @click="noMatch"><img :src="SikeImg" :alt="$t('sike')"></button>
     <response-list :selectable="true" v-model="matchedResponse"/>
+
   </div>
 </template>
 
@@ -44,3 +52,14 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+img{
+  width: 25%;
+}
+.responseMessage{
+  font-weight: 900;
+  font-size: 1.6rem;
+  color: $red;
+}
+</style>

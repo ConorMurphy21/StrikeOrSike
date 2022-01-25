@@ -1,9 +1,10 @@
 const {Prompts} = require('./prompts');
+const misspellMatch = require('./misspellMatch');
 
 const defaultOptions = () => {
     return {
-        promptTimer: 45,
-        numRounds: 8,
+        promptTimer: 30,
+        numRounds: 1,
         sikeDispute: false,
         sikeRetries: 0,
         promptSkipping: false,
@@ -35,7 +36,7 @@ const GameState = class {
         this._matchingCompleteCb = null;
         this._disputeCompleteCb = null;
 
-        room.players.forEach(player => {
+        for (const player of room.players) {
             this.players.push(
                 {
                     id: player.id,
@@ -49,7 +50,7 @@ const GameState = class {
                     matchingComplete: false, // set to true if explicitly no match was found or a match was found
                 }
             )
-        });
+        }
     }
 
     /*** Callback registry for events that may happen from disconnect ***/
@@ -80,30 +81,34 @@ const GameState = class {
                 this.prompt = prompt;
                 this.stage = 'response';
 
-                this.players.forEach(player => {
+                for (const player of this.players) {
                     player.responses = [];
                     player.used = [];
                     player.voteSkipPrompt = false;
-                });
+                }
                 resolve(true);
             });
         });
     }
 
     acceptPromptResponse(id, response) {
-        if (!response) {
+        if (!response || typeof response !== 'string') {
             return {error: 'emptyResponse'};
         }
+        response = response.trim().normalize().trim();
         if (this.stage === 'response') {
             const playerState = this.players.find(player => player.id === id);
-            if (playerState.responses.find(res => this._matches(res, response))) {
+            if (!playerState) {
+                return {error: 'spectator'};
+            }
+            if (playerState.responses.find(res => this._exact_matches(res, response))) {
                 return {error: 'duplicateResponse'};
             }
             playerState.responses.push(response);
         } else {
             return {error: 'badRequest'};
         }
-        return {success: true};
+        return {success: true, response};
     }
 
     voteSkipPrompt(id, vote) {
@@ -111,6 +116,7 @@ const GameState = class {
             return {error: 'badRequest'};
         }
         const playerState = this.players.find(player => player.id === id);
+        if (!playerState) return {error: 'spectator'};
         playerState.voteSkipPrompt = !!vote;
         return this._skipPromptAction();
     }
@@ -133,19 +139,18 @@ const GameState = class {
             this.selectionType = 'choice';
             this.selectionTypeChoice = true;
         }
-
         // this.selectionType = 'choice';
         // this.selectionTypeChoice = true;
     }
 
     _resetSelection() {
         this.remainingSikeRetries = this.options.sikeRetries;
-        this.players.forEach(player => {
+        for (const player of this.players) {
             player.selected = '';
             player.sikeVote = 0;
             player.match = '';
             player.matchingComplete = false;
-        });
+        }
     }
 
     /*** PROMPT SELECTION state changes ***/
@@ -195,8 +200,17 @@ const GameState = class {
     }
 
     // todo: improve automatic match catching
-    _matches(string1, string2) {
-        return string1 === string2;
+    _exact_matches(string1, string2) {
+        return this._match_chance(string1, string2) > 0.9999;
+    }
+
+    _match_chance(string1, string2) {
+        string1 = string1.trim().normalize().trim();
+        string2 = string2.trim().normalize().trim();
+        const exact = string1.localeCompare(string2, this.room.lang,
+            { sensitivity: 'base', ignorePunctuation: true, usage: 'search'});
+        if(exact === 0) return 1;
+        return misspellMatch(string1, string2, this.room.lang);
     }
 
     _autoMatch() {
@@ -206,12 +220,21 @@ const GameState = class {
             if (player.id === selector.id) return;
             if (player.responses.length <= player.used.length) {
                 player.matchingComplete = true;
+                if(this.selectionType === 'sike'){
+                    this.players[this.selector].points++;
+                }
             } else {
-                const match = player.responses.find(r => this._matches(r, response));
-                if (match && !player.used.includes(match)) {
-                    player.used.push(match);
-                    player.match = match;
+                const match = player.responses.map(r => {
+                    return {value: r, chance: this._match_chance(r, response)};
+                }).sort((a,b) => b.chance - a.chance)[0];
+
+                if (match.chance > 0.8 && !player.used.includes(match)) {
+                    player.used.push(match.value);
+                    player.match = match.value;
                     player.matchingComplete = true;
+                    if(this.selectionType === 'strike'){
+                        this.players[this.selector].points++;
+                    }
                 }
             }
         }));
@@ -262,6 +285,7 @@ const GameState = class {
             return {error: 'badRequest'};
         }
         const playerState = this.players.find(player => player.id === id);
+        if (!playerState) return {error: 'spectator'};
         playerState.sikeVote = vote ? 1 : -1;
         return {success: true, action: this._voteUpdateAction()};
     }
@@ -288,9 +312,9 @@ const GameState = class {
                     this.players[this.selector].responses.length > this.players[this.selector].used.length) {
                     this.stage = 'responseSelection';
                     this.remainingSikeRetries--;
-                    this.players.forEach(player => {
+                    for (const player of this.players) {
                         player.sikeVote = 0;
-                    });
+                    }
                     return 'reSelect';
                 } else {
                     return 'nextSelection';
@@ -322,6 +346,7 @@ const GameState = class {
     acceptMatch(id, match) {
         const selector = this.players[this.selector];
         const matcher = this.players.find(player => player.id === id);
+        if (!matcher) return {error: 'spectator'};
         if (matcher.matchingComplete) return {error: 'duplicateRequest'};
         if (this.stage !== 'responseMatching' || selector.id === id) return {error: 'badRequest'};
 
@@ -350,6 +375,14 @@ const GameState = class {
         return {error: 'badRequest'};
     }
 
+    /*** MATCHING state changes ***/
+    gameOver(){
+        this.stage = 'lobby';
+        return this.players.map(player => {
+            return {player: player.id, points: player.points};
+        }).sort((a, b) => b.points - a.points);
+    }
+
     /*** UTILS AND DISCONNECT ***/
     isSelector(id) {
         const selector = this.players[this.selector].id;
@@ -371,7 +404,7 @@ const GameState = class {
     disconnect(id) {
         if (this.stage === 'response') {
             const skipPrompt = this._skipPromptAction().skip;
-            if(skipPrompt) this._promptSkippedCb();
+            if (skipPrompt) this._promptSkippedCb();
 
         }
         if (this.stage === 'responseSelection') {

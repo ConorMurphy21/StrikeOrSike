@@ -41,6 +41,7 @@ export default {
   },
   mounted() {
     this.$refs.username.focus();
+    this.$store.reset();
   },
   methods: {
     ...mapMutations([
@@ -49,7 +50,7 @@ export default {
     ]),
     onSubmit(joinGame) {
       const event = joinGame ? 'joinRoom' : 'createRoom';
-      this.$socket.emit(event, this.form.name, this.form.roomName);
+      this.$socket.emit(event, this.form.name, this.form.roomName, navigator.languages);
     }
   },
   sockets: {

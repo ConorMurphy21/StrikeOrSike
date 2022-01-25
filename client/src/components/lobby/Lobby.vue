@@ -9,7 +9,7 @@ import PlayerList from '@/components/lobby/PlayerList.vue'
     <player-list/>
 
     <button class="btn btn-blue fs-4"
-            :class="{'d-none': !self || !self.leader}" @click="startGame">Start</button>
+            :class="{'d-none': !self || !self.leader}" @click="startGame" v-t="'startGame'"/>
   </div>
 </template>
 

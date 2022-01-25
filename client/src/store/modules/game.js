@@ -4,6 +4,8 @@ const state = () => ({
     scene: 'lobby',
     prompt: '',
     timer: 0,
+    // for cancelling the timer
+    timeoutId: null,
     responses: [],
     selectionTypeChoice: false,
     selectionType: '',
@@ -11,6 +13,7 @@ const state = () => ({
     selectedResponse: '',
     matches: [],
     usedResponses: [],
+    scores: [],
     // optional state
     skipVoteCount: 0,
     // options:
@@ -18,6 +21,9 @@ const state = () => ({
 });
 
 export const getters = {
+    isSelector(state, getters, rootState, rootGetters) {
+        return state.selector.id === rootGetters['room/self'].id;
+    },
     roundPoints(state) {
         if (state.selectionType === 'strike') {
             let count = 0;
@@ -63,6 +69,9 @@ const mutations = {
     setTimer(state, data) {
         state.timer = data;
     },
+    setTimeoutId(state, data) {
+        state.timeoutId = data;
+    },
     clearResponses(state) {
         state.responses = [];
         state.usedResponses = [];
@@ -87,6 +96,9 @@ const mutations = {
     },
     useResponse(state, data) {
         state.usedResponses.push(data);
+    },
+    setScores(state, data) {
+        state.scores = data;
     }
 }
 
@@ -100,9 +112,7 @@ const socketMutations = {
     SOCKET_selectionTypeChosen(state, selectionType) {
         state.selectionType = selectionType;
     },
-    SOCKET_gameOver(state) {
-        state.scene = 'lobby';
-    },
+
     SOCKET_setSkipVoteCount(state, count) {
         state.skipVoteCount = count;
     }
@@ -110,14 +120,14 @@ const socketMutations = {
 
 const socketActions = {
     async SOCKET_beginPrompt({state, commit, dispatch}, data) {
-        commit('setPrompt', data.prompt);
-        const currentTimer = state.timer;
         commit('setTimer', data.timer);
+        dispatch('startTimer');
+        commit('setPrompt', data.prompt);
         commit('clearResponses');
         commit('SOCKET_setSkipVoteCount', 0);
         commit('setScene', 'promptResponse');
         // Only start timer if it's not already started
-        if(currentTimer === 0) dispatch('startTimer');
+
     },
     async SOCKET_nextSelection({state, commit, rootGetters, rootState}, data) {
         const selector = rootState.room.players.find(player => player.id === data.selector);
@@ -129,11 +139,7 @@ const socketActions = {
         } else {
             commit('setSelectionTypeChoice', false);
         }
-        if (selector.id === rootGetters['room/self'].id) {
-            commit('setScene', 'activeSelection');
-        } else {
-            commit('setScene', 'passiveSelection');
-        }
+        commit('setScene', 'Selection');
     },
     async SOCKET_beginDispute({state, commit, rootGetters}, response) {
         commit('setSelectedResponse', response);
@@ -163,14 +169,36 @@ const socketActions = {
             commit('useResponse', match.response);
             commit('setScene', 'matchingSummary');
         }
-    }
+    },
+    async SOCKET_gameOver({state, commit, rootState}, data) {
+        commit('setScene', 'endGame');
+        const scores = [];
+        for (const score of data) {
+            scores.push({
+                player: rootState.room.players.find(player => player.id === score.player),
+                points: score.points
+            });
+        }
+        commit('setScores', scores);
+    },
 }
 
 const actions = {
     async startTimer({state, commit}) {
-        while (state.timer > 0) {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            commit('setTimer', state.timer - 1);
+        clearTimeout(state.timeoutId);
+        const initialTimer = state.timer;
+        const interval = 1000; // 1s
+        const maxTick = initialTimer * (1000 / interval);
+        let expected = Date.now() + interval;
+        let dt = 0;
+        for (let tick = 1; tick <= maxTick; tick++) {
+            await new Promise(resolve => {
+                const timeoutId = setTimeout(resolve, Math.max(0, interval - dt));
+                commit('setTimeoutId', timeoutId);
+            });
+            dt = Date.now() - expected; // the drift (positive for overshooting)
+            expected += interval;
+            commit('setTimer', initialTimer - tick * (interval / 1000));
         }
     }
 }

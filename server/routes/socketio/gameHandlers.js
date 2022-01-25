@@ -26,7 +26,7 @@ module.exports = (io, socket) => {
         const state = room.state;
         const result = state.acceptPromptResponse(socket.id, response);
         if (result.success) {
-            socket.emit('promptResponse', response);
+            socket.emit('promptResponse', result.response);
         }
     });
 
@@ -117,7 +117,7 @@ function registerCallbacks(io, room) {
     state.registerMatchingCompleteCb((selectorActive) => {
         // give a little time to show score before moving on to next selection
         if (!selectorActive) {
-            setTimeout(() => {
+            state.promptTimeout = setTimeout(() => {
                 continueSelection(io, room);
             }, 5000);
         }
@@ -143,7 +143,7 @@ function beginPrompt(io, room) {
                 beginSelection(io, room);
             }, state.options.promptTimer * 1000 + 1000);
         } else {
-            io.to(room.name).emit('gameOver');
+            io.to(room.name).emit('gameOver', state.gameOver());
         }
     });
 }
@@ -200,12 +200,12 @@ function applyDisputeAction(io, room, action) {
 function beginMatching(io, room) {
     const state = room.state;
     io.to(room.name).emit('beginMatching', state.selectedResponse());
-    state.players.forEach(player => {
+    for (const player of state.players) {
         if (player.matchingComplete) {
             // todo: turn this into 1 message to reduce network traffic
             io.to(room.name).emit('matchFound', {player: player.id, response: player.match});
         }
-    });
+    }
 }
 
 // return the room only if the user is the party leader

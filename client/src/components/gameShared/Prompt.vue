@@ -4,7 +4,7 @@
 <script>
 export default {
   props: {
-    prompt: Number
+    prompt: String
   }
 }
 </script>

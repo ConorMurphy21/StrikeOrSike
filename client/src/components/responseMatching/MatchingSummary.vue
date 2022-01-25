@@ -13,14 +13,14 @@
       <h2 class="selected-response">{{ selectedResponse }}</h2>
     </div>
 
-    <div v-for="row in rows()" class="d-flex flex-column w-75">
-      <div class="d-flex flex-row gap-2 justify-content-evenly align-items-center w-100">
+    <div class="d-flex flex-column w-75 gap-2">
+      <div v-for="row in rows()" class="d-flex flex-row gap-2 justify-content-evenly align-items-center w-100">
         <match-card v-for="player in row" :player="player" :match="match(player)"/>
       </div>
     </div>
 
 
-    <button class="btn btn-primary w-50 fs-4 m-5"
+    <button class="btn btn-blue w-50 fs-4 m-5"
             :class="{'invisible': !canEndRound}" @click="endRound">Next Person
     </button>
   </div>
@@ -78,3 +78,17 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+h3{
+  font: inherit;
+  font-size: 1.4rem;
+}
+h2{
+  font: inherit;
+  font-size: 1.8rem;
+  color: $red;
+  font-weight: 900;
+
+}
+</style>

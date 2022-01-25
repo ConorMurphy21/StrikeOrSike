@@ -1,6 +1,6 @@
 <template>
-  <div class="w-75">
-    <img v-if="match" :src="typeImg" :alt="imgAlt" class="w-100"/>
+  <div>
+    <img :src="typeImg" :alt="imgAlt"/>
     <h1>{{ player.name }}</h1>
   </div>
 </template>
@@ -32,12 +32,30 @@ export default {
         } else {
           return this.$t('sike');
         }
+      } else {
+        return 'pending';
       }
     }
   }
 }
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+div{
+  width: 20%;
+}
+h1{
+  text-align: center;
+  font: inherit;
+  font-size: 1.6rem;
+}
+img{
+  width: 100%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  font-size: 1.8rem;
+  color: $red;
+}
 </style>

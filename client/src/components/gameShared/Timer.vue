@@ -5,8 +5,7 @@
 </template>
 
 <script>
-import timerMp3 from '@/assets/audio/timer_full.mp3';
-const timerSound = new Audio(timerMp3);
+import timerMp3 from '@/assets/audio/timer.mp3';
 import timerCompleteMp3 from '@/assets/audio/timerComplete.mp3';
 const timerComplete = new Audio(timerCompleteMp3);
 export default {
@@ -16,10 +15,9 @@ export default {
   watch:{
     //todo: change style and sounds
     "time": (val) => {
-        if(val === 10){
-          timerSound.play();
+        if(val <= 10 && val > 0){
+          new Audio(timerMp3).play();
         } else if(val <= 0) {
-          timerSound.pause();
           timerComplete.play();
         }
     }

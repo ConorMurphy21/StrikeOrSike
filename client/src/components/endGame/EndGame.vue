@@ -9,12 +9,15 @@
     </div>
 
     <div class="flex-grow-1"/>
-    <button class="btn btn-blue mb-5" @click="setScene('lobby')" v-t="'toLobby'"/>
+    <button class="btn btn-blue mb-5" @click="click" v-t="'toLobby'"/>
   </div>
 </template>
 
 <script>
 import {createNamespacedHelpers} from 'vuex';
+import ClickMp3 from '@/assets/audio/click2.mp3'
+
+const click = new Audio(ClickMp3);
 
 const {mapState, mapMutations} = createNamespacedHelpers('game')
 
@@ -27,7 +30,11 @@ export default {
   methods: {
     ...mapMutations([
       'setScene'
-    ])
+    ]),
+    click: function() {
+      click.play();
+      this.setScene('lobby');
+    }
   }
 }
 </script>

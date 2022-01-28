@@ -15,6 +15,9 @@ const {mapState, mapGetters} = createNamespacedHelpers('game');
 import StrikeImg from '@/assets/images/strike.png';
 import SikeImg from '@/assets/images/sike.png';
 import ChoiceImg from '@/assets/images/choice.png';
+import ClickMp3 from '@/assets/audio/click2.mp3'
+
+const click = new Audio(ClickMp3);
 
 export default {
   data() {
@@ -42,6 +45,7 @@ export default {
   },
   methods: {
     selectSelectionType(strike) {
+      click.play();
       if (this.type === 'choice' || this.lastPicked !== strike) {
         this.$socket.emit('selectSelectionType', strike);
         this.lastPicked = strike;

@@ -19,7 +19,9 @@
 import {createNamespacedHelpers} from 'vuex';
 import ResponseList from '@/components/gameShared/ResponseList.vue';
 import Prompt from '@/components/gameShared/Prompt.vue';
+import ClickMp3 from '@/assets/audio/click2.mp3'
 
+const click = new Audio(ClickMp3);
 const {mapState} = createNamespacedHelpers('game');
 
 export default {
@@ -47,6 +49,7 @@ export default {
   },
   methods: {
     noMatch() {
+      click.play();
       this.$socket.emit('selectMatch', '');
     }
   }

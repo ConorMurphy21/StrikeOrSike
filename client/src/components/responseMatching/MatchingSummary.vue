@@ -30,6 +30,9 @@
 import {createNamespacedHelpers} from 'vuex';
 import Prompt from '@/components/gameShared/Prompt.vue';
 import MatchCard from '@/components/responseMatching/MatchCard.vue'
+import ClickMp3 from '@/assets/audio/click2.mp3'
+
+const click = new Audio(ClickMp3);
 
 const game = createNamespacedHelpers('game');
 const room = createNamespacedHelpers('room');
@@ -61,6 +64,7 @@ export default {
   },
   methods: {
     endRound: function () {
+      click.play();
       this.$socket.emit('selectionComplete');
     },
     rows: function () {

@@ -12,6 +12,9 @@
 <script>
 import {createNamespacedHelpers} from 'vuex';
 import PlayerList from '@/components/lobby/PlayerList.vue'
+import ClickMp3 from '@/assets/audio/click2.mp3'
+
+const click = new Audio(ClickMp3);
 
 const {mapGetters, mapState} = createNamespacedHelpers('room')
 
@@ -32,6 +35,7 @@ export default {
   },
   methods: {
     startGame() {
+      click.play();
       this.$socket.emit('startGame');
     }
   }

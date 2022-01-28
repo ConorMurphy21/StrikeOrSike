@@ -3,8 +3,8 @@ const misspellMatch = require('./misspellMatch');
 
 const defaultOptions = () => {
     return {
-        promptTimer: 30,
-        numRounds: 1,
+        promptTimer: 35,
+        numRounds: 8,
         sikeDispute: false,
         sikeRetries: 0,
         promptSkipping: false,

@@ -14,6 +14,7 @@ module.exports = (io, socket) => {
     socket.on('startGame', () => {
         const room = roomIfLeader(socket.id);
         if (!room) return;
+        if(room.players.length < 3) return;
         room.state = new GameState(room, room.state.options);
         registerCallbacks(io, room);
         setOptions(io, room);

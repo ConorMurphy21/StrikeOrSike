@@ -70,6 +70,9 @@ const joinRoom = (id, name, roomName) => {
     const room = rooms[parameterize(roomName)];
     if (!room)
         return { error: 'noRoom' };
+    if(room.players.length > 10) {
+        return { error: 'noSpace' };
+    }
 
 
     const existingPlayer = room.players.find(player => player.name === name);

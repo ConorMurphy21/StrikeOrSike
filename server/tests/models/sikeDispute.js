@@ -34,7 +34,7 @@ describe('Sike Dispute tests', () => {
             const result = gameState.acceptResponseSelection(selectorId, firstResponse);
             assert.isOk(result.success);
             assert.isNotOk(result.error);
-            assert.strictEqual(result.stage, 'responseMatching');
+            assert.strictEqual(result.stage, 'matching');
         });
 
         it('PromptSelection Accept NotSelector', () => {

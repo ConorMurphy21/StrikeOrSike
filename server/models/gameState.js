@@ -14,7 +14,7 @@ const defaultOptions = () => {
 const GameState = class {
     constructor(room, options /* for testing reasons*/) {
         this.name = room.name;
-        this.stage = 'lobby'; // enum: 'lobby', 'response', 'responseSelection', 'responseMatching'
+        this.stage = 'lobby'; // enum: 'lobby', 'response', 'selection', 'sikeDispute', 'matching'
         this.options = options;
         if (!this.options) this.options = defaultOptions();
         this.prompts = new Prompts(['standard']);
@@ -75,7 +75,10 @@ const GameState = class {
         // wrap in promise to avoid blocking
         return new Promise((resolve) => {
             // check if game is over
-            if (this.round >= this.options.numRounds) resolve(false);
+            if (this.round >= this.options.numRounds) {
+                resolve(false);
+                return;
+            }
             // no more unique prompts
             this.prompts.newPrompt().then(prompt => {
                 this.prompt = prompt;
@@ -155,14 +158,14 @@ const GameState = class {
 
     /*** PROMPT SELECTION state changes ***/
     beginSelection() {
-        this.stage = 'responseSelection';
+        this.stage = 'selection';
 
         // increment round here, this way skipping prompts doesn't increment the round count
         this.round++;
         //reset selections and matches
         this._resetSelection();
 
-        // update global state for responseSelection
+        // update global state for selection
         for (let i = 0; i < this.players.length; i++) {
             const j = (this.initialSelector + i) % this.players.length;
             const player = this.players[j];
@@ -179,7 +182,7 @@ const GameState = class {
     }
 
     nextSelection() {
-        this.stage = 'responseSelection';
+        this.stage = 'selection';
         //clear selections
         this._resetSelection();
 
@@ -214,36 +217,41 @@ const GameState = class {
     }
 
     _autoMatch() {
+        for(const player of this.players){
+            this._autoMatchSingle(player);
+        }
+    }
+
+    _autoMatchSingle(player){
         const selector = this.players[this.selector];
         const response = selector.selected;
-        this.players.forEach((player => {
-            if (player.id === selector.id) return;
-            if (player.responses.length <= player.used.length) {
+        if (player.id === selector.id) return;
+        if (player.responses.length <= player.used.length) {
+            player.matchingComplete = true;
+            if(this.selectionType === 'sike'){
+                this.players[this.selector].points++;
+            }
+        } else {
+            const match = player.responses.map(r => {
+                return {value: r, chance: this._match_chance(r, response)};
+            }).sort((a,b) => b.chance - a.chance)[0];
+
+            if (match.chance > 0.8 && !player.used.includes(match)) {
+                player.used.push(match.value);
+                player.match = match.value;
                 player.matchingComplete = true;
-                if(this.selectionType === 'sike'){
+                if(this.selectionType === 'strike'){
                     this.players[this.selector].points++;
                 }
-            } else {
-                const match = player.responses.map(r => {
-                    return {value: r, chance: this._match_chance(r, response)};
-                }).sort((a,b) => b.chance - a.chance)[0];
-
-                if (match.chance > 0.8 && !player.used.includes(match)) {
-                    player.used.push(match.value);
-                    player.match = match.value;
-                    player.matchingComplete = true;
-                    if(this.selectionType === 'strike'){
-                        this.players[this.selector].points++;
-                    }
-                }
             }
-        }));
+        }
     }
+
 
     acceptSelectionType(id, isStrike) {
         const selector = this.players[this.selector];
         if (this.selectionTypeChoice) {
-            if (this.stage === 'responseSelection' && selector.id === id) {
+            if (this.stage === 'selection' && selector.id === id) {
                 this.selectionType = isStrike ? 'strike' : 'sike';
                 return {success: true};
             }
@@ -257,7 +265,7 @@ const GameState = class {
         if (this.selectionType === 'choice') return {error: 'badRequest'};
 
         // id must be currently selecting
-        if (this.stage === 'responseSelection' && selector.id === id) {
+        if (this.stage === 'selection' && selector.id === id) {
             // response must be in selectors responses but not used
             if (selector.responses.includes(response) && !selector.used.includes(response)) {
                 selector.selected = response;
@@ -270,7 +278,7 @@ const GameState = class {
                 } else {
                     // automatically match any obvious matches
                     this._autoMatch();
-                    this.stage = 'responseMatching';
+                    this.stage = 'matching';
                     return {success: true, stage: this.stage};
                 }
             }
@@ -299,7 +307,7 @@ const GameState = class {
         // slightly favor allowing a sike over disallowing
         if (upVotes >= majorityFavored) {
             this._autoMatch();
-            this.stage = 'responseMatching';
+            this.stage = 'matching';
             return 'beginMatching';
         }
 
@@ -310,7 +318,7 @@ const GameState = class {
             } else {
                 if (this.isActive(this.selectorId()) &&
                     this.players[this.selector].responses.length > this.players[this.selector].used.length) {
-                    this.stage = 'responseSelection';
+                    this.stage = 'selection';
                     this.remainingSikeRetries--;
                     for (const player of this.players) {
                         player.sikeVote = 0;
@@ -333,7 +341,7 @@ const GameState = class {
     /*** MATCHING state changes ***/
     matchingComplete() {
         return !this.players.find(player => player.active && (!player.matchingComplete || player.selected))
-            && this.stage === 'responseMatching';
+            && this.stage === 'matching';
     }
 
 
@@ -348,7 +356,7 @@ const GameState = class {
         const matcher = this.players.find(player => player.id === id);
         if (!matcher) return {error: 'spectator'};
         if (matcher.matchingComplete) return {error: 'duplicateRequest'};
-        if (this.stage !== 'responseMatching' || selector.id === id) return {error: 'badRequest'};
+        if (this.stage !== 'matching' || selector.id === id) return {error: 'badRequest'};
 
         // Sike
         if (!match) {
@@ -373,6 +381,16 @@ const GameState = class {
         }
 
         return {error: 'badRequest'};
+    }
+
+    matches(){
+        const matches = [];
+        for (const player of this.players) {
+            if (player.matchingComplete) {
+                matches.push({player: player.id, response: player.match});
+            }
+        }
+        return matches;
     }
 
     /*** MATCHING state changes ***/
@@ -400,6 +418,51 @@ const GameState = class {
     selectorId() {
         return this.players[this.selector].id;
     }
+    
+    _getTimeLeft(timeout) {
+        return Math.ceil((timeout._idleStart + timeout._idleTimeout)/1000 - process.uptime())
+    }
+
+    midgameConnect(id, oldId){
+        let player = this.players.find(player => player.id === oldId);
+        if(!player){
+            this.players.push(
+                {
+                    id: id,
+                    voteSkipPrompt: false,
+                    points: 0,
+                    used: [],
+                    responses: [],
+                    selected: '',
+                    sikeVote: 0,
+                    match: '',
+                    matchingComplete: false, // set to true if explicitly no match was found or a match was found
+                }
+            );
+        } else {
+            player.id = id;
+        }
+        player = this.players.find(player => player.id === id);
+        // ensure if someone joins mid matching that they don't have to match since they have no responses
+        if(this.stage === 'matching'){
+           this._autoMatchSingle(player);
+        }
+        const votes = this.players.filter(player => this.isActive(player.id) && player.voteSkipPrompt).length;
+        const timeleft = this._getTimeLeft(this.promptTimeout) - 1;
+
+        return {
+            stage: this.stage,
+            selectionType: this.selectionType,
+            responses: player.responses,
+            usedResponses: player.used,
+            selector: this.selectorId(),
+            selectedResponse: this.selectedResponse(),
+            prompt: this.prompt,
+            skipVoteCount: votes,
+            timer: timeleft,
+            matches: this.matches()
+        }
+    }
 
     disconnect(id) {
         if (this.stage === 'response') {
@@ -407,7 +470,7 @@ const GameState = class {
             if (skipPrompt) this._promptSkippedCb();
 
         }
-        if (this.stage === 'responseSelection') {
+        if (this.stage === 'selection') {
             if (this.isSelector(id)) {
                 if (this._selectionUnsuccessfulCb) this._selectionUnsuccessfulCb();
             }
@@ -416,7 +479,7 @@ const GameState = class {
             const action = this._voteUpdateAction();
             if (action !== 'noOp') this._disputeCompleteCb(action);
         }
-        if (this.stage === 'responseMatching') {
+        if (this.stage === 'matching') {
             this._cbIfMatchingComplete();
         }
     }

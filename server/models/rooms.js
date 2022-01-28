@@ -71,15 +71,17 @@ const joinRoom = (id, name, roomName) => {
     if (!room)
         return { error: 'noRoom' };
 
+
     const existingPlayer = room.players.find(player => player.name === name);
     if(existingPlayer && existingPlayer.active){
         return { error: 'nameTaken' };
     } else if(existingPlayer){
         // if player disconnected, let them join back in as who they were previously
+        const oldId = existingPlayer.id;
         playerRoom[id] = room;
         existingPlayer.active = true;
         existingPlayer.id = id;
-        return { room };
+        return { room, oldId };
     }
 
     room.players.push({

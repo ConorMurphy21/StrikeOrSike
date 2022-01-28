@@ -61,7 +61,7 @@ module.exports = (io, socket) => {
         const state = room.state;
         const result = state.acceptResponseSelection(socket.id, response);
         if (result.success) {
-            if (result.stage === 'responseMatching') {
+            if (result.stage === 'matching') {
                 beginMatching(io, room);
             } else if (result.stage === 'sikeDispute') {
                 io.to(room.name).emit('beginDispute', response);
@@ -85,7 +85,7 @@ module.exports = (io, socket) => {
         const state = room.state;
         const result = state.acceptMatch(socket.id, match);
         if (result.success) {
-            io.to(room.name).emit('matchFound', {player: socket.id, response: match});
+            io.to(room.name).emit('matchesFound', [{player: socket.id, response: match}]);
         }
     });
 
@@ -200,11 +200,9 @@ function applyDisputeAction(io, room, action) {
 function beginMatching(io, room) {
     const state = room.state;
     io.to(room.name).emit('beginMatching', state.selectedResponse());
-    for (const player of state.players) {
-        if (player.matchingComplete) {
-            // todo: turn this into 1 message to reduce network traffic
-            io.to(room.name).emit('matchFound', {player: player.id, response: player.match});
-        }
+    const matches = state.matches();
+    if(matches.length !== 0) {
+        io.to(room.name).emit('matchesFound', state.matches());
     }
 }
 

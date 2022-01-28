@@ -5,7 +5,7 @@ module.exports = (io, socket) => {
     socket.onAny(() => {
         // update activity
         const room = getRoomById(socket.id);
-        if(room){
+        if (room) {
             room.lastActivity = (new Date()).getTime();
         }
     })
@@ -41,9 +41,14 @@ module.exports = (io, socket) => {
                 modifies: [room.players.find(p => p.name === name)],
                 deletes: []
             });
+            if (room.state.stage !== 'lobby') {
+                socket.emit('midgameConnect', room.state.midgameConnect(socket.id, result.oldId));
+                if(!result.oldId && room.state.stage === 'matching') {
+                    socket.to(room.name).emit('matchesFound', [{player: socket.id, response: ''}])
+                }
+            }
         }
     });
-
 
     socket.on('disconnect', () => {
         disconnect(socket);
@@ -54,7 +59,7 @@ function disconnect(socket) {
     let roomName = getRoomById(socket.id)?.name;
     disconnectPlayer(socket.id);
     // remove socket from room
-    if(roomName) socket.leave(roomName);
+    if (roomName) socket.leave(roomName);
 
     const room = getRoomByName(roomName);
     if (room) {

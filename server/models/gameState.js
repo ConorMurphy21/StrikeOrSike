@@ -8,6 +8,8 @@ const defaultOptions = () => {
         sikeDispute: false,
         sikeRetries: 0,
         promptSkipping: false,
+        minPlayers: 3,
+        maxPlayers: 10
     }
 }
 

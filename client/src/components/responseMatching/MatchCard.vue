@@ -6,9 +6,9 @@
 </template>
 
 <script>
-import StrikeImg from '@/assets/strike.png';
-import SikeImg from '@/assets/sike.png';
-import PendingImg from '@/assets/pending.gif';
+import StrikeImg from '@/assets/images/strike.png';
+import SikeImg from '@/assets/images/sike.png';
+import PendingImg from '@/assets/images/pending.gif';
 
 export default {
   props: {

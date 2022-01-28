@@ -12,9 +12,9 @@
 import {createNamespacedHelpers} from 'vuex';
 
 const {mapState, mapGetters} = createNamespacedHelpers('game');
-import StrikeImg from '@/assets/strike.png';
-import SikeImg from '@/assets/sike.png';
-import ChoiceImg from '@/assets/choice.png';
+import StrikeImg from '@/assets/images/strike.png';
+import SikeImg from '@/assets/images/sike.png';
+import ChoiceImg from '@/assets/images/choice.png';
 
 export default {
   data() {

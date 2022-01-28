@@ -9,7 +9,7 @@
         <span class="responseMessage">{{ selectedResponse }}</span>
       </template>
     </i18n-t>
-    <button class="btn btn-primary w-50 fs-4" @click="noMatch"><img src="@/assets/sike.png" :alt="$t('sike')"></button>
+    <button class="btn btn-primary w-50 fs-4" @click="noMatch"><img src="@/assets/images/sike.png" :alt="$t('sike')"></button>
     <response-list :selectable="true" v-model="matchedResponse"/>
 
   </div>

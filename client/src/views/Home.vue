@@ -55,7 +55,6 @@ export default {
   },
   sockets: {
     joinRoom: function (data) {
-      console.dir(data);
       if (data.success) {
         this.setName(this.form.name);
         this.setRoomName(data.roomName);

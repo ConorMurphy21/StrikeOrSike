@@ -8,7 +8,7 @@
 <script>
 import StrikeImg from '@/assets/strike.png';
 import SikeImg from '@/assets/sike.png';
-import PendingImg from '@/assets/pending.png'
+import PendingImg from '@/assets/pending.gif';
 
 export default {
   props: {

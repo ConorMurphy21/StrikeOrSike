@@ -1,9 +1,3 @@
-<script setup>
-import ResponseList from '@/components/gameShared/ResponseList.vue';
-import Prompt from '@/components/gameShared/Prompt.vue';
-import SikeImg from '@/assets/sike.png';
-</script>
-
 <template>
   <div class="w-100 h-100 d-flex flex-column justify-content-start align-items-center p-3">
     <prompt :prompt="prompt"/>
@@ -15,7 +9,7 @@ import SikeImg from '@/assets/sike.png';
         <span class="responseMessage">{{ selectedResponse }}</span>
       </template>
     </i18n-t>
-    <button class="btn btn-primary w-50 fs-4" @click="noMatch"><img :src="SikeImg" :alt="$t('sike')"></button>
+    <button class="btn btn-primary w-50 fs-4" @click="noMatch"><img src="@/assets/sike.png" :alt="$t('sike')"></button>
     <response-list :selectable="true" v-model="matchedResponse"/>
 
   </div>
@@ -23,6 +17,8 @@ import SikeImg from '@/assets/sike.png';
 
 <script>
 import {createNamespacedHelpers} from 'vuex';
+import ResponseList from '@/components/gameShared/ResponseList.vue';
+import Prompt from '@/components/gameShared/Prompt.vue';
 
 const {mapState} = createNamespacedHelpers('game');
 
@@ -31,6 +27,10 @@ export default {
     return {
       matchedResponse: '',
     }
+  },
+  components: {
+    ResponseList,
+    Prompt
   },
   computed: {
     ...mapState([

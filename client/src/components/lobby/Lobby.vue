@@ -1,7 +1,3 @@
-<script setup>
-import PlayerList from '@/components/lobby/PlayerList.vue'
-</script>
-
 <template>
   <div class="w-100 h-100 d-flex flex-column justify-content-between align-items-center gap-3 pt-1 pb-4">
     <h1 v-t="'players'"/>
@@ -15,16 +11,21 @@ import PlayerList from '@/components/lobby/PlayerList.vue'
 
 <script>
 import {createNamespacedHelpers} from 'vuex';
-const { mapGetters } = createNamespacedHelpers('room')
+import PlayerList from '@/components/lobby/PlayerList.vue'
+
+const {mapGetters} = createNamespacedHelpers('room')
 
 export default {
-  computed:{
+  components: {
+    PlayerList
+  },
+  computed: {
     ...mapGetters([
       'self',
     ]),
   },
-  methods:{
-    startGame(){
+  methods: {
+    startGame() {
       this.$socket.emit('startGame');
     }
   }

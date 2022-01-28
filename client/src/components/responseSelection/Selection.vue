@@ -1,13 +1,8 @@
-<script setup>
-import ResponseList from '@/components/gameShared/ResponseList.vue';
-import SelectionType from '@/components/responseSelection/SelectionType.vue';
-import Prompt from '@/components/gameShared/Prompt.vue';
-</script>
-
 <template>
   <div class="w-100 h-100 d-flex flex-column justify-content-start align-items-center p-3">
     <prompt :prompt="prompt"/>
-    <p v-if="!isSelector" class="my-auto passiveMessage" v-t="{path: 'selection.message', args: {'player':selector.name}}"/>
+    <p v-if="!isSelector" class="my-auto passiveMessage"
+       v-t="{path: 'selection.message', args: {'player':selector.name}}"/>
     <i18n-t v-else keypath="selection.selfMessage" tag="p" class="my-auto activeMessage">
       <template v-slot:self>
         <span class="activeSelector" v-t="'selection.self'"/>
@@ -20,6 +15,9 @@ import Prompt from '@/components/gameShared/Prompt.vue';
 
 <script>
 import {createNamespacedHelpers} from 'vuex';
+import ResponseList from '@/components/gameShared/ResponseList.vue';
+import SelectionType from '@/components/responseSelection/SelectionType.vue';
+import Prompt from '@/components/gameShared/Prompt.vue';
 
 const {mapState, mapGetters} = createNamespacedHelpers('game');
 
@@ -28,6 +26,11 @@ export default {
     return {
       response: '',
     }
+  },
+  components: {
+    ResponseList,
+    SelectionType,
+    Prompt
   },
   computed: {
     ...mapState([
@@ -39,7 +42,7 @@ export default {
       'isSelector'
     ])
   },
-  watch:{
+  watch: {
     response: function (val) {
       this.$socket.emit('selectResponse', val);
     }
@@ -48,10 +51,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.activeMessage{
+.activeMessage {
   font-size: 1.8rem;
 }
-.activeSelector{
+
+.activeSelector {
   color: $red;
   font-size: 2.4rem;
   font-weight: 900;

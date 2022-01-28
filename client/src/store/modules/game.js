@@ -76,6 +76,9 @@ const mutations = {
         state.responses = [];
         state.usedResponses = [];
     },
+    setResponses(state, data) {
+        state.responses = data;
+    },
     setSelectionType(state, data) {
         state.selectionType = data;
     },
@@ -96,6 +99,9 @@ const mutations = {
     },
     useResponse(state, data) {
         state.usedResponses.push(data);
+    },
+    setUsedResponses(state, data) {
+        state.usedResponses = data;
     },
     setScores(state, data) {
         state.scores = data;
@@ -139,7 +145,7 @@ const socketActions = {
         } else {
             commit('setSelectionTypeChoice', false);
         }
-        commit('setScene', 'Selection');
+        commit('setScene', 'selection');
     },
     async SOCKET_beginDispute({state, commit, rootGetters}, response) {
         commit('setSelectedResponse', response);
@@ -159,16 +165,18 @@ const socketActions = {
             commit('setScene', 'activeMatching');
         }
     },
-    async SOCKET_matchFound({state, commit, rootState, rootGetters}, match) {
-        commit('addMatch', {
-            player: rootState.room.players.find(player => player.id === match.player),
-            // response === '' if no match was found (i.e. sike)
-            response: match.response
-        });
-        if (match.player === rootGetters['room/self'].id) {
-            commit('useResponse', match.response);
-            commit('setScene', 'matchingSummary');
+    async SOCKET_matchesFound({state, commit, rootState, rootGetters}, matches) {
+        for(const match of matches) {
+            commit('addMatch', {
+                player: rootState.room.players.find(player => player.id === match.player),
+                response: match.response
+            });
+            if (match.player === rootGetters['room/self'].id) {
+                commit('useResponse', match.response);
+                commit('setScene', 'matchingSummary');
+            }
         }
+
     },
     async SOCKET_gameOver({state, commit, rootState}, data) {
         commit('setScene', 'endGame');
@@ -181,6 +189,45 @@ const socketActions = {
         }
         commit('setScores', scores);
     },
+    async SOCKET_midgameConnect({state, commit, dispatch, rootState, rootGetters}, data) {
+        commit('setSelectionType', data.selectionType);
+        if(data.selectionType === 'choice'){
+            commit('setSelectionTypeChoice', true);
+        }
+        commit('setResponses', data.responses);
+        commit('setUsedResponses', data.usedResponses);
+        commit('setSelector', rootState.room.players.find(player => player.id === data.selector));
+        commit('setSelectedResponse', data.selectedResponse);
+        commit('setPrompt', data.prompt);
+        commit('setTimer', data.timer);
+        commit('SOCKET_setSkipVoteCount', data.skipVoteCount);
+
+        if(data.timer){
+            dispatch('startTimer');
+        }
+        const isSelector = state.selector.id === rootGetters['room/self'].id;
+        let scene = '';
+        //'lobby', 'response', 'selection', 'sikeDispute', 'matching'
+        switch (data.stage) {
+            case 'lobby':
+                scene = 'lobby';
+                break;
+            case 'response':
+                scene = 'promptResponse';
+                break;
+            case 'selection':
+                scene = 'selection';
+                break;
+            case 'sikeDispute':
+                scene = isSelector ? 'passiveDispute' : 'activeDispute';
+                break;
+            case 'matching':
+                scene = isSelector ? 'matchingSummary' : 'activeMatching';
+        }
+        commit('setScene', scene);
+        dispatch('SOCKET_matchesFound', data.matches);
+
+    }
 }
 
 const actions = {

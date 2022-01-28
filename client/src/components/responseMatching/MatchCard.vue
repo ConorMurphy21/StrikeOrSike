@@ -8,7 +8,7 @@
 <script>
 import StrikeImg from '@/assets/strike.png';
 import SikeImg from '@/assets/sike.png';
-
+import PendingImg from '@/assets/pending.png'
 
 export default {
   props: {
@@ -23,6 +23,8 @@ export default {
        } else {
          return StrikeImg;
        }
+      } else {
+        return PendingImg;
       }
     },
     imgAlt(){
@@ -33,7 +35,7 @@ export default {
           return this.$t('sike');
         }
       } else {
-        return 'pending';
+        return this.$t('pending');
       }
     }
   }

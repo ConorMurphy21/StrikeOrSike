@@ -22,4 +22,6 @@ app.use(new VueSocketIO({
         mutationPrefix: 'SOCKET_'
     }
 }))
-app.mount('#app')
+router.isReady().then(() => {
+    app.mount('#app')
+})

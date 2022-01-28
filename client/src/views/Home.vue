@@ -25,9 +25,12 @@
 </template>
 
 <script>
-import {createNamespacedHelpers} from 'vuex'
+import {createNamespacedHelpers} from 'vuex';
+import ClickMp3 from '@/assets/audio/click2.mp3'
 
-const {mapMutations} = createNamespacedHelpers('room')
+const click = new Audio(ClickMp3);
+
+const {mapMutations} = createNamespacedHelpers('room');
 
 export default {
   data() {
@@ -49,13 +52,13 @@ export default {
       'setRoomName'
     ]),
     onSubmit(joinGame) {
+      click.play()
       const event = joinGame ? 'joinRoom' : 'createRoom';
       this.$socket.emit(event, this.form.name, this.form.roomName, navigator.languages);
     }
   },
   sockets: {
     joinRoom: function (data) {
-      console.dir(data);
       if (data.success) {
         this.setName(this.form.name);
         this.setRoomName(data.roomName);

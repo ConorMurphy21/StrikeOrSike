@@ -1,7 +1,3 @@
-<script setup>
-import PlayerCard from '@/components/lobby/PlayerCard.vue'
-</script>
-
 <template>
   <div class="player-list d-flex flex-row justify-content-evenly w-100 gap-4 px-4 flex-grow-1">
     <div class="d-flex flex-column justify-content-start align-items-center w-50 gap-4" v-for="column in columns">
@@ -12,10 +8,14 @@ import PlayerCard from '@/components/lobby/PlayerCard.vue'
 
 <script>
 import {createNamespacedHelpers} from 'vuex';
+import PlayerCard from '@/components/lobby/PlayerCard.vue'
 
 const {mapState} = createNamespacedHelpers('room')
 
 export default {
+  components: {
+    PlayerCard
+  },
   computed: {
     ...mapState([
       'players'

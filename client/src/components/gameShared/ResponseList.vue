@@ -14,8 +14,12 @@
 </template>
 <script>
 import {createNamespacedHelpers} from 'vuex';
+import Click1Mp3 from '@/assets/audio/click1.mp3'
+import Click2Mp3 from '@/assets/audio/click1.mp3'
 
-const {mapState} = createNamespacedHelpers('game')
+const click2 = new Audio(Click2Mp3);
+
+const {mapState} = createNamespacedHelpers('game');
 
 export default {
   data() {
@@ -35,10 +39,13 @@ export default {
   },
   methods: {
     select(index, response) {
+
       if (this.selectable && !this.used(response)) {
         if (this.selected !== index) {
+          new Audio(Click1Mp3).play();
           this.selected = index;
         } else {
+          click2.play();
           this.$emit('update:modelValue', response);
         }
       }

@@ -7,13 +7,14 @@ module.exports = (io, socket) => {
         const room = roomIfLeader(socket.id);
         if (!room) return;
         // todo: validation
-        room.state.options = options;
+        room.state.options = {...room.state.options, ...options};
         callback({success: true});
     });
 
     socket.on('startGame', () => {
         const room = roomIfLeader(socket.id);
         if (!room) return;
+        if(room.players.length < room.state.options.minPlayers) return;
         room.state = new GameState(room, room.state.options);
         registerCallbacks(io, room);
         setOptions(io, room);

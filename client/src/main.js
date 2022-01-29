@@ -14,7 +14,7 @@ app.use(i18n)
 
 app.use(new VueSocketIO({
     debug,
-    connection: debug ? 'http://localhost:3000' : 'http://54.190.240.152', //options object is Optional
+    connection: debug ? 'http://localhost:3000' : 'http://strikeorsike.io', //options object is Optional
     options: {withCredentials: false},
     vuex: {
         store,

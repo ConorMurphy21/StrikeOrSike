@@ -19,6 +19,7 @@ phases:
       - echo Build started on `date`
       - echo Compiling the Node.js code
       - cd client
+      - rm package-lock.json
       - npm run build
       - cd ..
       - echo Formatting Resources

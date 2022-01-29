@@ -3,9 +3,8 @@ version: 0.2
 
 phases:
   install:
-    runtime-versions:
-      nodejs: 14.x
     commands:
+      - n 14.18.3
       - echo Installing server node modules...
       - cd server
       - npm install

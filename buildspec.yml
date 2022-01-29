@@ -5,6 +5,7 @@ phases:
   install:
     commands:
       - n 14.18.3
+      - npm install -g npm@latest
       - echo Installing server node modules...
       - cd server
       - npm install

@@ -25,7 +25,7 @@ phases:
       - cd server
       - npm run formatPrompts
       - cd ..
-  post-build:
+  post_build:
     commands:
       - echo Build completed on `date`
 

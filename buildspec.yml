@@ -20,12 +20,14 @@ phases:
       - echo Compiling the Node.js code
       - cd client
       - npm run build
+      - cd ..
   post_build:
     commands:
       - echo Build completed on `date`
       - echo Formatting Resources
       - cd server
       - npm run formatPrompts
+      - cd ..
 artifacts:
   files:
     - '**/*'

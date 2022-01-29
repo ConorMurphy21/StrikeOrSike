@@ -26,3 +26,7 @@ phases:
       - echo Formatting Resources
       - cd server
       - npm run formatPrompts
+artifacts:
+  files:
+    - '**/*'
+  name: $AWS_REGION-$(date +%Y-%m-%d)

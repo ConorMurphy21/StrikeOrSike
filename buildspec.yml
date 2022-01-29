@@ -12,7 +12,6 @@ phases:
       - cd ..
       - echo Installing client node modules...
       - cd client
-      - rm package-lock.json
       - npm install
       - cd ..
   build:

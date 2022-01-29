@@ -4,7 +4,7 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      nodejs: 14
+      nodejs: 14.x
     commands:
       - echo Installing server node modules...
       - cd server
@@ -19,7 +19,6 @@ phases:
       - echo Build started on `date`
       - echo Compiling the Node.js code
       - cd client
-      - rm package-lock.json
       - npm run build
       - cd ..
       - echo Formatting Resources

@@ -9,27 +9,33 @@ phases:
       - echo Installing server node modules...
       - cd server
       - npm install
-      - cd ..
       - echo Installing client node modules...
-      - cd client
+      - cd ../client
       - npm install
       - cd ..
   build:
     commands:
       - echo Build started on `date`
-      - echo Compiling the Node.js code
+      - echo Compiling the client...
       - cd client
       - npm run build
-      - cd ..
-      - echo Formatting Resources
-      - cd server
+      - cd ../server
+      - echo Formatting Resources...
       - npm run formatPrompts
       - cd ..
+      - echo Make file structure match static Express.js app
+      - mv server/* ./
+      - mkdir public
+      - mv client/dist/* public/
   post_build:
     commands:
       - echo Build completed on `date`
 
 artifacts:
+  type: zip
   files:
-    - '**/*'
-  name: $AWS_REGION-$(date +%Y-%m-%d)
+    - /**/*
+  exclude-paths:
+    - scripts
+    - tests
+    - node_modules

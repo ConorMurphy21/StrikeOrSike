@@ -34,7 +34,7 @@ phases:
 artifacts:
   type: zip
   files:
-    - /**/*
+    - '**/*'
   exclude-paths:
     - scripts
     - tests

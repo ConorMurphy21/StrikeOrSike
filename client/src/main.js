@@ -16,7 +16,7 @@ app.use(i18n)
 router.isReady().then(() => {
     app.use(new VueSocketIO({
         debug,
-        connection: debug ? 'http://localhost:5100' : location.href, //options object is Optional
+        connection: debug ? 'http://localhost:5100' : location.origin, //options object is Optional
         options: {withCredentials: false},
         vuex: {
             store,

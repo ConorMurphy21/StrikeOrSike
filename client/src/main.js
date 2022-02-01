@@ -12,16 +12,17 @@ app.use(store)
 app.use(router)
 app.use(i18n)
 
-app.use(new VueSocketIO({
-    debug,
-    connection: debug ? 'http://localhost:5100' : 'http://strikeorsike.io', //options object is Optional
-    options: {withCredentials: false},
-    vuex: {
-        store,
-        actionPrefix: 'SOCKET_',
-        mutationPrefix: 'SOCKET_'
-    }
-}))
+
 router.isReady().then(() => {
+    app.use(new VueSocketIO({
+        debug,
+        connection: debug ? 'http://localhost:5100' : location.href, //options object is Optional
+        options: {withCredentials: false},
+        vuex: {
+            store,
+            actionPrefix: 'SOCKET_',
+            mutationPrefix: 'SOCKET_'
+        }
+    }))
     app.mount('#app')
 })

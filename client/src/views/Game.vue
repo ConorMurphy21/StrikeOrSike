@@ -6,6 +6,7 @@
 
 <script>
 import Lobby from '@/components/lobby/Lobby.vue'
+import Countdown from '@/components/countdown/Countdown.vue';
 import PromptResponse from '@/components/promptResponse/PromptResponse.vue'
 import Selection from '@/components/responseSelection/Selection.vue';
 import ActiveDispute from '@/components/dispute/ActiveDispute.vue';
@@ -19,6 +20,7 @@ import {mapState} from 'vuex';
 export default {
   components: {
     Lobby,
+    Countdown,
     PromptResponse,
     Selection,
     ActiveDispute,

@@ -8,7 +8,7 @@
         <span class="activeSelector" v-t="'selection.self'"/>
       </template>
     </i18n-t>
-    <selection-type/>
+    <selection-picker/>
     <response-list :selectable="isSelector" v-model="response"/>
   </div>
 </template>
@@ -16,9 +16,11 @@
 <script>
 import {createNamespacedHelpers} from 'vuex';
 import ResponseList from '@/components/gameShared/ResponseList.vue';
-import SelectionType from '@/components/responseSelection/SelectionType.vue';
+import SelectionPicker from '@/components/responseSelection/SelectionPicker.vue';
 import Prompt from '@/components/gameShared/Prompt.vue';
+import AlertMp3 from '@/assets/audio/alert.mp3';
 
+const alert = new Audio(AlertMp3);
 const {mapState, mapGetters} = createNamespacedHelpers('game');
 
 export default {
@@ -29,14 +31,20 @@ export default {
   },
   components: {
     ResponseList,
-    SelectionType,
+    SelectionPicker,
     Prompt
+  },
+  mounted() {
+    if (this.isSelector && !this.firstSelection) {
+      alert.play();
+    }
   },
   computed: {
     ...mapState([
       'prompt',
       'selectionType',
-      'selector'
+      'selector',
+      'firstSelection'
     ]),
     ...mapGetters([
       'isSelector'

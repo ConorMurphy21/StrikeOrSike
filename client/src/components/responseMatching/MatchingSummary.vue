@@ -11,6 +11,7 @@
         {{ $t('scoreMessage', {player: selector.name, score: $n(roundPoints)}) }}
       </h3>
       <h2 class="selected-response">{{ selectedResponse }}</h2>
+      <selection-type/>
     </div>
 
     <div class="d-flex flex-column w-75 gap-2">
@@ -29,8 +30,9 @@
 <script>
 import {createNamespacedHelpers} from 'vuex';
 import Prompt from '@/components/gameShared/Prompt.vue';
-import MatchCard from '@/components/responseMatching/MatchCard.vue'
-import ClickMp3 from '@/assets/audio/click2.mp3'
+import SelectionType from '@/components/gameShared/SelectionType.vue';
+import MatchCard from '@/components/responseMatching/MatchCard.vue';
+import ClickMp3 from '@/assets/audio/click2.mp3';
 
 const click = new Audio(ClickMp3);
 
@@ -38,7 +40,7 @@ const game = createNamespacedHelpers('game');
 const room = createNamespacedHelpers('room');
 
 export default {
-  components: {MatchCard, Prompt},
+  components: {MatchCard, Prompt, SelectionType},
   data() {
     return {
       matchedResponse: '',

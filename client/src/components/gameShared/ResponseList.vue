@@ -3,7 +3,7 @@
     <div class="list-group w-100 h-100">
       <div v-for="(response, index) in responses"
            class='list-group-item'
-           :class="{'list-group-item-action': selectable && !used(response),
+           :class="{'list-group-item-action selectable': selectable && !used(response),
                     'active': selected === index,
                     'list-group-item-red': used(response)}"
            @click="select(index, response)">
@@ -15,7 +15,7 @@
 <script>
 import {createNamespacedHelpers} from 'vuex';
 import Click1Mp3 from '@/assets/audio/click1.mp3'
-import Click2Mp3 from '@/assets/audio/click1.mp3'
+import Click2Mp3 from '@/assets/audio/click2.mp3'
 
 const click2 = new Audio(Click2Mp3);
 
@@ -56,5 +56,11 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.selectable {
+  cursor: pointer;
+}
+</style>
 
 

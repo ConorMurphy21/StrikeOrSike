@@ -16,10 +16,11 @@ export default {
   },
   watch: {
     'time': (val) => {
-      if (val <= 10) {
+      if (val === 10) {
         timer.play();
       } else if (val <= 0) {
         timer.pause();
+        timer.currentTime = 0;
         timerComplete.play();
       }
     }

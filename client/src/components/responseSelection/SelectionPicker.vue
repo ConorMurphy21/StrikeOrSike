@@ -1,8 +1,8 @@
 <template>
   <div class="d-flex flex-row align-items-center justify-content-around w-75">
-    <button v-if="choice && isSelector" class="btn btn-red w-25"
+    <button v-if="choice && isSelector" class="btn btn-orange w-25"
             @click="selectSelectionType(true)">Strike</button>
-    <img :src="typeImg" :alt="$t(type)">
+    <selection-type/>
     <button v-if="choice && isSelector" class="btn btn-blue w-25"
             @click="selectSelectionType(false)">Sike</button>
   </div>
@@ -10,14 +10,10 @@
 
 <script>
 import {createNamespacedHelpers} from 'vuex';
-
-const {mapState, mapGetters} = createNamespacedHelpers('game');
-import StrikeImg from '@/assets/images/strike.png';
-import SikeImg from '@/assets/images/sike.png';
-import ChoiceImg from '@/assets/images/choice.png';
+import SelectionType from '@/components/gameShared/SelectionType.vue';
 import ClickMp3 from '@/assets/audio/click2.mp3'
+const {mapState, mapGetters} = createNamespacedHelpers('game');
 
-const click = new Audio(ClickMp3);
 
 export default {
   data() {
@@ -25,27 +21,19 @@ export default {
       lastPicked: false
     }
   },
+  components: {SelectionType},
   computed: {
     ...mapState({
       type: 'selectionType',
       choice: 'selectionTypeChoice'
     }),
     ...mapGetters([
-        'isSelector'
+      'isSelector'
     ]),
-    typeImg(){
-      if(this.type === 'strike'){
-        return StrikeImg;
-      } else if(this.type === 'sike'){
-        return SikeImg;
-      }
-      return ChoiceImg;
-    }
-
   },
   methods: {
     selectSelectionType(strike) {
-      click.play();
+      new Audio(ClickMp3).play();
       if (this.type === 'choice' || this.lastPicked !== strike) {
         this.$socket.emit('selectSelectionType', strike);
         this.lastPicked = strike;
@@ -59,14 +47,6 @@ export default {
 button{
   font-family: $main-font;
   font-size: 1.4rem;
-}
-img{
-  max-width: 35%;
-  color: $black;
-  font-family: $header-font !important;
-  font-weight: normal;
-  font-size: 3rem;
-  text-align: center;
 }
 </style>
 

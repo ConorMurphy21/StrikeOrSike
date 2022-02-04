@@ -74,7 +74,7 @@ describe('promptResponse tests', () => {
                 setTimeout(() => {
                     done();
                 }, 200);
-            }, 1200);
+            }, 600);
         });
         clientSocket1.on('promptResponse', (response) => {
             assert.strictEqual(response, 'forceSelection');

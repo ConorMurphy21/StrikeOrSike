@@ -140,9 +140,11 @@ function beginPrompt(io, room) {
                 prompt: state.prompt,
                 timer: state.options.promptTimer
             });
+            const timeToWait = state.options.promptTimer ? state.options.promptTimer * 1000 + 3000 + 1000 : 500;
             state.promptTimeout = setTimeout(() => {
                 beginSelection(io, room);
-            }, state.options.promptTimer * 1000 + 1000);
+                        // time to respond          + countdown + tolerance
+            }, timeToWait);
         } else {
             io.to(room.name).emit('gameOver', state.gameOver());
         }

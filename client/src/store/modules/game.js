@@ -126,12 +126,16 @@ const socketMutations = {
 
 const socketActions = {
     async SOCKET_beginPrompt({state, commit, dispatch}, data) {
-        commit('setTimer', data.timer);
-        dispatch('startTimer');
+        commit('setTimer', 3);
         commit('setPrompt', data.prompt);
         commit('clearResponses');
         commit('SOCKET_setSkipVoteCount', 0);
-        commit('setScene', 'promptResponse');
+        commit('setScene', 'countdown');
+        dispatch('startTimer').then(() => {
+            commit('setTimer', data.timer);
+            dispatch('startTimer');
+            commit('setScene', 'promptResponse');
+        });
         // Only start timer if it's not already started
 
     },

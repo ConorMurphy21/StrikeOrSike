@@ -17,7 +17,9 @@ const state = () => ({
     // optional state
     skipVoteCount: 0,
     // options:
-    promptSkipping: false
+    promptSkipping: false,
+
+    firstSelection: true,
 });
 
 export const getters = {
@@ -105,6 +107,9 @@ const mutations = {
     },
     setScores(state, data) {
         state.scores = data;
+    },
+    setFirstSelection(state, data){
+        state.firstSelection = data;
     }
 }
 
@@ -131,6 +136,7 @@ const socketActions = {
         commit('clearResponses');
         commit('SOCKET_setSkipVoteCount', 0);
         commit('setScene', 'countdown');
+        commit('setFirstSelection', true);
         dispatch('startTimer').then(() => {
             commit('setTimer', data.timer);
             dispatch('startTimer');
@@ -161,6 +167,7 @@ const socketActions = {
         }
     },
     async SOCKET_beginMatching({state, commit, rootGetters}, response) {
+        commit('setFirstSelection', false);
         commit('setSelectedResponse', response);
         if (state.selector.id === rootGetters['room/self'].id) {
             commit('useResponse', response);

@@ -1,7 +1,6 @@
 <template>
   <div class="w-100 h-100 d-flex flex-column justify-content-between align-items-center gap-3 pt-1 pb-4">
     <h1 v-t="'players'"/>
-
     <player-list/>
 
     <button class="btn btn-blue fs-4"
@@ -53,5 +52,6 @@ h1 {
 .btn {
   height: 60px;
   width: 30%;
+  min-width: 150px;
 }
 </style>

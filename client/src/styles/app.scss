@@ -4,13 +4,37 @@
 
 @font-face {
   font-family: "Pacifico";
-  src: local("Pacifico"),   url(@/assets/fonts/Pacifico/Pacifico-Regular.ttf) format("truetype");
+  src: local("Pacifico"), url(@/assets/fonts/Pacifico/Pacifico-Regular.ttf) format("truetype");
 }
 
 
 @font-face {
   font-family: "Quicksand";
-  src: local("Quicksand"),   url(@/assets/fonts/Quicksand/Quicksand-VariableFont_wght.ttf) format("truetype");
+  src: local("Quicksand"), url(@/assets/fonts/Quicksand/Quicksand-VariableFont_wght.ttf) format("truetype");
+}
+
+$sizes: (
+        25: 25%,
+        50: 50%,
+        75: 75%,
+        93: 93%,
+        100: 100%
+);
+@each $breakpoint in map-keys($grid-breakpoints) {
+  @each $size, $length in $sizes {
+    @include media-breakpoint-up($breakpoint) {
+      .w-#{$breakpoint}-#{$size} {
+        width: $length !important;
+      }
+      .h-#{$breakpoint}-#{$size} {
+        width: $length !important;
+      }
+    }
+  }
+}
+
+.w-93 {
+  width: 93% !important;
 }
 
 body {

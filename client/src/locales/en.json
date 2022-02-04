@@ -1,8 +1,8 @@
 {
   "strikeOrSike": "Strike or Sike",
-  "strike": "Strike!",
-  "sike": "Sike!",
-  "choice": "Choice!",
+  "strike": "Strike",
+  "sike": "Sike",
+  "choice": "Choice",
   "continue": "Continue",
   "pending": "Pending",
 
@@ -45,7 +45,7 @@
   "playerScores": "Player Scores",
   "toLobby": "Back to Lobby",
 
-  "activeMatchingMessage": "{player} selected {response}, do you have a match?",
+  "activeMatchingMessage": "{player} selected {response} to {type}, do you have a match?",
   "passiveDisputeMessage": "Your friends are deciding if {response} fits the category",
   "activeDisputeMessage": "Does {response} fit the category?",
   "skipPrompt": "Vote Skip",

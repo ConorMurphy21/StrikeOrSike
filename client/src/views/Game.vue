@@ -1,5 +1,5 @@
 <template>
-  <div class="main-content w-75">
+  <div class="main-content w-93 w-md-75">
     <component :is="scene"/>
   </div>
 </template>

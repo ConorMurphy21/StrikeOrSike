@@ -105,7 +105,7 @@ describe('Complete callback tests', () => {
                 assert.strictEqual(action, 'nextSelection');
                 done();
             });
-            gameState.acceptSikeDisputeVote(matcherId, false);
+            gameState.pollVote(matcherId, 'disputeSike');
             players[matcher2Index].active = false;
             gameState.disconnect(matcher2Id);
         });

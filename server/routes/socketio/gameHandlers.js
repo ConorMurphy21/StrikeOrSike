@@ -58,21 +58,7 @@ module.exports = (io, socket) => {
         const state = room.state;
         const result = state.acceptResponseSelection(socket.id, response);
         if (result.success) {
-            if (result.stage === 'matching') {
-                beginMatching(io, room);
-            } else if (result.stage === 'sikeDispute') {
-                io.to(room.name).emit('beginDispute', response);
-            }
-        }
-    });
-
-    socket.on('sikeVote', (vote) => {
-        const room = getRoomById(socket.id);
-        if (!room) return;
-        const state = room.state;
-        const result = state.acceptSikeDisputeVote(socket.id, vote);
-        if (result.success) {
-            applyDisputeAction(io, room, result.action);
+            beginMatching(io, room);
         }
     });
 
@@ -191,8 +177,6 @@ function applyDisputeAction(io, room, action) {
             });
     } else if (action === 'nextSelection') {
         continueSelection(io, room);
-    } else if (action === 'beginMatching') {
-        beginMatching(io, room);
     }
 }
 

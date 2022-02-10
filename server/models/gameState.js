@@ -49,7 +49,6 @@ const GameState = class {
                     used: [],
                     responses: [],
                     selected: '',
-                    sikeVote: 0,
                     match: '',
                     matchingComplete: false, // set to true if explicitly no match was found or a match was found
                 }
@@ -89,7 +88,7 @@ const GameState = class {
                 this.stage = 'response';
                 this.corrections = {};
 
-                if(this.options.promptSkipping){
+                if (this.options.promptSkipping) {
                     this.pollService.registerPoll('skipPrompt', this._promptSkippedCb, 'response');
                 }
 
@@ -116,7 +115,7 @@ const GameState = class {
                 return {error: 'duplicateResponse'};
             }
             playerState.responses.push(response);
-            if(!this.corrections[response]) {
+            if (!this.corrections[response]) {
                 getCorrections(response, this.room.lang).then((corrections) => {
                     this.corrections[response] = corrections;
                 });
@@ -149,9 +148,9 @@ const GameState = class {
 
     _resetSelection() {
         this.remainingSikeRetries = this.options.sikeRetries;
+        this.pollService.clearPoll('sikeDispute');
         for (const player of this.players) {
             player.selected = '';
-            player.sikeVote = 0;
             player.match = '';
             player.matchingComplete = false;
         }
@@ -205,7 +204,6 @@ const GameState = class {
         return false;
     }
 
-    // todo: improve automatic match catching
     _exact_matches(string1, string2) {
         return this._match_chance(string1, string2) > 0.9999;
     }
@@ -214,36 +212,36 @@ const GameState = class {
         string1 = string1.trim().normalize().trim();
         string2 = string2.trim().normalize().trim();
         const exact = string1.localeCompare(string2, this.room.lang,
-            { sensitivity: 'base', ignorePunctuation: true, usage: 'search'});
-        if(exact === 0) return 1;
+            {sensitivity: 'base', ignorePunctuation: true, usage: 'search'});
+        if (exact === 0) return 1;
         return misspellMatch(string1, string2, this.corrections[string1] ?? [], this.corrections[string2] ?? [], this.room.lang);
     }
 
     _autoMatch() {
-        for(const player of this.players){
+        for (const player of this.players) {
             this._autoMatchSingle(player);
         }
     }
 
-    _autoMatchSingle(player){
+    _autoMatchSingle(player) {
         const selector = this.players[this.selector];
         const response = selector.selected;
         if (player.id === selector.id) return;
         if (player.responses.length <= player.used.length) {
             player.matchingComplete = true;
-            if(this.selectionType === 'sike'){
+            if (this.selectionType === 'sike') {
                 this.players[this.selector].points++;
             }
         } else {
             const match = player.responses.map(r => {
                 return {value: r, chance: this._match_chance(r, response)};
-            }).sort((a,b) => b.chance - a.chance)[0];
+            }).sort((a, b) => b.chance - a.chance)[0];
 
             if (match.chance > 0.8 && !player.used.includes(match)) {
                 player.used.push(match.value);
                 player.match = match.value;
                 player.matchingComplete = true;
-                if(this.selectionType === 'strike'){
+                if (this.selectionType === 'strike') {
                     this.players[this.selector].points++;
                 }
             }
@@ -272,67 +270,36 @@ const GameState = class {
             if (selector.responses.includes(response) && !selector.used.includes(response)) {
                 selector.selected = response;
                 selector.used.push(response);
-
-                // either transition to sikeDispute if that's set or matching otherwise
+                // automatically match any obvious matches
+                this._autoMatch();
+                this.stage = 'matching';
                 if (this.options.sikeDispute && this.selectionType === 'sike') {
-                    this.stage = 'sikeDispute';
-                    return {success: true, stage: this.stage};
-                } else {
-                    // automatically match any obvious matches
-                    this._autoMatch();
-                    this.stage = 'matching';
-                    return {success: true, stage: this.stage};
+                    this.pollService.registerPoll('disputeSike',
+                        () => this._sikeDisputeAction(), 'matching', this.selectorId());
                 }
+                return {success: true};
+
             }
         }
         return {error: 'badRequest'};
     }
 
-    /*** DISPUTE state changes ***/
-
-    acceptSikeDisputeVote(id, vote) {
-        if (id === this.selectorId() || this.stage !== 'sikeDispute') {
-            return {error: 'badRequest'};
-        }
-        const playerState = this.players.find(player => player.id === id);
-        if (!playerState) return {error: 'spectator'};
-        playerState.sikeVote = vote ? 1 : -1;
-        return {success: true, action: this._voteUpdateAction()};
-    }
-
-    _voteUpdateAction() {
-        const numVoters = this.numVoters(this.selectorId());
-        const majorityFavored = Math.ceil(numVoters / 2);
-        const majorityUnfavored = (numVoters % 2) ? majorityFavored : majorityFavored + 1;
-
-        const upVotes = this.players.filter(player => this.isActive(player.id) && player.sikeVote > 0).length;
-        // slightly favor allowing a sike over disallowing
-        if (upVotes >= majorityFavored) {
-            this._autoMatch();
-            this.stage = 'matching';
-            return 'beginMatching';
-        }
-
-        const downVotes = this.players.filter(player => this.isActive(player.id) && player.sikeVote < 0).length;
-        if (downVotes >= majorityUnfavored) {
-            if (this.remainingSikeRetries <= 0) {
-                return 'nextSelection';
-            } else {
-                if (this.isActive(this.selectorId()) &&
-                    this.players[this.selector].responses.length > this.players[this.selector].used.length) {
-                    this.stage = 'selection';
-                    this.remainingSikeRetries--;
-                    for (const player of this.players) {
-                        player.sikeVote = 0;
-                    }
-                    return 'reSelect';
-                } else {
-                    return 'nextSelection';
+    _sikeDisputeAction() {
+        if (this.remainingSikeRetries <= 0) {
+            this._disputeCompleteCb('nextSelection');
+        } else {
+            if (this.isActive(this.selectorId()) &&
+                this.players[this.selector].responses.length > this.players[this.selector].used.length) {
+                this.stage = 'selection';
+                this.remainingSikeRetries--;
+                for (const player of this.players) {
+                    player.sikeVote = 0;
                 }
-
+                this._disputeCompleteCb('reSelect');
+            } else {
+                this._disputeCompleteCb('nextSelection');
             }
         }
-        return 'noOp';
     }
 
     numVoters(excludedId) {
@@ -384,7 +351,7 @@ const GameState = class {
         return {error: 'badRequest'};
     }
 
-    matches(){
+    matches() {
         const matches = [];
         for (const player of this.players) {
             if (player.matchingComplete) {
@@ -395,7 +362,7 @@ const GameState = class {
     }
 
     /*** MATCHING state changes ***/
-    gameOver(){
+    gameOver() {
         this.stage = 'lobby';
         return this.players.map(player => {
             return {player: player.id, points: player.points};
@@ -419,14 +386,14 @@ const GameState = class {
     selectorId() {
         return this.players[this.selector].id;
     }
-    
+
     _getTimeLeft(timeout) {
-        return Math.ceil((timeout._idleStart + timeout._idleTimeout)/1000 - process.uptime())
+        return Math.ceil((timeout._idleStart + timeout._idleTimeout) / 1000 - process.uptime())
     }
 
-    midgameConnect(id, oldId){
+    midgameConnect(id, oldId) {
         let player = this.players.find(player => player.id === oldId);
-        if(!player){
+        if (!player) {
             this.players.push(
                 {
                     id: id,
@@ -445,8 +412,8 @@ const GameState = class {
         }
         player = this.players.find(player => player.id === id);
         // ensure if someone joins mid matching that they don't have to match since they have no responses
-        if(this.stage === 'matching'){
-           this._autoMatchSingle(player);
+        if (this.stage === 'matching') {
+            this._autoMatchSingle(player);
         }
         const timeleft = this._getTimeLeft(this.promptTimeout) - 1;
 
@@ -468,10 +435,6 @@ const GameState = class {
             if (this.isSelector(id)) {
                 if (this._selectionUnsuccessfulCb) this._selectionUnsuccessfulCb();
             }
-        }
-        if (this.stage === 'sikeDispute') {
-            const action = this._voteUpdateAction();
-            if (action !== 'noOp') this._disputeCompleteCb(action);
         }
         if (this.stage === 'matching') {
             this._cbIfMatchingComplete();

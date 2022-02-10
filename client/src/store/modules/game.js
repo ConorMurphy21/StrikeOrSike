@@ -126,7 +126,6 @@ const socketMutations = {
     SOCKET_selectionTypeChosen(state, selectionType) {
         state.selectionType = selectionType;
     },
-
     SOCKET_setVoteCount(state, data) {
         state.voteCounts[data.pollName] = data.count;
     }
@@ -145,8 +144,6 @@ const socketActions = {
             dispatch('startTimer');
             commit('setScene', 'promptResponse');
         });
-        // Only start timer if it's not already started
-
     },
     async SOCKET_nextSelection({state, commit, rootGetters, rootState}, data) {
         const selector = rootState.room.players.find(player => player.id === data.selector);
@@ -159,15 +156,6 @@ const socketActions = {
             commit('setSelectionTypeChoice', false);
         }
         commit('setScene', 'selection');
-    },
-    async SOCKET_beginDispute({state, commit, rootGetters}, response) {
-        commit('setSelectedResponse', response);
-        if (state.selector.id === rootGetters['room/self'].id) {
-            commit('useResponse', response);
-            commit('setScene', 'passiveDispute');
-        } else {
-            commit('setScene', 'activeDispute');
-        }
     },
     async SOCKET_beginMatching({state, commit, rootGetters}, response) {
         commit('setFirstSelection', false);
@@ -220,7 +208,7 @@ const socketActions = {
         }
         const isSelector = state.selector.id === rootGetters['room/self'].id;
         let scene = '';
-        //'lobby', 'response', 'selection', 'sikeDispute', 'matching'
+        //'lobby', 'response', 'selection', 'matching'
         switch (data.stage) {
             case 'lobby':
                 scene = 'lobby';
@@ -230,9 +218,6 @@ const socketActions = {
                 break;
             case 'selection':
                 scene = 'selection';
-                break;
-            case 'sikeDispute':
-                scene = isSelector ? 'passiveDispute' : 'activeDispute';
                 break;
             case 'matching':
                 scene = isSelector ? 'matchingSummary' : 'activeMatching';

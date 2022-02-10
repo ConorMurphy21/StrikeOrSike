@@ -8,47 +8,47 @@ describe('voteSkipPrompt tests', () => {
     const players = [];
     let gameState;
 
-    beforeEach((done) => {
+    beforeEach(() => {
         for (let i = 0; i < evenLen; i++) {
             players[i] = {id: i.toString(), active: true};
         }
         gameState = new GameState({players});
         gameState.options.promptSkipping = true;
-        gameState.beginNewPrompt().then(() => done());
     });
 
-    it('VoteSkip Happy', () => {
+    it('VoteSkip Happy', (done) => {
         let result;
         let i;
-        for(i = 0; i < Math.ceil(evenLen/2)-1; i++){
-            result = gameState.voteSkipPrompt(i.toString(), true);
+        gameState.registerPromptSkippedCb(done);
+        gameState.beginNewPrompt().then(() => {
+            for(i = 0; i < Math.ceil(evenLen/2)-1; i++){
+                result = gameState.pollVote(i.toString(), 'skipPrompt');
+                assert.isOk(result.success);
+                assert.strictEqual(result.count, i + 1);
+            }
+            result = gameState.pollVote(i.toString(), 'skipPrompt');
             assert.isOk(result.success);
             assert.strictEqual(result.count, i + 1);
-            assert.isFalse(result.skip);
-        }
-        result = gameState.voteSkipPrompt(i.toString(), true);
-        assert.isOk(result.success);
-        assert.strictEqual(result.count, i + 1);
-        assert.isTrue(result.skip);
+        });
     });
 
-    it('VoteSkip unvote', () => {
+    it('VoteSkip unvote', (done) => {
         let result;
         let i;
-        for(i = 0; i < Math.ceil(evenLen/2)-1; i++){
-            result = gameState.voteSkipPrompt(i.toString(), true);
+        gameState.registerPromptSkippedCb(done);
+        gameState.beginNewPrompt().then(() => {
+            for (i = 0; i < Math.ceil(evenLen / 2) - 1; i++) {
+                result = gameState.pollVote(i.toString(), 'skipPrompt');
+                assert.isOk(result.success);
+                assert.strictEqual(result.count, i + 1);
+            }
+            result = gameState.pollVote(i.toString(), 'skipPrompt');
             assert.isOk(result.success);
-            assert.strictEqual(result.count, i + 1);
-            assert.isFalse(result.skip);
-        }
-        result = gameState.voteSkipPrompt((i-1).toString(), false);
-        assert.isOk(result.success);
-        assert.strictEqual(result.count, i-1);
-        assert.isFalse(result.skip);
-        result = gameState.voteSkipPrompt(i.toString(), true);
-        assert.isOk(result.success);
-        assert.strictEqual(result.count, i );
-        assert.isFalse(result.skip);
+            assert.strictEqual(result.count, i - 1);
+            result = gameState.pollVote(i.toString(), 'skipPrompt');
+            assert.isOk(result.success);
+            assert.strictEqual(result.count, i);
+        });
     });
 
 });

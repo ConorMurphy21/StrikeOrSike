@@ -1,5 +1,6 @@
 const {Prompts} = require('./prompts');
 const {misspellMatch, getCorrections} = require('./misspellMatch');
+const PollService = require('./pollService');
 
 const defaultOptions = () => {
     return {
@@ -29,7 +30,8 @@ const GameState = class {
         this.selectionTypeChoice = false;
         this.selectionType = '';
         this.remainingSikeRetries = this.options.sikeRetries;
-        this.corrections = {}
+        this.corrections = {};
+        this.pollService = new PollService(this);
 
         // keeps track of how long until the response section is over
         this.promptTimeout = null;
@@ -43,7 +45,6 @@ const GameState = class {
             this.players.push(
                 {
                     id: player.id,
-                    voteSkipPrompt: false,
                     points: 0,
                     used: [],
                     responses: [],
@@ -88,10 +89,13 @@ const GameState = class {
                 this.stage = 'response';
                 this.corrections = {};
 
+                if(this.options.promptSkipping){
+                    this.pollService.registerPoll('skipPrompt', this._promptSkippedCb, 'response');
+                }
+
                 for (const player of this.players) {
                     player.responses = [];
                     player.used = [];
-                    player.voteSkipPrompt = false;
                 }
                 resolve(true);
             });
@@ -124,21 +128,8 @@ const GameState = class {
         return {success: true, response};
     }
 
-    voteSkipPrompt(id, vote) {
-        if (this.stage !== 'response' || !this.options.promptSkipping) {
-            return {error: 'badRequest'};
-        }
-        const playerState = this.players.find(player => player.id === id);
-        if (!playerState) return {error: 'spectator'};
-        playerState.voteSkipPrompt = !!vote;
-        return this._skipPromptAction();
-    }
-
-    _skipPromptAction() {
-        const numVoters = this._numVoters();
-        const majority = Math.ceil(numVoters / 2);
-        const votes = this.players.filter(player => this.isActive(player.id) && player.voteSkipPrompt).length;
-        return {success: true, count: votes, skip: votes >= majority};
+    pollVote(id, pollName) {
+        return this.pollService.acceptVote(pollName, id, this.stage);
     }
 
     _randomizeSelectionType() {
@@ -169,6 +160,8 @@ const GameState = class {
     /*** PROMPT SELECTION state changes ***/
     beginSelection() {
         this.stage = 'selection';
+
+        this.pollService.clearPoll('skipPrompt');
 
         // increment round here, this way skipping prompts doesn't increment the round count
         this.round++;
@@ -308,7 +301,7 @@ const GameState = class {
     }
 
     _voteUpdateAction() {
-        const numVoters = this._numVoters(this.selectorId());
+        const numVoters = this.numVoters(this.selectorId());
         const majorityFavored = Math.ceil(numVoters / 2);
         const majorityUnfavored = (numVoters % 2) ? majorityFavored : majorityFavored + 1;
 
@@ -342,7 +335,7 @@ const GameState = class {
         return 'noOp';
     }
 
-    _numVoters(excludedId) {
+    numVoters(excludedId) {
         return this.players.filter(player => player.id !== excludedId && this.isActive(player.id)).length;
     }
 
@@ -455,7 +448,6 @@ const GameState = class {
         if(this.stage === 'matching'){
            this._autoMatchSingle(player);
         }
-        const votes = this.players.filter(player => this.isActive(player.id) && player.voteSkipPrompt).length;
         const timeleft = this._getTimeLeft(this.promptTimeout) - 1;
 
         return {
@@ -466,18 +458,12 @@ const GameState = class {
             selector: this.selectorId(),
             selectedResponse: this.selectedResponse(),
             prompt: this.prompt,
-            skipVoteCount: votes,
             timer: timeleft,
             matches: this.matches()
         }
     }
 
     disconnect(id) {
-        if (this.stage === 'response') {
-            const skipPrompt = this._skipPromptAction().skip;
-            if (skipPrompt) this._promptSkippedCb();
-
-        }
         if (this.stage === 'selection') {
             if (this.isSelector(id)) {
                 if (this._selectionUnsuccessfulCb) this._selectionUnsuccessfulCb();
@@ -490,6 +476,7 @@ const GameState = class {
         if (this.stage === 'matching') {
             this._cbIfMatchingComplete();
         }
+        this.pollService.checkComplete();
     }
 };
 

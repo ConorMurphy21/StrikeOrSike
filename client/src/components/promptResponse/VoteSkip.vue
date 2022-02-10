@@ -10,30 +10,20 @@
 <script>
 import {createNamespacedHelpers} from 'vuex';
 
-const {mapState} = createNamespacedHelpers('game');
+const {mapState, mapGetters} = createNamespacedHelpers('game');
 
 export default {
-  data() {
-    return {
-      voted: false
-    }
-  },
   computed: {
     ...mapState([
-      'skipVoteCount',
       'prompt'
+    ]),
+    ...mapGetters([
+        'skipVoteCount'
     ])
   },
   methods: {
     sendVote() {
-      this.voted = !this.voted;
-      this.$socket.emit('voteSkipPrompt', this.voted);
-    }
-  },
-  watch: {
-    // whenever the prompt changes the votes should be reset
-    prompt() {
-      this.voted = false;
+      this.$socket.emit('pollVote', 'skipPrompt');
     }
   }
 }

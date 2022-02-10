@@ -15,7 +15,7 @@ const state = () => ({
     usedResponses: [],
     scores: [],
     // optional state
-    skipVoteCount: 0,
+    voteCounts: {},
     // options:
     promptSkipping: false,
 
@@ -58,6 +58,9 @@ export const getters = {
             }
         });
         return finishedMatching;
+    },
+    skipVoteCount(state) {
+        return state.voteCounts['skipPrompt'];
     }
 }
 
@@ -124,8 +127,8 @@ const socketMutations = {
         state.selectionType = selectionType;
     },
 
-    SOCKET_setSkipVoteCount(state, count) {
-        state.skipVoteCount = count;
+    SOCKET_setVoteCount(state, data) {
+        state.voteCounts[data.pollName] = data.count;
     }
 }
 
@@ -134,7 +137,7 @@ const socketActions = {
         commit('setTimer', 3);
         commit('setPrompt', data.prompt);
         commit('clearResponses');
-        commit('SOCKET_setSkipVoteCount', 0);
+        commit('SOCKET_setVoteCount', {pollName:'skipPrompt', count: 0});
         commit('setScene', 'countdown');
         commit('setFirstSelection', true);
         dispatch('startTimer').then(() => {
@@ -211,7 +214,6 @@ const socketActions = {
         commit('setSelectedResponse', data.selectedResponse);
         commit('setPrompt', data.prompt);
         commit('setTimer', data.timer);
-        commit('SOCKET_setSkipVoteCount', data.skipVoteCount);
 
         if(data.timer){
             dispatch('startTimer');

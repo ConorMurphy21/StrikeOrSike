@@ -32,17 +32,13 @@ module.exports = (io, socket) => {
     });
 
     // true to vote to skip, false to unvote to skip
-    socket.on('voteSkipPrompt', (vote) => {
+    socket.on('pollVote', (pollName) => {
         const room = getRoomById(socket.id);
         if (!room) return;
         const state = room.state;
-        const result = state.voteSkipPrompt(socket.id, vote);
+        const result = state.pollVote(socket.id, pollName);
         if (result.success) {
-            if (result.skip) {
-                skipPrompt(io, room);
-            } else {
-                io.to(room.name).emit('setSkipVoteCount', result.count);
-            }
+            io.to(room.name).emit('setVoteCount', {pollName, count: result.count});
         }
     });
 

@@ -36,6 +36,7 @@ const GameState = class {
         // keeps track of how long until the response section is over
         this.promptTimeout = null;
 
+        this._startNextPromptCb = null;
         this._promptSkippedCb = null;
         this._selectionUnsuccessfulCb = null;
         this._matchingCompleteCb = null;
@@ -57,21 +58,11 @@ const GameState = class {
     }
 
     /*** Callback registry for events that may happen from disconnect ***/
-    registerPromptSkippedCb(cb) {
-        this._promptSkippedCb = cb;
-    }
-
-    registerMatchingCompleteCb(cb) {
-        this._matchingCompleteCb = cb;
-    }
-
-    registerSelectionUnsuccessfulCb(cb) {
-        this._selectionUnsuccessfulCb = cb;
-    }
-
-    registerDisputeCompleteCb(cb) {
-        this._disputeCompleteCb = cb;
-    }
+    registerStartNextPromptCb(cb){this._startNextPromptCb = cb;}
+    registerPromptSkippedCb(cb) {this._promptSkippedCb = cb;}
+    registerMatchingCompleteCb(cb) {this._matchingCompleteCb = cb;}
+    registerSelectionUnsuccessfulCb(cb) {this._selectionUnsuccessfulCb = cb;}
+    registerDisputeCompleteCb(cb) {this._disputeCompleteCb = cb;}
 
     /*** PROMPT RESPONSE state changes ***/
     beginNewPrompt() {
@@ -159,7 +150,6 @@ const GameState = class {
     /*** PROMPT SELECTION state changes ***/
     beginSelection() {
         this.stage = 'selection';
-
         this.pollService.clearPoll('skipPrompt');
 
         // increment round here, this way skipping prompts doesn't increment the round count
@@ -201,6 +191,8 @@ const GameState = class {
             }
         }
         this.initialSelector = (this.initialSelector + 1) % this.players.length;
+        this.stage = 'endRound';
+        this.pollService.registerPoll('startNextRound', this._startNextPromptCb, 'endRound');
         return false;
     }
 

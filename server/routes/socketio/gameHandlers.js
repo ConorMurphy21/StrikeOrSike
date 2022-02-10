@@ -85,6 +85,10 @@ module.exports = (io, socket) => {
 function registerCallbacks(io, room) {
     const state = room.state;
 
+    state.registerStartNextPromptCb(() => {
+        beginPrompt(io, room);
+    });
+
     state.registerPromptSkippedCb(() => {
         skipPrompt(io, room);
     });
@@ -164,7 +168,7 @@ function continueSelection(io, room) {
                 selectionType: state.selectionType
             });
     } else {
-        beginPrompt(io, room);
+        io.to(room.name).emit('endRound');
     }
 }
 

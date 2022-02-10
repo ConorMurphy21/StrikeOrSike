@@ -61,6 +61,9 @@ export const getters = {
     },
     skipVoteCount(state) {
         return state.voteCounts['skipPrompt'];
+    },
+    startNextRoundCount(state) {
+        return state.voteCounts['startNextRound'];
     }
 }
 
@@ -178,7 +181,9 @@ const socketActions = {
                 commit('setScene', 'matchingSummary');
             }
         }
-
+    },
+    async SOCKET_endRound({state, commit}, data) {
+      commit('setScene', 'endRound');
     },
     async SOCKET_gameOver({state, commit, rootState}, data) {
         commit('setScene', 'endGame');

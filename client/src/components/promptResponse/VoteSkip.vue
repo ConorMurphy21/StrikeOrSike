@@ -9,20 +9,19 @@
 
 <script>
 import {createNamespacedHelpers} from 'vuex';
+import ClickMp3 from '@/assets/audio/click2.mp3';
 
-const {mapState, mapGetters} = createNamespacedHelpers('game');
+const {mapGetters} = createNamespacedHelpers('game');
 
 export default {
   computed: {
-    ...mapState([
-      'prompt'
-    ]),
     ...mapGetters([
         'skipVoteCount'
     ])
   },
   methods: {
     sendVote() {
+      new Audio(ClickMp3).play();
       this.$socket.emit('pollVote', 'skipPrompt');
     }
   }

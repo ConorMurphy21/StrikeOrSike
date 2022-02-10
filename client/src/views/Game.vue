@@ -11,6 +11,7 @@ import PromptResponse from '@/components/promptResponse/PromptResponse.vue'
 import Selection from '@/components/responseSelection/Selection.vue';
 import ActiveMatching from '@/components/responseMatching/ActiveMatching.vue';
 import MatchingSummary from '@/components/responseMatching/MatchingSummary.vue';
+import EndRound from '@/components/endRound/EndRound.vue';
 import EndGame from '@/components/endGame/EndGame.vue';
 import {mapState} from 'vuex';
 
@@ -23,6 +24,7 @@ export default {
     Selection,
     ActiveMatching,
     MatchingSummary,
+    EndRound,
     EndGame
   },
   props: {

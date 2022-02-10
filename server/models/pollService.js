@@ -29,8 +29,9 @@ module.exports = class pollService {
         } else {
             poll.inFavor.push(id);
         }
-        if(!this.cbIfComplete(pollName))
-            return {success: true, count: this.countVotes(pollName)};
+        const count = this.countVotes(pollName);
+        this.cbIfComplete(pollName);
+        return {success: true, count};
     }
 
     cbIfComplete(pollName){
@@ -38,9 +39,7 @@ module.exports = class pollService {
         if(this.complete(pollName)) {
             poll.completeCb();
             this.clearPoll(pollName);
-            return true;
         }
-        return false;
     }
 
     complete(pollName) {

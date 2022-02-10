@@ -1,5 +1,5 @@
 const {Prompts} = require('./prompts');
-const misspellMatch = require('./misspellMatch');
+const {misspellMatch, getCorrections} = require('./misspellMatch');
 
 const defaultOptions = () => {
     return {
@@ -29,6 +29,7 @@ const GameState = class {
         this.selectionTypeChoice = false;
         this.selectionType = '';
         this.remainingSikeRetries = this.options.sikeRetries;
+        this.corrections = {}
 
         // keeps track of how long until the response section is over
         this.promptTimeout = null;
@@ -85,6 +86,7 @@ const GameState = class {
             this.prompts.newPrompt().then(prompt => {
                 this.prompt = prompt;
                 this.stage = 'response';
+                this.corrections = {};
 
                 for (const player of this.players) {
                     player.responses = [];
@@ -110,9 +112,15 @@ const GameState = class {
                 return {error: 'duplicateResponse'};
             }
             playerState.responses.push(response);
+            if(!this.corrections[response]) {
+                getCorrections(response, this.room.lang).then((corrections) => {
+                    this.corrections[response] = corrections;
+                });
+            }
         } else {
             return {error: 'badRequest'};
         }
+
         return {success: true, response};
     }
 
@@ -215,7 +223,7 @@ const GameState = class {
         const exact = string1.localeCompare(string2, this.room.lang,
             { sensitivity: 'base', ignorePunctuation: true, usage: 'search'});
         if(exact === 0) return 1;
-        return misspellMatch(string1, string2, this.room.lang);
+        return misspellMatch(string1, string2, this.corrections[string1] ?? [], this.corrections[string2] ?? [], this.room.lang);
     }
 
     _autoMatch() {
@@ -248,7 +256,6 @@ const GameState = class {
             }
         }
     }
-
 
     acceptSelectionType(id, isStrike) {
         const selector = this.players[this.selector];
@@ -332,7 +339,6 @@ const GameState = class {
 
             }
         }
-
         return 'noOp';
     }
 

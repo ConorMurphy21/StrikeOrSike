@@ -15,7 +15,6 @@ describe('Selection Accepting tests', () => {
         gameState = new GameState({players});
         gameState.players[selectorIndex].responses.push(firstResponse);
         gameState.beginSelection();
-
     });
 
     describe('Strike selectionType', () => {

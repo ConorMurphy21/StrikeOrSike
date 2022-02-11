@@ -1,5 +1,5 @@
 <template>
-  <div class="main-content w-50 p-5">
+  <div class="main-content w-75 w-lg-50 p-3 p-lg-5">
     <form class="form" @submit.prevent="onSubmit(true)">
 
       <h4 class="mb-3" v-if="error" v-t="error"/>
@@ -16,9 +16,9 @@
                :placeholder="$t('roomNamePlaceholder')" v-model="form.roomName">
       </div>
 
-      <div class="d-flex flex-row justify-content-around align-items-center mt-5">
-        <button type="submit" class="btn btn-blue" v-t="'joinGame'"/>
-        <button type="button" @click="onSubmit(false)" class="btn btn-red" v-t="'createGame'"/>
+      <div class="d-flex flex-column flex-lg-row justify-content-around align-items-center mt-5 gap-3">
+        <button type="submit" class="btn btn-blue w-100" v-t="'joinGame'"/>
+        <button type="button" @click="onSubmit(false)" class="btn btn-red w-100" v-t="'createGame'"/>
       </div>
     </form>
   </div>
@@ -72,10 +72,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.main-content {
-  min-width: 350px;
-  width: 50%;
-}
 
 input {
   background-color: $primary;
@@ -100,8 +96,6 @@ h4 {
 }
 
 .btn {
-  width: 30%;
-  min-width: 150px;
   height: 60px;
 }
 </style>

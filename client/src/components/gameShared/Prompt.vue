@@ -1,5 +1,5 @@
 <template>
-  <h1>{{prompt}}</h1>
+  <h1 class="display-4">{{prompt}}</h1>
 </template>
 <script>
 export default {
@@ -10,7 +10,7 @@ export default {
 </script>
 <style scoped>
 h1 {
-  font-size: 2.75rem;
+/*  font-size: 2.75rem;*/
   font-weight: 650;
   text-align: center;
 }

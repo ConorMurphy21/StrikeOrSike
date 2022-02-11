@@ -1,7 +1,8 @@
 <template>
-  <div class="container vh-100 d-flex flex-column justify-content-top align-items-center">
-    <img class="my-3" src="@/assets/images/logo.png" :alt="$t('strikeOrSike')">
+  <div class="container vh-100 d-flex flex-column justify-content-evenly align-items-center">
+    <img src="@/assets/images/logo.png" :alt="$t('strikeOrSike')">
     <router-view/>
+    <img class="invisible" src="@/assets/images/logo.png" :alt="$t('strikeOrSike')">
   </div>
 </template>
 

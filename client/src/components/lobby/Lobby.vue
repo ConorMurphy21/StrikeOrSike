@@ -3,14 +3,18 @@
     <h1 v-t="'players'"/>
     <player-list/>
 
-    <button class="btn btn-blue fs-4"
-            :class="{'d-none': !canStart}" @click="startGame" v-t="'startGame'"/>
+    <div class="w-100 d-flex flex-column justify-content-start align-items-center gap-3">
+      <options v-model="options"/>
+      <button class="btn btn-blue fs-4"
+              :class="{'d-none': !canStart}" @click="startGame" v-t="'startGame'"/>
+    </div>
   </div>
 </template>
 
 <script>
 import {createNamespacedHelpers} from 'vuex';
 import PlayerList from '@/components/lobby/PlayerList.vue'
+import Options from '@/components/lobby/Options.vue'
 import ClickMp3 from '@/assets/audio/click2.mp3'
 
 const click = new Audio(ClickMp3);
@@ -18,8 +22,14 @@ const click = new Audio(ClickMp3);
 const {mapGetters, mapState} = createNamespacedHelpers('room')
 
 export default {
+  data() {
+    return {
+      options: {}
+    }
+  },
   components: {
-    PlayerList
+    PlayerList,
+    Options
   },
   computed: {
     ...mapState([
@@ -35,8 +45,10 @@ export default {
   methods: {
     startGame() {
       click.play();
-      this.$socket.emit('startGame');
-    }
+      this.$socket.emit('setOptions', this.options, () => {
+        this.$socket.emit('startGame');
+      })
+    },
   }
 }
 </script>

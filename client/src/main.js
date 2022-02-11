@@ -4,6 +4,10 @@ import store from './store'
 import i18n from './locales'
 import router from './router'
 import VueSocketIO from 'vue-3-socket.io'
+
+// only import bootstrap components that are used
+import {Collapse} from 'bootstrap';
+
 const debug = process.env.NODE_ENV !== 'production'
 
 const app = createApp(App)

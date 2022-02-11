@@ -5,7 +5,8 @@ const PollService = require('./pollService');
 const defaultOptions = () => {
     return {
         promptTimer: 35,
-        numRounds: 8,
+        autoNumRounds: true, // set numRounds to num players when game starts
+        numRounds: 3,
         sikeDispute: false,
         sikeRetries: 0,
         promptSkipping: false,
@@ -15,7 +16,7 @@ const defaultOptions = () => {
 }
 
 const GameState = class {
-    constructor(room, options /* for testing reasons*/) {
+    constructor(room, options) {
         this.name = room.name;
         this.stage = 'lobby'; // enum: 'lobby', 'response', 'selection', 'sikeDispute', 'matching'
         this.options = options;
@@ -32,6 +33,7 @@ const GameState = class {
         this.remainingSikeRetries = this.options.sikeRetries;
         this.corrections = {};
         this.pollService = new PollService(this);
+
 
         // keeps track of how long until the response section is over
         this.promptTimeout = null;
@@ -55,6 +57,11 @@ const GameState = class {
                 }
             )
         }
+
+        if(this.options.autoNumRounds){
+            this.options.numRounds = this.numVoters()
+        }
+
     }
 
     /*** Callback registry for events that may happen from disconnect ***/

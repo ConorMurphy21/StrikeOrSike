@@ -4,7 +4,7 @@
     <player-list/>
 
     <div class="w-100 d-flex flex-column justify-content-start align-items-center gap-3">
-      <options v-model="options"/>
+      <options :disabled="!self.leader"/>
       <button class="btn btn-blue fs-4"
               :class="{'d-none': !canStart}" @click="startGame" v-t="'startGame'"/>
     </div>
@@ -22,11 +22,6 @@ const click = new Audio(ClickMp3);
 const {mapGetters, mapState} = createNamespacedHelpers('room')
 
 export default {
-  data() {
-    return {
-      options: {}
-    }
-  },
   components: {
     PlayerList,
     Options
@@ -45,9 +40,7 @@ export default {
   methods: {
     startGame() {
       click.play();
-      this.$socket.emit('setOptions', this.options, () => {
-        this.$socket.emit('startGame');
-      })
+      this.$socket.emit('startGame');
     },
   }
 }

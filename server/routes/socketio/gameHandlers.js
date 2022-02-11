@@ -8,7 +8,8 @@ module.exports = (io, socket) => {
         if (!room) return;
         // todo: validation
         room.state.options = {...room.state.options, ...options};
-        callback({success: true});
+        io.to(room.name).emit('setOptions', room.state.options);
+        if(callback) callback({success: true});
     });
 
     socket.on('startGame', () => {
@@ -17,7 +18,6 @@ module.exports = (io, socket) => {
         if(room.players.length < room.state.options.minPlayers) return;
         room.state = new GameState(room, room.state.options);
         registerCallbacks(io, room);
-        setOptions(io, room);
         beginPrompt(io, room);
     });
 
@@ -108,13 +108,6 @@ function registerCallbacks(io, room) {
                 continueSelection(io, room);
             }, 5000);
         }
-    });
-}
-
-function setOptions(io, room) {
-    const state = room.state;
-    io.to(room.name).emit('setOptions', {
-        promptSkipping: state.options.promptSkipping
     });
 }
 

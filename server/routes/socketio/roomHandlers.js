@@ -23,6 +23,8 @@ module.exports = (io, socket) => {
             socket.join(room.name);
             socket.emit('joinRoom', {success: true, roomName: room.name});
             socket.emit('updatePlayers', {modifies: room.players, deletes: []});
+            console.dir(room.state.options);
+            socket.emit('setOptions', room.state.options);
         }
     });
 
@@ -41,6 +43,7 @@ module.exports = (io, socket) => {
                 modifies: [room.players.find(p => p.name === name)],
                 deletes: []
             });
+            socket.emit('setOptions', room.state.options);
             if (room.state.stage !== 'lobby') {
                 socket.emit('midgameConnect', room.state.midgameConnect(socket.id, result.oldId));
                 if(!result.oldId && room.state.stage === 'matching') {

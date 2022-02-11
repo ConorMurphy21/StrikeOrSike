@@ -17,7 +17,10 @@ const state = () => ({
     // optional state
     voteCounts: {},
     // options:
-    promptSkipping: false,
+    options: {
+        promptTimer: 35,
+        numRounds: 8,
+    },
 
     firstSelection: true,
 });
@@ -121,7 +124,7 @@ const mutations = {
 
 const socketMutations = {
     SOCKET_setOptions(state, options) {
-        state.promptSkipping = options.promptSkipping;
+        state.options = options;
     },
     SOCKET_promptResponse(state, response) {
         state.responses.push(response);

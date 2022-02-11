@@ -184,6 +184,7 @@ const socketActions = {
     },
     async SOCKET_endRound({state, commit}, data) {
       commit('setScene', 'endRound');
+      commit('SOCKET_setVoteCount', {pollName:'startNextRound', count: 0})
     },
     async SOCKET_gameOver({state, commit, rootState}, data) {
         commit('setScene', 'endGame');

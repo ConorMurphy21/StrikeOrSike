@@ -32,17 +32,13 @@ module.exports = (io, socket) => {
     });
 
     // true to vote to skip, false to unvote to skip
-    socket.on('voteSkipPrompt', (vote) => {
+    socket.on('pollVote', (pollName) => {
         const room = getRoomById(socket.id);
         if (!room) return;
         const state = room.state;
-        const result = state.voteSkipPrompt(socket.id, vote);
+        const result = state.pollVote(socket.id, pollName);
         if (result.success) {
-            if (result.skip) {
-                skipPrompt(io, room);
-            } else {
-                io.to(room.name).emit('setSkipVoteCount', result.count);
-            }
+            io.to(room.name).emit('setVoteCount', {pollName, count: result.count});
         }
     });
 
@@ -62,21 +58,7 @@ module.exports = (io, socket) => {
         const state = room.state;
         const result = state.acceptResponseSelection(socket.id, response);
         if (result.success) {
-            if (result.stage === 'matching') {
-                beginMatching(io, room);
-            } else if (result.stage === 'sikeDispute') {
-                io.to(room.name).emit('beginDispute', response);
-            }
-        }
-    });
-
-    socket.on('sikeVote', (vote) => {
-        const room = getRoomById(socket.id);
-        if (!room) return;
-        const state = room.state;
-        const result = state.acceptSikeDisputeVote(socket.id, vote);
-        if (result.success) {
-            applyDisputeAction(io, room, result.action);
+            beginMatching(io, room);
         }
     });
 
@@ -102,6 +84,10 @@ module.exports = (io, socket) => {
 
 function registerCallbacks(io, room) {
     const state = room.state;
+
+    state.registerStartNextPromptCb(() => {
+        beginPrompt(io, room);
+    });
 
     state.registerPromptSkippedCb(() => {
         skipPrompt(io, room);
@@ -182,7 +168,7 @@ function continueSelection(io, room) {
                 selectionType: state.selectionType
             });
     } else {
-        beginPrompt(io, room);
+        io.to(room.name).emit('endRound');
     }
 }
 
@@ -195,8 +181,6 @@ function applyDisputeAction(io, room, action) {
             });
     } else if (action === 'nextSelection') {
         continueSelection(io, room);
-    } else if (action === 'beginMatching') {
-        beginMatching(io, room);
     }
 }
 

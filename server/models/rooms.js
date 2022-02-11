@@ -67,6 +67,9 @@ const joinRoom = (id, name, roomName) => {
     let result = isValidName(name);
     if (!result.success)
         return result;
+    if(typeof roomName !== 'string') {
+        return { error: 'noRoom' };
+    }
     const room = rooms[parameterize(roomName)];
     if (!room)
         return { error: 'noRoom' };

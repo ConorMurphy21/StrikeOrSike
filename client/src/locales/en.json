@@ -41,6 +41,9 @@
     "self": "You"
   },
 
+  "*** END ROUND STRINGS ***": "",
+  "startNextRound": "Next Round",
+
   "*** END GAME STRINGS ***": "",
   "playerScores": "Player Scores",
   "toLobby": "Back to Lobby",

@@ -9,114 +9,145 @@ describe('Automatch tests', () => {
     let gameState;
     const firstResponse = 'firstResponse';
 
-    beforeEach(() => {
+    beforeEach((done) => {
         const players = [{id: selectorId, active: true}, {id: matcherId, active: true}];
         gameState = new GameState({players, lang: 'en'});
-        gameState.players[selectorIndex].responses.push(firstResponse);
-        gameState.beginSelection();
-        gameState.selectionType = 'strike';
+        gameState.beginNewPrompt().then(() => {
+            gameState.acceptPromptResponse(selectorId, firstResponse);
+            done();
+        });
+
     });
 
-    it('match empty responses', () => {
-        gameState.acceptResponseSelection(selectorId, firstResponse);
-        assert.isTrue(gameState.players[matcherIndex].matchingComplete);
-        assert.strictEqual(gameState.players[matcherIndex].match, '');
-    });
+    describe('no misspell', () => {
 
-    it('match all used', () => {
-        gameState.players[matcherIndex].responses = [firstResponse, 'abc', 'cde'];
-        gameState.players[matcherIndex].used = ['cde', 'abc', firstResponse];
-        gameState.acceptResponseSelection(selectorId, firstResponse);
-        assert.isTrue(gameState.players[matcherIndex].matchingComplete);
-        assert.strictEqual(gameState.players[matcherIndex].match, '');
-    });
+        beforeEach(() => {
+            gameState.beginSelection();
+            gameState.selectionType = 'strike';
+        });
 
-    it('exactMatch', () => {
-        gameState.players[matcherIndex].responses = [firstResponse];
-        gameState.acceptResponseSelection(selectorId, firstResponse);
-        assert.isTrue(gameState.players[matcherIndex].matchingComplete);
-        assert.strictEqual(gameState.players[matcherIndex].match, firstResponse);
-    });
+        it('match empty responses', () => {
+            gameState.acceptResponseSelection(selectorId, firstResponse);
+            assert.isTrue(gameState.players[matcherIndex].matchingComplete);
+            assert.strictEqual(gameState.players[matcherIndex].match, '');
+        });
 
-    it('whiteSpace', () => {
-        gameState.players[matcherIndex].responses = [firstResponse + ' '];
-        gameState.acceptResponseSelection(selectorId, firstResponse);
-        assert.isTrue(gameState.players[matcherIndex].matchingComplete);
-        assert.strictEqual(gameState.players[matcherIndex].match, firstResponse + ' ');
-    });
+        it('match all used', () => {
+            gameState.players[matcherIndex].responses = [firstResponse, 'abc', 'cde'];
+            gameState.players[matcherIndex].used = ['cde', 'abc', firstResponse];
+            gameState.acceptResponseSelection(selectorId, firstResponse);
+            assert.isTrue(gameState.players[matcherIndex].matchingComplete);
+            assert.strictEqual(gameState.players[matcherIndex].match, '');
+        });
 
-    it('capitalization', () => {
-        gameState.players[matcherIndex].responses = [firstResponse.toUpperCase()];
-        gameState.acceptResponseSelection(selectorId, firstResponse);
-        assert.isTrue(gameState.players[matcherIndex].matchingComplete);
-        assert.strictEqual(gameState.players[matcherIndex].match, firstResponse.toUpperCase());
-    });
+        it('exactMatch', () => {
+            gameState.players[matcherIndex].responses = [firstResponse];
+            gameState.acceptResponseSelection(selectorId, firstResponse);
+            assert.isTrue(gameState.players[matcherIndex].matchingComplete);
+            assert.strictEqual(gameState.players[matcherIndex].match, firstResponse);
+        });
 
-    it('punctuation', () => {
-        gameState.players[matcherIndex].responses = [firstResponse + '!!!'];
-        gameState.acceptResponseSelection(selectorId, firstResponse);
-        assert.isTrue(gameState.players[matcherIndex].matchingComplete);
-        assert.strictEqual(gameState.players[matcherIndex].match, firstResponse + '!!!');
-    });
+        it('whiteSpace', () => {
+            gameState.players[matcherIndex].responses = [firstResponse + ' '];
+            gameState.acceptResponseSelection(selectorId, firstResponse);
+            assert.isTrue(gameState.players[matcherIndex].matchingComplete);
+            assert.strictEqual(gameState.players[matcherIndex].match, firstResponse + ' ');
+        });
 
-    it('misspelled matcher', () => {
+        it('capitalization', () => {
+            gameState.players[matcherIndex].responses = [firstResponse.toUpperCase()];
+            gameState.acceptResponseSelection(selectorId, firstResponse);
+            assert.isTrue(gameState.players[matcherIndex].matchingComplete);
+            assert.strictEqual(gameState.players[matcherIndex].match, firstResponse.toUpperCase());
+        });
+
+        it('punctuation', () => {
+            gameState.players[matcherIndex].responses = [firstResponse + '!!!'];
+            gameState.acceptResponseSelection(selectorId, firstResponse);
+            assert.isTrue(gameState.players[matcherIndex].matchingComplete);
+            assert.strictEqual(gameState.players[matcherIndex].match, firstResponse + '!!!');
+        });
+
+    })
+
+    it('misspelled matcher', (done) => {
         const selectorResponse = 'response';
         const matcherResponse = 'rsponse';
-        gameState.players[selectorIndex].responses = [selectorResponse];
-        gameState.players[matcherIndex].responses = [matcherResponse];
-        gameState.acceptResponseSelection(selectorId, selectorResponse);
-        assert.isTrue(gameState.players[matcherIndex].matchingComplete);
-        assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
+        acceptPrompts([selectorResponse], [matcherResponse]).then(() => {
+            gameState.acceptResponseSelection(selectorId, selectorResponse);
+            assert.isTrue(gameState.players[matcherIndex].matchingComplete);
+            assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
+            done();
+        });
     });
 
-    it('misspelled selector', () => {
+    it('misspelled selector', (done) => {
         const selectorResponse = 'rsponse';
         const matcherResponse = 'response';
-        gameState.players[selectorIndex].responses = [selectorResponse];
-        gameState.players[matcherIndex].responses = [matcherResponse];
-        gameState.acceptResponseSelection(selectorId, selectorResponse);
-        assert.isTrue(gameState.players[matcherIndex].matchingComplete);
-        assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
+        acceptPrompts([selectorResponse], [matcherResponse]).then(() => {
+            gameState.acceptResponseSelection(selectorId, selectorResponse);
+            assert.isTrue(gameState.players[matcherIndex].matchingComplete);
+            assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
+            done();
+        });
     });
 
-    it('misspelled both', () => {
+    it('misspelled both', (done) => {
         const selectorResponse = 'rsponse';
         const matcherResponse = 'respanse';
-        gameState.players[selectorIndex].responses = [selectorResponse];
-        gameState.players[matcherIndex].responses = [matcherResponse];
-        gameState.acceptResponseSelection(selectorId, selectorResponse);
-        assert.isTrue(gameState.players[matcherIndex].matchingComplete);
-        assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
+        acceptPrompts([selectorResponse], [matcherResponse]).then(() => {
+            gameState.acceptResponseSelection(selectorId, selectorResponse);
+            assert.isTrue(gameState.players[matcherIndex].matchingComplete);
+            assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
+            done();
+        });
     });
 
-    it('misspelled false positive', () => {
+    it('misspelled false positive', (done) => {
         const selectorResponse = 'clothes';
         const matcherResponse = 'weedwacker';
-        gameState.players[selectorIndex].responses = [selectorResponse];
-        gameState.players[matcherIndex].responses = [matcherResponse];
-        gameState.acceptResponseSelection(selectorId, selectorResponse);
-        assert.isFalse(gameState.players[matcherIndex].matchingComplete);
-        assert.strictEqual(gameState.players[matcherIndex].match, '');
+        acceptPrompts([selectorResponse], [matcherResponse]).then(() => {
+            gameState.acceptResponseSelection(selectorId, selectorResponse);
+            assert.isFalse(gameState.players[matcherIndex].matchingComplete);
+            assert.strictEqual(gameState.players[matcherIndex].match, '');
+            done();
+        });
     });
 
-    it('misspelled both + capitalization', () => {
+    it('misspelled both + capitalization', (done) => {
         const selectorResponse = 'rsponse';
         const matcherResponse = 'Respanse';
-        gameState.players[selectorIndex].responses = [selectorResponse];
-        gameState.players[matcherIndex].responses = [matcherResponse];
-        gameState.acceptResponseSelection(selectorId, selectorResponse);
-        assert.isTrue(gameState.players[matcherIndex].matchingComplete);
-        assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
+        acceptPrompts([selectorResponse], [matcherResponse]).then(() => {
+            gameState.acceptResponseSelection(selectorId, selectorResponse);
+            assert.isTrue(gameState.players[matcherIndex].matchingComplete);
+            assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
+            done();
+        });
     });
 
-    it('misspelled selector + capitalization', () => {
+    it('misspelled selector + capitalization', (done) => {
         const selectorResponse = 'rsponse';
         const matcherResponse = 'Response';
-        gameState.players[selectorIndex].responses = [selectorResponse];
-        gameState.players[matcherIndex].responses = [matcherResponse];
-        gameState.acceptResponseSelection(selectorId, selectorResponse);
-        assert.isTrue(gameState.players[matcherIndex].matchingComplete);
-        assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
+        acceptPrompts([selectorResponse], [matcherResponse]).then(() => {
+            gameState.acceptResponseSelection(selectorId, selectorResponse);
+            assert.isTrue(gameState.players[matcherIndex].matchingComplete);
+            assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
+            done();
+        });
     });
 
+    async function acceptPrompts(selectorResponses, matcherResponses){
+        for(resp of selectorResponses){
+            gameState.acceptPromptResponse(selectorId, resp);
+        }
+        for(resp of matcherResponses){
+            gameState.acceptPromptResponse(matcherId, resp);
+        }
+        gameState.beginSelection();
+        gameState.selectionType = 'strike';
+        // to make sure prompt response correction is done
+        await new Promise(r => setTimeout(r, 100));
+    }
+
 });
+

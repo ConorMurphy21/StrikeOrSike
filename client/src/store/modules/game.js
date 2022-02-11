@@ -15,7 +15,7 @@ const state = () => ({
     usedResponses: [],
     scores: [],
     // optional state
-    skipVoteCount: 0,
+    voteCounts: {},
     // options:
     promptSkipping: false,
 
@@ -58,6 +58,12 @@ export const getters = {
             }
         });
         return finishedMatching;
+    },
+    skipVoteCount(state) {
+        return state.voteCounts['skipPrompt'];
+    },
+    startNextRoundCount(state) {
+        return state.voteCounts['startNextRound'];
     }
 }
 
@@ -123,9 +129,8 @@ const socketMutations = {
     SOCKET_selectionTypeChosen(state, selectionType) {
         state.selectionType = selectionType;
     },
-
-    SOCKET_setSkipVoteCount(state, count) {
-        state.skipVoteCount = count;
+    SOCKET_setVoteCount(state, data) {
+        state.voteCounts[data.pollName] = data.count;
     }
 }
 
@@ -134,7 +139,7 @@ const socketActions = {
         commit('setTimer', 3);
         commit('setPrompt', data.prompt);
         commit('clearResponses');
-        commit('SOCKET_setSkipVoteCount', 0);
+        commit('SOCKET_setVoteCount', {pollName:'skipPrompt', count: 0});
         commit('setScene', 'countdown');
         commit('setFirstSelection', true);
         dispatch('startTimer').then(() => {
@@ -142,8 +147,6 @@ const socketActions = {
             dispatch('startTimer');
             commit('setScene', 'promptResponse');
         });
-        // Only start timer if it's not already started
-
     },
     async SOCKET_nextSelection({state, commit, rootGetters, rootState}, data) {
         const selector = rootState.room.players.find(player => player.id === data.selector);
@@ -156,15 +159,6 @@ const socketActions = {
             commit('setSelectionTypeChoice', false);
         }
         commit('setScene', 'selection');
-    },
-    async SOCKET_beginDispute({state, commit, rootGetters}, response) {
-        commit('setSelectedResponse', response);
-        if (state.selector.id === rootGetters['room/self'].id) {
-            commit('useResponse', response);
-            commit('setScene', 'passiveDispute');
-        } else {
-            commit('setScene', 'activeDispute');
-        }
     },
     async SOCKET_beginMatching({state, commit, rootGetters}, response) {
         commit('setFirstSelection', false);
@@ -187,7 +181,10 @@ const socketActions = {
                 commit('setScene', 'matchingSummary');
             }
         }
-
+    },
+    async SOCKET_endRound({state, commit}, data) {
+      commit('setScene', 'endRound');
+      commit('SOCKET_setVoteCount', {pollName:'startNextRound', count: 0})
     },
     async SOCKET_gameOver({state, commit, rootState}, data) {
         commit('setScene', 'endGame');
@@ -211,14 +208,13 @@ const socketActions = {
         commit('setSelectedResponse', data.selectedResponse);
         commit('setPrompt', data.prompt);
         commit('setTimer', data.timer);
-        commit('SOCKET_setSkipVoteCount', data.skipVoteCount);
 
         if(data.timer){
             dispatch('startTimer');
         }
         const isSelector = state.selector.id === rootGetters['room/self'].id;
         let scene = '';
-        //'lobby', 'response', 'selection', 'sikeDispute', 'matching'
+        //'lobby', 'response', 'selection', 'matching'
         switch (data.stage) {
             case 'lobby':
                 scene = 'lobby';
@@ -228,9 +224,6 @@ const socketActions = {
                 break;
             case 'selection':
                 scene = 'selection';
-                break;
-            case 'sikeDispute':
-                scene = isSelector ? 'passiveDispute' : 'activeDispute';
                 break;
             case 'matching':
                 scene = isSelector ? 'matchingSummary' : 'activeMatching';

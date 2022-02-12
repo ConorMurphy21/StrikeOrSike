@@ -9,7 +9,8 @@ let setOptionsSchema = Joi.object({
         .integer()
         .min(1)
         .max(20),
-    autoNumRounds: Joi.boolean()
+    autoNumRounds: Joi.boolean(),
+    promptSkipping: Joi.boolean()
 })
 
 // be a little more permissive with options so unit tests can run
@@ -24,7 +25,8 @@ if (process.env.NODE_ENV !== 'production') {
             .min(1)
             .max(20),
         autoNumRounds: Joi.boolean(),
-        minPlayers: Joi.number().integer()
+        minPlayers: Joi.number().integer(),
+        promptSkipping: Joi.boolean()
     })
 }
 

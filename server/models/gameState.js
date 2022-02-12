@@ -10,7 +10,7 @@ const defaultOptions = () => {
         numRounds: 3,
         sikeDispute: false,
         sikeRetries: 0,
-        promptSkipping: false,
+        promptSkipping: true,
         minPlayers: 3,
         maxPlayers: 10
     }

@@ -24,6 +24,10 @@ export default {
         timerComplete.play();
       }
     }
+  },
+  unmounted() {
+    timer.pause();
+    timer.currentTime = 0;
   }
 }
 </script>

@@ -19,7 +19,8 @@ const state = () => ({
     // options:
     options: {
         promptTimer: 35,
-        numRounds: 8,
+        numRounds: 1,
+        promptSkipping: false,
     },
 
     firstSelection: true,
@@ -67,6 +68,9 @@ export const getters = {
     },
     startNextRoundCount(state) {
         return state.voteCounts['startNextRound'];
+    },
+    promptSkipping(state) {
+        return state.options.promptSkipping;
     }
 }
 

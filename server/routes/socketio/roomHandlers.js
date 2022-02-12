@@ -1,6 +1,6 @@
 const {joinRoom, disconnectPlayer, createRoom, getRoomById, getRoomByName} = require('../../models/rooms');
 const Joi = require('joi');
-let setOptionsSchema = require('./optionsSchema');
+let setOptionsSchema = require('../../models/optionsSchema');
 
 /*** handler validation schemas ***/
 const roomSchema = Joi.object({
@@ -41,7 +41,7 @@ module.exports = (io, socket) => {
             socket.join(room.name);
             socket.emit('joinRoom', {success: true, roomName: room.name});
             socket.emit('updatePlayers', {modifies: room.players, deletes: []});
-            socket.emit('setOptions', setOptionsSchema.validate(room.state.options, {stripUnknown: true}).value);
+            socket.emit('setOptions', room.state.getOptions());
         }
     });
 
@@ -64,7 +64,7 @@ module.exports = (io, socket) => {
                 modifies: [room.players.find(p => p.name === name)],
                 deletes: []
             });
-            socket.emit('setOptions', room.state.options);
+            socket.emit('setOptions', room.state.getOptions());
             if (room.state.stage !== 'lobby') {
                 socket.emit('midgameConnect', room.state.midgameConnect(socket.id, result.oldId));
                 if(!result.oldId && room.state.stage === 'matching') {

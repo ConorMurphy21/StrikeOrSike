@@ -138,15 +138,15 @@ const socketMutations = {
 }
 
 const socketActions = {
-    async SOCKET_beginPrompt({state, commit, dispatch}, data) {
+    async SOCKET_beginPrompt({state, commit, dispatch}, prompt) {
         commit('setTimer', 3);
-        commit('setPrompt', data.prompt);
+        commit('setPrompt', prompt);
         commit('clearResponses');
         commit('SOCKET_setVoteCount', {pollName:'skipPrompt', count: 0});
         commit('setScene', 'countdown');
         commit('setFirstSelection', true);
         dispatch('startTimer').then(() => {
-            commit('setTimer', data.timer);
+            commit('setTimer', state.options.promptTimer);
             dispatch('startTimer');
             commit('setScene', 'promptResponse');
         });
@@ -205,6 +205,7 @@ const socketActions = {
         if(data.selectionType === 'choice'){
             commit('setSelectionTypeChoice', true);
         }
+        commit('SOCKET_setOptions', data.options);
         commit('setResponses', data.responses);
         commit('setUsedResponses', data.usedResponses);
         commit('setSelector', rootState.room.players.find(player => player.id === data.selector));

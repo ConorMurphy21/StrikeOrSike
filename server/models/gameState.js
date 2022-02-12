@@ -1,6 +1,7 @@
 const {Prompts} = require('./prompts');
 const {misspellMatch, getCorrections} = require('./misspellMatch');
 const PollService = require('./pollService');
+const optionsSchema = require('./optionsSchema')
 
 const defaultOptions = () => {
     return {
@@ -396,12 +397,10 @@ const GameState = class {
             this.players.push(
                 {
                     id: id,
-                    voteSkipPrompt: false,
                     points: 0,
                     used: [],
                     responses: [],
                     selected: '',
-                    sikeVote: 0,
                     match: '',
                     matchingComplete: false, // set to true if explicitly no match was found or a match was found
                 }
@@ -424,9 +423,14 @@ const GameState = class {
             selector: this.selectorId(),
             selectedResponse: this.selectedResponse(),
             prompt: this.prompt,
+            options: this.getOptions(),
             timer: timeleft,
             matches: this.matches()
         }
+    }
+
+    getOptions() {
+        return optionsSchema.validate(this.options, {stripUnknown: true}).value;
     }
 
     disconnect(id) {

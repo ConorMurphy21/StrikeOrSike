@@ -5,7 +5,7 @@
        v-t="{path: 'selection.message', args: {'player':selector.name}}"/>
     <i18n-t v-else keypath="selection.selfMessage" tag="p" class="my-auto display-6 activeMessage">
       <template v-slot:self>
-        <span class="activeSelector" v-t="'selection.self'"/>
+        <span class="activeSelector display-6" v-t="'selection.self'"/>
       </template>
     </i18n-t>
     <selection-picker/>
@@ -71,10 +71,10 @@ export default {
 
 .activeSelector {
   color: $red;
-  font-size: 2rem;
+  //font-size: 2rem;
   font-weight: 900;
-  padding-left: 2px;
-  padding-right: 2px;
+  padding-left: 1px;
+  padding-right: 1px;
   text-decoration: 3px underline;
 }
 

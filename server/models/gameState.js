@@ -1,11 +1,13 @@
 const {Prompts} = require('./prompts');
 const {misspellMatch, getCorrections} = require('./misspellMatch');
 const PollService = require('./pollService');
+const optionsSchema = require('./optionsSchema')
 
 const defaultOptions = () => {
     return {
         promptTimer: 35,
-        numRounds: 8,
+        autoNumRounds: true, // set numRounds to num players when game starts
+        numRounds: 3,
         sikeDispute: false,
         sikeRetries: 0,
         promptSkipping: false,
@@ -15,7 +17,7 @@ const defaultOptions = () => {
 }
 
 const GameState = class {
-    constructor(room, options /* for testing reasons*/) {
+    constructor(room, options) {
         this.name = room.name;
         this.stage = 'lobby'; // enum: 'lobby', 'response', 'selection', 'sikeDispute', 'matching'
         this.options = options;
@@ -32,6 +34,7 @@ const GameState = class {
         this.remainingSikeRetries = this.options.sikeRetries;
         this.corrections = {};
         this.pollService = new PollService(this);
+
 
         // keeps track of how long until the response section is over
         this.promptTimeout = null;
@@ -55,6 +58,11 @@ const GameState = class {
                 }
             )
         }
+
+        if(this.options.autoNumRounds){
+            this.options.numRounds = this.numVoters()
+        }
+
     }
 
     /*** Callback registry for events that may happen from disconnect ***/
@@ -221,7 +229,8 @@ const GameState = class {
         if (player.id === selector.id) return;
         if (player.responses.length <= player.used.length) {
             player.matchingComplete = true;
-            if (this.selectionType === 'sike') {
+            // only add to score if they were active when round ends
+            if (this.selectionType === 'sike' && this.isActive(player.id)) {
                 this.players[this.selector].points++;
             }
         } else {
@@ -389,12 +398,10 @@ const GameState = class {
             this.players.push(
                 {
                     id: id,
-                    voteSkipPrompt: false,
                     points: 0,
                     used: [],
                     responses: [],
                     selected: '',
-                    sikeVote: 0,
                     match: '',
                     matchingComplete: false, // set to true if explicitly no match was found or a match was found
                 }
@@ -417,9 +424,14 @@ const GameState = class {
             selector: this.selectorId(),
             selectedResponse: this.selectedResponse(),
             prompt: this.prompt,
+            options: this.getOptions(),
             timer: timeleft,
             matches: this.matches()
         }
+    }
+
+    getOptions() {
+        return optionsSchema.validate(this.options, {stripUnknown: true}).value;
     }
 
     disconnect(id) {

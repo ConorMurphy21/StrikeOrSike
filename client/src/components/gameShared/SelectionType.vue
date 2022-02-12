@@ -29,6 +29,7 @@ export default {
 
 <style lang="scss" scoped>
 img {
+  min-width: 150px;
   max-width: 35%;
   color: $black;
   font-family: $header-font !important;

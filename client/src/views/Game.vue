@@ -1,5 +1,5 @@
 <template>
-  <div class="main-content w-93 w-md-75">
+  <div class="main-content w-xl-75 w-100 flex-grow-1">
     <component :is="scene"/>
   </div>
 </template>
@@ -51,6 +51,7 @@ export default {
 
 <style lang="scss" scoped>
 .main-content {
-  height: 70vh;
+//  min-height: 450px;
+//  height: 70vh;
 }
 </style>

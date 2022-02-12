@@ -1,14 +1,25 @@
 const {getRoomById} = require('../../models/rooms');
 const {GameState} = require('../../models/gameState');
+const Joi = require('joi');
+
+/*** handler validation schemas ***/
+let setOptionsSchema = require('../../models/optionsSchema');
+// if(process.env.NODE_ENV !== 'production') {
+//     setOptionsSchema = Joi.object();
+// }
+
 module.exports = (io, socket) => {
     /*** GAME STATE ENDPOINTS ***/
-
     socket.on('setOptions', (options, callback) => {
+        const result = setOptionsSchema.validate(options, {stripUnknown: true});
+        if(result.error) return;
+        options = result.value;
+
         const room = roomIfLeader(socket.id);
         if (!room) return;
-        // todo: validation
         room.state.options = {...room.state.options, ...options};
-        callback({success: true});
+        io.to(room.name).emit('setOptions', room.state.getOptions());
+        if(callback) callback({success: true});
     });
 
     socket.on('startGame', () => {
@@ -17,11 +28,11 @@ module.exports = (io, socket) => {
         if(room.players.length < room.state.options.minPlayers) return;
         room.state = new GameState(room, room.state.options);
         registerCallbacks(io, room);
-        setOptions(io, room);
         beginPrompt(io, room);
     });
 
     socket.on('promptResponse', (response) => {
+        if(Joi.string().max(60).validate(response).error) return;
         const room = getRoomById(socket.id);
         if (!room) return;
         const state = room.state;
@@ -33,6 +44,7 @@ module.exports = (io, socket) => {
 
     // true to vote to skip, false to unvote to skip
     socket.on('pollVote', (pollName) => {
+        if(Joi.string().validate(pollName).error) return;
         const room = getRoomById(socket.id);
         if (!room) return;
         const state = room.state;
@@ -53,6 +65,7 @@ module.exports = (io, socket) => {
     });
 
     socket.on('selectResponse', (response) => {
+        if(Joi.string().max(60).validate(response).error) return;
         const room = getRoomById(socket.id);
         if (!room) return;
         const state = room.state;
@@ -63,6 +76,8 @@ module.exports = (io, socket) => {
     });
 
     socket.on('selectMatch', (match) => {
+        if(Joi.string().max(60).allow('').validate(match).error) return;
+
         const room = getRoomById(socket.id);
         if (!room) return;
         const state = room.state;
@@ -111,21 +126,11 @@ function registerCallbacks(io, room) {
     });
 }
 
-function setOptions(io, room) {
-    const state = room.state;
-    io.to(room.name).emit('setOptions', {
-        promptSkipping: state.options.promptSkipping
-    });
-}
-
 function beginPrompt(io, room) {
     const state = room.state;
     state.beginNewPrompt().then(contGame => {
         if (contGame) {
-            io.to(room.name).emit('beginPrompt', {
-                prompt: state.prompt,
-                timer: state.options.promptTimer
-            });
+            io.to(room.name).emit('beginPrompt', state.prompt);
             const timeToWait = state.options.promptTimer ? state.options.promptTimer * 1000 + 3000 + 1000 : 500;
             state.promptTimeout = setTimeout(() => {
                 beginSelection(io, room);

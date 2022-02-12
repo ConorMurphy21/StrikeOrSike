@@ -47,9 +47,11 @@ div{
   width: 20%;
 }
 h1{
+  width: 100%;
   text-align: center;
   font: inherit;
   font-size: 1.6rem;
+  text-overflow: ellipsis;
 }
 img{
   width: 100%;

@@ -34,6 +34,10 @@
   "players": "Players",
   "startGame": "Start",
 
+  "*** OPTIONS STRINGS ***": "",
+  "timerDurationLabel": "Timer:",
+  "numRoundsLabel": "Rounds:",
+
   "*** GAME MESSAGES ***": "",
   "selection": {
     "message": "{player} is picking a word to...",

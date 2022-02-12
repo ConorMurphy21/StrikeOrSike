@@ -17,7 +17,10 @@ const state = () => ({
     // optional state
     voteCounts: {},
     // options:
-    promptSkipping: false,
+    options: {
+        promptTimer: 35,
+        numRounds: 8,
+    },
 
     firstSelection: true,
 });
@@ -39,7 +42,7 @@ export const getters = {
         if (state.selectionType === 'sike') {
             let count = 0;
             state.matches.forEach(match => {
-                if (match.response === '') {
+                if (match.response === '' && match.player.active) {
                     count++;
                 }
             });
@@ -121,7 +124,7 @@ const mutations = {
 
 const socketMutations = {
     SOCKET_setOptions(state, options) {
-        state.promptSkipping = options.promptSkipping;
+        state.options = options;
     },
     SOCKET_promptResponse(state, response) {
         state.responses.push(response);
@@ -135,15 +138,15 @@ const socketMutations = {
 }
 
 const socketActions = {
-    async SOCKET_beginPrompt({state, commit, dispatch}, data) {
+    async SOCKET_beginPrompt({state, commit, dispatch}, prompt) {
         commit('setTimer', 3);
-        commit('setPrompt', data.prompt);
+        commit('setPrompt', prompt);
         commit('clearResponses');
         commit('SOCKET_setVoteCount', {pollName:'skipPrompt', count: 0});
         commit('setScene', 'countdown');
         commit('setFirstSelection', true);
         dispatch('startTimer').then(() => {
-            commit('setTimer', data.timer);
+            commit('setTimer', state.options.promptTimer);
             dispatch('startTimer');
             commit('setScene', 'promptResponse');
         });
@@ -202,6 +205,7 @@ const socketActions = {
         if(data.selectionType === 'choice'){
             commit('setSelectionTypeChoice', true);
         }
+        commit('SOCKET_setOptions', data.options);
         commit('setResponses', data.responses);
         commit('setUsedResponses', data.usedResponses);
         commit('setSelector', rootState.room.players.find(player => player.id === data.selector));

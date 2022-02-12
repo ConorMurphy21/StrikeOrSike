@@ -38,7 +38,7 @@ describe('promptResponse tests', () => {
 
     it('startGame happy', (done) => {
         clientSocket1.on('beginPrompt', (data) => {
-            assert.strictEqual(data.timer, 30);
+            assert.isString(data);
             done();
         });
         clientSocket1.emit('startGame');

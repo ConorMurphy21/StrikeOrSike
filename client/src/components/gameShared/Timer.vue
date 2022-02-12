@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>{{ $n(time) }}</h1>
+    <h1 class="display-3">{{ $n(time) }}</h1>
   </div>
 </template>
 
@@ -30,7 +30,8 @@ export default {
 
 <style lang="scss" scoped>
 h1 {
-  font-size: 3.25rem;
+  //font-size: 3.25rem;
+  font-weight: 600;
   color: black;
   text-align: center;
   margin: auto;

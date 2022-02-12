@@ -1,11 +1,11 @@
 <template>
   <div class="w-100 h-100 d-flex flex-column justify-content-start align-items-center p-3">
     <prompt :prompt="prompt"/>
-    <p v-if="!isSelector" class="my-auto passiveMessage"
+    <p v-if="!isSelector" class="my-auto display-6 passiveMessage"
        v-t="{path: 'selection.message', args: {'player':selector.name}}"/>
-    <i18n-t v-else keypath="selection.selfMessage" tag="p" class="my-auto activeMessage">
+    <i18n-t v-else keypath="selection.selfMessage" tag="p" class="my-auto display-6 activeMessage">
       <template v-slot:self>
-        <span class="activeSelector" v-t="'selection.self'"/>
+        <span class="activeSelector display-6" v-t="'selection.self'"/>
       </template>
     </i18n-t>
     <selection-picker/>
@@ -60,15 +60,21 @@ export default {
 
 <style lang="scss" scoped>
 .activeMessage {
-  font-size: 1.8rem;
+  //font-size: 1.8rem;
+  font-weight: 500;
+  text-align: center;
+}
+.passiveMessage {
+  font-weight: 500;
+  text-align: center;
 }
 
 .activeSelector {
   color: $red;
-  font-size: 2.4rem;
+  //font-size: 2rem;
   font-weight: 900;
-  padding-left: 2px;
-  padding-right: 2px;
+  padding-left: 1px;
+  padding-right: 1px;
   text-decoration: 3px underline;
 }
 

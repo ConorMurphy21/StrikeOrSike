@@ -2,7 +2,7 @@
   <div class="w-100 h-100 d-flex flex-column justify-content-between align-items-center p-3">
     <prompt :prompt="prompt"/>
     <response-list :selectable="false"/>
-    <button class="btn btn-blue w-25 fs-4 m-5"
+    <button class="btn btn-blue w-75 w-lg-50 w-xl-25 fs-4 m-5"
          @click="sendVote">
       {{ $t('startNextRound') }} {{startNextRoundCount ? startNextRoundCount: ''}}
     </button>

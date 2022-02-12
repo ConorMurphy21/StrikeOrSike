@@ -1,4 +1,18 @@
 const {joinRoom, disconnectPlayer, createRoom, getRoomById, getRoomByName} = require('../../models/rooms');
+const Joi = require('joi');
+let setOptionsSchema = require('../../models/optionsSchema');
+
+/*** handler validation schemas ***/
+const roomSchema = Joi.object({
+    name: Joi.string().allow(''),
+    roomName: Joi.string().allow(''),
+    langs: Joi.array()
+        .items(
+            Joi.string()
+                .min(2)
+                .max(5)
+        )
+})
 
 module.exports = (io, socket) => {
 
@@ -14,6 +28,10 @@ module.exports = (io, socket) => {
     socket.on('createRoom', (name, roomName, langs) => {
         // disconnect for cleanup
         disconnect(socket);
+
+        const validateResult = roomSchema.validate({name, roomName, langs});
+        if(validateResult.error) return;
+
         const result = createRoom(socket.id, name, roomName, langs);
         // store name in session variable
         if (result.error) {
@@ -23,12 +41,17 @@ module.exports = (io, socket) => {
             socket.join(room.name);
             socket.emit('joinRoom', {success: true, roomName: room.name});
             socket.emit('updatePlayers', {modifies: room.players, deletes: []});
+            socket.emit('setOptions', room.state.getOptions());
         }
     });
 
     socket.on('joinRoom', (name, roomName) => {
         // disconnect for cleanup
         disconnect(socket);
+
+        const validateResult = roomSchema.validate({name, roomName, langs: []});
+        if(validateResult.error) return;
+
         const result = joinRoom(socket.id, name, roomName);
         if (result.error) {
             socket.emit('joinRoom', {error: result.error});
@@ -41,6 +64,7 @@ module.exports = (io, socket) => {
                 modifies: [room.players.find(p => p.name === name)],
                 deletes: []
             });
+            socket.emit('setOptions', room.state.getOptions());
             if (room.state.stage !== 'lobby') {
                 socket.emit('midgameConnect', room.state.midgameConnect(socket.id, result.oldId));
                 if(!result.oldId && room.state.stage === 'matching') {

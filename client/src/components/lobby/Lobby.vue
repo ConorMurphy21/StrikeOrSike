@@ -4,7 +4,7 @@
     <player-list/>
 
     <div class="w-100 d-flex flex-column justify-content-start align-items-center gap-3">
-      <options :disabled="!self.leader"/>
+      <options :disabled="!self || !self.leader"/>
       <button class="btn btn-blue fs-4"
               :class="{'d-none': !canStart}" @click="startGame" v-t="'startGame'"/>
     </div>

@@ -1,14 +1,25 @@
 const {getRoomById} = require('../../models/rooms');
 const {GameState} = require('../../models/gameState');
+const Joi = require('joi');
+
+/*** handler validation schemas ***/
+let setOptionsSchema = require('./optionsSchema');
+// if(process.env.NODE_ENV !== 'production') {
+//     setOptionsSchema = Joi.object();
+// }
+
 module.exports = (io, socket) => {
     /*** GAME STATE ENDPOINTS ***/
-
     socket.on('setOptions', (options, callback) => {
+        const result = setOptionsSchema.validate(options, {allowUnknown: true, stripUnknown: true});
+        if(result.error) return;
+        options = result.value;
+
         const room = roomIfLeader(socket.id);
         if (!room) return;
-        // todo: validation
         room.state.options = {...room.state.options, ...options};
-        io.to(room.name).emit('setOptions', room.state.options);
+        const newOptions = setOptionsSchema.validate(room.state.options, {allowUnknown: true, stripUnknown: true});
+        io.to(room.name).emit('setOptions', newOptions.value);
         if(callback) callback({success: true});
     });
 
@@ -22,6 +33,7 @@ module.exports = (io, socket) => {
     });
 
     socket.on('promptResponse', (response) => {
+        if(Joi.string().max(60).validate(response).error) return;
         const room = getRoomById(socket.id);
         if (!room) return;
         const state = room.state;
@@ -33,6 +45,7 @@ module.exports = (io, socket) => {
 
     // true to vote to skip, false to unvote to skip
     socket.on('pollVote', (pollName) => {
+        if(Joi.string().validate(pollName).error) return;
         const room = getRoomById(socket.id);
         if (!room) return;
         const state = room.state;
@@ -53,6 +66,7 @@ module.exports = (io, socket) => {
     });
 
     socket.on('selectResponse', (response) => {
+        if(Joi.string().max(60).validate(response).error) return;
         const room = getRoomById(socket.id);
         if (!room) return;
         const state = room.state;
@@ -63,6 +77,7 @@ module.exports = (io, socket) => {
     });
 
     socket.on('selectMatch', (match) => {
+        if(Joi.string().max(60).validate(match).error) return;
         const room = getRoomById(socket.id);
         if (!room) return;
         const state = room.state;

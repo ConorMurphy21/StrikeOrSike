@@ -3,7 +3,7 @@
     <prompt :prompt="prompt"/>
     <vote-skip v-if="promptSkipping"></vote-skip>
     <response-list :selectable="false"/>
-    <input ref="resInput" type="text" maxlength="50" class="form-control w-75" v-model="response" @keyup.enter="sendResponse"/>
+    <input ref="resInput" type="text" maxlength="60" class="form-control w-75" v-model="response" @keyup.enter="sendResponse"/>
     <timer :time="timer"></timer>
   </div>
 </template>

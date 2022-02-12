@@ -4,8 +4,8 @@ let setOptionsSchema = require('../../models/optionsSchema');
 
 /*** handler validation schemas ***/
 const roomSchema = Joi.object({
-    name: Joi.string(),
-    roomName: Joi.string(),
+    name: Joi.string().allow(''),
+    roomName: Joi.string().allow(''),
     langs: Joi.array()
         .items(
             Joi.string()

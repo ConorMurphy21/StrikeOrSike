@@ -42,7 +42,7 @@ export const getters = {
         if (state.selectionType === 'sike') {
             let count = 0;
             state.matches.forEach(match => {
-                if (match.response === '') {
+                if (match.response === '' && match.player.active) {
                     count++;
                 }
             });

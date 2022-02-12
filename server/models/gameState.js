@@ -229,7 +229,8 @@ const GameState = class {
         if (player.id === selector.id) return;
         if (player.responses.length <= player.used.length) {
             player.matchingComplete = true;
-            if (this.selectionType === 'sike') {
+            // only add to score if they were active when round ends
+            if (this.selectionType === 'sike' && this.isActive(player.id)) {
                 this.players[this.selector].points++;
             }
         } else {

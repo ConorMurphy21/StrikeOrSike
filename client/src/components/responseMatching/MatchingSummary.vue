@@ -70,7 +70,7 @@ export default {
       this.$socket.emit('selectionComplete');
     },
     rows: function () {
-      const matchers = this.players.filter(player => player.id !== this.selector.id);
+      const matchers = this.players.filter(player => player.active && player.id !== this.selector.id);
       if (matchers.length < 5) {
         return [matchers];
       } else {

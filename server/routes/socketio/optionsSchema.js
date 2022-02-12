@@ -1,6 +1,6 @@
 const Joi = require('joi');
 /*** handler validation schemas ***/
-const setOptionsSchema = Joi.object({
+let setOptionsSchema = Joi.object({
     promptTimer: Joi.number()
         .integer()
         .min(15)
@@ -11,5 +11,21 @@ const setOptionsSchema = Joi.object({
         .max(20),
     autoNumRounds: Joi.boolean()
 })
+
+// be a little more permissive with options so unit tests can run
+if (process.env.NODE_ENV !== 'production') {
+    setOptionsSchema = Joi.object({
+        promptTimer: Joi.number()
+            .integer()
+            .min(0)
+            .max(60),
+        numRounds: Joi.number()
+            .integer()
+            .min(1)
+            .max(20),
+        autoNumRounds: Joi.boolean(),
+        minPlayers: Joi.number().integer()
+    })
+}
 
 module.exports = setOptionsSchema;

@@ -1,6 +1,5 @@
 const {joinRoom, disconnectPlayer, createRoom, getRoomById, getRoomByName} = require('../../models/rooms');
 const Joi = require('joi');
-let setOptionsSchema = require('../../models/optionsSchema');
 
 /*** handler validation schemas ***/
 const roomSchema = Joi.object({

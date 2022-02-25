@@ -2,7 +2,7 @@ const {GameState} = require('./gameState');
 const parameterize = require('parameterize');
 const locale = require("locale");
 
-const supportedLocales = new locale.Locales(['en']);
+const supportedLocales = new locale.Locales(['en-CA'], 'en-CA');
 
 // map model to rooms
 const playerRoom = {}
@@ -49,7 +49,7 @@ const createRoom = (id, name, roomName, langs) => {
     const room = {
         name: roomName,
         lastActivity: (new Date()).getTime(),
-        lang: locales.best(supportedLocales),
+        lang: locales.best(supportedLocales).code,
         players: [{
             id,
             name,

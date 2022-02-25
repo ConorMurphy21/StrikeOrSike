@@ -37,7 +37,7 @@ export default {
     return {
       form: {
         name: '',
-        roomName: this.$route.query.name
+        roomName: this.$route.query.name ?? ''
       },
       error: this.$route.query.error
     }

@@ -49,7 +49,7 @@ const createRoom = (id, name, roomName, langs) => {
     const room = {
         name: roomName,
         lastActivity: (new Date()).getTime(),
-        lang: locales.best(supportedLocales),
+        lang: locales.best(supportedLocales).normalized,
         players: [{
             id,
             name,

@@ -1,4 +1,5 @@
 const Spellchecker = require('spellchecker');
+const pluralize = require('pluralize');
 const en = new Spellchecker.Spellchecker();
 en.setSpellcheckerType(Spellchecker.ALWAYS_USE_HUNSPELL);
 en.setDictionary('en_CA', './resources/dictionaries');
@@ -15,13 +16,29 @@ const getCorrections = async (string, lang) => {
     return [];
 }
 
-const misspellMatch = (string1, string2, corrections1, corrections2, lang) => {
+const certainMatch = (string1, string2, lang) => {
+    return exactMatch(string1, string2, lang) || pluralMatch(string1, string2, lang);
+}
+
+const exactMatch = (string1, string2, lang) => {
+    return string1.localeCompare(string2, lang,
+        {sensitivity: 'base', ignorePunctuation: true, usage: 'search'}) === 0;
+}
+
+const pluralMatch = (string1, string2, lang) => {
+    if(lang !== 'en') return false;
+    if(string1.includes(' ') || string2.includes(' ')) return false;
+    return exactMatch(pluralize.plural(string1), pluralize.plural(string2), lang);
+}
+
+const stringMatch = (string1, string2, corrections1, corrections2, lang) => {
+    if(certainMatch(string1, string2, lang)) return 1;
+
     if (!corrections1.length && !corrections2.length) return 0;
     if (corrections1.length && corrections2.length) {
         const intersection = corrections1.filter(element => {
             for (const el of corrections2) {
-                if (el.localeCompare(element, lang,
-                    {sensitivity: 'base', ignorePunctuation: true, usage: 'search'}) === 0) return true;
+                if (certainMatch(el, element, lang)) return true;
             }
             return false;
         });
@@ -37,11 +54,10 @@ const misspellMatch = (string1, string2, corrections1, corrections2, lang) => {
         const options = mis1 ? corrections1 : corrections2;
         let index = -1;
         for (let i = 0; i < options.length; i++) {
-            if (options[i].localeCompare(correct, lang,
-                {sensitivity: 'base', ignorePunctuation: true, usage: 'search'}) === 0) index = i;
+            if (certainMatch(options[i], correct, lang)) index = i;
         }
         return index === -1 ? 0 : 0.95 - index * 0.03;
     }
 }
 
-module.exports = {getCorrections, misspellMatch};
+module.exports = {getCorrections, stringMatch};

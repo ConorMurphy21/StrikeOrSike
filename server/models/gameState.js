@@ -1,5 +1,5 @@
 const {Prompts} = require('./prompts');
-const {misspellMatch, getCorrections} = require('./misspellMatch');
+const {stringMatch, getCorrections} = require('./matchUtils');
 const PollService = require('./pollService');
 const optionsSchema = require('./optionsSchema')
 
@@ -211,10 +211,8 @@ const GameState = class {
     _match_chance(string1, string2) {
         string1 = string1.trim().normalize().trim();
         string2 = string2.trim().normalize().trim();
-        const exact = string1.localeCompare(string2, this.room.lang,
-            {sensitivity: 'base', ignorePunctuation: true, usage: 'search'});
-        if (exact === 0) return 1;
-        return misspellMatch(string1, string2, this.corrections[string1] ?? [], this.corrections[string2] ?? [], this.room.lang);
+        return stringMatch(string1, string2,
+            this.corrections[string1] ?? [], this.corrections[string2] ?? [], this.room.lang);
     }
 
     _autoMatch() {

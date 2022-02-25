@@ -136,6 +136,28 @@ describe('Automatch tests', () => {
         });
     });
 
+    it('pluralization', (done) => {
+        const selectorResponse = 'knife';
+        const matcherResponse = 'knives';
+        acceptPrompts([selectorResponse], [matcherResponse]).then(() => {
+            gameState.acceptResponseSelection(selectorId, selectorResponse);
+            assert.isTrue(gameState.players[matcherIndex].matchingComplete);
+            assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
+            done();
+        });
+    });
+
+    it('pluralization + capitalization', (done) => {
+        const selectorResponse = 'PeoPle!';
+        const matcherResponse = 'person';
+        acceptPrompts([selectorResponse], [matcherResponse]).then(() => {
+            gameState.acceptResponseSelection(selectorId, selectorResponse);
+            assert.isTrue(gameState.players[matcherIndex].matchingComplete);
+            assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
+            done();
+        });
+    });
+
     async function acceptPrompts(selectorResponses, matcherResponses){
         for(resp of selectorResponses){
             gameState.acceptPromptResponse(selectorId, resp);

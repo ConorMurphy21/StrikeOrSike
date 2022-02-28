@@ -2,6 +2,7 @@ import { createWebHistory, createRouter } from 'vue-router';
 import Home from '@/views/Home.vue'
 import Game from '@/views/Game.vue'
 import NotFound from '@/views/NotFound.vue'
+import HowToPlay from '@/views/HowToPlay';
 
 const routes = [
     {
@@ -9,6 +10,12 @@ const routes = [
         component: Home,
         name: 'home',
         meta: { title: 'Home' }
+    },
+    {
+        path: '/how-to-play',
+        component: HowToPlay,
+        name: 'howToPlay',
+        meta: { title: 'How To Play'}
     },
     {
         path: '/:roomName',

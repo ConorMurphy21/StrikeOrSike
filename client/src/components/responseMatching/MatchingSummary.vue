@@ -1,5 +1,5 @@
 <template>
-  <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-between gap-2 my-3">
+  <div class="w-100 d-flex flex-column align-items-center justify-content-between gap-2 my-3">
 
 
     <div class="d-flex flex-column align-items-center justify-content-start">

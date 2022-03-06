@@ -1,5 +1,5 @@
 <template>
-  <div class="w-100 h-100 d-flex flex-column justify-content-start align-items-center p-3">
+  <div class="w-100 d-flex flex-column justify-content-start align-items-center p-3">
     <prompt :prompt="prompt"/>
     <p v-if="!isSelector" class="my-auto display-6 passiveMessage"
        v-t="{path: 'selection.message', args: {'player':selector.name}}"/>

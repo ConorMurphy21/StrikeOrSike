@@ -1,5 +1,5 @@
 <template>
-  <div class="w-100 h-100 d-flex flex-column justify-content-between align-items-center p-3">
+  <div class="w-100 d-flex flex-column justify-content-between align-items-center p-3">
     <prompt :prompt="prompt"/>
     <vote-skip v-if="promptSkipping"/>
     <response-list :selectable="false"/>

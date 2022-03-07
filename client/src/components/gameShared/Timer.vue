@@ -14,7 +14,7 @@ export default {
   props: {
     time: Number
   },
-  watch: {
+  watchEffect: {
     'time': (val) => {
       if (val === 10) {
         timer.play();
@@ -34,7 +34,6 @@ export default {
 
 <style lang="scss" scoped>
 h1 {
-  //font-size: 3.25rem;
   font-weight: 600;
   color: black;
   text-align: center;

@@ -1,20 +1,22 @@
 <template>
-  <div class="w-100 h-100 d-flex flex-column justify-content-start align-items-center p-3">
+  <div class="w-100 d-flex flex-column justify-content-start align-items-center p-3">
     <prompt :prompt="prompt"/>
     <i18n-t keypath="activeMatchingMessage" tag="p">
       <template v-slot:player>
         <span class="player">{{ selector.name }}</span>
       </template>
       <template v-slot:response>
-        <span class="responseMessage">{{ selectedResponse }}</span>
+        <span class="responseMessage fs-4">{{ selectedResponse }}</span>
       </template>
       <template v-slot:type>
         <span :class="selectionType" v-t="selectionType"/>
       </template>
     </i18n-t>
-    <button class="btn btn-primary w-50 fs-4" @click="noMatch"><img src="@/assets/images/sike.png" :alt="$t('sike')"></button>
+    <button class="btn btn-primary w-50 fs-4" @click="noMatch">
+      <img class="my-auto w-75 w-sm-50 w-lg-25" src="@/assets/images/sike.png" :alt="$t('sike')">
+    </button>
     or
-    <response-list :selectable="true" v-model="matchedResponse"/>
+    <response-list :selectable="true" :height="35" v-model="matchedResponse"/>
 
   </div>
 </template>
@@ -67,26 +69,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-img{
-  width: 25%;
-}
+
 p{
   text-align: center;
 }
 .responseMessage{
   text-align: center;
   font-weight: 900;
-  font-size: 1.6rem;
   color: $red;
-}
-.strike{
-  font-weight: 900;
-  font-size: 1.6rem;
-  color: $orange;
-}
-.sike{
-  font-weight: 900;
-  font-size: 1.6rem;
-  color: $blue;
 }
 </style>

@@ -200,7 +200,7 @@ const GameState = class {
         }
         this.initialSelector = (this.initialSelector + 1) % this.players.length;
         this.stage = 'endRound';
-        this.pollService.registerPoll('startNextRound', this._startNextPromptCb, 'endRound');
+        this.pollService.registerPoll('startNextRound', this._startNextPromptCb, 'endRound',null,0.75);
         return false;
     }
 

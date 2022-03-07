@@ -15,7 +15,8 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
-      '~bootstrap': 'bootstrap'
+      '~bootstrap': 'bootstrap',
+      '~bootstrap-icons': 'bootstrap-icons'
     }
   },
   server: {

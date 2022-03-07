@@ -14,7 +14,7 @@ export default {
   props: {
     time: Number
   },
-  watch: {
+  watchEffect: {
     'time': (val) => {
       if (val === 10) {
         timer.play();

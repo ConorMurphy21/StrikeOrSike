@@ -1,5 +1,6 @@
 <template>
-  <div class="box d-flex flex-column justify-content-center align-items-center w-75 m-2 m-3 overflow-auto">
+  <div :style="cssProps" ref="box"
+       class="box d-flex flex-column justify-content-center align-items-center w-75 m-2 overflow-auto">
     <div class="list-group w-100 h-100">
       <div v-for="(response, index) in responses"
            class='list-group-item'
@@ -29,6 +30,10 @@ export default {
   },
   props: {
     selectable: Boolean,
+    height: {
+      type: Number,
+      default: 30
+    }
   },
   emits: ['update:modelValue'],
   computed: {
@@ -36,10 +41,17 @@ export default {
       'responses',
       'usedResponses'
     ]),
+    responsesLength(){
+      return this.responses.length;
+    },
+    cssProps(){
+      return{
+        '--max-height': this.height + 'vh'
+      }
+    }
   },
   methods: {
     select(index, response) {
-
       if (this.selectable && !this.used(response)) {
         if (this.selected !== index) {
           new Audio(Click1Mp3).play();
@@ -53,6 +65,13 @@ export default {
     used(response) {
       return this.usedResponses.includes(response);
     }
+  },
+  watch: {
+    responsesLength() {
+      setTimeout(() => {
+        this.$refs.box.scrollTop = this.$refs.box.scrollHeight;
+      }, 50);
+    }
   }
 }
 </script>
@@ -63,8 +82,9 @@ export default {
 }
 
 .box {
-  max-height: 30vh;
+  max-height: max(var(--max-height), 250px);
   min-height: 200px;
+  //overflow: scroll;
 }
 </style>
 

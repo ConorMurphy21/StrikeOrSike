@@ -1,6 +1,5 @@
 <template>
-  <div :style="cssProps"
-       class="box d-flex flex-column justify-content-center align-items-center w-75 m-2 m-3 overflow-auto">
+  <div class="box d-flex flex-column justify-content-center align-items-center w-75 m-2 m-3 overflow-auto">
     <div class="list-group w-100 h-100">
       <div v-for="(response, index) in responses"
            class='list-group-item'
@@ -30,10 +29,6 @@ export default {
   },
   props: {
     selectable: Boolean,
-    height: {
-      type: Number,
-      default: 500
-    }
   },
   emits: ['update:modelValue'],
   computed: {
@@ -41,11 +36,6 @@ export default {
       'responses',
       'usedResponses'
     ]),
-    cssProps(){
-      return{
-        '--max-height': this.height + 'px'
-      }
-    }
   },
   methods: {
     select(index, response) {
@@ -71,22 +61,9 @@ export default {
 .selectable {
   cursor: pointer;
 }
-@media screen and (max-height: 1000px){
-  .box {
-    max-height: 325px;
-  }
-}
-@media screen and (max-height: 700px){
-  .box {
-    max-height: 250px;
-  }
-}
-@media screen and (max-height: 500px){
-  .box {
-    max-height: 200px;
-  }
-}
+
 .box {
+  max-height: 30vh;
   min-height: 200px;
 }
 </style>

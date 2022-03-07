@@ -1,5 +1,5 @@
 <template>
-  <div class="outer d-flex flex-column justify-content-start align-items-center w-100">
+  <div class="outer flex-grow-1 d-flex flex-column justify-content-between align-items-center w-100">
     <div :style="cssProps" ref="box"
          class="box d-flex flex-column justify-content-center align-items-center w-75 m-2 overflow-auto">
       <div class="list-group w-100 h-100">
@@ -14,7 +14,7 @@
       </div>
     </div>
     <transition name="confirm">
-      <div v-if="selected !== -1" class="d-flex flex-row gap-2 w-75 justify-content-around">
+      <div v-if="selected !== -1" class="d-flex flex-row gap-2 w-75 justify-content-between">
         <button class="btn btn-red w-50 w-lg-25" @click="deselect">Cancel</button>
         <button class="btn btn-blue w-50 w-lg-25" @click="confirm">Confirm</button>
 

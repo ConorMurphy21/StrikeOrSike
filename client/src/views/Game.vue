@@ -1,5 +1,5 @@
 <template>
-  <div class="main-content d-flex w-xl-75 w-100 flex-grow-1">
+  <div class="main-content d-flex w-xl-75 w-100 flex-grow-1 p-1">
     <component :is="scene"/>
   </div>
 </template>

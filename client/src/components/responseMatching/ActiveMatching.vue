@@ -1,5 +1,5 @@
 <template>
-  <div class="w-100 h-100 d-flex flex-column justify-content-start align-items-center p-3">
+  <div class="w-100 d-flex flex-column justify-content-start align-items-center p-3">
     <prompt :prompt="prompt"/>
     <i18n-t keypath="activeMatchingMessage" tag="p">
       <template v-slot:player>
@@ -14,7 +14,7 @@
     </i18n-t>
     <button class="btn btn-primary w-50 fs-4" @click="noMatch"><img src="@/assets/images/sike.png" :alt="$t('sike')"></button>
     or
-    <response-list :selectable="true" v-model="matchedResponse"/>
+    <response-list :selectable="true" :height="35" v-model="matchedResponse"/>
 
   </div>
 </template>

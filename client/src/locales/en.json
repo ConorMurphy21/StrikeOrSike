@@ -3,8 +3,10 @@
   "strike": "Strike",
   "sike": "Sike",
   "choice": "Choice",
-  "continue": "Continue",
+  "cont": "Continue",
   "pending": "Pending",
+  "confirm": "Confirm",
+  "cancel": "Cancel",
 
   "*** HOME STRINGS ***": "",
   "usernameLabel": "Name",

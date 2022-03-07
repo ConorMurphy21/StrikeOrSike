@@ -1,7 +1,8 @@
 <template>
   <div>
-    <img :src="typeImg" :alt="imgAlt"/>
-    <h1>{{ player.name }}</h1>
+    <h1 v-if="this.match && this.match.response" class="fs-3"> {{ match.response }} </h1>
+    <img v-else class="fs-3" :src="typeImg" :alt="imgAlt"/>
+    <h2 class="fs-5">{{ player.name }}</h2>
   </div>
 </template>
 
@@ -16,21 +17,21 @@ export default {
     match: Object
   },
   computed: {
-    typeImg(){
-      if(this.match){
-       if(!this.match.response){
-         return SikeImg;
-       } else {
-         return StrikeImg;
-       }
+    typeImg() {
+      if (this.match) {
+        if (!this.match.response) {
+          return SikeImg;
+        } else {
+          return StrikeImg;
+        }
       } else {
         return PendingImg;
       }
     },
-    imgAlt(){
-      if(this.match){
-        if(!this.match.response){
-          return this.$t('strike');
+    imgAlt() {
+      if (this.match) {
+        if (!this.match.response) {
+          return this.match.response;
         } else {
           return this.$t('sike');
         }
@@ -38,28 +39,40 @@ export default {
         return this.$t('pending');
       }
     }
-  }
+  },
 }
 </script>
 
 <style lang="scss" scoped>
-div{
-  width: 20%;
+div {
+  width: 150px;
+  max-width: 150px;
 }
-h1{
-  width: 100%;
+
+h1 {
+  max-width: 150px;
+  font-weight: bolder;
   text-align: center;
-  font: inherit;
-  font-size: 1.6rem;
   text-overflow: ellipsis;
+  overflow: hidden;
+  color: $orange;
+  margin: auto;
+  white-space: nowrap;
 }
-img{
-  width: 100%;
+
+h2 {
+  max-width: 150px;
+  text-align: center;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+img {
+  max-height: 50px;
   display: block;
   margin-left: auto;
   margin-right: auto;
   text-align: center;
-  font-size: 1.8rem;
   color: $red;
 }
 </style>

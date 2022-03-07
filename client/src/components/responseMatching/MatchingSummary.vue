@@ -1,28 +1,25 @@
 <template>
-  <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-between gap-2 my-3">
+  <div class="w-100 d-flex flex-column align-items-center justify-content-between gap-2">
 
 
     <div class="d-flex flex-column align-items-center justify-content-start">
       <prompt :prompt="prompt"/>
-      <h3 v-if="isSelector" class="score-message">
+      <h3 v-if="isSelector" class="fs-3">
         {{ $t('selfScoreMessage', {score: $n(roundPoints)}) }}
       </h3>
-      <h3 v-else class="score-message">
+      <h3 v-else class="fs-3">
         {{ $t('scoreMessage', {player: selector.name, score: $n(roundPoints)}) }}
       </h3>
-      <h2 class="selected-response">{{ selectedResponse }}</h2>
+      <h2 class="fs-2 fw-bolder">{{ selectedResponse }}</h2>
       <selection-type/>
     </div>
 
-    <div class="d-flex flex-column w-75 gap-2">
-      <div v-for="row in rows()" class="d-flex flex-row gap-2 justify-content-evenly align-items-center w-100">
-        <match-card v-for="player in row" :player="player" :match="match(player)"/>
-      </div>
+    <div class="matches d-flex flex-row w-75 gap-2 justify-content-around align-items-center">
+      <match-card v-for="player in matchers" :player="player" :match="match(player)"/>
     </div>
 
-
-    <button class="btn btn-blue w-50 fs-4 m-5"
-            :class="{'invisible': !canEndRound}" @click="endRound" v-t="'continue'">
+    <button class="btn btn-blue w-50 fs-4 mb-3"
+            :class="{'invisible': !canEndRound}" @click="endRound" v-t="'cont'">
     </button>
   </div>
 </template>
@@ -62,7 +59,9 @@ export default {
       'canEndRound',
       'isSelector'
     ]),
-
+    matchers: function() {
+      return this.players.filter(player => player.active && player.id !== this.selector.id);
+    }
   },
   methods: {
     endRound: function () {
@@ -86,15 +85,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-h3{
-  font: inherit;
-  font-size: 1.4rem;
-}
-h2{
-  font: inherit;
-  font-size: 1.8rem;
-  color: $red;
-  font-weight: 900;
 
+h2{
+  color: $red;
+}
+
+.matches{
+  overflow-x: auto;
+  flex-flow: wrap;
+  overflow-y: auto;
+  max-height: 25vh;
 }
 </style>

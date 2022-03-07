@@ -1,15 +1,25 @@
 <template>
-  <div class="d-flex flex-column justify-content-center align-items-center w-75 h-100 m-2 m-3 overflow-auto">
-    <div class="list-group w-100 h-100">
-      <div v-for="(response, index) in responses"
-           class='list-group-item'
-           :class="{'list-group-item-action selectable': selectable && !used(response),
+  <div class="outer flex-grow-1 d-flex flex-column justify-content-between align-items-center w-100">
+    <div :style="cssProps" ref="box"
+         class="box d-flex flex-column justify-content-center align-items-center w-75 m-2 overflow-auto">
+      <div class="list-group w-100 h-100">
+        <div v-for="(response, index) in responses"
+             class='list-group-item'
+             :class="{'list-group-item-action selectable': selectable && !used(response),
                     'active': selected === index,
                     'list-group-item-red': used(response)}"
-           @click="select(index, response)">
-        {{ response }}
+             @click="select(index, response)">
+          {{ response }}
+        </div>
       </div>
     </div>
+    <transition name="confirm">
+      <div v-if="selected !== -1" class="d-flex flex-row gap-2 w-75 justify-content-between">
+        <button class="btn btn-red w-50 w-lg-25" @click="deselect" v-t="'cancel'"/>
+        <button class="btn btn-blue w-50 w-lg-25" @click="confirm" v-t="'confirm'"/>
+
+      </div>
+    </transition>
   </div>
 </template>
 <script>
@@ -29,6 +39,10 @@ export default {
   },
   props: {
     selectable: Boolean,
+    height: {
+      type: Number,
+      default: 30
+    }
   },
   emits: ['update:modelValue'],
   computed: {
@@ -36,10 +50,17 @@ export default {
       'responses',
       'usedResponses'
     ]),
+    responsesLength() {
+      return this.responses.length;
+    },
+    cssProps() {
+      return {
+        '--max-height': this.height + 'vh'
+      }
+    }
   },
   methods: {
     select(index, response) {
-
       if (this.selectable && !this.used(response)) {
         if (this.selected !== index) {
           new Audio(Click1Mp3).play();
@@ -50,16 +71,47 @@ export default {
         }
       }
     },
+    deselect() {
+      this.selected = -1;
+    },
+    confirm() {
+      this.select(this.selected, this.responses[this.selected]);
+    },
     used(response) {
       return this.usedResponses.includes(response);
+    }
+  },
+  watch: {
+    responsesLength() {
+      setTimeout(() => {
+        this.$refs.box.scrollTop = this.$refs.box.scrollHeight;
+      }, 50);
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+
+.outer{
+  min-height: 200px;
+}
 .selectable {
   cursor: pointer;
+}
+
+.box {
+  max-height: max(var(--max-height), 250px);
+}
+
+.confirm-enter-active,
+.confirm-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.confirm-enter-from,
+.confirm-leave-to {
+  opacity: 0;
 }
 </style>
 

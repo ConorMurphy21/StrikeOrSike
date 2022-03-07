@@ -2,7 +2,7 @@
   <button class="btn btn-primary text-white
               d-flex flex-column justify-content-center align-items-center position-relative"
        @click="sendVote">
-    <i class="bi-skip-forward display-6"></i>
+    <i class="bi-skip-end display-6"></i>
     <span v-if="skipVoteCount" class="position-absolute top-0 start-100 translate-middle badge bg-blue">
     {{ $n(skipVoteCount) }}</span>
   </button>

@@ -1,16 +1,25 @@
 <template>
-  <div :style="cssProps" ref="box"
-       class="box d-flex flex-column justify-content-center align-items-center w-75 m-2 overflow-auto">
-    <div class="list-group w-100 h-100">
-      <div v-for="(response, index) in responses"
-           class='list-group-item'
-           :class="{'list-group-item-action selectable': selectable && !used(response),
+  <div class="outer d-flex flex-column justify-content-start align-items-center w-100">
+    <div :style="cssProps" ref="box"
+         class="box d-flex flex-column justify-content-center align-items-center w-75 m-2 overflow-auto">
+      <div class="list-group w-100 h-100">
+        <div v-for="(response, index) in responses"
+             class='list-group-item'
+             :class="{'list-group-item-action selectable': selectable && !used(response),
                     'active': selected === index,
                     'list-group-item-red': used(response)}"
-           @click="select(index, response)">
-        {{ response }}
+             @click="select(index, response)">
+          {{ response }}
+        </div>
       </div>
     </div>
+    <transition name="confirm">
+      <div v-if="selected !== -1" class="d-flex flex-row gap-2 w-75 justify-content-around">
+        <button class="btn btn-red w-50 w-lg-25" @click="deselect">Cancel</button>
+        <button class="btn btn-blue w-50 w-lg-25" @click="confirm">Confirm</button>
+
+      </div>
+    </transition>
   </div>
 </template>
 <script>
@@ -41,11 +50,11 @@ export default {
       'responses',
       'usedResponses'
     ]),
-    responsesLength(){
+    responsesLength() {
       return this.responses.length;
     },
-    cssProps(){
-      return{
+    cssProps() {
+      return {
         '--max-height': this.height + 'vh'
       }
     }
@@ -62,6 +71,12 @@ export default {
         }
       }
     },
+    deselect() {
+      this.selected = -1;
+    },
+    confirm() {
+      this.select(this.selected, this.responses[this.selected]);
+    },
     used(response) {
       return this.usedResponses.includes(response);
     }
@@ -77,14 +92,26 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.outer{
+  min-height: 200px;
+}
 .selectable {
   cursor: pointer;
 }
 
 .box {
   max-height: max(var(--max-height), 250px);
-  min-height: 200px;
-  //overflow: scroll;
+}
+
+.confirm-enter-active,
+.confirm-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.confirm-enter-from,
+.confirm-leave-to {
+  opacity: 0;
 }
 </style>
 

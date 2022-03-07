@@ -235,6 +235,10 @@ const socketActions = {
                 break;
             case 'matching':
                 scene = isSelector ? 'matchingSummary' : 'activeMatching';
+                break;
+            case 'endRound':
+                scene = 'endRound';
+                break;
         }
         commit('setScene', scene);
         dispatch('SOCKET_matchesFound', data.matches);

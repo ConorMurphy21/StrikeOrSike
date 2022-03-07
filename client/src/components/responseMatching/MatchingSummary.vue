@@ -17,15 +17,9 @@
     <div class="matches d-flex flex-row w-75 gap-2 justify-content-around align-items-center">
       <match-card v-for="player in matchers" :player="player" :match="match(player)"/>
     </div>
-<!--    <div class="d-flex flex-column w-75 gap-2">-->
-<!--      <div v-for="row in rows()" class="d-flex flex-row gap-2 justify-content-evenly align-items-center w-100">-->
-<!--        <match-card v-for="player in row" :player="player" :match="match(player)"/>-->
-<!--      </div>-->
-<!--    </div>-->
-
 
     <button class="btn btn-blue w-50 fs-4 mb-3"
-            :class="{'invisible': !canEndRound}" @click="endRound" v-t="'continue'">
+            :class="{'invisible': !canEndRound}" @click="endRound" v-t="'cont'">
     </button>
   </div>
 </template>

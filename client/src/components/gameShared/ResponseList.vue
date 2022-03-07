@@ -15,8 +15,8 @@
     </div>
     <transition name="confirm">
       <div v-if="selected !== -1" class="d-flex flex-row gap-2 w-75 justify-content-between">
-        <button class="btn btn-red w-50 w-lg-25" @click="deselect">Cancel</button>
-        <button class="btn btn-blue w-50 w-lg-25" @click="confirm">Confirm</button>
+        <button class="btn btn-red w-50 w-lg-25" @click="deselect" v-t="'cancel'"/>
+        <button class="btn btn-blue w-50 w-lg-25" @click="confirm" v-t="'confirm'"/>
 
       </div>
     </transition>

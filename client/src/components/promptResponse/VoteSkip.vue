@@ -1,10 +1,11 @@
 <template>
-  <div class="btn btn-primary border border-primary border-2 rounded-circle
-              d-flex flex-column justify-content-center align-items-center"
+  <button class="btn btn-primary text-white
+              d-flex flex-column justify-content-center align-items-center position-relative"
        @click="sendVote">
-    <h3 class="text-white my-2" v-t="'skipPrompt'"/>
-    <h3 v-if="skipVoteCount" class="text-white"> {{ $n(skipVoteCount) }} </h3>
-  </div>
+    <i class="bi-skip-forward display-6"></i>
+    <span v-if="skipVoteCount" class="position-absolute top-0 start-100 translate-middle badge bg-blue">
+    {{ $n(skipVoteCount) }}</span>
+  </button>
 </template>
 
 <script>

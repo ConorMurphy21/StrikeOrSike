@@ -1,14 +1,14 @@
 <template>
   <div class="w-100 d-flex flex-column justify-content-between align-items-center p-3">
     <prompt :prompt="prompt"/>
-    <response-list :selectable="false"/>
-    <button class="btn btn-blue w-75 w-lg-50 w-xl-25 fs-4 m-5 position-relative"
+    <response-list :selectable="false" :height="43"/>
+    <button class="btn btn-blue w-75 w-lg-50 w-xl-25 fs-4 mb-3 position-relative"
          @click="sendVote">
       {{ $t('startNextRound') }}
 
 
       <span v-if="startNextRoundCount" class="position-absolute top-0 start-100 translate-middle badge bg-burgundy">
-    {{ startNextRoundCount }}</span>
+    {{ $n(startNextRoundCount) }}</span>
     </button>
   </div>
 </template>

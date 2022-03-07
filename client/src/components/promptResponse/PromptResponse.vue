@@ -1,10 +1,16 @@
 <template>
   <div class="w-100 d-flex flex-column justify-content-between align-items-center p-3">
     <prompt :prompt="prompt"/>
-    <vote-skip v-if="promptSkipping"/>
-    <response-list :selectable="false"/>
-    <input ref="resInput" type="text" maxlength="60" class="form-control w-75" v-model="response" @keyup.enter="sendResponse"/>
-    <timer :time="timer"></timer>
+    <response-list :selectable="false" :height="35"/>
+    <div class="d-flex flex-column align-items-center w-100 gap-2">
+      <input ref="resInput" type="text" maxlength="60" class="form-control w-75" v-model="response"
+             @keyup.enter="sendResponse"/>
+      <div class="d-flex align-items-center justify-content-between w-100">
+        <vote-skip class="invisible" v-if="promptSkipping"/>
+        <timer :time="timer"></timer>
+        <vote-skip v-if="promptSkipping"/>
+      </div>
+    </div>
   </div>
 </template>
 

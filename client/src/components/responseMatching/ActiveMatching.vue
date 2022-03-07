@@ -14,7 +14,7 @@
     </i18n-t>
     <button class="btn btn-primary w-50 fs-4" @click="noMatch"><img src="@/assets/images/sike.png" :alt="$t('sike')"></button>
     or
-    <response-list :selectable="true" v-model="matchedResponse"/>
+    <response-list :selectable="true" :height="35" v-model="matchedResponse"/>
 
   </div>
 </template>

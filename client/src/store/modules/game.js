@@ -69,8 +69,14 @@ export const getters = {
     startNextRoundCount(state) {
         return state.voteCounts['startNextRound'];
     },
+    sikeDisputeCount(state) {
+        return state.voteCounts['sikeDispute'];
+    },
     promptSkipping(state) {
         return state.options.promptSkipping;
+    },
+    sikeDispute(state) {
+        return state.options.sikeDispute;
     }
 }
 
@@ -160,6 +166,7 @@ const socketActions = {
         commit('clearMatches');
         commit('setSelector', selector);
         commit('setSelectionType', data.selectionType);
+        commit('SOCKET_setVoteCount', {pollName:'sikeDispute', count: 0});
         if (data.selectionType === 'choice') {
             commit('setSelectionTypeChoice', true);
         } else {

@@ -7,11 +7,14 @@
       </template>
       <template v-slot:response>
         <span class="responseMessage fs-4">{{ selectedResponse }}</span>
+        <dispute-icon v-if="sikeDispute && selectionType === 'sike'" class="ms-2 me-1 float"/>
       </template>
       <template v-slot:type>
         <span :class="selectionType" v-t="selectionType"/>
       </template>
     </i18n-t>
+
+
     <button class="btn btn-primary w-50 fs-4" @click="noMatch">
       <img class="my-auto w-75 w-sm-50 w-lg-25" src="@/assets/images/sike.png" :alt="$t('sike')">
     </button>
@@ -27,11 +30,12 @@ import ResponseList from '@/components/gameShared/ResponseList.vue';
 import Prompt from '@/components/gameShared/Prompt.vue';
 import ClickMp3 from '@/assets/audio/click2.mp3';
 import AlertMp3 from '@/assets/audio/alert.mp3';
+import DisputeIcon from '@/components/responseMatching/DisputeIcon.vue';
 
 const click = new Audio(ClickMp3);
 const alert = new Audio(AlertMp3);
 
-const {mapState} = createNamespacedHelpers('game');
+const {mapState, mapGetters} = createNamespacedHelpers('game');
 
 export default {
   data() {
@@ -40,6 +44,7 @@ export default {
     }
   },
   components: {
+    DisputeIcon,
     ResponseList,
     Prompt
   },
@@ -53,6 +58,9 @@ export default {
       'selectedResponse',
       'selector'
     ]),
+    ...mapGetters([
+        'sikeDispute'
+    ])
   },
   watch: {
     matchedResponse: function (val) {

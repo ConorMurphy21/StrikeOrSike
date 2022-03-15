@@ -1,10 +1,10 @@
 <template>
-  <button class="btn btn-primary text-white
-              d-flex flex-column justify-content-center align-items-center position-relative"
-       @click="sendVote">
-    <i class="bi-skip-end display-6"></i>
+  <button class="btn btn-orange text-white position-relative"
+          @click="sendVote">
+    <i class="bi-skip-end display-6"/>
     <span v-if="skipVoteCount" class="position-absolute top-0 start-100 translate-middle badge bg-blue">
-    {{ $n(skipVoteCount) }}</span>
+      {{ $n(skipVoteCount) }}
+    </span>
   </button>
 </template>
 
@@ -17,7 +17,7 @@ const {mapGetters} = createNamespacedHelpers('game');
 export default {
   computed: {
     ...mapGetters([
-        'skipVoteCount'
+      'skipVoteCount'
     ])
   },
   methods: {

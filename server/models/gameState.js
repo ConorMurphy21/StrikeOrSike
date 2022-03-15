@@ -8,7 +8,7 @@ const defaultOptions = () => {
         promptTimer: 35,
         autoNumRounds: true, // set numRounds to num players when game starts
         numRounds: 3,
-        sikeDispute: false,
+        sikeDispute: true,
         sikeRetries: 0,
         promptSkipping: true,
         minPlayers: 3,
@@ -19,7 +19,7 @@ const defaultOptions = () => {
 const GameState = class {
     constructor(room, options) {
         this.name = room.name;
-        this.stage = 'lobby'; // enum: 'lobby', 'response', 'selection', 'sikeDispute', 'matching'
+        this.stage = 'lobby'; // enum: 'lobby', 'response', 'selection', 'matching', 'endRound'
         this.options = options;
         if (!this.options) this.options = defaultOptions();
         this.prompts = new Prompts(['standard']);
@@ -273,7 +273,7 @@ const GameState = class {
                 this._autoMatch();
                 this.stage = 'matching';
                 if (this.options.sikeDispute && this.selectionType === 'sike') {
-                    this.pollService.registerPoll('disputeSike',
+                    this.pollService.registerPoll('sikeDispute',
                         () => this._sikeDisputeAction(), 'matching', this.selectorId());
                 }
                 return {success: true};

@@ -9,6 +9,7 @@ import VueSocketIO from 'vue-3-socket.io'
 import {Collapse} from 'bootstrap';
 
 const debug = process.env.NODE_ENV !== 'production'
+//const debug = true
 
 const app = createApp(App)
 

@@ -39,6 +39,8 @@
   "*** OPTIONS STRINGS ***": "",
   "timerDurationLabel": "Timer:",
   "numRoundsLabel": "Rounds:",
+  "sikeDisputeLabel": "Dispute Sike:",
+  "sikeRetriesLabel": "Retries:",
 
   "*** GAME MESSAGES ***": "",
   "selection": {

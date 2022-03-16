@@ -4,22 +4,32 @@
 
       <div id="form" class="accordion-collapse collapse hidden" aria-labelledby="options-heading">
         <div class="accordion-body">
-          <div class="d-flex flex-column align-items-center w-100 gap-4 px-4">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-4 w-100">
-              <label for="timerDuration" class="form-label" v-t="'timerDurationLabel'"/>
+          <form class="d-flex flex-column align-items-center w-100 gap-2 gap-md-4 px-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 gap-md-4 w-100">
+              <label for="timerDuration" class="form-label my-auto" v-t="'timerDurationLabel'"/>
               <input type="number" min="15" max="60" class="form-control" :class="{'Disabled': disabled}" id="timerDuration" ref="timerDuration"
                      :value="options.promptTimer" @focusout="validateNum($event, 'promptTimer')" :disabled="disabled">
-              <label for="numRounds" class="form-label" v-t="'numRoundsLabel'" />
+              <label for="numRounds" class="form-label my-auto" v-t="'numRoundsLabel'" />
               <input type="number" min="1" max="20" class="form-control" :class="{'Disabled': disabled}" id="numRounds"
                      :value="(options.autoNumRounds) ? players.length : options.numRounds"
                      @focusout="validateNumRounds($event)" :disabled="disabled">
             </div>
-          </div>
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 gap-md-4 w-100">
+
+              <label for="sikeDispute" class="my-auto form-check-label text-nowrap" v-t="'sikeDisputeLabel'"/>
+              <input type="checkbox" class="form-check" :class="{'Disabled': disabled}" :disabled="disabled" id="sikeDispute"
+                     :checked="options.sikeDispute" @click="validateSikeDispute($event, 'sikeDispute')" >
+
+              <label for="sikeRetries" class="my-auto form-label" v-t="'sikeRetriesLabel'" />
+              <input type="number" min="0" max="2" class="form-control" :class="{'Disabled': disabled || !options.sikeDispute}" id="sikeRetries"
+                     :value="options.sikeRetries" @focusout="validateNum($event, 'sikeRetries')" :disabled="disabled || !options.sikeDispute">
+            </div>
+          </form>
         </div>
       </div>
       <h2 class="accordion-header" id="options-heading">
         <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#form"
-                aria-expanded="true" aria-controls="form">
+                aria-expanded="false" aria-controls="form">
           Game Options
         </button>
       </h2>
@@ -75,6 +85,17 @@ export default {
         this.$socket.emit('setOptions', options);
       } else {
         input.value = options[value];
+      }
+    },
+    validateSikeDispute(event, value, options) {
+      options = options ?? {...this.options};
+      const input = event.currentTarget;
+      options[value] = input.checked;
+      if(!input.checked){
+        options['sikeRetries'] = 0;
+      }
+      if(this.options[value] !== options[value]) {
+        this.$socket.emit('setOptions', options);
       }
     }
   }

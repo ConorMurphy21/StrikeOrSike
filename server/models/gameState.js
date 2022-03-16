@@ -145,8 +145,10 @@ const GameState = class {
         // this.selectionTypeChoice = true;
     }
 
-    _resetSelection() {
-        this.remainingSikeRetries = this.options.sikeRetries;
+    _resetSelection(resetRetries=true) {
+        if(resetRetries) {
+            this.remainingSikeRetries = this.options.sikeRetries;
+        }
         this.pollService.clearPoll('sikeDispute');
         for (const player of this.players) {
             player.selected = '';
@@ -291,9 +293,7 @@ const GameState = class {
                 this.players[this.selector].responses.length > this.players[this.selector].used.length) {
                 this.stage = 'selection';
                 this.remainingSikeRetries--;
-                for (const player of this.players) {
-                    player.sikeVote = 0;
-                }
+                this._resetSelection(false);
                 this._disputeCompleteCb('reSelect');
             } else {
                 this._disputeCompleteCb('nextSelection');

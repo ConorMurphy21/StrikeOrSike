@@ -25,10 +25,12 @@ describe('Complete callback tests', () => {
 
        it('Disconnect non-voter', (done) => {
            gameState.options.promptSkipping = true;
+           gameState.room.players.push({id: 'matcher3Id', active: true})
            gameState.registerPromptSkippedCb(done);
            gameState.beginNewPrompt().then(() => {
                gameState.pollVote(selectorId, 'skipPrompt');
-               players[matcherIndex].active = false;
+               gameState.pollVote(matcherIndex, 'skipPrompt');
+               players[matcher2Index].active = false;
                gameState.disconnect(matcherId);
            });
        });
@@ -105,7 +107,7 @@ describe('Complete callback tests', () => {
                 assert.strictEqual(action, 'nextSelection');
                 done();
             });
-            gameState.pollVote(matcherId, 'disputeSike');
+            gameState.pollVote(matcherId, 'sikeDispute');
             players[matcher2Index].active = false;
             gameState.disconnect(matcher2Id);
         });

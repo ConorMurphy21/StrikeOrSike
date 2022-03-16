@@ -21,7 +21,7 @@ describe('voteSkipPrompt tests', () => {
         let i;
         gameState.registerPromptSkippedCb(done);
         gameState.beginNewPrompt().then(() => {
-            for(i = 0; i < Math.ceil(evenLen/2)-1; i++){
+            for(i = 0; i < Math.ceil(evenLen/2); i++){
                 result = gameState.pollVote(i.toString(), 'skipPrompt');
                 assert.isOk(result.success);
                 assert.strictEqual(result.count, i + 1);
@@ -37,7 +37,7 @@ describe('voteSkipPrompt tests', () => {
         let i;
         gameState.registerPromptSkippedCb(done);
         gameState.beginNewPrompt().then(() => {
-            for (i = 0; i < Math.ceil(evenLen / 2) - 1; i++) {
+            for (i = 0; i < Math.ceil(evenLen / 2); i++) {
                 result = gameState.pollVote(i.toString(), 'skipPrompt');
                 assert.isOk(result.success);
                 assert.strictEqual(result.count, i + 1);

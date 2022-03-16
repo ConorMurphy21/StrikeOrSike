@@ -8,7 +8,7 @@ const defaultOptions = () => {
         promptTimer: 35,
         autoNumRounds: true, // set numRounds to num players when game starts
         numRounds: 3,
-        sikeDispute: false,
+        sikeDispute: true,
         sikeRetries: 0,
         promptSkipping: true,
         minPlayers: 3,
@@ -19,7 +19,7 @@ const defaultOptions = () => {
 const GameState = class {
     constructor(room, options) {
         this.name = room.name;
-        this.stage = 'lobby'; // enum: 'lobby', 'response', 'selection', 'sikeDispute', 'matching'
+        this.stage = 'lobby'; // enum: 'lobby', 'response', 'selection', 'matching', 'endRound'
         this.options = options;
         if (!this.options) this.options = defaultOptions();
         this.prompts = new Prompts(['standard']);
@@ -145,8 +145,10 @@ const GameState = class {
         // this.selectionTypeChoice = true;
     }
 
-    _resetSelection() {
-        this.remainingSikeRetries = this.options.sikeRetries;
+    _resetSelection(resetRetries=true) {
+        if(resetRetries) {
+            this.remainingSikeRetries = this.options.sikeRetries;
+        }
         this.pollService.clearPoll('sikeDispute');
         for (const player of this.players) {
             player.selected = '';
@@ -273,7 +275,7 @@ const GameState = class {
                 this._autoMatch();
                 this.stage = 'matching';
                 if (this.options.sikeDispute && this.selectionType === 'sike') {
-                    this.pollService.registerPoll('disputeSike',
+                    this.pollService.registerPoll('sikeDispute',
                         () => this._sikeDisputeAction(), 'matching', this.selectorId());
                 }
                 return {success: true};
@@ -291,9 +293,7 @@ const GameState = class {
                 this.players[this.selector].responses.length > this.players[this.selector].used.length) {
                 this.stage = 'selection';
                 this.remainingSikeRetries--;
-                for (const player of this.players) {
-                    player.sikeVote = 0;
-                }
+                this._resetSelection(false);
                 this._disputeCompleteCb('reSelect');
             } else {
                 this._disputeCompleteCb('nextSelection');

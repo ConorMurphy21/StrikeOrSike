@@ -1,13 +1,8 @@
 <template>
-
+  <h1> Hi this is how to play </h1>
 </template>
 
 <script>
-export default {
-  name: 'HowToPlay'
-}
+
 </script>
 
-<style scoped>
-
-</style>

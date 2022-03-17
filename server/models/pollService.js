@@ -4,7 +4,7 @@ module.exports = class pollService {
         this.polls = {}
     }
 
-    registerPoll(pollName, completeCb, stage, exclude = null, majorityPercent = 0.5) {
+    registerPoll(pollName, completeCb, stage, exclude = null, majorityPercent = 0.501) {
         this.polls[pollName] = {completeCb, majorityPercent, stage, exclude, inFavor: []};
     }
 
@@ -13,11 +13,11 @@ module.exports = class pollService {
     }
 
     acceptVote(pollName, id, stage) {
-        if(!this.polls.hasOwnProperty(pollName)) {
+        if(!this.polls.hasOwnProperty(pollName) || this.polls[pollName] === null) {
             return {error: 'noPoll'};
         }
         const poll = this.polls[pollName];
-        if(stage !== poll.stage) {
+        if(poll.stage && stage !== poll.stage) {
             return {error: 'wrongStage'};
         }
         if(poll.exclude === id) {
@@ -30,7 +30,9 @@ module.exports = class pollService {
             poll.inFavor.push(id);
         }
         const count = this.countVotes(pollName);
-        this.cbIfComplete(pollName);
+        if(this.cbIfComplete(pollName)) {
+            return {success: true, count: 0};
+        }
         return {success: true, count};
     }
 
@@ -39,7 +41,9 @@ module.exports = class pollService {
         if(this.complete(pollName)) {
             poll.completeCb();
             this.clearPoll(pollName);
+            return true;
         }
+        return false;
     }
 
     complete(pollName) {

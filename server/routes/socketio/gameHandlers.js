@@ -4,9 +4,6 @@ const Joi = require('joi');
 
 /*** handler validation schemas ***/
 let setOptionsSchema = require('../../models/optionsSchema');
-// if(process.env.NODE_ENV !== 'production') {
-//     setOptionsSchema = Joi.object();
-// }
 
 module.exports = (io, socket) => {
     /*** GAME STATE ENDPOINTS ***/

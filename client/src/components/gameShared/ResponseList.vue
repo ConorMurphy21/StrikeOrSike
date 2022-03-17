@@ -3,14 +3,15 @@
     <div :style="cssProps" ref="box"
          class="box d-flex flex-column justify-content-center align-items-center w-75 m-2 overflow-auto">
       <div class="list-group w-100 h-100">
-        <div v-for="(response, index) in responses"
-             class='list-group-item'
-             :class="{'list-group-item-action selectable': selectable && !used(response),
+        <button v-for="(response, index) in responses"
+                class='list-group-item text-start fw-bold'
+                :class="{'list-group-item-action': selectable && !used(response),
+                    'pe-none': !selectable || used(response),
                     'active': selected === index,
                     'list-group-item-red': used(response)}"
-             @click="select(index, response)">
+                @click="select(index, response)">
           {{ response }}
-        </div>
+        </button>
       </div>
     </div>
     <transition name="confirm">
@@ -26,8 +27,6 @@
 import {createNamespacedHelpers} from 'vuex';
 import Click1Mp3 from '@/assets/audio/click1.mp3'
 import Click2Mp3 from '@/assets/audio/click2.mp3'
-
-const click2 = new Audio(Click2Mp3);
 
 const {mapState} = createNamespacedHelpers('game');
 
@@ -66,12 +65,13 @@ export default {
           new Audio(Click1Mp3).play();
           this.selected = index;
         } else {
-          click2.play();
+          new Audio(Click2Mp3).play();
           this.$emit('update:modelValue', response);
         }
       }
     },
     deselect() {
+      new Audio(Click2Mp3).play();
       this.selected = -1;
     },
     confirm() {
@@ -93,11 +93,8 @@ export default {
 
 <style lang="scss" scoped>
 
-.outer{
+.outer {
   min-height: 200px;
-}
-.selectable {
-  cursor: pointer;
 }
 
 .box {

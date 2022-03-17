@@ -26,7 +26,7 @@ const exactMatch = (string1, string2, lang) => {
 }
 
 const pluralMatch = (string1, string2, lang) => {
-    if(lang !== 'en') return false;
+    if(lang && !lang.startsWith('en')) return false;
     if(string1.includes(' ') || string2.includes(' ')) return false;
     return exactMatch(pluralize.plural(string1), pluralize.plural(string2), lang);
 }

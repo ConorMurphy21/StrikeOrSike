@@ -17,12 +17,12 @@ const defaultOptions = () => {
 }
 
 const GameState = class {
-    constructor(room, options) {
+    constructor(room, options, oldPrompts) {
         this.name = room.name;
         this.stage = 'lobby'; // enum: 'lobby', 'response', 'selection', 'matching', 'endRound'
         this.options = options;
         if (!this.options) this.options = defaultOptions();
-        this.prompts = new Prompts(['standard']);
+        this.prompts = new Prompts(['standard'], [], room.lang, oldPrompts);
         this.room = room;
         this.round = 0;
         this.prompt = '';

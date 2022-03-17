@@ -11,7 +11,7 @@ describe('Automatch tests', () => {
 
     beforeEach((done) => {
         const players = [{id: selectorId, active: true}, {id: matcherId, active: true}];
-        gameState = new GameState({players, lang: 'en'});
+        gameState = new GameState({players, lang: 'en-CA'});
         gameState.beginNewPrompt().then(() => {
             gameState.acceptPromptResponse(selectorId, firstResponse);
             done();

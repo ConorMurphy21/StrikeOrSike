@@ -36,7 +36,10 @@ export default {
     Prompt
   },
   mounted() {
-    this.$refs.resInput.focus();
+    // only auto focus if the user is not on mobile
+    if(!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+      this.$refs.resInput.focus();
+    }
   },
   computed: {
     ...mapState([

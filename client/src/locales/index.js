@@ -1,5 +1,5 @@
 import {createI18n} from 'vue-i18n'
-import * as en from './en.json'
+import en from './en.js'
 
 const messages = {
     en: {

@@ -9,7 +9,7 @@
     </div>
 
     <div class="flex-grow-1"/>
-    <button class="btn btn-blue mb-5 w-50 w-lg-25" @click="click" v-t="'toLobby'"/>
+    <button class="btn btn-blue w-75 w-lg-50 fs-4 mb-4" @click="click" v-t="'toLobby'"/>
   </div>
 </template>
 
@@ -45,11 +45,5 @@ h1 {
   font-family: $header-font !important;
   font-weight: normal;
   color: $red;
-}
-
-.btn {
-  width: 30%;
-  min-width: 150px;
-  height: 60px;
 }
 </style>

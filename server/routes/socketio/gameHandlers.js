@@ -23,7 +23,7 @@ module.exports = (io, socket) => {
         const room = roomIfLeader(socket.id);
         if (!room) return;
         if(room.players.length < room.state.options.minPlayers) return;
-        room.state = new GameState(room, room.state.options);
+        room.state = new GameState(room, room.state.options, room.state.prompts);
         registerCallbacks(io, room);
         beginPrompt(io, room);
     });

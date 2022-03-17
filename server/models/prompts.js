@@ -39,7 +39,7 @@ const Prompts = class {
 
     static metas = retrieveMetas(promptsRoot);
 
-    constructor(packNames, customPrompts, lang = 'en') {
+    constructor(packNames, customPrompts, lang = 'en', oldPrompts) {
         this.customPrompts = customPrompts;
         this.numPrompts = customPrompts?.length ?? 0;
         this.packs = [];
@@ -51,6 +51,14 @@ const Prompts = class {
             this.packs.push(meta);
             this.numPrompts += meta.height;
         }
+        this.keepOldUsed(oldPrompts);
+    }
+
+    keepOldUsed(oldPrompts){
+        // this will only work as long as the prompts are the same
+        if(!oldPrompts) return;
+        this.used = oldPrompts.used;
+        this.remaining = oldPrompts.remaining;
     }
 
     newPrompt() {

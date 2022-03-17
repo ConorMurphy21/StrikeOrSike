@@ -39,7 +39,7 @@ const Prompts = class {
 
     static metas = retrieveMetas(promptsRoot);
 
-    constructor(packNames, customPrompts, lang = 'en', oldPrompts) {
+    constructor(packNames, customPrompts, lang = 'en-CA', oldPrompts) {
         this.customPrompts = customPrompts;
         this.numPrompts = customPrompts?.length ?? 0;
         this.packs = [];

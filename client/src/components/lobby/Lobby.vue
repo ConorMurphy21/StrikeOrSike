@@ -1,11 +1,11 @@
 <template>
   <div class="w-100 d-flex flex-column justify-content-between align-items-center gap-3 pt-1 pb-4">
-    <h1 v-t="'players'"/>
+    <h1 class="font-fancy text-red display-2" v-t="'players'"/>
     <player-list/>
 
     <div class="w-100 d-flex flex-column justify-content-start align-items-center gap-3">
       <options :disabled="!self || !self.leader"/>
-      <button class="btn btn-blue fs-4"
+      <button class="btn btn-blue fs-4 w-50 w-lg-25"
               :class="{'d-none': !canStart}" @click="startGame" v-t="'startGame'"/>
     </div>
   </div>
@@ -45,18 +45,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-h1 {
-  font-family: $header-font !important;
-  font-size: 4rem;
-  font-weight: normal;
-  color: $red;
-}
-
-.btn {
-  height: 60px;
-  width: 30%;
-  min-width: 150px;
-}
-</style>

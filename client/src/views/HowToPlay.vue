@@ -5,7 +5,7 @@
       <p class="fw-normal">{{ section.body }}</p>
       <img class="w-93 w-md-50" v-if="imgs[section.key]" :src="imgs[section.key]" :alt="section.alt">
       <div v-for="child in section.children">
-        <h3 class="font-fancy display-6">{{ child.header }}</h3>
+        <h3 class="fw-bold display-6">{{ child.header }}</h3>
         <p class="fw-normal">{{ child.body }}</p>
         <img class="w-93 w-md-50" v-if="imgs[child.key]" :src="imgs[child.key]" :alt="child.alt">
       </div>
@@ -16,6 +16,8 @@
 <script>
 import Prompt from '@/assets/images/howToPlay/prompt.png';
 import Strike from '@/assets/images/howToPlay/strikeSelect.png';
+import Choice from '@/assets/images/howToPlay/choice.png';
+import Matching from '@/assets/images/howToPlay/matching.png';
 
 export default {
   data(){
@@ -23,6 +25,8 @@ export default {
       imgs: {
         prompt: Prompt,
         strike: Strike,
+        choice: Choice,
+        matching: Matching,
       }
     }
   }

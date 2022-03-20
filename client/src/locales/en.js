@@ -92,37 +92,62 @@ export default {
         },
         {
             key: 'selection',
-            header: 'Somethinging',
-            body: 'After the timer runs out, each player will get a chance to something! The overlord computer will role a dice and pick whether either strike, sike or choice.',
+            header: 'Selection',
+            body: 'After the timer runs out, each player will get a chance to select! The overlord computer will role a dice and pick whether either strike, sike or choice.',
             children: [
                 {
                     key: 'strike',
                     header: 'Strike',
-                    body: 'The somethinger will pick a response from their list that they think all other players also wrote down. A good choice for "Ice cream flavours" might be vanilla, because it is a very common flavour. The somethingers score for this round is the number of players who also had vanilla on their list.\n',
+                    body: 'The selector will pick a response from their list that they think all other players also wrote down. A good choice for "Ice cream flavours" might be vanilla, because it is a very common flavour. The somethingers score for this round is the number of players who also had vanilla on their list.\n',
                     alt: 'Example of selecting a Strike',
                 },
                 {
                     key: 'sike',
                     header: 'Sike',
-                    body: 'The somethinger will pick a response from their list that they think no other players wrote down. A good choice for "Ice cream flavours" might be garlic, because it is an ice cream flavour that exists, but not a top flavour. The somethingers score for this round is the number of players who did not have garlic on their list.'
+                    body: 'The selector will pick a response from their list that they think no other players wrote down. A good choice for "Ice cream flavours" might be garlic, because it is an ice cream flavour that exists, but not a top flavour. The somethingers score for this round is the number of players who did not have garlic on their list.'
                 },
                 {
                     key: 'choice',
                     header: 'Choice',
-                    body: 'The somethinger gets to choose whether they would like to Strike or Sike. After choosing, the player picks a response as if they had roled Strike or Sike.'
+                    body: 'The selector gets to choose whether they would like to Strike or Sike. After choosing, the player picks a response as if they had rolled Strike or Sike.'
                 }
             ]
         },
         {
             key: 'matching',
             header: 'Matching',
-            body: 'Most of the time matching is done automatically, but sometimes synonyms exist, and it is up to the players to decide whether or not 2 responses are the same. For example, Airplane and Plane are probably the same.',
+            body: 'Most of the time matching is done automatically, but sometimes synonyms exist, and it is up to the players to decide whether or not 2 responses are the same. For example, airplane and plane are probably the same. When prompted, either match the selected word to a corresponding synonym in your list, or hit the Sike button because you don\'t have one.',
             children: []
         },
-        // {
-        //     header: 'Options',
-        //     body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Aliquam purus sit amet luctus venenatis lectus magna fringilla. Sit amet cursus sit amet. Egestas purus viverra accumsan in nisl nisi scelerisque eu. Dolor magna eget est lorem ipsum dolor sit amet.',
-        //     children: []
-        // }
+        {
+            header: 'Options',
+            body: '',
+            children: [
+                {
+                    key: 'timer',
+                    header: 'Timer',
+                    body: 'Changes how long players are given to respond to prompts. By default it is set to 35 seconds but it can be set as low as 15 seconds and as high as 60.',
+                    children: []
+                },
+                {
+                    key: 'rounds',
+                    header: 'Rounds',
+                    body: 'The number of rounds the game will last for. By default this is equal to the number of players because selecting first in a round is advantageous, and this allows every player to select first once.',
+                    children: []
+                },
+                {
+                    key: 'dispute',
+                    header: 'Sike Dispute',
+                    body: 'By default, players can vote that a selected Sike does not adequately fit the prompt. If you trust your friends and don\'t want to cause fighting this can be disabled.',
+                    children: []
+                },
+                {
+                    key: 'retries',
+                    header: 'Retries',
+                    body: 'By default, after a selectors Sike has successfully been disputed, the selector\'s turn is over and they get 0 points. If you believe this punishment is too harsh, you can let them retry, and select a Sike that actually fits the category. I\'m sure it was just a misunderstanding.',
+                    children: ''
+                }
+            ]
+        }
     ]
 }

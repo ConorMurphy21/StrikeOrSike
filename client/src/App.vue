@@ -8,13 +8,6 @@
   </div>
 </template>
 
-<style lang="scss" scoped>
-img {
-  //min-width: 350px;
-  //width: 60%;
-}
-</style>
-
 <style lang="scss">
 @import '@/styles/app';
 </style>

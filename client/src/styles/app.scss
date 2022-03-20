@@ -38,7 +38,7 @@ $sizes: (
 }
 
 .w-93 {
-  width: 93% !important;
+  width: 93%;
 }
 
 body {
@@ -54,6 +54,11 @@ body {
   border-radius: 15px;
   box-shadow: 6px 6px 6px 2px $gray-600;
   background-color: $secondary;
+}
+
+.font-fancy {
+  font-family: $header-font;
+  font-weight: normal;
 }
 
 .form-control, .btn {

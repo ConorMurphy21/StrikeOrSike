@@ -2,7 +2,7 @@
   <div class="main-content w-75 w-lg-50 p-3 p-lg-5">
     <form class="form" @submit.prevent="onSubmit(true)">
 
-      <h4 class="mb-3" v-if="error" v-t="error"/>
+      <h4 class="mb-3 text-center text-red fs-4" v-if="error" v-t="error"/>
 
       <div class="mb-3">
         <label for="username" class="form-label" v-t="'usernameLabel'"/>
@@ -16,9 +16,13 @@
                :placeholder="$t('roomNamePlaceholder')" v-model="form.roomName">
       </div>
 
-      <div class="d-flex flex-column flex-lg-row justify-content-around align-items-center mt-5 gap-3">
+      <div class="d-flex flex-column flex-lg-row justify-content-around align-items-center mt-5 mb-4 gap-3">
         <button type="submit" class="btn btn-blue w-100" v-t="'joinGame'"/>
         <button type="button" @click="onSubmit(false)" class="btn btn-red w-100" v-t="'createGame'"/>
+      </div>
+
+      <div class="row">
+        <router-link class="col text-center fs-4" to="/how-to-play">How To Play</router-link>
       </div>
     </form>
   </div>
@@ -74,7 +78,7 @@ export default {
 <style lang="scss" scoped>
 
 input {
-  background-color: $primary;
+  background-color: $orange;
   color: $gray-800 !important;
   text-align: center;
   height: 70px;
@@ -85,18 +89,17 @@ input::placeholder {
 }
 
 input:focus {
-  background-color: $primary;
-}
-
-h4 {
-  text-align: center;
-  color: $red;
-  font: inherit;
-  font-size: 1.6rem;
+  background-color: $orange;
 }
 
 .btn {
   height: 60px;
+}
+a {
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: 2px underline;
 }
 </style>
 

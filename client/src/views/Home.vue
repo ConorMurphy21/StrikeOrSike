@@ -22,7 +22,8 @@
       </div>
 
       <div class="row">
-        <router-link class="col text-center fs-4" to="/how-to-play">How To Play</router-link>
+        <router-link class="col text-center fs-4" to="/how-to-play" v-t="'howToPlayLink'"/>
+        <router-link class="col text-center link-blue fs-4" to="/about" v-t="'aboutLink'"/>
       </div>
     </form>
   </div>

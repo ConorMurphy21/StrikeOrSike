@@ -62,6 +62,7 @@ export default {
     selfScoreMessage: 'Your Score: {score}',
 
     /*** HOW TO PLAY ***/
+    howToPlayLink: 'How To Play',
     howToPlay: [
         {
             key: 'overview',
@@ -149,5 +150,8 @@ export default {
                 }
             ]
         }
-    ]
+    ],
+
+    /*** ABOUT ***/
+    aboutLink: 'About',
 }

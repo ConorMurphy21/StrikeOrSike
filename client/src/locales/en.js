@@ -138,7 +138,7 @@ export default {
                 },
                 {
                     key: 'dispute',
-                    header: 'Sike Dispute',
+                    header: 'Dispute Sike',
                     body: 'By default, players can vote that a selected Sike does not adequately fit the prompt. If you trust your friends and don\'t want to cause fighting this can be disabled.',
                     children: []
                 },
@@ -152,6 +152,18 @@ export default {
         }
     ],
 
-    /*** ABOUT ***/
-    aboutLink: 'About',
+    /*** ABOUT PAGE STRINGS ***/
+
+    about: {
+        link: 'About',
+        header: 'About',
+        project: 'Strike or Sike has been a passion project of mine. Throughout the pandemic game room sites like this one kept my friends and family entertained. Since I couldn\'t find one of my favourite games "Hit or Miss" anywhere, I decided to make it myself.',
+        openSource: 'This project is completely open source and can be found {github}. If you want to contribute and add a feature that is missing, fix a bug, support a new language, or add more prompt packs, feel free to submit a pull request. If you see a bug or request a feature you can submit an {issues}.',
+        me: 'This project was designed by Conor Murphy, you can learn more about me and my projects {profile}. A big thank you to Jen Gu, who designed all of the art assets and helped with UI/UX design.',
+        github: 'github',
+        issues: 'issue',
+        profile: 'here',
+    }
+
+
 }

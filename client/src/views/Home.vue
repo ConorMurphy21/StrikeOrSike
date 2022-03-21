@@ -23,7 +23,7 @@
 
       <div class="row">
         <router-link class="col text-center fs-4" to="/how-to-play" v-t="'howToPlayLink'"/>
-        <router-link class="col text-center link-blue fs-4" to="/about" v-t="'aboutLink'"/>
+        <router-link class="col text-center link-blue fs-4" to="/about" v-t="'about.link'"/>
       </div>
     </form>
   </div>

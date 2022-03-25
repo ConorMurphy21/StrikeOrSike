@@ -36,10 +36,10 @@ export default {
     startGame: 'Start',
 
     /*** OPTIONS STRINGS ***/
-    timerDurationLabel: 'Timer:',
-    numRoundsLabel: 'Rounds:',
-    sikeDisputeLabel: 'Dispute Sike:',
-    sikeRetriesLabel: 'Retries:',
+    timerDurationLabel: 'Timer',
+    numRoundsLabel: 'Rounds',
+    sikeDisputeLabel: 'Dispute Sike',
+    sikeRetriesLabel: 'Retries',
 
     /*** GAME MESSAGES ***/
     selection: {

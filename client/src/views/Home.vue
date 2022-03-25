@@ -1,5 +1,5 @@
 <template>
-  <div class="main-content w-75 w-lg-50 p-3 p-lg-5">
+  <div class="main-content w-93 w-lg-50 px-3 px-lg-5 py-3 py-lg-4">
     <form class="form" @submit.prevent="onSubmit(true)">
 
       <h4 class="mb-3 text-center text-red fs-4" v-if="error" v-t="error"/>
@@ -16,14 +16,14 @@
                :placeholder="$t('roomNamePlaceholder')" v-model="form.roomName">
       </div>
 
-      <div class="d-flex flex-column flex-lg-row justify-content-around align-items-center mt-5 mb-4 gap-3">
+      <div class="d-flex flex-column flex-lg-row justify-content-around align-items-center mt-5 mb-3 gap-3">
         <button type="submit" class="btn btn-blue w-100" v-t="'joinGame'"/>
         <button type="button" @click="onSubmit(false)" class="btn btn-red w-100" v-t="'createGame'"/>
       </div>
 
-      <div class="row">
-        <router-link class="col text-center fs-4" to="/how-to-play" v-t="'howToPlayLink'"/>
-        <router-link class="col text-center link-blue fs-4" to="/about" v-t="'about.link'"/>
+      <div class="d-flex flex-column justify-content-between align-items-center">
+        <router-link class="row text-center fs-5" to="/about" v-t="'about.link'"/>
+        <router-link class="row text-center link-blue fs-5" to="/how-to-play" v-t="'howToPlayLink'"/>
       </div>
     </form>
   </div>

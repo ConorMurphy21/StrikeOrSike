@@ -107,6 +107,7 @@ export default {
             children: []
         },
         {
+            key: 'options',
             header: 'Options',
             body: '',
             children: [

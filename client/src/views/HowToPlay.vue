@@ -15,7 +15,8 @@
 
 <script>
 import Prompt from '@/assets/images/howToPlay/prompt.png';
-import Strike from '@/assets/images/howToPlay/strikeSelect.png';
+import Strike from '@/assets/images/howToPlay/strike.png';
+import Sike from '@/assets/images/howToPlay/sike.png';
 import Choice from '@/assets/images/howToPlay/choice.png';
 import Matching from '@/assets/images/howToPlay/matching.png';
 
@@ -25,6 +26,7 @@ export default {
       imgs: {
         prompt: Prompt,
         strike: Strike,
+        sike: Sike,
         choice: Choice,
         matching: Matching,
       }

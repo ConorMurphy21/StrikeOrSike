@@ -1,6 +1,6 @@
 <template>
   <div class="main-content d-flex w-xl-75 w-100 flex-grow-1 p-1 position-relative">
-    <a class="btn btn-burgundy position-absolute top-0 end-0 m-3 bi-question py-0 px-1" target="_blank" :href="helpLink"/>
+    <a class="btn btn-burgundy position-absolute top-0 end-0 m-2 bi-question py-0 px-1" target="_blank" :href="helpLink"/>
     <component :is="scene"/>
   </div>
 </template>

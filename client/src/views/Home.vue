@@ -2,7 +2,7 @@
   <div class="main-content w-93 w-lg-50 px-3 px-lg-5 py-3 py-lg-4">
     <form class="form" @submit.prevent="onSubmit(true)">
 
-      <h4 class="mb-3 text-center text-red fs-4" v-if="error" v-t="error"/>
+      <h4 class="mb-1 text-center text-red fs-4" v-if="error" v-t="error"/>
 
       <div class="mb-3">
         <label for="username" class="form-label" v-t="'usernameLabel'"/>

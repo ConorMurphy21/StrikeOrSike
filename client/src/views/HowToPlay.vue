@@ -3,11 +3,11 @@
     <div v-for="section in $tm('howToPlay')">
       <h1 class="font-fancy text-burgundy display-2 mb-3" :id="section.key">{{ section.header }}</h1>
       <p class="fw-normal">{{ section.body }}</p>
-      <img class="w-93 w-md-50" v-if="imgs[section.key]" :src="imgs[section.key]" :alt="section.alt">
+      <img class="border border-4 border-burgundy rounded w-93 w-md-50 mb-4" v-if="imgs[section.key]" :src="imgs[section.key]" :alt="section.alt">
       <div v-for="child in section.children">
         <h3 class="fw-bold display-6" :id="child.key">{{ child.header }}</h3>
         <p class="fw-normal">{{ child.body }}</p>
-        <img class="w-93 w-md-50" v-if="imgs[child.key]" :src="imgs[child.key]" :alt="child.alt">
+        <img class="border border-4 border-burgundy rounded w-93 w-md-50 mb-4" v-if="imgs[child.key]" :src="imgs[child.key]" :alt="child.alt">
       </div>
     </div>
   </div>

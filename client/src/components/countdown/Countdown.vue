@@ -1,5 +1,5 @@
 <template>
-  <div class="w-100 d-flex justify-content-center ">
+  <div class="w-100 d-flex justify-content-center">
     <h1>{{ $n(timer) }}</h1>
   </div>
 </template>
@@ -10,7 +10,6 @@ import {createNamespacedHelpers} from 'vuex';
 
 const {mapState} = createNamespacedHelpers('game');
 
-const countdown = new Audio(timerMp3);
 
 export default {
   computed: {
@@ -19,7 +18,7 @@ export default {
     ])
   },
   mounted() {
-    countdown.play();
+    new Audio(timerMp3).play();
   },
 }
 </script>

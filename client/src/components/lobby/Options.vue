@@ -4,25 +4,38 @@
 
       <div id="form" class="accordion-collapse collapse hidden" aria-labelledby="options-heading">
         <div class="accordion-body">
-          <form class="d-flex flex-column align-items-center w-100 gap-2 gap-md-4 px-4">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 gap-md-4 w-100">
-              <label for="timerDuration" class="form-label my-auto" v-t="'timerDurationLabel'"/>
-              <input type="number" min="15" max="60" class="form-control" :class="{'Disabled': disabled}" id="timerDuration" ref="timerDuration"
-                     :value="options.promptTimer" @focusout="validateNum($event, 'promptTimer')" :disabled="disabled">
-              <label for="numRounds" class="form-label my-auto" v-t="'numRoundsLabel'" />
-              <input type="number" min="1" max="20" class="form-control" :class="{'Disabled': disabled}" id="numRounds"
-                     :value="(options.autoNumRounds) ? players.length : options.numRounds"
-                     @focusout="validateNumRounds($event)" :disabled="disabled">
+          <form>
+            <div class="row">
+              <div class="col-md-6">
+                <label for="timerDuration" class="form-label" v-t="'timerDurationLabel'"/>
+                <input type="number" min="15" max="60" class="form-control" :class="{'Disabled': disabled}"
+                       id="timerDuration" ref="timerDuration"
+                       :value="options.promptTimer" @focusout="validateNum($event, 'promptTimer')" :disabled="disabled">
+              </div>
+              <div class="col-md-6">
+                <label for="numRounds" class="form-label" v-t="'numRoundsLabel'"/>
+                <input type="number" min="1" max="20" class="form-control" :class="{'Disabled': disabled}"
+                       id="numRounds"
+                       :value="(options.autoNumRounds) ? players.length : options.numRounds"
+                       @focusout="validateNumRounds($event)" :disabled="disabled">
+              </div>
             </div>
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 gap-md-4 w-100">
-
-              <label for="sikeDispute" class="my-auto form-check-label text-nowrap" v-t="'sikeDisputeLabel'"/>
-              <input type="checkbox" class="form-check" :class="{'Disabled': disabled}" :disabled="disabled" id="sikeDispute"
-                     :checked="options.sikeDispute" @click="validateSikeDispute($event, 'sikeDispute')" >
-
-              <label for="sikeRetries" class="my-auto form-label" v-t="'sikeRetriesLabel'" />
-              <input type="number" min="0" max="2" class="form-control" :class="{'Disabled': disabled || !options.sikeDispute}" id="sikeRetries"
-                     :value="options.sikeRetries" @focusout="validateNum($event, 'sikeRetries')" :disabled="disabled || !options.sikeDispute">
+            <div class="row">
+              <div class="col-md-6 d-flex justify-content-start align-items-center">
+                <div class="form-check form-switch">
+                  <label for="sikeDispute" class="form-check-label" v-t="'sikeDisputeLabel'"/>
+                  <input type="checkbox" class="form-check-input" :class="{'Disabled': disabled}" :disabled="disabled"
+                         id="sikeDispute"
+                         :checked="options.sikeDispute" @click="validateSikeDispute($event, 'sikeDispute')">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label for="sikeRetries" class="form-label" v-t="'sikeRetriesLabel'"/>
+                <input type="number" min="0" max="2" class="form-control"
+                       :class="{'Disabled': disabled || !options.sikeDispute}" id="sikeRetries"
+                       :value="options.sikeRetries" @focusout="validateNum($event, 'sikeRetries')"
+                       :disabled="disabled || !options.sikeDispute">
+              </div>
             </div>
           </form>
         </div>
@@ -81,7 +94,7 @@ export default {
       } else {
         options[value] = inputValue;
       }
-      if(this.options[value] !== options[value]) {
+      if (this.options[value] !== options[value]) {
         this.$socket.emit('setOptions', options);
       } else {
         input.value = options[value];
@@ -91,10 +104,10 @@ export default {
       options = options ?? {...this.options};
       const input = event.currentTarget;
       options[value] = input.checked;
-      if(!input.checked){
+      if (!input.checked) {
         options['sikeRetries'] = 0;
       }
-      if(this.options[value] !== options[value]) {
+      if (this.options[value] !== options[value]) {
         this.$socket.emit('setOptions', options);
       }
     }

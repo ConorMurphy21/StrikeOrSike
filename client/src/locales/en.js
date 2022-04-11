@@ -62,7 +62,16 @@ export default {
     selfScoreMessage: 'Your Score: {score}',
 
     /*** TOOL TIPS ***/
-
+    tooltip: {
+        options: {
+            timer: 'Duration given to respond to the prompt',
+            rounds: 'The number of rounds the game will last for',
+            dispute: 'Allow players to dispute a sike if it doesn\'t fit the prompt',
+            retries: 'Allow a player with a failed sike to retry',
+        },
+        voteSkip: 'Vote to skip current prompt',
+        dispute: 'Vote to dispute {response}'
+    },
 
     /*** HOW TO PLAY ***/
     howToPlayLink: 'How To Play',

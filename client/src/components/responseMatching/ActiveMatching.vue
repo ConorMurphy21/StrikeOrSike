@@ -7,13 +7,13 @@
       </template>
       <template v-slot:response>
         <span class="responseMessage fs-4">{{ selectedResponse }}</span>
-        <dispute-icon v-if="sikeDispute && selectionType === 'sike'" class="ms-2 me-1 float"/>
+        <dispute-icon v-if="sikeDispute && selectionType === 'sike'" class="ms-2 me-1 float"
+                      :response="selectedResponse" :placement="'top'"/>
       </template>
       <template v-slot:type>
         <span :class="selectionType" v-t="selectionType"/>
       </template>
     </i18n-t>
-
 
     <button class="btn btn-primary w-50 fs-4" @click="noMatch">
       <img class="my-auto w-75 w-sm-50 w-lg-25" src="@/assets/images/sike.png" :alt="$t('sike')">

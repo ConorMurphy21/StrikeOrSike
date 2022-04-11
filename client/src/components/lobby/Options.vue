@@ -10,6 +10,7 @@
                 <label for="timerDuration" class="form-label" v-t="'timerDurationLabel'"/>
                 <input type="number" min="15" max="60" class="form-control" :class="{'Disabled': disabled}"
                        id="timerDuration" ref="timerDuration"
+                       data-bs-toggle="tooltip" data-bs-placement="left" title="Duration of round timer"
                        :value="options.promptTimer" @focusout="validateNum($event, 'promptTimer')" :disabled="disabled">
               </div>
               <div class="col-md-6">
@@ -52,6 +53,7 @@
 
 <script>
 import {createNamespacedHelpers} from 'vuex';
+import {Tooltip} from 'bootstrap';
 
 const game = createNamespacedHelpers('game')
 const room = createNamespacedHelpers('room')
@@ -74,6 +76,11 @@ export default {
     form.addEventListener('shown.bs.collapse', function () {
       firstForm.focus();
     });
+
+    //inti tooltip
+    Array.from(document.querySelectorAll('input[data-bs-toggle="tooltip"]'))
+          .forEach(tooltipNode => new Tooltip(tooltipNode, {delay: 800}))
+
   },
   methods: {
     validateNumRounds(event) {

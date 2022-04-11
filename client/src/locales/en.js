@@ -61,6 +61,9 @@ export default {
     scoreMessage: '{player}\'s Score: {score}',
     selfScoreMessage: 'Your Score: {score}',
 
+    /*** TOOL TIPS ***/
+
+
     /*** HOW TO PLAY ***/
     howToPlayLink: 'How To Play',
     howToPlay: [

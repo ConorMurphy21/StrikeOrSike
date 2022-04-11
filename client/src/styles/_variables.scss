@@ -26,6 +26,12 @@ $theme-colors: (
         "dark":       $dark
 );
 
+
+
 // 3. Include remainder of required Bootstrap stylesheets
 @import "~bootstrap/scss/variables";
+
+$tooltip-bg: $gray-600;
+$tooltip-arrow-color: $tooltip-bg;
+
 @import "~bootstrap/scss/mixins";

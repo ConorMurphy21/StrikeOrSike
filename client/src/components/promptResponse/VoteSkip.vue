@@ -1,5 +1,6 @@
 <template>
   <button class="btn btn-orange text-white position-relative"
+          :class="{'btn-blue': skipVoteNext}"
           @click="sendVote">
     <i class="bi-skip-end display-6"/>
     <span v-if="skipVoteCount" class="position-absolute top-0 start-100 translate-middle badge bg-blue">
@@ -17,7 +18,8 @@ const {mapGetters} = createNamespacedHelpers('game');
 export default {
   computed: {
     ...mapGetters([
-      'skipVoteCount'
+      'skipVoteCount',
+      'skipVoteNext'
     ])
   },
   methods: {

@@ -31,9 +31,9 @@ module.exports = class pollService {
         }
         const count = this.countVotes(pollName);
         if(this.cbIfComplete(pollName)) {
-            return {success: true, count: 0};
+            return {success: true, count: 0, next: false};
         }
-        return {success: true, count};
+        return {success: true, count, next: this.nextComplete(pollName)};
     }
 
     cbIfComplete(pollName){
@@ -50,6 +50,12 @@ module.exports = class pollService {
         const poll = this.polls[pollName];
         const threshold = Math.ceil(this.gameState.numVoters(poll.exclude) * poll.majorityPercent);
         return this.countVotes(pollName) >= threshold;
+    }
+
+    nextComplete(pollName){
+        const poll = this.polls[pollName];
+        const threshold = Math.ceil(this.gameState.numVoters(poll.exclude) * poll.majorityPercent);
+        return this.countVotes(pollName) + 1 >= threshold;
     }
 
     countVotes(pollName) {

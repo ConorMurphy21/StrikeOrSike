@@ -54,7 +54,7 @@ export default {
     /*** END GAME STRINGS ***/
     playerScores: 'Player Scores',
     toLobby: 'Back to Lobby',
-    activeMatchingMessage: '{player} is trying to {type} with {response}. Do you have a match?',
+    activeMatchingMessage: '{player} is trying to {type} with {response} Do you have a match?',
     passiveDisputeMessage: 'Your friends are deciding if {response} fits the category',
     activeDisputeMessage: 'Does {response} fit the category?',
     skipPrompt: 'Vote Skip',

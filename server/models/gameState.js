@@ -238,7 +238,7 @@ const GameState = class {
                 return {value: r, chance: this._match_chance(r, response)};
             }).sort((a, b) => b.chance - a.chance)[0];
 
-            if (match.chance > 0.8 && !player.used.includes(match)) {
+            if (match.chance > 0.8 && !player.used.includes(match.value)) {
                 player.used.push(match.value);
                 player.match = match.value;
                 player.matchingComplete = true;

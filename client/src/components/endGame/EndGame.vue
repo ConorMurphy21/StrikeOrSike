@@ -1,15 +1,15 @@
 <template>
   <div class="w-100 d-flex flex-column justify-content-start align-items-center gap-3">
-    <h1 class="mt-2 text-center display-1" v-t="'playerScores'"/>
+    <h1 class="mt-2 text-center display-1 text-red font-fancy" v-t="'playerScores'"/>
 
     <div class="list-group w-75 w-xl-50">
       <div v-for="(score, index) in scores" class="list-group-item">
-        {{ $n(index + 1) }}. {{ score.player.name }}: {{ $n(score.points) }}
+        {{ rank[index] }}. {{ score.player.name }}: {{ $n(score.points) }}
       </div>
     </div>
 
     <div class="flex-grow-1"/>
-    <button class="btn btn-blue w-75 w-lg-50 fs-4 mb-4" @click="click" v-t="'toLobby'"/>
+    <button class="btn btn-blue w-75 w-lg-50 fs-4 mb-4" @click="toLobby" v-t="'toLobby'"/>
   </div>
 </template>
 
@@ -26,24 +26,26 @@ export default {
     ...mapState([
       'scores'
     ]),
+    rank() {
+      let result = [];
+      let rank = 1;
+      let last = -1;
+      for (let score of this.scores) {
+        if (score.points < last) rank++;
+        result.push(rank);
+        last = score.points;
+      }
+      return result;
+    }
   },
   methods: {
     ...mapMutations([
       'setScene'
     ]),
-    click: function() {
+    toLobby() {
       click.play();
       this.setScene('lobby');
     }
-  }
+  },
 }
 </script>
-
-<style lang="scss" scoped>
-
-h1 {
-  font-family: $header-font !important;
-  font-weight: normal;
-  color: $red;
-}
-</style>

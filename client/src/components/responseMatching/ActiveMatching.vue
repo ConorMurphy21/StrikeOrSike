@@ -86,4 +86,10 @@ p{
   font-weight: 900;
   color: $red;
 }
+.strike{
+  color: $orange;
+}
+.sike{
+  color: $blue;
+}
 </style>

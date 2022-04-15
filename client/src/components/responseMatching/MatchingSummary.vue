@@ -11,7 +11,8 @@
       </h3>
       <span class="d-flex flex-row align-items-center justify-content-center gap-2">
         <h2 class="fs-2 fw-bolder text-red my-auto">{{ selectedResponse }}</h2>
-        <dispute-icon :disabled="isSelector" v-if="sikeDisputeCount"/>
+        <dispute-icon :disabled="isSelector" v-if="sikeDisputeCount"
+                      :response="selectedResponse" :placement="'right'"/>
       </span>
       <selection-type/>
     </div>

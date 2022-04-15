@@ -64,13 +64,22 @@ export const getters = {
         return finishedMatching;
     },
     skipVoteCount(state) {
-        return state.voteCounts['skipPrompt'];
+        return state.voteCounts['skipPrompt'].count;
     },
     startNextRoundCount(state) {
-        return state.voteCounts['startNextRound'];
+        return state.voteCounts['startNextRound'].count;
     },
     sikeDisputeCount(state) {
-        return state.voteCounts['sikeDispute'];
+        return state.voteCounts['sikeDispute'].count;
+    },
+    skipVoteNext(state) {
+        return state.voteCounts['skipPrompt'].next;
+    },
+    startNextRoundNext(state) {
+        return state.voteCounts['startNextRound'].next;
+    },
+    sikeDisputeNext(state) {
+        return state.voteCounts['sikeDispute'].next;
     },
     promptSkipping(state) {
         return state.options.promptSkipping;
@@ -143,7 +152,7 @@ const socketMutations = {
         state.selectionType = selectionType;
     },
     SOCKET_setVoteCount(state, data) {
-        state.voteCounts[data.pollName] = data.count;
+        state.voteCounts[data.pollName] = {count: data.count, next: data.next};
     }
 }
 

@@ -82,7 +82,7 @@ export default {
 
     //inti tooltip
     Array.from(document.querySelectorAll('input[data-bs-toggle="tooltip"]'))
-          .forEach(tooltipNode => new Tooltip(tooltipNode, {delay: 800}))
+          .forEach(tooltipNode => new Tooltip(tooltipNode, {delay: { show: 500, hide: 50 }}))
 
   },
   methods: {

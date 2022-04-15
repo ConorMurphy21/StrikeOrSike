@@ -1,6 +1,6 @@
 <template>
   <button class="btn btn-orange text-white position-relative"
-          data-bs-toggle="tooltip" data-bs-placement="top" :title="$t('tooltip.voteSkip')"
+          data-bs-toggle="tooltip" data-bs-placement="left" :title="$t('tooltip.voteSkip')"
           @click="sendVote">
     <i class="bi-skip-end display-6"/>
     <span v-if="skipVoteCount" class="position-absolute top-0 start-100 translate-middle badge bg-blue">

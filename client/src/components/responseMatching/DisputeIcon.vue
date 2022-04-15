@@ -1,6 +1,6 @@
 <template>
-  <button class="btn btn-blue text-white position-relative" :disabled="disabled"
-          @click="sendVote" :class="{'btn-red': sikeDisputeNext}">
+  <button class="btn btn-orange text-white position-relative" :disabled="disabled"
+          @click="sendVote" :class="{'btn-blue': !sikeDisputeNext}">
     <i class="bi-hand-thumbs-down fs-5"/>
     <span v-if="sikeDisputeCount" class="position-absolute top-0 start-100 translate-middle badge bg-burgundy">
       {{ $n(sikeDisputeCount) }}

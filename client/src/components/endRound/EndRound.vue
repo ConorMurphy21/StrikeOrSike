@@ -2,10 +2,10 @@
   <div class="w-100 d-flex flex-column justify-content-between align-items-center p-3">
     <prompt :prompt="prompt"/>
     <response-list :selectable="false" :height="43"/>
-    <button class="btn btn-blue w-75 w-lg-50 w-xl-25 fs-4 mb-3 position-relative"
+    <button class="btn btn-orange w-75 w-lg-50 w-xl-25 fs-4 mb-3 position-relative"
+            :class="{'btn-blue': !startNextRoundNext}"
          @click="sendVote">
       {{ $t('startNextRound') }}
-
 
       <span v-if="startNextRoundCount" class="position-absolute top-0 start-100 translate-middle badge bg-burgundy">
     {{ $n(startNextRoundCount) }}</span>
@@ -31,7 +31,8 @@ export default {
         'prompt'
     ]),
     ...mapGetters([
-      'startNextRoundCount'
+      'startNextRoundCount',
+      'startNextRoundNext'
     ])
   },
   methods: {

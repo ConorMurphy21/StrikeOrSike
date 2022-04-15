@@ -1,5 +1,5 @@
 <template>
-  <button class="btn btn-blue text-white position-relative" :disabled="disabled"
+  <button class="btn btn-orange text-white position-relative" :class="{'btn-blue': !sikeDisputeNext}" :disabled="disabled"
           data-bs-toggle="tooltip" :data-bs-placement="placement" :title="$t('tooltip.dispute', {response})"
      @click="sendVote">
     <i class="bi-hand-thumbs-down fs-5"/>
@@ -29,8 +29,9 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'sikeDisputeCount'
-    ]),
+      'sikeDisputeCount',
+      'sikeDisputeNext'
+    ])
   },
   methods: {
     sendVote() {

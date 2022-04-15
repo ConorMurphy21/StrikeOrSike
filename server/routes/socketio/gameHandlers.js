@@ -47,7 +47,7 @@ module.exports = (io, socket) => {
         const state = room.state;
         const result = state.pollVote(socket.id, pollName);
         if (result.success) {
-            io.to(room.name).emit('setVoteCount', {pollName, count: result.count});
+            io.to(room.name).emit('setVoteCount', {pollName, count: result.count, next: result.next});
         }
     });
 

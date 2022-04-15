@@ -1,7 +1,8 @@
 <template>
-  <button class="btn btn-orange text-white position-relative" :class="{'btn-blue': !sikeDisputeNext}" :disabled="disabled"
+  <button class="btn btn-orange text-white position-relative" :class="{'btn-blue': !sikeDisputeNext}"
+          :disabled="disabled"
           data-bs-toggle="tooltip" :data-bs-placement="placement" :title="$t('tooltip.dispute', {response})"
-     @click="sendVote">
+          @click="sendVote">
     <i class="bi-hand-thumbs-down fs-5"/>
     <span v-if="sikeDisputeCount" class="position-absolute top-0 start-100 translate-middle badge bg-burgundy">
       {{ $n(sikeDisputeCount) }}

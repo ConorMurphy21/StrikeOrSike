@@ -10,12 +10,14 @@
                 <label for="timerDuration" class="form-label" v-t="'timerDurationLabel'"/>
                 <input type="number" min="15" max="60" class="form-control" :class="{'Disabled': disabled}"
                        id="timerDuration" ref="timerDuration"
+                       data-bs-toggle="tooltip" data-bs-placement="left" :title="$t('tooltip.options.timer')"
                        :value="options.promptTimer" @focusout="validateNum($event, 'promptTimer')" :disabled="disabled">
               </div>
               <div class="col-md-6">
                 <label for="numRounds" class="form-label" v-t="'numRoundsLabel'"/>
                 <input type="number" min="1" max="20" class="form-control" :class="{'Disabled': disabled}"
                        id="numRounds"
+                       data-bs-toggle="tooltip" data-bs-placement="right" :title="$t('tooltip.options.rounds')"
                        :value="(options.autoNumRounds) ? players.length : options.numRounds"
                        @focusout="validateNumRounds($event)" :disabled="disabled">
               </div>
@@ -26,12 +28,14 @@
                   <label for="sikeDispute" class="form-check-label" v-t="'sikeDisputeLabel'"/>
                   <input type="checkbox" class="form-check-input" :class="{'Disabled': disabled}" :disabled="disabled"
                          id="sikeDispute"
+                         data-bs-toggle="tooltip" data-bs-placement="left" :title="$t('tooltip.options.dispute')"
                          :checked="options.sikeDispute" @click="validateSikeDispute($event, 'sikeDispute')">
                 </div>
               </div>
               <div class="col-md-6">
                 <label for="sikeRetries" class="form-label" v-t="'sikeRetriesLabel'"/>
                 <input type="number" min="0" max="2" class="form-control"
+                       data-bs-toggle="tooltip" data-bs-placement="right" :title="$t('tooltip.options.retries')"
                        :class="{'Disabled': disabled || !options.sikeDispute}" id="sikeRetries"
                        :value="options.sikeRetries" @focusout="validateNum($event, 'sikeRetries')"
                        :disabled="disabled || !options.sikeDispute">
@@ -52,6 +56,7 @@
 
 <script>
 import {createNamespacedHelpers} from 'vuex';
+import {Tooltip} from 'bootstrap';
 
 const game = createNamespacedHelpers('game')
 const room = createNamespacedHelpers('room')
@@ -74,6 +79,11 @@ export default {
     form.addEventListener('shown.bs.collapse', function () {
       firstForm.focus();
     });
+
+    //inti tooltip
+    Array.from(document.querySelectorAll('input[data-bs-toggle="tooltip"]'))
+          .forEach(tooltipNode => new Tooltip(tooltipNode, {delay: { show: 500, hide: 50 }}))
+
   },
   methods: {
     validateNumRounds(event) {

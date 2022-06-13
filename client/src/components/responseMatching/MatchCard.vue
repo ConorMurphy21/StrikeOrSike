@@ -18,23 +18,15 @@ export default {
   },
   computed: {
     typeImg() {
-      if (this.match) {
-        if (!this.match.response) {
-          return SikeImg;
-        } else {
-          return StrikeImg;
-        }
+      if (this.match && !this.match.response) {
+        return SikeImg;
       } else {
         return PendingImg;
       }
     },
     imgAlt() {
-      if (this.match) {
-        if (!this.match.response) {
-          return this.match.response;
-        } else {
-          return this.$t('sike');
-        }
+      if (this.match && !this.match.response) {
+        return this.$t('sike');
       } else {
         return this.$t('pending');
       }

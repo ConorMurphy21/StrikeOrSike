@@ -1,0 +1,293 @@
+@charset "UTF-8";
+@import "variables";
+/**
+ *
+ * three-dots.css v0.1.0
+ *
+ * https://nzbin.github.io/three-dots/
+ *
+ * Copyright (c) 2018 nzbin
+ *
+ * Released under the MIT license
+ *
+ */
+$dot-colour: $orange;
+
+$dot-pulse-delay: 0.25s;
+$dot-pulse-length: 2s;
+
+$dot-typing-length: 1.25s;
+/**
+ * ==============================================
+ * Dot Elastic
+ * ==============================================
+ */
+.dot-elastic {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: $dot-colour;
+  color: $dot-colour;
+  animation: dotElastic 1s infinite linear;
+}
+
+.dot-elastic::before, .dot-elastic::after {
+  content: '';
+  display: inline-block;
+  position: absolute;
+  top: 0;
+}
+
+.dot-elastic::before {
+  left: -15px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: $dot-colour;
+  color: $dot-colour;
+  animation: dotElasticBefore 1s infinite linear;
+}
+
+.dot-elastic::after {
+  left: 15px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: $dot-colour;
+  color: $dot-colour;
+  animation: dotElasticAfter 1s infinite linear;
+}
+
+@keyframes dotElasticBefore {
+  0% {
+    transform: scale(1, 1);
+  }
+  25% {
+    transform: scale(1, 1.5);
+  }
+  50% {
+    transform: scale(1, 0.67);
+  }
+  75% {
+    transform: scale(1, 1);
+  }
+  100% {
+    transform: scale(1, 1);
+  }
+}
+
+@keyframes dotElastic {
+  0% {
+    transform: scale(1, 1);
+  }
+  25% {
+    transform: scale(1, 1);
+  }
+  50% {
+    transform: scale(1, 1.5);
+  }
+  75% {
+    transform: scale(1, 1);
+  }
+  100% {
+    transform: scale(1, 1);
+  }
+}
+
+@keyframes dotElasticAfter {
+  0% {
+    transform: scale(1, 1);
+  }
+  25% {
+    transform: scale(1, 1);
+  }
+  50% {
+    transform: scale(1, 0.67);
+  }
+  75% {
+    transform: scale(1, 1.5);
+  }
+  100% {
+    transform: scale(1, 1);
+  }
+}
+
+/**
+ * ==============================================
+ * Dot Pulse
+ * ==============================================
+ */
+.dot-pulse {
+  position: relative;
+  left: -9999px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: $dot-colour;
+  color: $dot-colour;
+  box-shadow: 9999px 0 0 -5px $dot-colour;
+  animation: dotPulse $dot-pulse-length infinite linear;
+  animation-delay: $dot-pulse-delay;
+}
+
+.dot-pulse::before, .dot-pulse::after {
+  content: '';
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: $dot-colour;
+  color: $dot-colour;
+}
+
+.dot-pulse::before {
+  box-shadow: 9984px 0 0 -5px $dot-colour;
+  animation: dotPulseBefore $dot-pulse-length infinite linear;
+  animation-delay: 0s;
+}
+
+.dot-pulse::after {
+  box-shadow: 10014px 0 0 -5px $dot-colour;
+  animation: dotPulseAfter $dot-pulse-length infinite linear;
+  animation-delay: 2*$dot-pulse-delay;
+}
+
+@keyframes dotPulseBefore {
+  0% {
+    box-shadow: 9984px 0 0 -5px $dot-colour;
+  }
+  30% {
+    box-shadow: 9984px 0 0 2px $dot-colour;
+  }
+  60%,
+  100% {
+    box-shadow: 9984px 0 0 -5px $dot-colour;
+  }
+}
+
+@keyframes dotPulse {
+  0% {
+    box-shadow: 9999px 0 0 -5px $dot-colour;
+  }
+  30% {
+    box-shadow: 9999px 0 0 2px $dot-colour;
+  }
+  60%,
+  100% {
+    box-shadow: 9999px 0 0 -5px $dot-colour;
+  }
+}
+
+@keyframes dotPulseAfter {
+  0% {
+    box-shadow: 10014px 0 0 -5px $dot-colour;
+  }
+  30% {
+    box-shadow: 10014px 0 0 2px $dot-colour;
+  }
+  60%,
+  100% {
+    box-shadow: 10014px 0 0 -5px $dot-colour;
+  }
+}
+
+/**
+ * ==============================================
+ * Dot Flashing
+ * ==============================================
+ */
+.dot-flashing {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: $dot-colour;
+  color: $dot-colour;
+  animation: dotFlashing 1s infinite linear alternate;
+  animation-delay: .5s;
+}
+
+.dot-flashing::before, .dot-flashing::after {
+  content: '';
+  display: inline-block;
+  position: absolute;
+  top: 0;
+}
+
+.dot-flashing::before {
+  left: -15px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: $dot-colour;
+  color: $dot-colour;
+  animation: dotFlashing 1s infinite alternate;
+  animation-delay: 0s;
+}
+
+.dot-flashing::after {
+  left: 15px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: $dot-colour;
+  color: $dot-colour;
+  animation: dotFlashing 1s infinite alternate;
+  animation-delay: 1s;
+}
+
+@keyframes dotFlashing {
+  0% {
+    background-color: $dot-colour;
+  }
+  50%,
+  100% {
+    background-color: #ebe6ff;
+  }
+}
+
+/**
+ * ==============================================
+ * Dot Typing
+ * ==============================================
+ */
+.dot-typing {
+  position: relative;
+  left: -9999px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: $dot-colour;
+  color: $dot-colour;
+  box-shadow: 9984px 0 0 0 $dot-colour, 9999px 0 0 0 $dot-colour, 10014px 0 0 0 $dot-colour;
+  animation: dotTyping $dot-typing-length infinite linear;
+}
+
+@keyframes dotTyping {
+  0% {
+    box-shadow: 9984px 0 0 0 $dot-colour, 9999px 0 0 0 $dot-colour, 10014px 0 0 0 $dot-colour;
+  }
+  16.667% {
+    box-shadow: 9984px -10px 0 0 $dot-colour, 9999px 0 0 0 $dot-colour, 10014px 0 0 0 $dot-colour;
+  }
+  33.333% {
+    box-shadow: 9984px 0 0 0 $dot-colour, 9999px 0 -5px 0 $dot-colour, 10014px 0 0 0 $dot-colour;
+  }
+  50% {
+    box-shadow: 9984px 0 0 0 $dot-colour, 9999px -10px 0 0 $dot-colour, 10014px 0 0 0 $dot-colour;
+  }
+  66.667% {
+    box-shadow: 9984px 0 0 0 $dot-colour, 9999px 0 0 0 $dot-colour, 10014px 0 -5px 0 $dot-colour;
+  }
+  83.333% {
+    box-shadow: 9984px 0 0 0 $dot-colour, 9999px 0 0 0 $dot-colour, 10014px -10px 0 0 $dot-colour;
+  }
+  100% {
+    box-shadow: 9984px 0 0 0 $dot-colour, 9999px 0 0 0 $dot-colour, 10014px 0 0 0 $dot-colour;
+  }
+}
+
+/*# sourceMappingURL=three-dots.css.map */

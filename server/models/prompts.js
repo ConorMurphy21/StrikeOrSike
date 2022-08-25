@@ -3,34 +3,54 @@ const fs = require('fs');
 const path = require('path');
 const klawSync = require('klaw-sync');
 
-
-const regex = /^([\d]*)x([\d]*)(.*).txt$/
-
-const walkFilter = (item) => {
-    const basename = path.basename(item.path);
-    return regex.test(basename);
-};
+const CUSTOM = 'custom';
 
 // retrieve meta info for what prompts can be served
 const retrieveMetas = (root) => {
     const metas = []
-
-    const items = klawSync(root,{nodir: true}).filter(walkFilter);
-
+    const items = klawSync(root, {nodir: true});
     for (const item of items) {
         const lang = path.basename(path.dirname(item.path));
-        const basename = path.basename(item.path);
-        const [_, width, height, name] = basename.match(regex);
+        const id = path.basename(item.path, '.txt');
+        const prompts = fs.readFileSync(item.path, 'utf-8').split(/\r?\n/);
         metas.push({
+            id,
             lang,
-            path: item.path,
-            width: parseInt(width),
-            height: parseInt(height),
-            name
+            prompts
         });
     }
-
     return metas;
+}
+
+/*
+    returns: a map of intersections
+    an id to the intersection is id1 + id2, for example if pack1 is standard and pack2 is canadian than standardcanadian
+    is an index
+    the intersection just lists the index of each intersecting value
+ */
+const retrieveIntersections = (metas) => {
+    const intersections = {};
+    for (const meta1 of metas) {
+        for (const meta2 of metas) {
+            if (meta1.id === meta2.id || meta1.lang !== meta2.lang) continue;
+            // already computed this intersection
+            if (intersections[meta2.id + meta1.id]) continue;
+            const overlapsA = []
+            const overlapsB = []
+            for (let i = 0; i < meta1.prompts.length; i++) {
+                for (let j = 0; j < meta2.prompts.length; j++) {
+                    if (meta1.prompts[i].trim() === meta2.prompts[j].trim()) {
+                        overlapsA.push(i)
+                        overlapsB.push(j)
+                    }
+                }
+            }
+            intersections[meta1.id + meta2.id] = {};
+            intersections[meta1.id + meta2.id][meta1] = overlapsA;
+            intersections[meta1.id + meta2.id][meta2] = overlapsB;
+        }
+    }
+    return intersections;
 }
 
 const promptsRoot = './resources/prompts/';
@@ -38,94 +58,127 @@ const promptsRoot = './resources/prompts/';
 const Prompts = class {
 
     static metas = retrieveMetas(promptsRoot);
+    static intersections = retrieveIntersections(Prompts.metas);
 
-    constructor(packNames, customPrompts, lang = 'en-CA', oldPrompts) {
-        this.customPrompts = customPrompts;
+    constructor(packIds, customPrompts, lang = 'en-CA', oldPrompts) {
         this.numPrompts = customPrompts?.length ?? 0;
+        this.numRemaining = 0;
         this.packs = [];
-        this.used = [];
-        this.remaining = [];
         // retrieve meta for each pack
-        for (const name of packNames) {
-            const meta = Prompts.metas.find(meta => meta.name === name && meta.lang === lang);
-            this.packs.push(meta);
-            this.numPrompts += meta.height;
+        for (const id of packIds) {
+            const meta = Prompts.metas.find(meta => meta.id === id && meta.lang === lang);
+            this.packs.push({id: meta.id, prompts: meta.prompts, used: new Set(), remaining: new Set()});
         }
-        this.keepOldUsed(oldPrompts);
+        // use prompts to avoid intersection between packs
+        for (let i = 0; i < packIds.length; i++) {
+            for (let j = i + 1; j < packIds.length; j++) {
+                let intersect = Prompts.intersections[packIds[i] + packIds[j]] ??
+                    Prompts.intersections[packIds[j] + packIds[i]];
+                this.packs[i].used += intersect[packIds[i]]; // Always use the smaller i to avoid intersections
+            }
+        }
+        // add customPrompts to packs list
+        this.packs.push({id: CUSTOM, prompts: customPrompts, used: new Set(), remaining: new Set()})
+        this._keepOldUsed(oldPrompts);
+
+        // set counters
+        for (const pack of this.packs) {
+            this.numPrompts += pack.prompts.length;
+            this.numRemaining += pack.prompts.length - pack.used.length;
+        }
+
+        if (this._useRemainingMethod(this.numRemaining)) {
+            this._setRemainingSets();
+        }
     }
 
-    keepOldUsed(oldPrompts){
+    _keepOldUsed(oldPrompts) {
         // this will only work as long as the prompts are the same
-        if(!oldPrompts) return;
-        this.used = oldPrompts.used;
-        this.remaining = oldPrompts.remaining;
+        for (const oldPack of oldPrompts.packs) {
+            for (const newPack of this.packs) {
+                if(oldPack.id === newPack.id && newPack.id !== CUSTOM) {
+                    newPack.used = new Set([...newPack.used, ...oldPack.used])
+                }
+            }
+        }
+        // check for overlapping custom prompts since the old custom prompts are not necessarily the same as the new ones
+        const oldCustomPack = oldPrompts.packs[oldPrompts.length - 1];
+        const customPack = this.packs[this.packs.length - 1];
+        for(const i of oldCustomPack.used){
+            for(let j = 0; j < customPack.length; j++){
+                if(oldCustomPack[i].trim() === customPack[j].trim()){
+                    customPack.used.add(i);
+                }
+            }
+        }
+    }
+
+    _useRemainingMethod(numRemaining) {
+        return numRemaining < this.numPrompts / 6;
+    }
+
+    _setRemainingSets() {
+        for (const pack of this.packs) {
+            pack.remaining = new Set(Array.from({length: this.numPrompts}, (v, i) => i)
+                .filter(index => !pack.used.has(index)));
+        }
     }
 
     newPrompt() {
-        if(this.used.length === this.numPrompts){
+        if (this.numRemaining === 0) {
             return Promise.resolve('');
         }
-        const r = this._chooseRandomIndex();
-        return this._getPrompt(r);
+        return this._getPrompt();
     }
 
-    _getPrompt(index) {
+    _getPrompt() {
         return new Promise(resolve => {
-            let resolved = false;
-            for (const pack of this.packs) {
-                if(resolved || index >= pack.height) {
-                    index -= pack.height;
-                    continue;
-                }
-                resolved = true;
-                this._getPromptFromPack(pack, index).then(value => resolve(value));
+            let retVal = '';
+            if (this._useRemainingMethod()) {
+                retVal = this._chooseFromRemaining();
+            } else {
+                retVal = this._chooseRegular();
             }
-            if(!resolved){
-                resolve(this.customPrompts[index]);
-            }
+            this.numRemaining--;
+            resolve(retVal);
         });
-    }
-
-    _getPromptFromPack(pack, index) {
-        return new Promise((resolve) => {
-            fs.open(pack.path, 'r', (err, fd) => {
-                let buffer = Buffer.alloc(pack.width);
-                fs.read(fd, buffer, 0, pack.width, index * pack.width, (err, bytesRead, buffer) => {
-                    if(err){}
-                    resolve(buffer.toString().trim());
-                });
-            });
-        });
-    }
-
-    _chooseRandomIndex(){
-        if (this.used.length > this.numPrompts * 3 / 4) {
-            return this._chooseFromRemaining();
-        } else {
-            return this._chooseRegular();
-        }
     }
 
     // non-deterministic but with enough prompts should be better
     _chooseRegular() {
-        let r = Math.floor(Math.random() * this.numPrompts);
-        while (this.used.includes(r)) {
+        let r;
+        let pack;
+        do {
             r = Math.floor(Math.random() * this.numPrompts);
-        }
-        this.used.push(r);
-        return r;
+            for(pack of this.packs){
+                if(r >= pack.prompts.length){
+                    r -= pack.prompts.length;
+                } else {
+                    break;
+                }
+            }
+        } while (pack.used.has(r));
+        return pack.prompts[r];
     }
 
     // more consistent but more memory usage, avoided if possible but fallback on if the number of prompts is small
     _chooseFromRemaining() {
-        if (!this.remaining.length) {
-            this.remaining = Array.from({length: this.numPrompts}, (v, i) => i)
-                .filter(index => !this.used.includes(index));
+        // this means this is the first time using the remaining method
+        if (!this._useRemainingMethod(this.numRemaining + 1)) {
+            this._setRemainingSets();
         }
-        const rr = Math.floor(Math.random() * this.remaining.length);
-        const r = this.remaining[rr];
-        this.used.push(r);
-        this.remaining.splice(rr, 1);
+        let rr = Math.floor(Math.random() * this.numRemaining);
+        let pack;
+        for(pack of this.packs){
+            if(rr >= pack.remaining.length){
+                rr -= pack.remaining.length;
+            } else {
+                break;
+            }
+        }
+        const r = pack.remaining[rr];
+        pack.used.push(r);
+        pack.remaining.splice(rr, 1);
         return r;
     }
 }

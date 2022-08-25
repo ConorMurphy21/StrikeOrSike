@@ -19,9 +19,6 @@ phases:
       - echo Compiling the client...
       - cd client
       - npm run build
-      - cd ../server
-      - echo Formatting Resources...
-      - npm run formatPrompts
       - cd ..
       - echo Make file structure match static Express.js app
       - mv server/* ./

@@ -57,8 +57,12 @@ const promptsRoot = './resources/prompts/';
 
 const Prompts = class {
 
-    static metas = retrieveMetas(promptsRoot);
-    static intersections = retrieveIntersections(Prompts.metas);
+    static metas;
+    static intersections;
+    static {
+        this.metas = retrieveMetas(promptsRoot);
+        this.intersections = retrieveIntersections(this.metas);
+    }
 
     constructor(packIds, customPrompts, lang = 'en-CA', oldPrompts) {
         this.numPrompts = customPrompts?.length ?? 0;
@@ -94,6 +98,7 @@ const Prompts = class {
 
     _keepOldUsed(oldPrompts) {
         // this will only work as long as the prompts are the same
+        if(!oldPrompts) return;
         for (const oldPack of oldPrompts.packs) {
             for (const newPack of this.packs) {
                 if(oldPack.id === newPack.id && newPack.id !== CUSTOM) {
@@ -102,7 +107,7 @@ const Prompts = class {
             }
         }
         // check for overlapping custom prompts since the old custom prompts are not necessarily the same as the new ones
-        const oldCustomPack = oldPrompts.packs[oldPrompts.length - 1];
+        const oldCustomPack = oldPrompts.packs[oldPrompts.packs.length - 1];
         const customPack = this.packs[this.packs.length - 1];
         for(const i of oldCustomPack.used){
             for(let j = 0; j < customPack.length; j++){

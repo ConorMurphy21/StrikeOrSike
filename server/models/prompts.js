@@ -57,12 +57,8 @@ const promptsRoot = './resources/prompts/';
 
 const Prompts = class {
 
-    static metas;
-    static intersections;
-    static {
-        this.metas = retrieveMetas(promptsRoot);
-        this.intersections = retrieveIntersections(this.metas);
-    }
+    static metas = retrieveMetas(promptsRoot);
+    static intersections = retrieveIntersections(this.metas);
 
     constructor(packIds, customPrompts, lang = 'en-CA', oldPrompts) {
         this.numPrompts = customPrompts?.length ?? 0;

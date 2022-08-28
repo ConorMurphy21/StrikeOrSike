@@ -1,5 +1,5 @@
 const assert = require('chai').assert;
-const {Prompts, retrieveMetas} = require('../../models/prompts');
+const {Prompts, retrieveMetas, retrieveIntersections} = require('../../models/prompts');
 const fs = require('fs');
 
 describe('prompts tests', () => {
@@ -8,129 +8,65 @@ describe('prompts tests', () => {
 
         before(() => {
             Prompts.metas = retrieveMetas('./resources/prompts');
+            Prompts.intersections = retrieveIntersections(Prompts.metas);
         });
 
-        it('pack indexing', (done) => {
-            test_pack_indexing(done);
+        it('single pack', () => {
+            const prompts = new Prompts(['standard'], []);
+            test_prompts(prompts, 'en-CA', []);
         });
 
-        it('prompt indexing wo customPrompts', (done) => {
-            test_indexing(done, []);
+        it('double pack', () => {
+            const prompts = new Prompts(['standard', 'canadian'], []);
+            test_prompts(prompts, 'en-CA', []);
         });
 
-        it('prompt indexing w customPrompts', (done) => {
-            const customPrompts = ['test1', 'test2', 'test3', 'test4', 'test5'];
-            test_indexing(done, customPrompts);
+        it('double pack w custom', () => {
+            const custom = ['test1', 'test2', 'test3', 'test4', 'test5']
+            const prompts = new Prompts(['standard', 'canadian'], custom);
+            test_prompts(prompts, 'en-CA', custom);
         });
+
     });
 
     describe('mock files', () => {
         before(() => {
             Prompts.metas = retrieveMetas('./tests/resources/prompts');
+            Prompts.intersections = retrieveIntersections(Prompts.metas);
         });
 
-        after(() => {
-            Prompts.metas = retrieveMetas('./resources/prompts');
+        it('single pack', () => {
+            const prompts = new Prompts(['pack1'], []);
+            test_prompts(prompts, 'en-CA', []);
         });
 
-
-        it('pack indexing', (done) => {
-            test_pack_indexing(done);
-        });
-
-        it('indexing wo customPrompts', (done) => {
-            test_indexing(done, []);
-        });
-
-        it('indexing w customPrompts', (done) => {
-            const customPrompts = ['test1', 'test2', 'test3', 'test4', 'test5'];
-            test_indexing(done, customPrompts);
-        });
-    });
-
-    describe('random numbers', () => {
-
-        it('all numbers used', () => {
-            const len = 300;
-            const customPrompts = [];
-            customPrompts.length = len;
-            const prompts = new Prompts([], customPrompts);
-            const used = [];
-            for(let i = 0; i < len; i++){
-                const index = prompts.newPrompt();
-                assert.notInclude(used, index);
-                used.push(index);
-            }
-        });
-
-    });
-
-
-});
-
-function test_indexing(done, customPrompts) {
-    if (!Prompts.metas.length) {
-        done();
-        return;
-    }
-    const langs = [];
-    for (const meta of Prompts.metas) {
-        if(!langs.includes(meta.lang)) langs.push(meta.lang);
-    }
-
-    let promise = Promise.resolve();
-    for (const lang of langs) {
-        promise = promise.then(() => test_indexing_lang(customPrompts, lang));
-    }
-    promise.then(done);
-}
-
-function test_indexing_lang(customPrompts, lang) {
-
-    let lines = [];
-    const packs = [];
-
-    for (const meta1 of Prompts.metas.filter(meta => meta.lang === lang)) {
-        packs.push(meta1.name);
-        lines = lines.concat(fs.readFileSync(meta1.path, 'utf-8').split('\n').filter(Boolean));
-    }
-    lines = lines.concat(customPrompts);
-
-    const prompts = new Prompts(packs, customPrompts, lang);
-    let promise = Promise.resolve();
-    for (const prompt of lines) {
-        const index = lines.indexOf(prompt);
-        promise = promise.then(() => {
-            return new Promise((resolve) => {
-                prompts._getPrompt(index).then(value => {
-                    assert.strictEqual(value, prompt.trim());
-                    resolve();
-                });
+        describe('french', () => {
+            it('single pack', () => {
+                const prompts = new Prompts(['pack1'], [], 'fr');
+                test_prompts(prompts, 'fr', []);
             });
         });
-    }
-    return promise;
-}
+    });
+});
 
-function test_pack_indexing(done) {
-    if (!Prompts.metas.length) {
-        done();
-        return;
+function test_prompts(prompts, lang, customPrompts) {
+    let lines = customPrompts;
+    for (const pack of prompts.packs) {
+        if (pack.id !== 'custom') {
+            const meta = Prompts.metas.find(p => p.id === pack.id && p.lang === lang);
+            const packLines = fs.readFileSync(meta.path, 'utf-8').split(/\r?\n/);
+            lines = lines.concat(packLines);
+        }
     }
-    let promise = Promise.resolve();
-    for (const meta of Prompts.metas) {
-        const lines = fs.readFileSync(meta.path, 'utf-8').split('\n').filter(Boolean);
-        const prompts = new Prompts([meta.id], [], meta.lang);
-        lines.forEach((prompt, index) => {
-            promise = promise.then(() => {
-                return new Promise((resolve) => {
-                    prompts._getPrompt(index).then(value => {
-                        assert.strictEqual(value, prompt.trim());
-                        resolve();
-                    });
-                });
-            }).catch(assert.fail);
-        });
+    lines = lines.map(p => p.trim()).filter(Boolean);
+    lines = new Set(lines);
+    const used = new Set();
+    for(let i = 0; i < lines.size; i++) {
+        const p = prompts.newPrompt();
+        assert.isFalse(used.has(p));
+        used.add(p);
+        assert.isTrue(lines.has(p));
     }
-    promise.then(done);
+    const p = prompts.newPrompt();
+    assert.strictEqual(p, '');
 }

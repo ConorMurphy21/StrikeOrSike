@@ -12,7 +12,10 @@ const retrieveMetas = (root) => {
     for (const item of items) {
         const lang = path.basename(path.dirname(item.path));
         const id = path.basename(item.path, '.txt');
-        const prompts = fs.readFileSync(item.path, 'utf-8').split(/\r?\n/);
+        const prompts = fs.readFileSync(item.path, 'utf-8')
+            .split(/\r?\n/)
+            .map(p => p.trim())
+            .filter(Boolean);
         metas.push({
             id,
             path: item.path,
@@ -36,19 +39,19 @@ const retrieveIntersections = (metas) => {
             if (meta1.id === meta2.id || meta1.lang !== meta2.lang) continue;
             // already computed this intersection
             if (intersections[meta2.id + meta1.id]) continue;
-            const overlapsA = []
-            const overlapsB = []
+            const overlapsA = new Set();
+            const overlapsB = new Set();
             for (let i = 0; i < meta1.prompts.length; i++) {
                 for (let j = 0; j < meta2.prompts.length; j++) {
-                    if (meta1.prompts[i].trim() === meta2.prompts[j].trim()) {
-                        overlapsA.push(i)
-                        overlapsB.push(j)
+                    if (meta1.prompts[i] === meta2.prompts[j]) {
+                        overlapsA.add(i)
+                        overlapsB.add(j)
                     }
                 }
             }
             intersections[meta1.id + meta2.id] = {};
-            intersections[meta1.id + meta2.id][meta1] = overlapsA;
-            intersections[meta1.id + meta2.id][meta2] = overlapsB;
+            intersections[meta1.id + meta2.id][meta1.id] = overlapsA;
+            intersections[meta1.id + meta2.id][meta2.id] = overlapsB;
         }
     }
     return intersections;
@@ -75,17 +78,18 @@ const Prompts = class {
             for (let j = i + 1; j < packIds.length; j++) {
                 let intersect = Prompts.intersections[packIds[i] + packIds[j]] ??
                     Prompts.intersections[packIds[j] + packIds[i]];
-                this.packs[i].used += intersect[packIds[i]]; // Always use the smaller i to avoid intersections
+                this.packs[i].used = new Set([...this.packs[i].used, ...intersect[packIds[i]]]); // Always use the smaller i to avoid intersections
             }
         }
         // add customPrompts to packs list
+        customPrompts = customPrompts.map(p => p.trim());
         this.packs.push({id: CUSTOM, prompts: customPrompts, used: new Set(), remaining: new Set()})
         this._keepOldUsed(oldPrompts);
 
         // set counters
         for (const pack of this.packs) {
             this.numPrompts += pack.prompts.length;
-            this.numRemaining += pack.prompts.length - pack.used.length;
+            this.numRemaining += pack.prompts.length - pack.used.size;
         }
 
         if (this._useRemainingMethod(this.numRemaining)) {
@@ -108,7 +112,7 @@ const Prompts = class {
         const customPack = this.packs[this.packs.length - 1];
         for (const i of oldCustomPack.used) {
             for (let j = 0; j < customPack.length; j++) {
-                if (oldCustomPack[i].trim() === customPack[j].trim()) {
+                if (oldCustomPack[i] === customPack[j]) {
                     customPack.used.add(i);
                 }
             }
@@ -154,6 +158,7 @@ const Prompts = class {
                 }
             }
         } while (pack.used.has(r));
+        pack.used.add(r);
         return pack.prompts[r];
     }
 
@@ -179,4 +184,4 @@ const Prompts = class {
     }
 }
 
-module.exports = {Prompts, retrieveMetas};
+module.exports = {Prompts, retrieveMetas, retrieveIntersections};

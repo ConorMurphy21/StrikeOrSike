@@ -57,7 +57,7 @@ describe('prompts tests', () => {
             const prompts = new Prompts([], customPrompts);
             const used = [];
             for(let i = 0; i < len; i++){
-                const index = prompts._chooseRandomIndex();
+                const index = prompts.newPrompt();
                 assert.notInclude(used, index);
                 used.push(index);
             }
@@ -120,7 +120,7 @@ function test_pack_indexing(done) {
     let promise = Promise.resolve();
     for (const meta of Prompts.metas) {
         const lines = fs.readFileSync(meta.path, 'utf-8').split('\n').filter(Boolean);
-        const prompts = new Prompts([meta.name], [], meta.lang);
+        const prompts = new Prompts([meta.id], [], meta.lang);
         lines.forEach((prompt, index) => {
             promise = promise.then(() => {
                 return new Promise((resolve) => {

@@ -15,6 +15,7 @@ const retrieveMetas = (root) => {
         const prompts = fs.readFileSync(item.path, 'utf-8').split(/\r?\n/);
         metas.push({
             id,
+            path: item.path,
             lang,
             prompts
         });
@@ -94,10 +95,10 @@ const Prompts = class {
 
     _keepOldUsed(oldPrompts) {
         // this will only work as long as the prompts are the same
-        if(!oldPrompts) return;
+        if (!oldPrompts) return;
         for (const oldPack of oldPrompts.packs) {
             for (const newPack of this.packs) {
-                if(oldPack.id === newPack.id && newPack.id !== CUSTOM) {
+                if (oldPack.id === newPack.id && newPack.id !== CUSTOM) {
                     newPack.used = new Set([...newPack.used, ...oldPack.used])
                 }
             }
@@ -105,9 +106,9 @@ const Prompts = class {
         // check for overlapping custom prompts since the old custom prompts are not necessarily the same as the new ones
         const oldCustomPack = oldPrompts.packs[oldPrompts.packs.length - 1];
         const customPack = this.packs[this.packs.length - 1];
-        for(const i of oldCustomPack.used){
-            for(let j = 0; j < customPack.length; j++){
-                if(oldCustomPack[i].trim() === customPack[j].trim()){
+        for (const i of oldCustomPack.used) {
+            for (let j = 0; j < customPack.length; j++) {
+                if (oldCustomPack[i].trim() === customPack[j].trim()) {
                     customPack.used.add(i);
                 }
             }
@@ -127,22 +128,16 @@ const Prompts = class {
 
     newPrompt() {
         if (this.numRemaining === 0) {
-            return Promise.resolve('');
+            return '';
         }
-        return this._getPrompt();
-    }
-
-    _getPrompt() {
-        return new Promise(resolve => {
-            let retVal = '';
-            if (this._useRemainingMethod()) {
-                retVal = this._chooseFromRemaining();
-            } else {
-                retVal = this._chooseRegular();
-            }
-            this.numRemaining--;
-            resolve(retVal);
-        });
+        let retVal = '';
+        if (this._useRemainingMethod()) {
+            retVal = this._chooseFromRemaining();
+        } else {
+            retVal = this._chooseRegular();
+        }
+        this.numRemaining--;
+        return retVal;
     }
 
     // non-deterministic but with enough prompts should be better
@@ -151,8 +146,8 @@ const Prompts = class {
         let pack;
         do {
             r = Math.floor(Math.random() * this.numPrompts);
-            for(pack of this.packs){
-                if(r >= pack.prompts.length){
+            for (pack of this.packs) {
+                if (r >= pack.prompts.length) {
                     r -= pack.prompts.length;
                 } else {
                     break;
@@ -170,8 +165,8 @@ const Prompts = class {
         }
         let rr = Math.floor(Math.random() * this.numRemaining);
         let pack;
-        for(pack of this.packs){
-            if(rr >= pack.remaining.length){
+        for (pack of this.packs) {
+            if (rr >= pack.remaining.length) {
                 rr -= pack.remaining.length;
             } else {
                 break;

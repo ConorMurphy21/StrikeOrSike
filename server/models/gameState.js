@@ -59,45 +59,55 @@ const GameState = class {
             )
         }
 
-        if(this.options.autoNumRounds){
+        if (this.options.autoNumRounds) {
             this.options.numRounds = this.numVoters()
         }
 
     }
 
     /*** Callback registry for events that may happen from disconnect ***/
-    registerStartNextPromptCb(cb){this._startNextPromptCb = cb;}
-    registerPromptSkippedCb(cb) {this._promptSkippedCb = cb;}
-    registerMatchingCompleteCb(cb) {this._matchingCompleteCb = cb;}
-    registerSelectionUnsuccessfulCb(cb) {this._selectionUnsuccessfulCb = cb;}
-    registerDisputeCompleteCb(cb) {this._disputeCompleteCb = cb;}
+    registerStartNextPromptCb(cb) {
+        this._startNextPromptCb = cb;
+    }
+
+    registerPromptSkippedCb(cb) {
+        this._promptSkippedCb = cb;
+    }
+
+    registerMatchingCompleteCb(cb) {
+        this._matchingCompleteCb = cb;
+    }
+
+    registerSelectionUnsuccessfulCb(cb) {
+        this._selectionUnsuccessfulCb = cb;
+    }
+
+    registerDisputeCompleteCb(cb) {
+        this._disputeCompleteCb = cb;
+    }
 
     /*** PROMPT RESPONSE state changes ***/
     beginNewPrompt() {
         // wrap in promise to avoid blocking
-        return new Promise((resolve) => {
-            // check if game is over
-            if (this.round >= this.options.numRounds) {
-                resolve(false);
-                return;
-            }
-            // no more unique prompts
-            this.prompts.newPrompt().then(prompt => {
-                this.prompt = prompt;
-                this.stage = 'response';
-                this.corrections = {};
+        // check if game is over
+        if (this.round >= this.options.numRounds) {
+            return false;
+        }
+        // no more unique prompts
 
-                if (this.options.promptSkipping) {
-                    this.pollService.registerPoll('skipPrompt', this._promptSkippedCb, 'response');
-                }
+        this.prompt = this.prompts.newPrompt();
+        this.stage = 'response';
+        this.corrections = {};
 
-                for (const player of this.players) {
-                    player.responses = [];
-                    player.used = [];
-                }
-                resolve(true);
-            });
-        });
+        if (this.options.promptSkipping) {
+            this.pollService.registerPoll('skipPrompt', this._promptSkippedCb, 'response');
+        }
+
+        for (const player of this.players) {
+            player.responses = [];
+            player.used = [];
+        }
+        return true;
     }
 
     acceptPromptResponse(id, response) {
@@ -145,8 +155,8 @@ const GameState = class {
         // this.selectionTypeChoice = true;
     }
 
-    _resetSelection(resetRetries=true) {
-        if(resetRetries) {
+    _resetSelection(resetRetries = true) {
+        if (resetRetries) {
             this.remainingSikeRetries = this.options.sikeRetries;
         }
         this.pollService.clearPoll('sikeDispute');
@@ -202,7 +212,7 @@ const GameState = class {
         }
         this.initialSelector = (this.initialSelector + 1) % this.players.length;
         this.stage = 'endRound';
-        this.pollService.registerPoll('startNextRound', this._startNextPromptCb, 'endRound',null,0.75);
+        this.pollService.registerPoll('startNextRound', this._startNextPromptCb, 'endRound', null, 0.75);
         return false;
     }
 

@@ -27,12 +27,11 @@ describe('Complete callback tests', () => {
            gameState.options.promptSkipping = true;
            gameState.room.players.push({id: 'matcher3Id', active: true})
            gameState.registerPromptSkippedCb(done);
-           gameState.beginNewPrompt().then(() => {
-               gameState.pollVote(selectorId, 'skipPrompt');
-               gameState.pollVote(matcherIndex, 'skipPrompt');
-               players[matcher2Index].active = false;
-               gameState.disconnect(matcherId);
-           });
+           gameState.beginNewPrompt();
+           gameState.pollVote(selectorId, 'skipPrompt');
+           gameState.pollVote(matcherIndex, 'skipPrompt');
+           players[matcher2Index].active = false;
+           gameState.disconnect(matcherId);
        });
     });
 

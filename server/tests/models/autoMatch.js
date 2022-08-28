@@ -9,14 +9,11 @@ describe('Automatch tests', () => {
     let gameState;
     const firstResponse = 'firstResponse';
 
-    beforeEach((done) => {
+    beforeEach(() => {
         const players = [{id: selectorId, active: true}, {id: matcherId, active: true}];
         gameState = new GameState({players, lang: 'en-CA'});
-        gameState.beginNewPrompt().then(() => {
-            gameState.acceptPromptResponse(selectorId, firstResponse);
-            done();
-        });
-
+        gameState.beginNewPrompt();
+        gameState.acceptPromptResponse(selectorId, firstResponse);
     });
 
     describe('no misspell', () => {

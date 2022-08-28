@@ -9,27 +9,27 @@ module.exports = (io, socket) => {
     /*** GAME STATE ENDPOINTS ***/
     socket.on('setOptions', (options, callback) => {
         const result = setOptionsSchema.validate(options, {stripUnknown: true});
-        if(result.error) return;
+        if (result.error) return;
         options = result.value;
 
         const room = roomIfLeader(socket.id);
         if (!room) return;
         room.state.options = {...room.state.options, ...options};
         io.to(room.name).emit('setOptions', room.state.getOptions());
-        if(callback) callback({success: true});
+        if (callback) callback({success: true});
     });
 
     socket.on('startGame', () => {
         const room = roomIfLeader(socket.id);
         if (!room) return;
-        if(room.players.length < room.state.options.minPlayers) return;
+        if (room.players.length < room.state.options.minPlayers) return;
         room.state = new GameState(room, room.state.options, room.state.prompts);
         registerCallbacks(io, room);
         beginPrompt(io, room);
     });
 
     socket.on('promptResponse', (response) => {
-        if(Joi.string().max(60).validate(response).error) return;
+        if (Joi.string().max(60).validate(response).error) return;
         const room = getRoomById(socket.id);
         if (!room) return;
         const state = room.state;
@@ -41,7 +41,7 @@ module.exports = (io, socket) => {
 
     // true to vote to skip, false to unvote to skip
     socket.on('pollVote', (pollName) => {
-        if(Joi.string().validate(pollName).error) return;
+        if (Joi.string().validate(pollName).error) return;
         const room = getRoomById(socket.id);
         if (!room) return;
         const state = room.state;
@@ -62,7 +62,7 @@ module.exports = (io, socket) => {
     });
 
     socket.on('selectResponse', (response) => {
-        if(Joi.string().max(60).validate(response).error) return;
+        if (Joi.string().max(60).validate(response).error) return;
         const room = getRoomById(socket.id);
         if (!room) return;
         const state = room.state;
@@ -73,7 +73,7 @@ module.exports = (io, socket) => {
     });
 
     socket.on('selectMatch', (match) => {
-        if(Joi.string().max(60).allow('').validate(match).error) return;
+        if (Joi.string().max(60).allow('').validate(match).error) return;
 
         const room = getRoomById(socket.id);
         if (!room) return;
@@ -125,18 +125,16 @@ function registerCallbacks(io, room) {
 
 function beginPrompt(io, room) {
     const state = room.state;
-    state.beginNewPrompt().then(contGame => {
-        if (contGame) {
-            io.to(room.name).emit('beginPrompt', state.prompt);
-            const timeToWait = state.options.promptTimer ? state.options.promptTimer * 1000 + 3000 + 1000 : 500;
-            state.promptTimeout = setTimeout(() => {
-                beginSelection(io, room);
-                        // time to respond          + countdown + tolerance
-            }, timeToWait);
-        } else {
-            io.to(room.name).emit('gameOver', state.gameOver());
-        }
-    });
+    if (state.beginNewPrompt()) {
+        io.to(room.name).emit('beginPrompt', state.prompt);
+        const timeToWait = state.options.promptTimer ? state.options.promptTimer * 1000 + 3000 + 1000 : 500;
+        state.promptTimeout = setTimeout(() => {
+            beginSelection(io, room);
+            // time to respond          + countdown + tolerance
+        }, timeToWait);
+    } else {
+        io.to(room.name).emit('gameOver', state.gameOver());
+    }
 }
 
 function skipPrompt(io, room) {
@@ -190,7 +188,7 @@ function beginMatching(io, room) {
     const state = room.state;
     io.to(room.name).emit('beginMatching', state.selectedResponse());
     const matches = state.matches();
-    if(matches.length !== 0) {
+    if (matches.length !== 0) {
         io.to(room.name).emit('matchesFound', state.matches());
     }
 }

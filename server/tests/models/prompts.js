@@ -21,10 +21,37 @@ describe('prompts tests', () => {
             test_prompts(prompts, 'en-CA', []);
         });
 
+        it('custom only', () => {
+            const custom = ['test1', 'test2', 'test3', 'test4', 'test5'];
+            const prompts = new Prompts([], custom);
+            test_prompts(prompts, 'en-CA', custom);
+        });
+
+
         it('double pack w custom', () => {
             const custom = ['test1', 'test2', 'test3', 'test4', 'test5']
             const prompts = new Prompts(['standard', 'canadian'], custom);
             test_prompts(prompts, 'en-CA', custom);
+        });
+
+        describe('carryover', () => {
+            it('single pack', () => {
+                test_old_prompt_carryover(['standard'], [], 'en-CA');
+            });
+
+            it('double pack', () => {
+                test_old_prompt_carryover(['standard', 'canadian'], [], 'en-CA');
+            });
+
+            it('custom only', () => {
+                const custom = ['test1', 'test2', 'test3', 'test4', 'test5'];
+                test_old_prompt_carryover([], custom, 'en-CA');
+            });
+
+            it('double pack w custom', () => {
+                const custom = ['test1', 'test2', 'test3', 'test4', 'test5'];
+                test_old_prompt_carryover(['standard', 'canadian'], custom, 'en-CA');
+            });
         });
 
     });
@@ -40,9 +67,30 @@ describe('prompts tests', () => {
             test_prompts(prompts, 'en-CA', []);
         });
 
+        it('triple pack', () => {
+            const prompts = new Prompts(['pack1', 'pack2', 'pack3'], []);
+            test_prompts(prompts, 'en-CA', []);
+        });
+
+        describe('permutations', () => {
+            it('all combs', () => {
+                const prompts = new Prompts(['a', 'b', 'c', 'd'], [], 'prm');
+                test_prompts(prompts, 'prm', []);
+            });
+
+            it('all combs carryover', () => {
+                test_old_prompt_carryover(['a', 'b', 'c', 'd'], [], 'prm');
+            });
+        });
+
         describe('french', () => {
             it('single pack', () => {
                 const prompts = new Prompts(['pack1'], [], 'fr');
+                test_prompts(prompts, 'fr', []);
+            });
+
+            it('triple pack', () => {
+                const prompts = new Prompts(['pack1', 'pack2', 'pack3'], [], 'fr');
                 test_prompts(prompts, 'fr', []);
             });
         });
@@ -61,8 +109,33 @@ function test_prompts(prompts, lang, customPrompts) {
     lines = lines.map(p => p.trim()).filter(Boolean);
     lines = new Set(lines);
     const used = new Set();
-    for(let i = 0; i < lines.size; i++) {
+    for (let i = 0; i < lines.size; i++) {
         const p = prompts.newPrompt();
+        assert.isFalse(used.has(p));
+        used.add(p);
+        assert.isTrue(lines.has(p));
+    }
+    const p = prompts.newPrompt();
+    assert.strictEqual(p, '');
+}
+
+function test_old_prompt_carryover(packIds, customPrompts, lang) {
+    let prompts = new Prompts(packIds, customPrompts, lang);
+    let lines = customPrompts;
+    for (const pack of prompts.packs) {
+        if (pack.id !== 'custom') {
+            const meta = Prompts.metas.find(p => p.id === pack.id && p.lang === lang);
+            const packLines = fs.readFileSync(meta.path, 'utf-8').split(/\r?\n/);
+            lines = lines.concat(packLines);
+        }
+    }
+    lines = lines.map(p => p.trim()).filter(Boolean);
+    lines = new Set(lines);
+
+    const used = new Set();
+    for (let i = 0; i < lines.size; i++) {
+        const p = prompts.newPrompt();
+        prompts = new Prompts(packIds, customPrompts, lang, prompts);
         assert.isFalse(used.has(p));
         used.add(p);
         assert.isTrue(lines.has(p));

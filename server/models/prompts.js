@@ -111,8 +111,8 @@ const Prompts = class {
         const oldCustomPack = oldPrompts.packs[oldPrompts.packs.length - 1];
         const customPack = this.packs[this.packs.length - 1];
         for (const i of oldCustomPack.used) {
-            for (let j = 0; j < customPack.length; j++) {
-                if (oldCustomPack[i] === customPack[j]) {
+            for (let j = 0; j < customPack.prompts.length; j++) {
+                if (oldCustomPack.prompts[i] === customPack.prompts[j]) {
                     customPack.used.add(i);
                 }
             }

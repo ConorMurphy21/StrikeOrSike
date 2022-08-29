@@ -62,6 +62,11 @@ describe('prompts tests', () => {
             Prompts.intersections = retrieveIntersections(Prompts.metas);
         });
 
+        after(() => {
+            Prompts.metas = retrieveMetas('./resources/prompts');
+            Prompts.intersections = retrieveIntersections(Prompts.metas);
+        });
+
         it('single pack', () => {
             const prompts = new Prompts(['pack1'], []);
             test_prompts(prompts, 'en-CA', []);

@@ -64,14 +64,29 @@ const Prompts = class {
     static metas = retrieveMetas(promptsRoot);
     static intersections = retrieveIntersections(this.metas);
 
-    constructor(packIds, customPrompts, lang = 'en-CA', oldPrompts) {
+    static packOptions(lang) {
+        const packs = {}
+        for(const meta of Prompts.metas){
+            if(meta.lang === lang){
+                packs[meta.id] = false;
+            }
+        }
+        packs['standard'] = true;
+        return packs;
+    }
+
+    constructor(packs, customPrompts, lang = 'en-CA', oldPrompts) {
         this.numPrompts = customPrompts?.length ?? 0;
         this.numRemaining = 0;
         this.packs = [];
         // retrieve meta for each pack
-        for (const id of packIds) {
-            const meta = Prompts.metas.find(meta => meta.id === id && meta.lang === lang);
-            this.packs.push({id: meta.id, prompts: meta.prompts, used: new Set(), remaining: new Set()});
+        const packIds = [];
+        for (const id in packs) {
+            if(packs[id]) {
+                packIds.push(id);
+                const meta = Prompts.metas.find(meta => meta.id === id && meta.lang === lang);
+                this.packs.push({id: meta.id, prompts: meta.prompts, used: new Set(), remaining: new Set()});
+            }
         }
         // use prompts to avoid intersection between packs
         for (let i = 0; i < packIds.length; i++) {

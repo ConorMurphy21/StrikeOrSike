@@ -12,45 +12,45 @@ describe('prompts tests', () => {
         });
 
         it('single pack', () => {
-            const prompts = new Prompts(['standard'], []);
+            const prompts = new Prompts(z(['standard']), []);
             test_prompts(prompts, 'en-CA', []);
         });
 
         it('double pack', () => {
-            const prompts = new Prompts(['standard', 'canadian'], []);
+            const prompts = new Prompts(z(['standard', 'canadian']), []);
             test_prompts(prompts, 'en-CA', []);
         });
 
         it('custom only', () => {
             const custom = ['test1', 'test2', 'test3', 'test4', 'test5'];
-            const prompts = new Prompts([], custom);
+            const prompts = new Prompts({}, custom);
             test_prompts(prompts, 'en-CA', custom);
         });
 
 
         it('double pack w custom', () => {
             const custom = ['test1', 'test2', 'test3', 'test4', 'test5']
-            const prompts = new Prompts(['standard', 'canadian'], custom);
+            const prompts = new Prompts(z(['standard', 'canadian']), custom);
             test_prompts(prompts, 'en-CA', custom);
         });
 
         describe('carryover', () => {
             it('single pack', () => {
-                test_old_prompt_carryover(['standard'], [], 'en-CA');
+                test_old_prompt_carryover(z(['standard']), [], 'en-CA');
             });
 
             it('double pack', () => {
-                test_old_prompt_carryover(['standard', 'canadian'], [], 'en-CA');
+                test_old_prompt_carryover(z(['standard', 'canadian']), [], 'en-CA');
             });
 
             it('custom only', () => {
                 const custom = ['test1', 'test2', 'test3', 'test4', 'test5'];
-                test_old_prompt_carryover([], custom, 'en-CA');
+                test_old_prompt_carryover({}, custom, 'en-CA');
             });
 
             it('double pack w custom', () => {
                 const custom = ['test1', 'test2', 'test3', 'test4', 'test5'];
-                test_old_prompt_carryover(['standard', 'canadian'], custom, 'en-CA');
+                test_old_prompt_carryover(z(['standard', 'canadian']), custom, 'en-CA');
             });
         });
 
@@ -68,39 +68,47 @@ describe('prompts tests', () => {
         });
 
         it('single pack', () => {
-            const prompts = new Prompts(['pack1'], []);
+            const prompts = new Prompts(z(['pack1']), []);
             test_prompts(prompts, 'en-CA', []);
         });
 
         it('triple pack', () => {
-            const prompts = new Prompts(['pack1', 'pack2', 'pack3'], []);
+            const prompts = new Prompts(z(['pack1', 'pack2', 'pack3']), []);
             test_prompts(prompts, 'en-CA', []);
         });
 
         describe('permutations', () => {
             it('all combs', () => {
-                const prompts = new Prompts(['a', 'b', 'c', 'd'], [], 'prm');
+                const prompts = new Prompts(z(['a', 'b', 'c', 'd']), [], 'prm');
                 test_prompts(prompts, 'prm', []);
             });
 
             it('all combs carryover', () => {
-                test_old_prompt_carryover(['a', 'b', 'c', 'd'], [], 'prm');
+                test_old_prompt_carryover(z(['a', 'b', 'c', 'd']), [], 'prm');
             });
         });
 
         describe('french', () => {
             it('single pack', () => {
-                const prompts = new Prompts(['pack1'], [], 'fr');
+                const prompts = new Prompts(z(['pack1']), [], 'fr');
                 test_prompts(prompts, 'fr', []);
             });
 
             it('triple pack', () => {
-                const prompts = new Prompts(['pack1', 'pack2', 'pack3'], [], 'fr');
+                const prompts = new Prompts(z(['pack1', 'pack2', 'pack3']), [], 'fr');
                 test_prompts(prompts, 'fr', []);
             });
         });
     });
 });
+
+function z(pack) {
+    const ret = {}
+    for(const id of pack){
+        ret[id] = true;
+    }
+    return ret;
+}
 
 function test_prompts(prompts, lang, customPrompts) {
     let lines = customPrompts;

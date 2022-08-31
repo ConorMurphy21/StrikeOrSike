@@ -1,9 +1,9 @@
 const {Prompts} = require('./prompts');
 const {stringMatch, getCorrections} = require('./matchUtils');
 const PollService = require('./pollService');
-const optionsSchema = require('./optionsSchema')
+const optionsSchema = require('./optionsSchema');
 
-const defaultOptions = () => {
+const defaultOptions = (lang) => {
     return {
         promptTimer: 35,
         autoNumRounds: true, // set numRounds to num players when game starts
@@ -12,7 +12,9 @@ const defaultOptions = () => {
         sikeRetries: 0,
         promptSkipping: true,
         minPlayers: 3,
-        maxPlayers: 10
+        maxPlayers: 10,
+        packs: Prompts.packOptions(lang),
+        customPrompts: []
     }
 }
 
@@ -21,8 +23,8 @@ const GameState = class {
         this.name = room.name;
         this.stage = 'lobby'; // enum: 'lobby', 'response', 'selection', 'matching', 'endRound'
         this.options = options;
-        if (!this.options) this.options = defaultOptions();
-        this.prompts = new Prompts(['standard'], [], room.lang, oldPrompts);
+        if(!options) this.options = defaultOptions(room.lang);
+        this.prompts = new Prompts(this.options.packs, this.options.customPrompts, room.lang, oldPrompts);
         this.room = room;
         this.round = 0;
         this.prompt = '';
@@ -34,7 +36,6 @@ const GameState = class {
         this.remainingSikeRetries = this.options.sikeRetries;
         this.corrections = {};
         this.pollService = new PollService(this);
-
 
         // keeps track of how long until the response section is over
         this.promptTimeout = null;

@@ -2,6 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const klawSync = require('klaw-sync');
+const {custom} = require('joi');
 
 const CUSTOM = 'custom';
 
@@ -66,8 +67,8 @@ const Prompts = class {
 
     static packOptions(lang) {
         const packs = {}
-        for(const meta of Prompts.metas){
-            if(meta.lang === lang){
+        for (const meta of Prompts.metas) {
+            if (meta.lang === lang) {
                 packs[meta.id] = false;
             }
         }
@@ -82,10 +83,16 @@ const Prompts = class {
         // retrieve meta for each pack
         const packIds = [];
         for (const id in packs) {
-            if(packs[id]) {
+            if (packs[id]) {
                 packIds.push(id);
                 const meta = Prompts.metas.find(meta => meta.id === id && meta.lang === lang);
-                this.packs.push({id: meta.id, prompts: meta.prompts, used: new Set(), remaining: new Set()});
+
+                this.packs.push({
+                    id: meta.id, prompts: meta.prompts,
+                    used: new Set(), // used by the room
+                    oou: new Set(),  // out of use (used to avoid repeats)
+                    remaining: new Set()
+                }); // for alternative method when too much storage is required
             }
         }
         // use prompts to avoid intersection between packs
@@ -93,18 +100,18 @@ const Prompts = class {
             for (let j = i + 1; j < packIds.length; j++) {
                 let intersect = Prompts.intersections[packIds[i] + packIds[j]] ??
                     Prompts.intersections[packIds[j] + packIds[i]];
-                this.packs[i].used = new Set([...this.packs[i].used, ...intersect[packIds[i]]]); // Always use the smaller i to avoid intersections
+                this.packs[i].oou = new Set([...this.packs[i].oou, ...intersect[packIds[i]]]); // Always use the smaller i to avoid intersections
             }
         }
         // add customPrompts to packs list
         customPrompts = customPrompts.map(p => p.trim());
-        this.packs.push({id: CUSTOM, prompts: customPrompts, used: new Set(), remaining: new Set()})
+        this.packs.push({id: CUSTOM, prompts: customPrompts, used: new Set(), oou: new Set(), remaining: new Set()})
         this._keepOldUsed(oldPrompts);
 
         // set counters
         for (const pack of this.packs) {
             this.numPrompts += pack.prompts.length;
-            this.numRemaining += pack.prompts.length - pack.used.size;
+            this.numRemaining += pack.prompts.length - new Set([...pack.used, ...pack.oou]).size;
         }
 
         if (this._useRemainingMethod(this.numRemaining)) {
@@ -116,11 +123,23 @@ const Prompts = class {
         // this will only work as long as the prompts are the same
         if (!oldPrompts) return;
         for (const oldPack of oldPrompts.packs) {
+            if (oldPack.id === CUSTOM || oldPack.used.size === 0) continue;
             for (const newPack of this.packs) {
-                if (oldPack.id === newPack.id && newPack.id !== CUSTOM) {
+                if (newPack.id === CUSTOM) break;
+                if (oldPack.id === newPack.id) {
                     newPack.used = new Set([...newPack.used, ...oldPack.used])
+                } else {
+                    let intersect = Prompts.intersections[oldPack.id + newPack.id] ??
+                        Prompts.intersections[newPack.id + oldPack.id];
+                    for (const u of oldPack.used) {
+                        if (intersect[oldPack.id].has(u)) {
+                            const index = [...intersect[oldPack.id]].indexOf(u);
+                            newPack.used.add([...intersect[newPack.id]][index]);
+                        }
+                    }
                 }
             }
+
         }
         // check for overlapping custom prompts since the old custom prompts are not necessarily the same as the new ones
         const oldCustomPack = oldPrompts.packs[oldPrompts.packs.length - 1];
@@ -141,12 +160,12 @@ const Prompts = class {
     _setRemainingSets() {
         for (const pack of this.packs) {
             pack.remaining = new Set(Array.from({length: this.numPrompts}, (v, i) => i)
-                .filter(index => !pack.used.has(index)));
+                .filter(index => !(pack.used.has(index) || pack.oou.has(index))));
         }
     }
 
     newPrompt() {
-        if (this.numRemaining === 0) {
+        if (this.numRemaining <= 0) {
             return '';
         }
         let retVal = '';
@@ -172,7 +191,7 @@ const Prompts = class {
                     break;
                 }
             }
-        } while (pack.used.has(r));
+        } while (pack.used.has(r) || pack.oou.has(r));
         pack.used.add(r);
         return pack.prompts[r];
     }

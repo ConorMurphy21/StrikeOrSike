@@ -12,45 +12,45 @@ describe('prompts tests', () => {
         });
 
         it('single pack', () => {
-            const prompts = new Prompts(z(['standard']), []);
-            test_prompts(prompts, 'en-CA', []);
+            test_prompts(z(['standard']), [], 'en-CA');
         });
 
         it('double pack', () => {
-            const prompts = new Prompts(z(['standard', 'canadian']), []);
-            test_prompts(prompts, 'en-CA', []);
+            test_prompts(z(['standard', 'canadian']), [], 'en-CA');
         });
 
         it('custom only', () => {
             const custom = ['test1', 'test2', 'test3', 'test4', 'test5'];
-            const prompts = new Prompts({}, custom);
-            test_prompts(prompts, 'en-CA', custom);
+            test_prompts({}, custom, 'en-CA');
         });
 
 
         it('double pack w custom', () => {
             const custom = ['test1', 'test2', 'test3', 'test4', 'test5']
-            const prompts = new Prompts(z(['standard', 'canadian']), custom);
-            test_prompts(prompts, 'en-CA', custom);
+            test_prompts(z(['standard', 'canadian']), custom, 'en-CA');
         });
 
         describe('carryover', () => {
             it('single pack', () => {
-                test_old_prompt_carryover(z(['standard']), [], 'en-CA');
+                test_prompts(z(['standard']), [], 'en-CA', true);
             });
 
             it('double pack', () => {
-                test_old_prompt_carryover(z(['standard', 'canadian']), [], 'en-CA');
+                test_prompts(z(['standard', 'canadian']), [], 'en-CA', true);
             });
 
             it('custom only', () => {
                 const custom = ['test1', 'test2', 'test3', 'test4', 'test5'];
-                test_old_prompt_carryover({}, custom, 'en-CA');
+                test_prompts({}, custom, 'en-CA', true);
             });
 
             it('double pack w custom', () => {
                 const custom = ['test1', 'test2', 'test3', 'test4', 'test5'];
-                test_old_prompt_carryover(z(['standard', 'canadian']), custom, 'en-CA');
+                test_prompts(z(['standard', 'canadian']), custom, 'en-CA', true);
+            });
+
+            it('double pack reduced', () => {
+                test_pack_swap_carryover(z(['standard', 'canadian']), z(['canadian']), 'en-CA', 0.5);
             });
         });
 
@@ -68,35 +68,38 @@ describe('prompts tests', () => {
         });
 
         it('single pack', () => {
-            const prompts = new Prompts(z(['pack1']), []);
-            test_prompts(prompts, 'en-CA', []);
+            test_prompts(z(['pack1']), [], 'en-CA');
         });
 
         it('triple pack', () => {
-            const prompts = new Prompts(z(['pack1', 'pack2', 'pack3']), []);
-            test_prompts(prompts, 'en-CA', []);
+            test_prompts(z(['pack1', 'pack2', 'pack3']), [], 'en-CA');
         });
 
         describe('permutations', () => {
             it('all combs', () => {
-                const prompts = new Prompts(z(['a', 'b', 'c', 'd']), [], 'prm');
-                test_prompts(prompts, 'prm', []);
+                test_prompts(z(['a', 'b', 'c', 'd']), [], 'prm');
             });
 
             it('all combs carryover', () => {
-                test_old_prompt_carryover(z(['a', 'b', 'c', 'd']), [], 'prm');
+                test_prompts(z(['a', 'b', 'c', 'd']), [], 'prm', true);
+            });
+
+            it('all combs pack swap', () => {
+                test_pack_swap_carryover(z(['a', 'b']), z(['c', 'd']), 'prm', 1);
+                test_pack_swap_carryover(z(['c', 'd']), z(['a', 'b']), 'prm', 1);
+                test_pack_swap_carryover(z(['a', 'd']), z(['b', 'c']), 'prm', 1);
+                test_pack_swap_carryover(z(['a', 'b', 'c']), z(['d']), 'prm', 0.5);
+                test_pack_swap_carryover(z(['a']), z(['a', 'b']), 'prm', 1);
             });
         });
 
         describe('french', () => {
             it('single pack', () => {
-                const prompts = new Prompts(z(['pack1']), [], 'fr');
-                test_prompts(prompts, 'fr', []);
+                test_prompts(z(['pack1']), [], 'fr');
             });
 
             it('triple pack', () => {
-                const prompts = new Prompts(z(['pack1', 'pack2', 'pack3']), [], 'fr');
-                test_prompts(prompts, 'fr', []);
+                test_prompts(z(['pack1', 'pack2', 'pack3']), [], 'fr');
             });
         });
     });
@@ -104,13 +107,15 @@ describe('prompts tests', () => {
 
 function z(pack) {
     const ret = {}
-    for(const id of pack){
+    for (const id of pack) {
         ret[id] = true;
     }
     return ret;
 }
 
-function test_prompts(prompts, lang, customPrompts) {
+
+function test_prompts(packs, customPrompts, lang, carryover) {
+    let prompts = new Prompts(packs, customPrompts, lang);
     let lines = customPrompts;
     for (const pack of prompts.packs) {
         if (pack.id !== 'custom') {
@@ -121,9 +126,14 @@ function test_prompts(prompts, lang, customPrompts) {
     }
     lines = lines.map(p => p.trim()).filter(Boolean);
     lines = new Set(lines);
+
     const used = new Set();
     for (let i = 0; i < lines.size; i++) {
         const p = prompts.newPrompt();
+        if (carryover) {
+            prompts = new Prompts(packs, customPrompts, lang, prompts);
+        }
+        assert.isOk(p);
         assert.isFalse(used.has(p));
         used.add(p);
         assert.isTrue(lines.has(p));
@@ -132,9 +142,10 @@ function test_prompts(prompts, lang, customPrompts) {
     assert.strictEqual(p, '');
 }
 
-function test_old_prompt_carryover(packIds, customPrompts, lang) {
-    let prompts = new Prompts(packIds, customPrompts, lang);
-    let lines = customPrompts;
+function test_pack_swap_carryover(packs1, packs2, lang, percent) {
+    //just to retrieve the lines
+    let prompts = new Prompts(packs2, [], lang);
+    let lines = []
     for (const pack of prompts.packs) {
         if (pack.id !== 'custom') {
             const meta = Prompts.metas.find(p => p.id === pack.id && p.lang === lang);
@@ -142,13 +153,23 @@ function test_old_prompt_carryover(packIds, customPrompts, lang) {
             lines = lines.concat(packLines);
         }
     }
+    // no carryover start with packs1
+    prompts = new Prompts(packs1, [], lang);
     lines = lines.map(p => p.trim()).filter(Boolean);
     lines = new Set(lines);
 
+    // use percent of the prompts from the first pack
     const used = new Set();
+    for(let i = 0; i < prompts.numRemaining * percent; i++){
+        let p = prompts.newPrompt();
+        used.add(p);
+        if(lines.has(p)) lines.delete(p);
+    }
+    prompts = new Prompts(packs2, [], lang, prompts);
+
     for (let i = 0; i < lines.size; i++) {
         const p = prompts.newPrompt();
-        prompts = new Prompts(packIds, customPrompts, lang, prompts);
+        assert.isOk(p);
         assert.isFalse(used.has(p));
         used.add(p);
         assert.isTrue(lines.has(p));

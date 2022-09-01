@@ -50,14 +50,17 @@ if (process.env.NODE_ENV !== 'production') {
             .max(2),
         packs: Joi.object()
             .pattern(
-                Joi.string().length(20),
+                Joi.string()
+                    .min(3)
+                    .max(20),
                 Joi.boolean())
-            .length(10),
+            .max(10),
         customPrompts: Joi.array()
             .items(
                 Joi.string()
-                    .length(200))
-            .length(400)
+                    .min(1)
+                    .max(200))
+            .max(400)
     })
 }
 

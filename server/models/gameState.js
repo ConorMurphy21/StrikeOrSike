@@ -440,7 +440,8 @@ const GameState = class {
     }
 
     getOptions() {
-        const ret = optionsSchema.validate(this.options, {stripUnknown: true}).value;
+        const result = optionsSchema.validate(this.options, {stripUnknown: true});
+        const ret = result.value;
         delete ret.customPrompts; // too big and not worth the other clients seeing
         return ret;
     }

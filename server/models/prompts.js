@@ -2,7 +2,6 @@
 const fs = require('fs');
 const path = require('path');
 const klawSync = require('klaw-sync');
-const {custom} = require('joi');
 
 const CUSTOM = 'custom';
 
@@ -12,7 +11,7 @@ const retrieveMetas = (root) => {
     const items = klawSync(root, {nodir: true});
     for (const item of items) {
         const lang = path.basename(path.dirname(item.path));
-        const id = path.basename(item.path, '.txt');
+        const id = path.basename(item.path, '.txt').split(/\. ?/)[1];
         const prompts = fs.readFileSync(item.path, 'utf-8')
             .split(/\r?\n/)
             .map(p => p.trim())

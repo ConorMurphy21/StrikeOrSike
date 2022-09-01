@@ -50,7 +50,7 @@
                 <label :for="label" class="form-check-label ms-2">{{$tm('packLabels')[label]}}</label>
               </div>
             </div>
-            <div class="row mt-2" :class="{'d-none': disabled}">
+            <div class="row mt-2 d-none d-sm-block" :class="{'d-none': disabled}">
               <div class="col-12">
                 <label for="customPrompts" class="form-label" v-t="'customPromptsLabel'"/>
                 <textarea class="form-control fs-6" id="customPrompts"

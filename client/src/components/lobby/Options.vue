@@ -1,4 +1,4 @@
-<template>
+<template xmlns="http://www.w3.org/1999/html">
   <div class="accordion w-75">
     <div class="accordion-item">
 
@@ -41,6 +41,22 @@
                        :disabled="disabled || !options.sikeDispute">
               </div>
             </div>
+            <div class="row mt-2">
+              <label class="form-label" v-t="'promptPacksLabel'"/>
+              <div v-for="(value, label) in options.packs" class="col-md-auto">
+                <input type="checkbox" class="form-check-input" :class="{'Disabled': disabled}" :disabled="disabled"
+                       :id="label"
+                       :checked="value">
+                <label :for="label" class="form-check-label ms-2">{{$tm('packLabels')[label]}}</label>
+              </div>
+            </div>
+            <div class="row mt-2" :class="{'d-none': disabled}">
+              <div class="col-12">
+                <label for="customPrompts" class="form-label" v-t="'customPromptsLabel'"/>
+                <textarea class="form-control fs-6" id="customPrompts"
+                          :placeholder="$t('customPromptsPlaceholder')" rows="3"/>
+              </div>
+            </div>
           </form>
         </div>
       </div>
@@ -63,7 +79,7 @@ const room = createNamespacedHelpers('room')
 
 export default {
   props: {
-    disabled: Boolean
+    disabled: Boolean,
   },
   computed: {
     ...game.mapState([
@@ -82,37 +98,36 @@ export default {
 
     //inti tooltip
     Array.from(document.querySelectorAll('input[data-bs-toggle="tooltip"]'))
-          .forEach(tooltipNode => new Tooltip(tooltipNode, {delay: { show: 500, hide: 50 }}))
-
+        .forEach(tooltipNode => new Tooltip(tooltipNode, {delay: {show: 500, hide: 50}}));
   },
   methods: {
     validateNumRounds(event) {
-      const options = {...this.options};
-      options.autoNumRounds = false;
-      this.validateNum(event, 'numRounds', options);
+      this.validateNum(event, 'numRounds', {autoNumRounds: false});
     },
     validateNum(event, value, options) {
-      options = options ?? {...this.options};
       const input = event.currentTarget;
       const inputValue = parseInt(input.value);
       const max = parseInt(input.max);
       const min = parseInt(input.min);
+      let val;
       if (inputValue > max) {
-        options[value] = max;
+        val = max;
       } else if (inputValue < min) {
-        options[value] = min;
+        val = min;
       } else {
-        options[value] = inputValue;
+        val = inputValue;
       }
-      if (this.options[value] !== options[value]) {
+      if (val !== this.options[value]) {
+        options = options ?? {};
+        options[value] = val;
         this.$socket.emit('setOptions', options);
       } else {
         input.value = options[value];
       }
     },
-    validateSikeDispute(event, value, options) {
-      options = options ?? {...this.options};
+    validateSikeDispute(event, value) {
       const input = event.currentTarget;
+      let options = {};
       options[value] = input.checked;
       if (!input.checked) {
         options['sikeRetries'] = 0;

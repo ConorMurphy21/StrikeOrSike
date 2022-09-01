@@ -40,6 +40,14 @@ export default {
     numRoundsLabel: 'Rounds',
     sikeDisputeLabel: 'Dispute Sike',
     sikeRetriesLabel: 'Retries',
+    promptPacksLabel: 'Packs',
+    customPromptsLabel: 'Custom prompts',
+    customPromptsPlaceholder: 'Separate prompts with new lines...',
+
+    packLabels: {
+        standard: 'Basic',
+        canadian: 'Canadian',
+    },
 
     /*** GAME MESSAGES ***/
     selection: {

@@ -9,17 +9,19 @@
               <div class="col-md-6">
                 <label for="timerDuration" class="form-label" v-t="'timerDurationLabel'"/>
                 <input type="number" min="15" max="60" class="form-control" :class="{'Disabled': disabled}"
-                       id="timerDuration" ref="timerDuration"
+                       :disabled="disabled" id="timerDuration" ref="timerDuration" :value="options.promptTimer"
                        data-bs-toggle="tooltip" data-bs-placement="left" :title="$t('tooltip.options.timer')"
-                       :value="options.promptTimer" @focusout="validateNum($event, 'promptTimer')" :disabled="disabled">
+                       @focusout="validateNum($event, 'promptTimer')"
+                       @change="onNumChange($event, 'promptTimer')">
               </div>
               <div class="col-md-6">
                 <label for="numRounds" class="form-label" v-t="'numRoundsLabel'"/>
                 <input type="number" min="1" max="20" class="form-control" :class="{'Disabled': disabled}"
-                       id="numRounds"
-                       data-bs-toggle="tooltip" data-bs-placement="right" :title="$t('tooltip.options.rounds')"
+                       :disabled="disabled" id="numRounds"
                        :value="(options.autoNumRounds) ? players.length : options.numRounds"
-                       @focusout="validateNumRounds($event)" :disabled="disabled">
+                       data-bs-toggle="tooltip" data-bs-placement="right" :title="$t('tooltip.options.rounds')"
+                       @focusout="validateNumRounds($event)"
+                       @change="onNumRoundChange($event, 'numRounds')">
               </div>
             </div>
             <div class="row">
@@ -27,27 +29,28 @@
                 <div class="form-check form-switch">
                   <label for="sikeDispute" class="form-check-label" v-t="'sikeDisputeLabel'"/>
                   <input type="checkbox" class="form-check-input" :class="{'Disabled': disabled}" :disabled="disabled"
-                         id="sikeDispute"
+                         id="sikeDispute" :checked="options.sikeDispute"
                          data-bs-toggle="tooltip" data-bs-placement="left" :title="$t('tooltip.options.dispute')"
-                         :checked="options.sikeDispute" @click="validateSikeDispute($event, 'sikeDispute')">
+                         @click="validateSikeDispute($event, 'sikeDispute')">
                 </div>
               </div>
               <div class="col-md-6">
                 <label for="sikeRetries" class="form-label" v-t="'sikeRetriesLabel'"/>
-                <input type="number" min="0" max="2" class="form-control"
+                <input type="number" min="0" max="2" class="form-control" id="sikeRetries" :value="options.sikeRetries"
+                       :class="{'Disabled': disabled || !options.sikeDispute}"
+                       :disabled="disabled || !options.sikeDispute"
                        data-bs-toggle="tooltip" data-bs-placement="right" :title="$t('tooltip.options.retries')"
-                       :class="{'Disabled': disabled || !options.sikeDispute}" id="sikeRetries"
-                       :value="options.sikeRetries" @focusout="validateNum($event, 'sikeRetries')"
-                       :disabled="disabled || !options.sikeDispute">
+                       @focusout="validateNum($event, 'sikeRetries')"
+                       @change="onNumChange($event, 'sikeRetries')"
+                >
               </div>
             </div>
             <div class="row mt-2">
               <label class="form-label" v-t="'promptPacksLabel'"/>
               <div v-for="(value, label) in options.packs" class="col-md-auto">
-                <input type="checkbox" class="form-check-input" :class="{'Disabled': disabled}" :disabled="disabled"
-                       :id="label"
-                       :checked="value">
-                <label :for="label" class="form-check-label ms-2">{{$tm('packLabels')[label]}}</label>
+                <input type="checkbox" class="form-check-input" :class="{'Disabled': disabled}"
+                       :disabled="disabled" :id="label" :checked="value">
+                <label :for="label" class="form-check-label ms-2">{{ $tm('packLabels')[label] }}</label>
               </div>
             </div>
             <div class="row mt-2 d-none d-sm-block" :class="{'d-none': disabled}">
@@ -104,6 +107,16 @@ export default {
     validateNumRounds(event) {
       this.validateNum(event, 'numRounds', {autoNumRounds: false});
     },
+    onNumRoundChange(event) {
+      this.onNumChange(event, 'numRounds', {autoNumRounds: false});
+    },
+    onNumChange(event, value, options) {
+      const inputValue = parseInt(event.currentTarget.value);
+      const actualValue = this.options[value];
+      if(Math.abs(inputValue - actualValue) === 1){
+        this.validateNum(event, value, options);
+      }
+    },
     validateNum(event, value, options) {
       const input = event.currentTarget;
       const inputValue = parseInt(input.value);
@@ -122,7 +135,7 @@ export default {
         options[value] = val;
         this.$socket.emit('setOptions', options);
       } else {
-        input.value = options[value];
+        input.value = this.options[value];
       }
     },
     validateSikeDispute(event, value) {

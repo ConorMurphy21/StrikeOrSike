@@ -6,6 +6,21 @@
         <div class="accordion-body">
           <form>
             <div class="row">
+              <label class="form-label" v-t="'promptPacksLabel'"/>
+              <div v-for="(value, label, index) in options.packs" class="col-md-auto">
+                <input type="checkbox" class="form-check-input" :class="{'Disabled': disabled}"
+                       :disabled="disabled" :id="label" :ref="'pack' + index" :checked="value" @click="packChange($event, label)">
+                <label :for="label" class="form-check-label ms-2">{{ $tm('packLabels')[label] }}</label>
+              </div>
+            </div>
+            <div class="row mt-2 d-none d-sm-block" :class="{'d-sm-none': disabled}">
+              <div class="col-12">
+                <label for="customPrompts" class="form-label" v-t="'customPromptsLabel'"/>
+                <textarea class="form-control fs-6" id="customPrompts"
+                          :placeholder="$t('customPromptsPlaceholder')" rows="3"/>
+              </div>
+            </div>
+            <div class="row mt-2">
               <div class="col-md-6">
                 <label for="timerDuration" class="form-label" v-t="'timerDurationLabel'"/>
                 <input type="number" min="15" max="60" class="form-control" :class="{'Disabled': disabled}"
@@ -25,7 +40,7 @@
               </div>
             </div>
             <div class="row mt-2">
-              <div class="col-md-6 d-flex justify-content-center align-items-center">
+              <div class="col-md-6 d-flex justify-content-start align-items-center">
                 <div class="form-check form-switch">
                   <label for="sikeDispute" class="form-check-label" v-t="'sikeDisputeLabel'"/>
                   <input type="checkbox" class="form-check-input" :class="{'Disabled': disabled}" :disabled="disabled"
@@ -42,22 +57,6 @@
                        data-bs-toggle="tooltip" data-bs-placement="right" :title="$t('tooltip.options.retries')"
                        @focusout="validateNum($event, 'sikeRetries')"
                        @change="onNumChange($event, 'sikeRetries')">
-              </div>
-            </div>
-<!--            <hr class="bg-blue border-2 border-top border-blue">-->
-            <div class="row mt-2">
-              <label class="form-label" v-t="'promptPacksLabel'"/>
-              <div v-for="(value, label) in options.packs" class="col-md-auto">
-                <input type="checkbox" class="form-check-input" :class="{'Disabled': disabled}"
-                       :disabled="disabled" :id="label" :checked="value" @click="packChange($event, label)">
-                <label :for="label" class="form-check-label ms-2">{{ $tm('packLabels')[label] }}</label>
-              </div>
-            </div>
-            <div class="row mt-2 d-none d-sm-block" :class="{'d-sm-none': disabled}">
-              <div class="col-12">
-                <label for="customPrompts" class="form-label" v-t="'customPromptsLabel'"/>
-                <textarea class="form-control fs-6" id="customPrompts"
-                          :placeholder="$t('customPromptsPlaceholder')" rows="3"/>
               </div>
             </div>
           </form>
@@ -90,13 +89,14 @@ export default {
     ]),
     ...room.mapState([
       'players'
-    ])
+    ]),
   },
   mounted() {
     const form = document.getElementById('form');
-    const firstForm = this.$refs.timerDuration;
-    form.addEventListener('shown.bs.collapse', function () {
-      firstForm.focus();
+    form.addEventListener('shown.bs.collapse', () => {
+        if(!this.$refs.pack0) return;
+        const firstForm = this.$refs.pack0[0];
+        firstForm.focus();
     });
 
     //inti tooltip

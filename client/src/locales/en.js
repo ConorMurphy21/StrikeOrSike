@@ -41,7 +41,7 @@ export default {
     sikeDisputeLabel: 'Dispute Sike',
     sikeRetriesLabel: 'Retries',
     promptPacksLabel: 'Packs',
-    customPromptsLabel: 'Custom prompts',
+    customPromptsLabel: 'Custom Prompts',
     customPromptsPlaceholder: 'Separate prompts with new lines...',
 
     packLabels: {

@@ -9,14 +9,15 @@
               <label class="form-label" v-t="'promptPacksLabel'"/>
               <div v-for="(value, label, index) in options.packs" class="col-md-auto">
                 <input type="checkbox" class="form-check-input" :class="{'Disabled': disabled}"
-                       :disabled="disabled" :id="label" :ref="'pack' + index" :checked="value" @click="packChange($event, label)">
+                       :disabled="disabled" :id="label" :ref="'pack' + index" :checked="value"
+                       @click="packChange($event, label)">
                 <label :for="label" class="form-check-label ms-2">{{ $tm('packLabels')[label] }}</label>
               </div>
             </div>
             <div class="row mt-2 d-none d-sm-block" :class="{'d-sm-none': disabled}">
               <div class="col-12">
                 <label for="customPrompts" class="form-label" v-t="'customPromptsLabel'"/>
-                <textarea class="form-control fs-6" id="customPrompts"
+                <textarea class="form-control fs-6" id="customPrompts" @focusout="customPromptsChange($event)"
                           :placeholder="$t('customPromptsPlaceholder')" rows="3"/>
               </div>
             </div>
@@ -94,9 +95,9 @@ export default {
   mounted() {
     const form = document.getElementById('form');
     form.addEventListener('shown.bs.collapse', () => {
-        if(!this.$refs.pack0) return;
-        const firstForm = this.$refs.pack0[0];
-        firstForm.focus();
+      if (!this.$refs.pack0) return;
+      const firstForm = this.$refs.pack0[0];
+      firstForm.focus();
     });
 
     //inti tooltip
@@ -104,6 +105,12 @@ export default {
         .forEach(tooltipNode => new Tooltip(tooltipNode, {delay: {show: 500, hide: 50}}));
   },
   methods: {
+    arraysEqual(a, b) {
+      return Array.isArray(a) &&
+          Array.isArray(b) &&
+          a.length === b.length &&
+          a.every((val, index) => val === b[index]);
+    },
     validateNumRounds(event) {
       this.validateNum(event, 'numRounds', {autoNumRounds: false});
     },
@@ -113,7 +120,7 @@ export default {
     onNumChange(event, label, options) {
       const inputValue = parseInt(event.currentTarget.value);
       const actualValue = this.options[label];
-      if(Math.abs(inputValue - actualValue) === 1){
+      if (Math.abs(inputValue - actualValue) === 1) {
         this.validateNum(event, label, options);
       }
     },
@@ -153,7 +160,15 @@ export default {
       packs[label] = input.checked;
       const options = {packs: packs}
       this.$socket.emit('setOptions', options);
-    }
+    },
+    customPromptsChange(event) {
+      const input = event.currentTarget.value;
+      const prompts = input.split(/\r?\n/);
+      if (!this.arraysEqual(prompts, this.options.customPrompts)) {
+        const options = {customPrompts: prompts};
+        this.$socket.emit('setOptions', options);
+      }
+    },
   }
 }
 </script>

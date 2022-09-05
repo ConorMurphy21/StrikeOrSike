@@ -39,8 +39,8 @@ module.exports = class pollService {
     cbIfComplete(pollName){
         const poll = this.polls[pollName];
         if(this.complete(pollName)) {
-            poll.completeCb();
             this.clearPoll(pollName);
+            poll.completeCb();
             return true;
         }
         return false;

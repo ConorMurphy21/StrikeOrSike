@@ -94,9 +94,9 @@ const GameState = class {
         if (this.round >= this.options.numRounds) {
             return false;
         }
-        // no more unique prompts
-
         this.prompt = this.prompts.newPrompt();
+        // no more unique prompts
+        if(!this.prompt) return false;
         this.stage = 'response';
         this.corrections = {};
 

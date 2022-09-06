@@ -95,8 +95,21 @@ const GameState = class {
             return false;
         }
         this.prompt = this.prompts.newPrompt();
-        // no more unique prompts
-        if(!this.prompt) return false;
+
+        // if no more unique prompts try adding a pack
+        while(!this.prompt) {
+            let changed = false;
+            for(const pack in this.options.packs){
+                if(!this.options.packs[pack]){
+                    this.options.packs[pack] = true;
+                    changed = true;
+                    break;
+                }
+            }
+            if(!changed) return false;
+            this.prompts = new Prompts(this.options.packs, this.options.customPrompts, this.room.lang, this.prompts);
+            this.prompt = this.prompts.newPrompt();
+        }
         this.stage = 'response';
         this.corrections = {};
 

@@ -8,16 +8,18 @@
             <div class="row">
               <label class="form-label" v-t="'promptPacksLabel'"/>
               <div v-for="(value, label, index) in options.packs" class="col-md-auto">
-                <input type="checkbox" class="form-check-input" :class="{'Disabled': disabled}"
-                       :disabled="disabled" :id="label" :ref="'pack' + index" :checked="value"
-                       @click="packChange($event, label)">
-                <label :for="label" class="form-check-label ms-2">{{ $tm('packLabels')[label] }}</label>
+                <input v-if="index !== options.packs.length-1" type="checkbox" class="form-check-input"
+                       :class="{'Disabled': disabled}"
+                       :disabled="disabled" :id="'pack' + index" :ref="'pack' + index" :checked="value"
+                       @click="packChange($event, label, index)">
+                <label :for="'pack' + index" class="form-check-label ms-2">{{ $tm('packLabels')[label] }}</label>
               </div>
             </div>
             <div class="row mt-2 d-none d-sm-block" :class="{'d-sm-none': disabled}">
               <div class="col-12">
                 <label for="customPrompts" class="form-label" v-t="'customPromptsLabel'"/>
-                <textarea class="form-control fs-6" id="customPrompts" @focusout="customPromptsChange($event)"
+                <textarea class="form-control fs-6" :class="{'Disabled': !customSelected}" :disabled="!customSelected"
+                          id="customPrompts" ref="customPrompts" @focusout="customPromptsChange($event.currentTarget.value)"
                           :placeholder="$t('customPromptsPlaceholder')" rows="3"/>
               </div>
             </div>
@@ -81,6 +83,11 @@ const game = createNamespacedHelpers('game')
 const room = createNamespacedHelpers('room')
 
 export default {
+  data() {
+    return {
+      customSelected: 0
+    }
+  },
   props: {
     disabled: Boolean,
   },
@@ -154,15 +161,17 @@ export default {
       }
       this.$socket.emit('setOptions', options);
     },
-    packChange(event, label) {
+    packChange(event, label, index) {
       const input = event.currentTarget;
+      if(index === Object.keys(this.options.packs).length - 1){
+        this.customSelected = input.checked;
+      }
       const packs = {...this.options.packs};
       packs[label] = input.checked;
-      const options = {packs: packs}
+      const options = {packs: packs};
       this.$socket.emit('setOptions', options);
     },
-    customPromptsChange(event) {
-      const input = event.currentTarget.value;
+    customPromptsChange(input) {
       const prompts = input.split(/\r?\n/);
       if (!this.arraysEqual(prompts, this.options.customPrompts)) {
         const options = {customPrompts: prompts};

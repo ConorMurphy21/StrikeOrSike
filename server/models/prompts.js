@@ -72,6 +72,7 @@ const Prompts = class {
             }
         }
         packs['standard'] = true;
+        packs['custom'] = false;
         return packs;
     }
 
@@ -83,9 +84,11 @@ const Prompts = class {
         const packIds = [];
         for (const id in packs) {
             if (packs[id]) {
-                packIds.push(id);
                 const meta = Prompts.metas.find(meta => meta.id === id && meta.lang === lang);
+                // skip any packs that can't be found
+                if(!meta) continue;
 
+                packIds.push(id);
                 this.packs.push({
                     id: meta.id, prompts: meta.prompts,
                     used: new Set(), // used by the room

@@ -47,6 +47,7 @@ export default {
     packLabels: {
         standard: 'Basic',
         canadian: 'Canadian',
+        custom: 'Custom'
     },
 
     /*** GAME MESSAGES ***/
@@ -131,6 +132,18 @@ export default {
             header: 'Options',
             body: '',
             children: [
+                {
+                    key: 'packs',
+                    header: 'Prompt Packs',
+                    body: 'Pick which themes and varieties you want your prompts to come in. Feel free to mix and match packs and select custom if you want to create your own prompts.',
+                    children: []
+                },
+                {
+                    key: 'custom',
+                    header: 'Custom Prompts',
+                    body: 'Write your custom prompts here. Only put one prompt per line. If you have a list of prompts that you think other players might like feel free to share it with me!',
+                    children: []
+                },
                 {
                     key: 'timer',
                     header: 'Timer',

@@ -36,6 +36,14 @@ module.exports = class pollService {
         return {success: true, count, next: this.nextComplete(pollName)};
     }
 
+    getVoteCounts(){
+        const ret = {}
+        for(const poll in this.polls) {
+            ret[poll] = {count: this.countVotes(poll), next: this.nextComplete(poll)};
+        }
+        return ret;
+    }
+
     cbIfComplete(pollName){
         const poll = this.polls[pollName];
         if(this.complete(pollName)) {

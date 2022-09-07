@@ -15,12 +15,21 @@ const state = () => ({
     usedResponses: [],
     scores: [],
     // optional state
-    voteCounts: {},
+    voteCounts: {
+        skipPrompt: {count: 0, next: false},
+        startNextRound: {count: 0, next: false},
+        sikeDispute: {count: 0, next: false},
+    },
     // options:
     options: {
         promptTimer: 35,
         numRounds: 1,
         promptSkipping: false,
+        packs: {
+            basic: true,
+            canadian: false,
+            custom: false,
+        }
     },
 
     firstSelection: true,
@@ -138,6 +147,9 @@ const mutations = {
     },
     setFirstSelection(state, data){
         state.firstSelection = data;
+    },
+    setVoteCounts(state, data) {
+        state.voteCounts = data;
     }
 }
 
@@ -153,7 +165,7 @@ const socketMutations = {
     },
     SOCKET_setVoteCount(state, data) {
         state.voteCounts[data.pollName] = {count: data.count, next: data.next};
-    }
+    },
 }
 
 const socketActions = {
@@ -205,7 +217,7 @@ const socketActions = {
             }
         }
     },
-    async SOCKET_endRound({state, commit}, data) {
+    async SOCKET_endRound({commit}) {
       commit('setScene', 'endRound');
       commit('SOCKET_setVoteCount', {pollName:'startNextRound', count: 0})
     },
@@ -232,6 +244,7 @@ const socketActions = {
         commit('setSelectedResponse', data.selectedResponse);
         commit('setPrompt', data.prompt);
         commit('setTimer', data.timer);
+        commit('setVoteCounts', data.voteCounts);
 
         if(data.timer){
             dispatch('startTimer');

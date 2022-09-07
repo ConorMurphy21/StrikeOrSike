@@ -448,7 +448,8 @@ const GameState = class {
             prompt: this.prompt,
             options: this.getOptions(),
             timer: timeleft,
-            matches: this.matches()
+            matches: this.matches(),
+            voteCounts: this.pollService.getVoteCounts()
         }
     }
 

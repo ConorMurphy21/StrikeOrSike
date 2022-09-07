@@ -141,7 +141,7 @@ export default {
                 {
                     key: 'custom',
                     header: 'Custom Prompts',
-                    body: 'Write your custom prompts here. Only put one prompt per line. If you have a list of prompts that you think other players might like feel free to share it with me!',
+                    body: 'Write out all of the prompts that make you and your friends click. Paste your custom prompts in the text area as a newline separated list. If you have a list of prompts that you think other players might like feel free to share it with me!',
                     children: []
                 },
                 {

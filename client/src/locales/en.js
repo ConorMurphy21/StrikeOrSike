@@ -40,6 +40,15 @@ export default {
     numRoundsLabel: 'Rounds',
     sikeDisputeLabel: 'Dispute Sike',
     sikeRetriesLabel: 'Retries',
+    promptPacksLabel: 'Packs',
+    customPromptsLabel: 'Custom Prompts',
+    customPromptsPlaceholder: 'Separate prompts with new lines...',
+
+    packLabels: {
+        standard: 'Basic',
+        canadian: 'Canadian',
+        custom: 'Custom'
+    },
 
     /*** GAME MESSAGES ***/
     selection: {
@@ -123,6 +132,18 @@ export default {
             header: 'Options',
             body: '',
             children: [
+                {
+                    key: 'packs',
+                    header: 'Prompt Packs',
+                    body: 'Pick which themes and varieties you want your prompts to come in. Feel free to mix and match packs and select custom if you want to create your own prompts.',
+                    children: []
+                },
+                {
+                    key: 'custom',
+                    header: 'Custom Prompts',
+                    body: 'Write out all of the prompts that make you and your friends click. Paste your custom prompts in the text area as a newline separated list. If you have a list of prompts that you think other players might like feel free to share it with me!',
+                    children: []
+                },
                 {
                     key: 'timer',
                     header: 'Timer',

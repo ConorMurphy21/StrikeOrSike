@@ -1,5 +1,5 @@
 const assert = require('chai').assert;
-const {Prompts, retrieveMetas} = require('../../models/prompts');
+const {Prompts, retrieveMetas, retrieveIntersections} = require('../../models/prompts');
 const fs = require('fs');
 
 describe('prompts tests', () => {
@@ -8,129 +8,172 @@ describe('prompts tests', () => {
 
         before(() => {
             Prompts.metas = retrieveMetas('./resources/prompts');
+            Prompts.intersections = retrieveIntersections(Prompts.metas);
         });
 
-        it('pack indexing', (done) => {
-            test_pack_indexing(done);
+        it('single pack', () => {
+            test_prompts(z(['standard']), [], 'en-CA');
         });
 
-        it('prompt indexing wo customPrompts', (done) => {
-            test_indexing(done, []);
+        it('double pack', () => {
+            test_prompts(z(['standard', 'canadian']), [], 'en-CA');
         });
 
-        it('prompt indexing w customPrompts', (done) => {
-            const customPrompts = ['test1', 'test2', 'test3', 'test4', 'test5'];
-            test_indexing(done, customPrompts);
+        it('custom only', () => {
+            const custom = ['test1', 'test2', 'test3', 'test4', 'test5'];
+            test_prompts({}, custom, 'en-CA');
         });
+
+
+        it('double pack w custom', () => {
+            const custom = ['test1', 'test2', 'test3', 'test4', 'test5']
+            test_prompts(z(['standard', 'canadian']), custom, 'en-CA');
+        });
+
+        describe('carryover', () => {
+            it('single pack', () => {
+                test_prompts(z(['standard']), [], 'en-CA', true);
+            });
+
+            it('double pack', () => {
+                test_prompts(z(['standard', 'canadian']), [], 'en-CA', true);
+            });
+
+            it('custom only', () => {
+                const custom = ['test1', 'test2', 'test3', 'test4', 'test5'];
+                test_prompts({}, custom, 'en-CA', true);
+            });
+
+            it('double pack w custom', () => {
+                const custom = ['test1', 'test2', 'test3', 'test4', 'test5'];
+                test_prompts(z(['standard', 'canadian']), custom, 'en-CA', true);
+            });
+
+            it('double pack reduced', () => {
+                test_pack_swap_carryover(z(['standard', 'canadian']), z(['canadian']), 'en-CA', 0.5);
+            });
+        });
+
     });
 
     describe('mock files', () => {
         before(() => {
             Prompts.metas = retrieveMetas('./tests/resources/prompts');
+            Prompts.intersections = retrieveIntersections(Prompts.metas);
         });
 
         after(() => {
             Prompts.metas = retrieveMetas('./resources/prompts');
+            Prompts.intersections = retrieveIntersections(Prompts.metas);
         });
 
-
-        it('pack indexing', (done) => {
-            test_pack_indexing(done);
+        it('single pack', () => {
+            test_prompts(z(['pack1']), [], 'en-CA');
         });
 
-        it('indexing wo customPrompts', (done) => {
-            test_indexing(done, []);
+        it('triple pack', () => {
+            test_prompts(z(['pack1', 'pack2', 'pack3']), [], 'en-CA');
         });
 
-        it('indexing w customPrompts', (done) => {
-            const customPrompts = ['test1', 'test2', 'test3', 'test4', 'test5'];
-            test_indexing(done, customPrompts);
-        });
-    });
+        describe('permutations', () => {
+            it('all combs', () => {
+                test_prompts(z(['a', 'b', 'c', 'd']), [], 'prm');
+            });
 
-    describe('random numbers', () => {
+            it('all combs carryover', () => {
+                test_prompts(z(['a', 'b', 'c', 'd']), [], 'prm', true);
+            });
 
-        it('all numbers used', () => {
-            const len = 300;
-            const customPrompts = [];
-            customPrompts.length = len;
-            const prompts = new Prompts([], customPrompts);
-            const used = [];
-            for(let i = 0; i < len; i++){
-                const index = prompts._chooseRandomIndex();
-                assert.notInclude(used, index);
-                used.push(index);
-            }
-        });
-
-    });
-
-
-});
-
-function test_indexing(done, customPrompts) {
-    if (!Prompts.metas.length) {
-        done();
-        return;
-    }
-    const langs = [];
-    for (const meta of Prompts.metas) {
-        if(!langs.includes(meta.lang)) langs.push(meta.lang);
-    }
-
-    let promise = Promise.resolve();
-    for (const lang of langs) {
-        promise = promise.then(() => test_indexing_lang(customPrompts, lang));
-    }
-    promise.then(done);
-}
-
-function test_indexing_lang(customPrompts, lang) {
-
-    let lines = [];
-    const packs = [];
-
-    for (const meta1 of Prompts.metas.filter(meta => meta.lang === lang)) {
-        packs.push(meta1.name);
-        lines = lines.concat(fs.readFileSync(meta1.path, 'utf-8').split('\n').filter(Boolean));
-    }
-    lines = lines.concat(customPrompts);
-
-    const prompts = new Prompts(packs, customPrompts, lang);
-    let promise = Promise.resolve();
-    for (const prompt of lines) {
-        const index = lines.indexOf(prompt);
-        promise = promise.then(() => {
-            return new Promise((resolve) => {
-                prompts._getPrompt(index).then(value => {
-                    assert.strictEqual(value, prompt.trim());
-                    resolve();
-                });
+            it('all combs pack swap', () => {
+                test_pack_swap_carryover(z(['a', 'b']), z(['c', 'd']), 'prm', 1);
+                test_pack_swap_carryover(z(['c', 'd']), z(['a', 'b']), 'prm', 1);
+                test_pack_swap_carryover(z(['a', 'd']), z(['b', 'c']), 'prm', 1);
+                test_pack_swap_carryover(z(['a', 'b', 'c']), z(['d']), 'prm', 0.5);
+                test_pack_swap_carryover(z(['a']), z(['a', 'b']), 'prm', 1);
             });
         });
+
+        describe('french', () => {
+            it('single pack', () => {
+                test_prompts(z(['pack1']), [], 'fr');
+            });
+
+            it('triple pack', () => {
+                test_prompts(z(['pack1', 'pack2', 'pack3']), [], 'fr');
+            });
+        });
+    });
+});
+
+function z(pack) {
+    const ret = {}
+    for (const id of pack) {
+        ret[id] = true;
     }
-    return promise;
+    return ret;
 }
 
-function test_pack_indexing(done) {
-    if (!Prompts.metas.length) {
-        done();
-        return;
+
+function test_prompts(packs, customPrompts, lang, carryover) {
+    let prompts = new Prompts(packs, customPrompts, lang);
+    let lines = customPrompts;
+    for (const pack of prompts.packs) {
+        if (pack.id !== 'custom') {
+            const meta = Prompts.metas.find(p => p.id === pack.id && p.lang === lang);
+            const packLines = fs.readFileSync(meta.path, 'utf-8').split(/\r?\n/);
+            lines = lines.concat(packLines);
+        }
     }
-    let promise = Promise.resolve();
-    for (const meta of Prompts.metas) {
-        const lines = fs.readFileSync(meta.path, 'utf-8').split('\n').filter(Boolean);
-        const prompts = new Prompts([meta.name], [], meta.lang);
-        lines.forEach((prompt, index) => {
-            promise = promise.then(() => {
-                return new Promise((resolve) => {
-                    prompts._getPrompt(index).then(value => {
-                        assert.strictEqual(value, prompt.trim());
-                        resolve();
-                    });
-                });
-            }).catch(assert.fail);
-        });
+    lines = lines.map(p => p.trim()).filter(Boolean);
+    lines = new Set(lines);
+
+    const used = new Set();
+    for (let i = 0; i < lines.size; i++) {
+        const p = prompts.newPrompt();
+        if (carryover) {
+            prompts = new Prompts(packs, customPrompts, lang, prompts);
+        }
+        assert.isOk(p);
+        assert.isFalse(used.has(p));
+        used.add(p);
+        assert.isTrue(lines.has(p));
     }
-    promise.then(done);
+    const p = prompts.newPrompt();
+    assert.strictEqual(p, '');
+}
+
+function test_pack_swap_carryover(packs1, packs2, lang, percent) {
+    //just to retrieve the lines
+    let prompts = new Prompts(packs2, [], lang);
+    let lines = []
+    for (const pack of prompts.packs) {
+        if (pack.id !== 'custom') {
+            const meta = Prompts.metas.find(p => p.id === pack.id && p.lang === lang);
+            const packLines = fs.readFileSync(meta.path, 'utf-8').split(/\r?\n/);
+            lines = lines.concat(packLines);
+        }
+    }
+    // no carryover start with packs1
+    prompts = new Prompts(packs1, [], lang);
+    lines = lines.map(p => p.trim()).filter(Boolean);
+    lines = new Set(lines);
+
+    // use percent of the prompts from the first pack
+    const used = new Set();
+    for(let i = 0; i < prompts.numRemaining * percent; i++){
+        let p = prompts.newPrompt();
+        used.add(p);
+        if(lines.has(p)) lines.delete(p);
+    }
+    prompts = new Prompts(packs2, [], lang, prompts);
+
+    for (let i = 0; i < lines.size; i++) {
+        const p = prompts.newPrompt();
+        assert.isOk(p);
+        assert.isFalse(used.has(p));
+        used.add(p);
+        assert.isTrue(lines.has(p));
+    }
+    const p = prompts.newPrompt();
+    assert.strictEqual(p, '');
 }

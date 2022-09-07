@@ -20,35 +20,35 @@ describe('voteSkipPrompt tests', () => {
         let result;
         let i;
         gameState.registerPromptSkippedCb(done);
-        gameState.beginNewPrompt().then(() => {
-            for(i = 0; i < Math.ceil(evenLen/2); i++){
-                result = gameState.pollVote(i.toString(), 'skipPrompt');
-                assert.isOk(result.success);
-                assert.strictEqual(result.count, i + 1);
-            }
+        gameState.beginNewPrompt();
+        for (i = 0; i < Math.ceil(evenLen / 2); i++) {
             result = gameState.pollVote(i.toString(), 'skipPrompt');
             assert.isOk(result.success);
             assert.strictEqual(result.count, i + 1);
-        });
+        }
+        result = gameState.pollVote(i.toString(), 'skipPrompt');
+        assert.isOk(result.success);
+        assert.strictEqual(result.count, i + 1);
+
     });
 
     it('VoteSkip unvote', (done) => {
         let result;
         let i;
         gameState.registerPromptSkippedCb(done);
-        gameState.beginNewPrompt().then(() => {
-            for (i = 0; i < Math.ceil(evenLen / 2); i++) {
-                result = gameState.pollVote(i.toString(), 'skipPrompt');
-                assert.isOk(result.success);
-                assert.strictEqual(result.count, i + 1);
-            }
+        gameState.beginNewPrompt();
+        for (i = 0; i < Math.ceil(evenLen / 2); i++) {
             result = gameState.pollVote(i.toString(), 'skipPrompt');
             assert.isOk(result.success);
-            assert.strictEqual(result.count, i - 1);
-            result = gameState.pollVote(i.toString(), 'skipPrompt');
-            assert.isOk(result.success);
-            assert.strictEqual(result.count, i);
-        });
+            assert.strictEqual(result.count, i + 1);
+        }
+        result = gameState.pollVote(i.toString(), 'skipPrompt');
+        assert.isOk(result.success);
+        assert.strictEqual(result.count, i - 1);
+        result = gameState.pollVote(i.toString(), 'skipPrompt');
+        assert.isOk(result.success);
+        assert.strictEqual(result.count, i);
+
     });
 
 });

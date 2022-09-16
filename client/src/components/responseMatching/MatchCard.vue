@@ -1,39 +1,20 @@
 <template>
   <div class="root">
-<!--    <h1 v-if="this.match && this.match.response" class="fs-3"> {{ match.response }} </h1>-->
-<!--    <img v-else class="fs-3" :src="typeImg" :alt="imgAlt"/>-->
-    <div class=" p-3 d-flex justify-content-center align-items-center position-relative">
-    <div class="dot-pulse"></div>
+    <h1 v-if="this.match && this.match.response" class="fs-3"> {{ match.response }} </h1>
+    <img v-else-if="this.match" class="fs-3" src="@/assets/images/sike.png" :alt="$t('sike')"/>
+    <div v-else class=" p-3 d-flex justify-content-center align-items-center position-relative">
+      <div class="dot-pulse"/>
     </div>
     <h2 class="fs-5">{{ player.name }}</h2>
   </div>
 </template>
 
 <script>
-import StrikeImg from '@/assets/images/strike.png';
-import SikeImg from '@/assets/images/sike.png';
-import PendingImg from '@/assets/images/pending.gif';
 
 export default {
   props: {
     player: Object,
     match: Object
-  },
-  computed: {
-    typeImg() {
-      if (this.match && !this.match.response) {
-        return SikeImg;
-      } else {
-        return PendingImg;
-      }
-    },
-    imgAlt() {
-      if (this.match && !this.match.response) {
-        return this.$t('sike');
-      } else {
-        return this.$t('pending');
-      }
-    }
   },
 }
 </script>

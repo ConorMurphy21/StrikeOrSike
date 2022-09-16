@@ -1,6 +1,6 @@
 <template>
   <div class="w-100 d-flex flex-column justify-content-between align-items-center gap-3 pt-1 pb-4">
-    <h1 class="font-fancy text-red display-2" v-t="'players'"/>
+    <h1 class="font-fancy text-dark display-3" v-t="'players'"/>
     <player-list/>
 
     <div class="w-100 d-flex flex-column justify-content-start align-items-center gap-3">

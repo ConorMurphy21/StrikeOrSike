@@ -1,9 +1,9 @@
 const {Prompts} = require('./prompts');
 const {stringMatch, getCorrections} = require('./matchUtils');
 const PollService = require('./pollService');
-const optionsSchema = require('./optionsSchema')
+const optionsSchema = require('./optionsSchema');
 
-const defaultOptions = () => {
+const defaultOptions = (lang) => {
     return {
         promptTimer: 35,
         autoNumRounds: true, // set numRounds to num players when game starts
@@ -12,7 +12,9 @@ const defaultOptions = () => {
         sikeRetries: 0,
         promptSkipping: true,
         minPlayers: 3,
-        maxPlayers: 10
+        maxPlayers: 10,
+        packs: Prompts.packOptions(lang),
+        customPrompts: []
     }
 }
 
@@ -21,8 +23,8 @@ const GameState = class {
         this.name = room.name;
         this.stage = 'lobby'; // enum: 'lobby', 'response', 'selection', 'matching', 'endRound'
         this.options = options;
-        if (!this.options) this.options = defaultOptions();
-        this.prompts = new Prompts(['standard'], [], room.lang, oldPrompts);
+        if(!options) this.options = defaultOptions(room.lang);
+        this.prompts = new Prompts(this.options.packs, this.options.customPrompts, room.lang, oldPrompts);
         this.room = room;
         this.round = 0;
         this.prompt = '';
@@ -34,7 +36,6 @@ const GameState = class {
         this.remainingSikeRetries = this.options.sikeRetries;
         this.corrections = {};
         this.pollService = new PollService(this);
-
 
         // keeps track of how long until the response section is over
         this.promptTimeout = null;
@@ -59,45 +60,68 @@ const GameState = class {
             )
         }
 
-        if(this.options.autoNumRounds){
+        if (this.options.autoNumRounds) {
             this.options.numRounds = this.numVoters()
         }
 
     }
 
     /*** Callback registry for events that may happen from disconnect ***/
-    registerStartNextPromptCb(cb){this._startNextPromptCb = cb;}
-    registerPromptSkippedCb(cb) {this._promptSkippedCb = cb;}
-    registerMatchingCompleteCb(cb) {this._matchingCompleteCb = cb;}
-    registerSelectionUnsuccessfulCb(cb) {this._selectionUnsuccessfulCb = cb;}
-    registerDisputeCompleteCb(cb) {this._disputeCompleteCb = cb;}
+    registerStartNextPromptCb(cb) {
+        this._startNextPromptCb = cb;
+    }
+
+    registerPromptSkippedCb(cb) {
+        this._promptSkippedCb = cb;
+    }
+
+    registerMatchingCompleteCb(cb) {
+        this._matchingCompleteCb = cb;
+    }
+
+    registerSelectionUnsuccessfulCb(cb) {
+        this._selectionUnsuccessfulCb = cb;
+    }
+
+    registerDisputeCompleteCb(cb) {
+        this._disputeCompleteCb = cb;
+    }
 
     /*** PROMPT RESPONSE state changes ***/
     beginNewPrompt() {
         // wrap in promise to avoid blocking
-        return new Promise((resolve) => {
-            // check if game is over
-            if (this.round >= this.options.numRounds) {
-                resolve(false);
-                return;
+        // check if game is over
+        if (this.round >= this.options.numRounds) {
+            return false;
+        }
+        this.prompt = this.prompts.newPrompt();
+
+        // if no more unique prompts try adding a pack
+        while(!this.prompt) {
+            let changed = false;
+            for(const pack in this.options.packs){
+                if(!this.options.packs[pack]){
+                    this.options.packs[pack] = true;
+                    changed = true;
+                    break;
+                }
             }
-            // no more unique prompts
-            this.prompts.newPrompt().then(prompt => {
-                this.prompt = prompt;
-                this.stage = 'response';
-                this.corrections = {};
+            if(!changed) return false;
+            this.prompts = new Prompts(this.options.packs, this.options.customPrompts, this.room.lang, this.prompts);
+            this.prompt = this.prompts.newPrompt();
+        }
+        this.stage = 'response';
+        this.corrections = {};
 
-                if (this.options.promptSkipping) {
-                    this.pollService.registerPoll('skipPrompt', this._promptSkippedCb, 'response');
-                }
+        if (this.options.promptSkipping) {
+            this.pollService.registerPoll('skipPrompt', this._promptSkippedCb, 'response');
+        }
 
-                for (const player of this.players) {
-                    player.responses = [];
-                    player.used = [];
-                }
-                resolve(true);
-            });
-        });
+        for (const player of this.players) {
+            player.responses = [];
+            player.used = [];
+        }
+        return true;
     }
 
     acceptPromptResponse(id, response) {
@@ -145,8 +169,8 @@ const GameState = class {
         // this.selectionTypeChoice = true;
     }
 
-    _resetSelection(resetRetries=true) {
-        if(resetRetries) {
+    _resetSelection(resetRetries = true) {
+        if (resetRetries) {
             this.remainingSikeRetries = this.options.sikeRetries;
         }
         this.pollService.clearPoll('sikeDispute');
@@ -202,7 +226,7 @@ const GameState = class {
         }
         this.initialSelector = (this.initialSelector + 1) % this.players.length;
         this.stage = 'endRound';
-        this.pollService.registerPoll('startNextRound', this._startNextPromptCb, 'endRound',null,0.75);
+        this.pollService.registerPoll('startNextRound', this._startNextPromptCb, 'endRound', null, 0.75);
         return false;
     }
 
@@ -424,12 +448,16 @@ const GameState = class {
             prompt: this.prompt,
             options: this.getOptions(),
             timer: timeleft,
-            matches: this.matches()
+            matches: this.matches(),
+            voteCounts: this.pollService.getVoteCounts()
         }
     }
 
     getOptions() {
-        return optionsSchema.validate(this.options, {stripUnknown: true}).value;
+        const result = optionsSchema.validate(this.options, {stripUnknown: true});
+        const ret = result.value;
+        delete ret.customPrompts; // too big and not worth the other clients seeing
+        return ret;
     }
 
     disconnect(id) {

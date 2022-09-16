@@ -9,11 +9,16 @@
       <template v-slot:issues>
         <a href="https://github.com/ConorMurphy21/StrikeOrSike/issues/new" v-t="'about.issues'"/>
       </template>
+      <template v-slot:gmail>
+        <a href="mailto:strikeorsike@gmail.com" v-t="'about.gmail'"/>
+      </template>
     </i18n-t>
     <i18n-t keypath="about.me" tag="p">
-
       <template v-slot:profile>
         <a href="https://www.linkedin.com/in/conormurphy21/" v-t="'about.profile'"/>
+      </template>
+      <template v-slot:coffee>
+        <a href="https://www.buymeacoffee.com/strikeorsike/" v-t="'about.coffee'"/>
       </template>
     </i18n-t>
   </div>

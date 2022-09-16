@@ -24,6 +24,15 @@
       <div class="d-flex flex-column justify-content-between align-items-center">
         <router-link class="row text-center fs-5" to="/about" v-t="'about.link'"/>
         <router-link class="row text-center link-blue fs-5" to="/how-to-play" v-t="'howToPlayLink'"/>
+        <a href="https://www.buymeacoffee.com/strikeorsike/" class="row text-center fs-4 link-dark font-fancy">
+          <div class="d-flex align-items-center justify-content-center gap-1">
+            <img :alt="$t('coffeeAlt')" src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg"
+                 height="25">
+          <span v-t="'coffeeLink'"/>
+          <img :alt="$t('coffeeAlt')" src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg"
+               height="25">
+          </div>
+        </a>
       </div>
     </form>
   </div>

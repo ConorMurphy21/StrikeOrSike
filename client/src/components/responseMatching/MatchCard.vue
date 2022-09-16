@@ -1,7 +1,10 @@
 <template>
-  <div>
-    <h1 v-if="this.match && this.match.response" class="fs-3"> {{ match.response }} </h1>
-    <img v-else class="fs-3" :src="typeImg" :alt="imgAlt"/>
+  <div class="root">
+<!--    <h1 v-if="this.match && this.match.response" class="fs-3"> {{ match.response }} </h1>-->
+<!--    <img v-else class="fs-3" :src="typeImg" :alt="imgAlt"/>-->
+    <div class=" p-3 d-flex justify-content-center align-items-center position-relative">
+    <div class="dot-pulse"></div>
+    </div>
     <h2 class="fs-5">{{ player.name }}</h2>
   </div>
 </template>
@@ -36,7 +39,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-div {
+.root {
   width: 150px;
   max-width: 150px;
 }

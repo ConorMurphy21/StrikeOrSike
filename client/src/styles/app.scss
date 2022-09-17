@@ -1,6 +1,6 @@
 @import "min-bootstrap";
 @import "variables";
-
+@import "loading-icon";
 
 @font-face {
   font-family: "Pacifico";
@@ -11,10 +11,6 @@
 @font-face {
   font-family: "Quicksand";
   src: local("Quicksand"), url(@/assets/fonts/Quicksand/Quicksand-VariableFont_wght.ttf) format("truetype");
-}
-
-@font-face {
-
 }
 
 $sizes: (
@@ -43,8 +39,8 @@ $sizes: (
 
 body {
   background-color: $burgundy;
-  //background-image: url('@/assets/images/background.svg');
-  //background-size: 100vw 100vh;
+  background-image: url('@/assets/images/background.svg');
+  background-size: auto, auto;
   font-family: $main-font;
   font-weight: 700;
   font-size: $font-size-lg;

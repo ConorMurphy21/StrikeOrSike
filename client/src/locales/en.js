@@ -36,6 +36,7 @@ export default {
     /*** LOBBY STRINGS ***/
     players: 'Players',
     startGame: 'Start',
+    coffeeBannerLink: 'If you want to support me I\'d love a tea',
 
     /*** OPTIONS STRINGS ***/
     timerDurationLabel: 'Timer',

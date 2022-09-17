@@ -15,6 +15,8 @@ export default {
     roomNamePlaceholder: 'room name',
     joinGame: 'Join Game',
     createGame: 'Create Game',
+    coffeeLink: 'Buy me a tea',
+    coffeeAlt: 'Buy me a coffee',
 
     /*** HOME ERRORS ***/
     roomTaken: 'Room name is taken',
@@ -34,6 +36,7 @@ export default {
     /*** LOBBY STRINGS ***/
     players: 'Players',
     startGame: 'Start',
+    coffeeBannerLink: 'If you want to support me I\'d love a tea',
 
     /*** OPTIONS STRINGS ***/
     timerDurationLabel: 'Timer',
@@ -178,10 +181,12 @@ export default {
         link: 'About',
         header: 'About',
         project: 'Strike or Sike has been a passion project of mine. Throughout the pandemic, game room sites, like this one, kept my friends and family entertained. Since I couldn\'t find one of my favourite games "Hit or Miss" anywhere, I decided to make it myself.',
-        openSource: 'This project is completely open source and can be found on {github}. If you want to contribute –  add a new feature, fix a bug, support a new language, or add more prompt packs –  feel free to submit a pull request. If you see a bug or want a feature (but aren’t as technically inclined) you can submit an {issues}.',
-        me: 'This project was designed by Conor Murphy. You can learn more about me and my projects {profile}. A big thank you to Jen Gu, who designed all of the art assets and helped with UI/UX design.',
+        openSource: 'This project is completely open source and can be found on {github}. If you want to contribute –  add a new feature, fix a bug, support a new language, or add more prompt packs –  feel free to submit a pull request. If you see a bug or want a feature (but aren’t as technically inclined) you can submit an {issues} or email us at {gmail}.',
+        me: 'This project was designed by Conor Murphy. You can learn more about me and my projects {profile}. A big thank you to Jen Gu, who designed all of the art assets and helped with UI/UX design. If you would like to support this website, I would love a {coffee}.',
         github: 'github',
         issues: 'issue',
+        gmail: 'strikeorsike@gmail.com',
         profile: 'here',
+        coffee: 'tea',
     }
 }

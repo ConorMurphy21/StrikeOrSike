@@ -1,7 +1,17 @@
 <template>
   <div class="main-content d-flex w-xl-75 w-100 flex-grow-1 p-1 position-relative">
-    <a class="btn btn-burgundy position-absolute top-0 end-0 m-2 bi-question py-0 px-1" target="_blank" :href="helpLink"/>
+    <a class="btn btn-burgundy position-absolute top-0 end-0 m-2 bi-question py-0 px-1" target="_blank"
+       :href="helpLink"/>
     <component :is="scene"/>
+
+    <a v-if="scene==='lobby'" href="https://www.buymeacoffee.com/strikeorsike/" target="_blank"
+       class="link-yellow position-fixed bottom-0 start-50 translate-middle fs-6 text-center">
+      <div class="d-flex align-items-center justify-content-center gap-1">
+        <span v-t="'coffeeBannerLink'"/>
+        <img :alt="$t('coffeeAlt')" src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg"
+             height="25">
+      </div>
+    </a>
   </div>
 </template>
 
@@ -41,7 +51,7 @@ export default {
       scene: state => state.game.scene,
       storeRoomName: state => state.room.roomName
     }),
-    helpLink(){
+    helpLink() {
       const tips = {
         lobby: '#overview',
         countdown: '#prompt',

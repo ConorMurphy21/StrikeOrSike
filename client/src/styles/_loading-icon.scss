@@ -1,0 +1,103 @@
+@charset "UTF-8";
+@import "variables";
+/**
+ *
+ * three-dots.css v0.1.0
+ *
+ * https://nzbin.github.io/three-dots/
+ *
+ * Copyright (c) 2018 nzbin
+ *
+ * Released under the MIT license
+ *
+ */
+$dot-colour: $red;
+
+$dot-pulse-delay: 0.25s;
+$dot-pulse-length: 2s;
+
+$dot-typing-length: 1.25s;
+
+/**
+ * ==============================================
+ * Dot Pulse
+ * ==============================================
+ */
+.dot-pulse {
+  position: relative;
+  left: -9999px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: $dot-colour;
+  color: $dot-colour;
+  box-shadow: 9999px 0 0 -5px $dot-colour;
+  animation: dotPulse $dot-pulse-length infinite linear;
+  animation-delay: $dot-pulse-delay;
+}
+
+.dot-pulse::before, .dot-pulse::after {
+  content: '';
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: $dot-colour;
+  color: $dot-colour;
+}
+
+.dot-pulse::before {
+  box-shadow: 9984px 0 0 -5px $dot-colour;
+  animation: dotPulseBefore $dot-pulse-length infinite linear;
+  animation-delay: 0s;
+}
+
+.dot-pulse::after {
+  box-shadow: 10014px 0 0 -5px $dot-colour;
+  animation: dotPulseAfter $dot-pulse-length infinite linear;
+  animation-delay: 2*$dot-pulse-delay;
+}
+
+@keyframes dotPulseBefore {
+  0% {
+    box-shadow: 9984px 0 0 -5px $dot-colour;
+  }
+  30% {
+    box-shadow: 9984px 0 0 2px $dot-colour;
+  }
+  60%,
+  100% {
+    box-shadow: 9984px 0 0 -5px $dot-colour;
+  }
+}
+
+@keyframes dotPulse {
+  0% {
+    box-shadow: 9999px 0 0 -5px $dot-colour;
+  }
+  30% {
+    box-shadow: 9999px 0 0 2px $dot-colour;
+  }
+  60%,
+  100% {
+    box-shadow: 9999px 0 0 -5px $dot-colour;
+  }
+}
+
+@keyframes dotPulseAfter {
+  0% {
+    box-shadow: 10014px 0 0 -5px $dot-colour;
+  }
+  30% {
+    box-shadow: 10014px 0 0 2px $dot-colour;
+  }
+  60%,
+  100% {
+    box-shadow: 10014px 0 0 -5px $dot-colour;
+  }
+}
+
+
+/*# sourceMappingURL=three-dots.css.map */

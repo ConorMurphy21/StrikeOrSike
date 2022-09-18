@@ -1,6 +1,7 @@
 const {getRoomById} = require('../../models/rooms');
 const {GameState} = require('../../models/gameState');
 const Joi = require('joi');
+const logger = require('../../logger/logger');
 
 /*** handler validation schemas ***/
 let setOptionsSchema = require('../../models/optionsSchema');

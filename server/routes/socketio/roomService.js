@@ -1,5 +1,6 @@
 
 const {roomService} = require('../../models/rooms');
+const logger = require('../../logger/logger');
 // 1 minute
 const TIMEOUT = 60 * 1000;
 // 1 second
@@ -16,6 +17,7 @@ module.exports = (io) => {
 const cleanup = (io) => {
     const inactiveRoomNames = roomService(MAX_INACTIVITY);
     for (const name of inactiveRoomNames) {
+        logger.info('(roomService) Room closed due to inactivity');
         // send a kick event to all the players in that room
         io.to(name).emit('kickPlayer', {error: 'inactiveRoom'});
         io.in(name).socketsLeave(name);

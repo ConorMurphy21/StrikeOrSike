@@ -28,9 +28,9 @@
           <div class="d-flex align-items-center justify-content-center gap-1">
             <img :alt="$t('coffeeAlt')" src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg"
                  height="25">
-          <span v-t="'coffeeLink'"/>
-          <img :alt="$t('coffeeAlt')" src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg"
-               height="25">
+            <span v-t="'coffeeLink'"/>
+            <img :alt="$t('coffeeAlt')" src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg"
+                 height="25">
           </div>
         </a>
       </div>
@@ -44,7 +44,7 @@ import ClickMp3 from '@/assets/audio/click2.mp3'
 
 const click = new Audio(ClickMp3);
 
-const {mapMutations} = createNamespacedHelpers('room');
+const {mapMutations, mapState} = createNamespacedHelpers('room');
 
 export default {
   data() {
@@ -53,33 +53,31 @@ export default {
         name: '',
         roomName: this.$route.query.name ?? ''
       },
-      error: this.$route.query.error
     }
   },
   mounted() {
+    if (this.$route.query.error) {
+      this.setError(this.$route.query.error);
+    }
     this.$refs.username.focus();
     this.$store.reset();
+  },
+  computed: {
+    ...mapState([
+      'error'
+    ])
   },
   methods: {
     ...mapMutations([
       'setName',
-      'setRoomName'
+      'setRoomName',
+      'setError',
     ]),
     onSubmit(joinGame) {
-      click.play()
+      click.play();
       const event = joinGame ? 'joinRoom' : 'createRoom';
+      this.setName(this.form.name);
       this.$socket.emit(event, this.form.name, this.form.roomName, navigator.languages);
-    }
-  },
-  sockets: {
-    joinRoom: function (data) {
-      if (data.success) {
-        this.setName(this.form.name);
-        this.setRoomName(data.roomName);
-        this.$router.push({name: 'game', params: {roomName: data.roomName}});
-      } else {
-        this.error = data.error;
-      }
     }
   }
 }
@@ -105,9 +103,11 @@ input:focus {
 .btn {
   height: 60px;
 }
+
 a {
   text-decoration: none;
 }
+
 a:hover {
   text-decoration: 2px underline;
 }

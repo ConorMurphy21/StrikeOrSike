@@ -1,6 +1,6 @@
 const {joinRoom, disconnectPlayer, createRoom, getRoomById, getRoomByName} = require('../../models/rooms');
 const Joi = require('joi');
-//const logger = require('../../logger/logger')
+const logger = require('../../logger/logger');
 
 /*** handler validation schemas ***/
 const roomSchema = Joi.object({
@@ -35,8 +35,10 @@ module.exports = (io, socket) => {
         const result = createRoom(socket.id, name, roomName, langs);
         // store name in session variable
         if (result.error) {
+            logger.info(`(roomHandler) Room creation failed due to ${result.error}`);
             socket.emit('joinRoom', {error: result.error});
         } else {
+            logger.info('(roomHandler) Room created');
             const room = result.room;
             socket.join(room.name);
             socket.emit('joinRoom', {success: true, roomName: room.name});
@@ -54,8 +56,10 @@ module.exports = (io, socket) => {
 
         const result = joinRoom(socket.id, name, roomName);
         if (result.error) {
+            logger.info(`(roomHandler) Player failed to join room due to ${result.error}`);
             socket.emit('joinRoom', {error: result.error});
         } else {
+            logger.info('(roomHandler) Player joined room');
             const room = result.room;
             socket.join(room.name);
             socket.emit('joinRoom', {success: true, roomName: room.name});
@@ -75,6 +79,7 @@ module.exports = (io, socket) => {
     });
 
     socket.on('disconnect', () => {
+        logger.info('(roomHandler) Player joined room');
         disconnect(socket);
     });
 };
@@ -91,6 +96,8 @@ function disconnect(socket) {
         // could be modified
         const leader = room.players.find(p => p.leader);
         socket.to(room.name).emit('updatePlayers', {modifies: [player, leader], deletes: []});
+    } else {
+        logger.info('(roomHandlers) Room closed');
     }
 }
 

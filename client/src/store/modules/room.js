@@ -1,23 +1,32 @@
 // noinspection JSUnusedGlobalSymbols
+import router from '@/router';
 
 const state = () => ({
     players: [],
     name: '',
-    roomName: ''
+    roomName: '',
+    error: '',
+    route: 'home',
 })
 
 const getters = {
     self: state => {
-        return state.players.find(p => p.name === state.name)
+        return state.players.find(p => p.name === state.name);
     }
 }
 
 const mutations = {
-    setName(state, data){
-        state.name = data
+    setName(state, data) {
+        state.name = data;
     },
-    setRoomName(state, data){
-        state.roomName = data
+    setRoomName(state, data) {
+        state.roomName = data;
+    },
+    setError(state, data) {
+        state.error = data;
+    },
+    setRoute(state, data){
+        state.route = data;
     }
 }
 
@@ -35,9 +44,32 @@ const socketMutations = {
     }
 }
 
+const socketActions = {
+    async SOCKET_joinRoom({state, commit, rootGetters, rootState}, data) {
+        if (data.success) {
+            commit('setRoomName', data.roomName);
+            commit('setError', '');
+            await router.push({name: 'game', params: {roomName: data.roomName}});
+        } else {
+            if (state.route !== 'home') {
+                await router.push({name: 'home', params: {error: data.error}});
+            } else {
+                commit('setError', data.error);
+            }
+        }
+    },
+    async SOCKET_connect({state}) {
+        // automatically try to rejoin last room if a reconnect event occurs
+        if(state.name && state.roomName) {
+            this.$socket.io.emit('joinRoom', state.name, state.roomName);
+        }
+    }
+}
+
 export default {
     namespaced: true,
     state,
     getters,
-    mutations: {...mutations, ...socketMutations}
+    mutations: {...mutations, ...socketMutations},
+    actions: socketActions
 }

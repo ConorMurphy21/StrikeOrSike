@@ -35,10 +35,10 @@ module.exports = (io, socket) => {
         const result = createRoom(socket.id, name, roomName, langs);
         // store name in session variable
         if (result.error) {
-            logger.info(`(roomHandler) Room creation failed due to ${result.error}`);
+            logger.info(`(roomHandlers) Room creation failed due to ${result.error}`);
             socket.emit('joinRoom', {error: result.error});
         } else {
-            logger.info('(roomHandler) Room created');
+            logger.info('(roomHandlers) Room created');
             const room = result.room;
             socket.join(room.name);
             socket.emit('joinRoom', {success: true, roomName: room.name});
@@ -56,10 +56,10 @@ module.exports = (io, socket) => {
 
         const result = joinRoom(socket.id, name, roomName);
         if (result.error) {
-            logger.info(`(roomHandler) Player failed to join room due to ${result.error}`);
+            logger.info(`(roomHandlers) Player failed to join room due to ${result.error}`);
             socket.emit('joinRoom', {error: result.error});
         } else {
-            logger.info('(roomHandler) Player joined room');
+            logger.info('(roomHandlers) Player joined room');
             const room = result.room;
             socket.join(room.name);
             socket.emit('joinRoom', {success: true, roomName: room.name});
@@ -79,7 +79,7 @@ module.exports = (io, socket) => {
     });
 
     socket.on('disconnect', () => {
-        logger.info('(roomHandler) Player joined room');
+        logger.info('(roomHandlers) Player disconnected');
         disconnect(socket);
     });
 };
@@ -96,8 +96,6 @@ function disconnect(socket) {
         // could be modified
         const leader = room.players.find(p => p.leader);
         socket.to(room.name).emit('updatePlayers', {modifies: [player, leader], deletes: []});
-    } else {
-        logger.info('(roomHandlers) Room closed');
     }
 }
 

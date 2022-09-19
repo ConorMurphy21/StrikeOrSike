@@ -9,12 +9,17 @@ let setOptionsSchema = require('../../models/optionsSchema');
 module.exports = (io, socket) => {
     /*** GAME STATE ENDPOINTS ***/
     socket.on('setOptions', (options, callback) => {
-        const result = setOptionsSchema.validate(options, {stripUnknown: true});
-        if (result.error) return;
-        options = result.value;
-
         const room = roomIfLeader(socket.id);
-        if (!room) return;
+        if (!room) {
+            logger.error('(gameHandlers) Set options attempted with no room');
+            return;
+        }
+        const result = setOptionsSchema.validate(options, {stripUnknown: true});
+        if (result.error) {
+            logger.error('(gameHandlers) Invalid options schema used');
+            return;
+        }
+        options = result.value;
         room.state.options = {...room.state.options, ...options};
         io.to(room.name).emit('setOptions', room.state.getOptions());
         if (callback) callback({success: true});
@@ -22,8 +27,15 @@ module.exports = (io, socket) => {
 
     socket.on('startGame', () => {
         const room = roomIfLeader(socket.id);
-        if (!room) return;
-        if (room.players.length < room.state.options.minPlayers) return;
+        if (!room) {
+            logger.error('(gameHandlers) Game start attempted with no room');
+            return;
+        }
+        if (room.players.length < room.state.options.minPlayers) {
+            logger.error('(gameHandlers) Game start attempted with too few players');
+            return;
+        }
+        logger.info('(gameHandlers) Game started');
         room.state = new GameState(room, room.state.options, room.state.prompts);
         registerCallbacks(io, room);
         beginPrompt(io, room);
@@ -75,7 +87,6 @@ module.exports = (io, socket) => {
 
     socket.on('selectMatch', (match) => {
         if (Joi.string().max(60).allow('').validate(match).error) return;
-
         const room = getRoomById(socket.id);
         if (!room) return;
         const state = room.state;
@@ -134,6 +145,7 @@ function beginPrompt(io, room) {
             // time to respond          + countdown + tolerance
         }, timeToWait);
     } else {
+        logger.info('(gameHandlers) game over');
         io.to(room.name).emit('gameOver', state.gameOver());
     }
 }

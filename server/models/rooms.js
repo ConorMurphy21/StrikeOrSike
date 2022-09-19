@@ -152,11 +152,8 @@ const roomService = (maxInactivity) => {
     return inactiveRooms;
 }
 
-const printState = () => {
-    console.log('------------------------------------------')
-    console.log('playerRoom: ', JSON.stringify(playerRoom, null, 2));
-    //console.log('rooms: ', JSON.stringify(rooms, null, 2));
-    console.log('------------------------------------------')
+const getCount = () => {
+    return {rooms: Object.keys(rooms).length, players: Object.keys(playerRoom).length};
 }
 
-module.exports = {createRoom, joinRoom, getRoomById, getRoomByName, disconnectPlayer, roomService, printState}
+module.exports = {createRoom, joinRoom, getRoomById, getRoomByName, disconnectPlayer, roomService, getCount}

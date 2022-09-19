@@ -9,23 +9,23 @@ const logger = new winston.createLogger({
         })
     ]
 });
-if (process.env.NODE_ENV !== 'production') {
-    const cloudwatchConfig = {
-        logGroupName: 'application/logs',
-        logStreamName: 'application/logs-production',
-        awsRegion: 'us-west-2',
-        messageFormatter: ({
-                               level,
-                               message,
-                               additionalInfo
-                           }) => {
-            if(additionalInfo) {
-                return `[${level}] : ${message} \nAdditional Info: ${JSON.stringify(additionalInfo)}}`
-            } else {
-                `[${level}] : ${message}`
-            }
-        }
-    }
-    logger.add(new WinstonCloudWatch(cloudwatchConfig))
-}
+// if (process.env.NODE_ENV === 'production') {
+//     const cloudwatchConfig = {
+//         logGroupName: 'application/logs',
+//         logStreamName: 'application/logs-production',
+//         awsRegion: 'us-west-2',
+//         messageFormatter: ({
+//                                level,
+//                                message,
+//                                additionalInfo
+//                            }) => {
+//             if(additionalInfo) {
+//                 return `[${level}] : ${message} \nAdditional Info: ${JSON.stringify(additionalInfo)}}`
+//             } else {
+//                 `[${level}] : ${message}`
+//             }
+//         }
+//     }
+//     logger.add(new WinstonCloudWatch(cloudwatchConfig))
+// }
 module.exports = logger;

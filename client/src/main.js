@@ -17,17 +17,20 @@ app.use(store)
 app.use(router)
 app.use(i18n)
 
+const socket = new VueSocketIO({
+    debug,
+    connection: debug ? 'http://localhost:5000' : location.origin, //options object is Optional
+    options: {withCredentials: false},
+    vuex: {
+        store,
+        actionPrefix: 'SOCKET_',
+        mutationPrefix: 'SOCKET_'
+    }
+});
+
+store.$socket = socket;
 
 router.isReady().then(() => {
-    app.use(new VueSocketIO({
-        debug,
-        connection: debug ? 'http://localhost:5000' : location.origin, //options object is Optional
-        options: {withCredentials: false},
-        vuex: {
-            store,
-            actionPrefix: 'SOCKET_',
-            mutationPrefix: 'SOCKET_'
-        }
-    }))
+    app.use(socket);
     app.mount('#app')
 })

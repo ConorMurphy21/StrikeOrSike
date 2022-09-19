@@ -42,6 +42,8 @@ io.on('connection', (socket) => registerHandlers(io, socket));
 const roomService = require('../routes/socketio/roomService');
 roomService(io);
 
+const logService = require('../logger/logService');
+logService();
 
 /**
  * Listen on provided port, on all network interfaces.

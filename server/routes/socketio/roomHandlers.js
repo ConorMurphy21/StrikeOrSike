@@ -1,5 +1,6 @@
 const {joinRoom, disconnectPlayer, createRoom, getRoomById, getRoomByName} = require('../../models/rooms');
 const Joi = require('joi');
+const logger = require('../../logger/logger');
 
 /*** handler validation schemas ***/
 const roomSchema = Joi.object({
@@ -34,8 +35,10 @@ module.exports = (io, socket) => {
         const result = createRoom(socket.id, name, roomName, langs);
         // store name in session variable
         if (result.error) {
+            logger.info(`(roomHandlers) Room creation failed due to ${result.error}`);
             socket.emit('joinRoom', {error: result.error});
         } else {
+            logger.info('(roomHandlers) Room created');
             const room = result.room;
             socket.join(room.name);
             socket.emit('joinRoom', {success: true, roomName: room.name});
@@ -53,8 +56,10 @@ module.exports = (io, socket) => {
 
         const result = joinRoom(socket.id, name, roomName);
         if (result.error) {
+            logger.info(`(roomHandlers) Player failed to join room due to ${result.error}`);
             socket.emit('joinRoom', {error: result.error});
         } else {
+            logger.info('(roomHandlers) Player joined room');
             const room = result.room;
             socket.join(room.name);
             socket.emit('joinRoom', {success: true, roomName: room.name});
@@ -74,6 +79,7 @@ module.exports = (io, socket) => {
     });
 
     socket.on('disconnect', () => {
+        logger.info('(roomHandlers) Player disconnected');
         disconnect(socket);
     });
 };

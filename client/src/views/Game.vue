@@ -4,7 +4,7 @@
        :href="helpLink"/>
     <component :is="scene"/>
 
-    <a v-if="scene==='lobby'" href="https://www.buymeacoffee.com/strikeorsike/" target="_blank"
+    <a v-if="scene==='lobby'" href="https://www.buymeacoffee.com/ConorMurphy/" target="_blank"
        class="link-yellow position-fixed bottom-0 start-50 translate-middle fs-6 text-center">
       <div class="d-flex align-items-center justify-content-center gap-1">
         <span v-t="'coffeeBannerLink'"/>

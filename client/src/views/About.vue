@@ -18,7 +18,7 @@
         <a href="https://www.linkedin.com/in/conormurphy21/" v-t="'about.profile'"/>
       </template>
       <template v-slot:coffee>
-        <a href="https://www.buymeacoffee.com/strikeorsike/" v-t="'about.coffee'"/>
+        <a href="https://www.buymeacoffee.com/ConorMurphy/" v-t="'about.coffee'"/>
       </template>
     </i18n-t>
   </div>

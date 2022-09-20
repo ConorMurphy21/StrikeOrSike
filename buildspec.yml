@@ -8,10 +8,10 @@ phases:
       - npm install -g npm@latest
       - echo Installing server node modules...
       - cd server
-      - npm install --production
+      - npm install --omit=dev
       - echo Installing client node modules...
       - cd ../client
-      - npm install --production
+      - npm install
       - cd ..
   build:
     commands:

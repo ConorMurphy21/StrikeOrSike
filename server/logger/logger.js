@@ -17,14 +17,8 @@ if (process.env.NODE_ENV === 'production') {
         messageFormatter: ({
                                level,
                                message,
-                               additionalInfo
-                           }) => {
-            if(additionalInfo) {
-                return `[${level}] : ${message} \nAdditional Info: ${JSON.stringify(additionalInfo)}}`
-            } else {
-                `[${level}] : ${message}`
-            }
-        }
+                           }) => `[${level}] : ${message}`
+
     }
     logger.add(new WinstonCloudWatch(cloudwatchConfig))
 }

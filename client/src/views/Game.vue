@@ -4,14 +4,16 @@
        :href="helpLink"/>
     <component :is="scene"/>
 
-    <a v-if="scene==='lobby'" href="https://www.buymeacoffee.com/ConorMurphy/" target="_blank"
-       class="link-yellow position-fixed bottom-0 start-50 translate-middle fs-6 text-center">
-      <div class="d-flex align-items-center justify-content-center gap-1">
-        <span v-t="'coffeeBannerLink'"/>
-        <img :alt="$t('coffeeAlt')" src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg"
-             height="25">
-      </div>
-    </a>
+    <portal to="banner">
+      <a v-if="scene==='lobby'" href="https://www.buymeacoffee.com/ConorMurphy/" target="_blank"
+         class="link-yellow fs-6 text-center mb-2">
+        <div class="d-flex align-items-center justify-content-center gap-1">
+          <span v-t="'coffeeBannerLink'"/>
+          <img :alt="$t('coffeeAlt')" src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg"
+               height="25">
+        </div>
+      </a>
+    </portal>
   </div>
 </template>
 

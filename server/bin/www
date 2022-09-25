@@ -7,10 +7,16 @@ const app = require('../app');
 const debug = require('debug')('strikeorsike:server');
 const http = require('http');
 
+const logger = require('../logger/logger');
+process.on('uncaughtException', err => {
+    logger.error(`(www) crash report: ${err.stack}`);
+    process.exit(1);
+});
+
 /**
  * Get port from environment and store in Express.
  */
-const port = normalizePort( process.env.PORT || '5000');
+const port = normalizePort(process.env.PORT || '5000');
 app.set('port', port);
 
 /**

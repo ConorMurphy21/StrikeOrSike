@@ -42,66 +42,108 @@ module.exports = (io, socket) => {
     });
 
     socket.on('promptResponse', (response) => {
-        if (Joi.string().max(60).validate(response).error) return;
+        if (Joi.string().max(60).validate(response).error) {
+            logger.error('(gameHandlers) Prompt Response too large')
+            return;
+        }
         const room = getRoomById(socket.id);
-        if (!room) return;
+        if (!room) {
+            logger.error('(gameHandlers) PromptResponse attempted with no room');
+            return;
+        }
         const state = room.state;
         const result = state.acceptPromptResponse(socket.id, response);
         if (result.success) {
             socket.emit('promptResponse', result.response);
+        } else {
+            logger.error(`(gameHandlers) PromptResponse failed due to ${result.error}`);
         }
     });
 
     // true to vote to skip, false to unvote to skip
     socket.on('pollVote', (pollName) => {
-        if (Joi.string().validate(pollName).error) return;
+        if (Joi.string().validate(pollName).error) {
+            logger.error('(gameHandlers) PollVote invalid format');
+            return;
+        }
         const room = getRoomById(socket.id);
-        if (!room) return;
+        if (!room) {
+            logger.error('(gameHandlers) PollVote attempted with no room');
+            return;
+        }
         const state = room.state;
         const result = state.pollVote(socket.id, pollName);
         if (result.success) {
             io.to(room.name).emit('setVoteCount', {pollName, count: result.count, next: result.next});
+        } else {
+            logger.error(`(gameHandlers) pollVote failed due to ${result.error}`);
         }
     });
 
     socket.on('selectSelectionType', (isStrike) => {
         const room = getRoomById(socket.id);
-        if (!room) return;
+        if (!room) {
+            logger.error('(gameHandlers) selectSelectionType attempted with no room');
+            return;
+        }
         const state = room.state;
         const result = state.acceptSelectionType(socket.id, isStrike);
         if (result.success) {
             io.to(room.name).emit('selectionTypeChosen', state.selectionType);
+        } else {
+            logger.error(`(gameHandlers) selectSelectionType failed due to ${result.error}`);
         }
     });
 
     socket.on('selectResponse', (response) => {
-        if (Joi.string().max(60).validate(response).error) return;
+        if (Joi.string().max(60).validate(response).error) {
+            logger.error('(gameHandlers) selectResponse attempted with invalid match');
+            return;
+        }
         const room = getRoomById(socket.id);
-        if (!room) return;
+        if (!room) {
+            logger.error('(gameHandlers) selectResponse attempted with no room');
+            return;
+        }
         const state = room.state;
         const result = state.acceptResponseSelection(socket.id, response);
         if (result.success) {
             beginMatching(io, room);
+        } else {
+            logger.error(`(gameHandlers) selectResponse failed due to ${result.error}`);
         }
     });
 
     socket.on('selectMatch', (match) => {
-        if (Joi.string().max(60).allow('').validate(match).error) return;
+        if (Joi.string().max(60).allow('').validate(match).error) {
+            logger.error('(gameHandlers) selectMatch attempted with invalid match');
+            return;
+        }
         const room = getRoomById(socket.id);
-        if (!room) return;
+        if (!room) {
+            logger.error('(gameHandlers) selectMatch attempted with no room');
+            return;
+        }
         const state = room.state;
         const result = state.acceptMatch(socket.id, match);
         if (result.success) {
             io.to(room.name).emit('matchesFound', [{player: socket.id, response: match}]);
+        } else {
+            logger.error(`(gameHandlers) selectMatch failed due to ${result.error}`);
         }
     });
 
     socket.on('selectionComplete', () => {
         const room = getRoomById(socket.id);
-        if (!room) return;
+        if (!room) {
+            logger.error('(gameHandlers) selectionComplete attempted with no room');
+            return;
+        }
         const state = room.state;
         if (state.matchingComplete() && state.isSelector(socket.id)) {
             continueSelection(io, room);
+        } else {
+            logger.error('(gameHandlers) selectionComplete attempted at wrong stage');
         }
     });
 }

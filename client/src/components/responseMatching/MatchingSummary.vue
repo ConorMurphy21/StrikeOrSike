@@ -83,7 +83,10 @@ export default {
       }
     },
     match(player) {
-      return this.matches.find(match => player.id === match.player.id);
+      const ret = this.matches.find(match => player.id === match.player.id);
+      console.log('returning match:');
+      console.dir(ret);
+      return ret;
     }
   }
 }

@@ -121,10 +121,12 @@ const disconnectPlayer = id => {
     if(!activePlayer) {
         clearTimeout(room.state.promptTimeout);
         delete rooms[room.name];
-    } else if(player.leader) {
+    } else {
         room.state.disconnect(id);
-        player.leader = false;
-        activePlayer.leader = true;
+        if(player.leader) {
+            player.leader = false;
+            activePlayer.leader = true;
+        }
     }
 }
 

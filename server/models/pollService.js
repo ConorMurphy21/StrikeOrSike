@@ -39,7 +39,11 @@ module.exports = class pollService {
     getVoteCounts(){
         const ret = {}
         for(const poll in this.polls) {
-            ret[poll] = {count: this.countVotes(poll), next: this.nextComplete(poll)};
+            if(this.polls[poll]) {
+                ret[poll] = {count: this.countVotes(poll), next: this.nextComplete(poll)};
+            } else {
+                ret[poll] = {count: 0, next: 0};
+            }
         }
         return ret;
     }
@@ -73,6 +77,17 @@ module.exports = class pollService {
     checkComplete(){
         for(const pollName in this.polls) {
             if(this.polls[pollName]) this.cbIfComplete(pollName);
+        }
+    }
+
+    disconnect(id){
+        for(const poll in this.polls) {
+            if(this.polls[poll]) {
+                const index = this.polls[poll].inFavor.indexOf(id);
+                if(index >= 0) {
+                    this.polls[poll].inFavor.splice(index, 1);
+                }
+            }
         }
     }
 

@@ -251,6 +251,7 @@ const GameState = class {
         const selector = this.players[this.selector];
         const response = selector.selected;
         if (player.id === selector.id) return;
+        if(player.matchingComplete) return;
         if (player.responses.length <= player.used.length) {
             player.matchingComplete = true;
             // only add to score if they were active when round ends
@@ -374,6 +375,14 @@ const GameState = class {
         return {error: 'badRequest'};
     }
 
+    getMatch(id) {
+        const matcher = this.players.find(player => player.id === id);
+        if(matcher.matchingComplete) {
+            return matcher.match;
+        }
+        return undefined;
+    }
+
     matches() {
         const matches = [];
         for (const player of this.players) {
@@ -461,14 +470,18 @@ const GameState = class {
     }
 
     disconnect(id) {
-        if (this.stage === 'selection') {
-            if (this.isSelector(id)) {
-                if (this._selectionUnsuccessfulCb) this._selectionUnsuccessfulCb();
-            }
-        }
+        // disconnect was not hooked up properly
+        // now that it is, this seems too harsh
+        // so this temporarily removed at the expense of allowing an unprogressable state
+        // if (this.stage === 'selection') {
+        //     if (this.isSelector(id)) {
+        //         if (this._selectionUnsuccessfulCb) this._selectionUnsuccessfulCb();
+        //     }
+        // }
         if (this.stage === 'matching') {
             this._cbIfMatchingComplete();
         }
+        this.pollService.disconnect(id);
         this.pollService.checkComplete();
     }
 };

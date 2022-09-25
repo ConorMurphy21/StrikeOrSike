@@ -71,8 +71,12 @@ module.exports = (io, socket) => {
             socket.emit('setOptions', room.state.getOptions());
             if (room.state.stage !== 'lobby') {
                 socket.emit('midgameConnect', room.state.midgameConnect(socket.id, result.oldId));
-                if(!result.oldId && room.state.stage === 'matching') {
-                    socket.to(room.name).emit('matchesFound', [{player: socket.id, response: ''}])
+                if(room.state.stage === 'matching') {
+                    const match = room.state.getMatch(socket.id);
+                    if(match !== undefined) {
+                        socket.to(room.name).emit('matchesFound', [{player: socket.id, response: match}]);
+                    }
+
                 }
             }
         }

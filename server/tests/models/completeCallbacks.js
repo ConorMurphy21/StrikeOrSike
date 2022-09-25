@@ -44,7 +44,7 @@ describe('Complete callback tests', () => {
             gameState.selectionType = 'strike';
         });
 
-        it('Selector Disconnects while selecting', (done) => {
+        it.skip('Selector Disconnects while selecting', (done) => {
             gameState.registerSelectionUnsuccessfulCb(done);
             gameState.disconnect(selectorId);
         });

@@ -1,7 +1,7 @@
 <template>
   <div class="root">
-    <h1 v-if="this.match && this.match.response" class="fs-3"> {{ match.response }} </h1>
-    <img v-else-if="this.match" class="fs-3" src="@/assets/images/sike.png" :alt="$t('sike')"/>
+    <h1 v-if="match && match.response" class="fs-3"> {{ match.response }} </h1>
+    <img v-else-if="match" class="fs-3" src="@/assets/images/sike.png" :alt="$t('sike')"/>
     <div v-else class=" p-3 d-flex justify-content-center align-items-center position-relative">
       <div class="dot-pulse"/>
     </div>

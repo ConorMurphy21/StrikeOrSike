@@ -85,7 +85,8 @@ const room = createNamespacedHelpers('room')
 export default {
   data() {
     return {
-      customSelected: 0
+      customSelected: 0,
+      tooltips: []
     }
   },
   props: {
@@ -107,9 +108,15 @@ export default {
       firstForm.focus();
     });
 
-    //inti tooltip
-    Array.from(document.querySelectorAll('input[data-bs-toggle="tooltip"]'))
-        .forEach(tooltipNode => new Tooltip(tooltipNode, {delay: {show: 500, hide: 50}}));
+    //init tooltip
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    this.tooltips = [...tooltipTriggerList].map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl,
+        {delay: {show: 500, hide: 50}}));
+  },
+  beforeUnmount() {
+    for(const tooltip of this.tooltips){
+      tooltip.hide();
+    }
   },
   methods: {
     arraysEqual(a, b) {

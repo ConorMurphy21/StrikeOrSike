@@ -1,5 +1,11 @@
 // 4. Include any optional Bootstrap components as you like
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/maps";
+@import "~bootstrap/scss/mixins";
 @import "~bootstrap/scss/utilities";
+@import "~bootstrap/scss/helpers";
+@import "~bootstrap/scss/utilities/api";
 
 // Layout & components
 @import "~bootstrap/scss/root";
@@ -32,12 +38,6 @@
 //@import "~bootstrap/scss/carousel";
 //@import "~bootstrap/scss/spinners";
 //@import "~bootstrap/scss/offcanvas";
-
-// Helpers
-@import "~bootstrap/scss/helpers";
-
-// Utilities
-@import "~bootstrap/scss/utilities/api";
 
 // Icons
 @import "~bootstrap-icons/font/bootstrap-icons";

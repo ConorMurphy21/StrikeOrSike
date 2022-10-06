@@ -18,15 +18,26 @@ import {Tooltip} from 'bootstrap';
 const {mapGetters, mapState} = createNamespacedHelpers('game');
 
 export default {
+  data() {
+    return {
+      tooltips: []
+    }
+  },
   props: {
     disabled: Boolean,
     response: String,
     placement: String
   },
   mounted() {
-    //inti tooltip
-    Array.from(document.querySelectorAll('button[data-bs-toggle="tooltip"]'))
-        .forEach(tooltipNode => new Tooltip(tooltipNode, {delay: 500}))
+    //init tooltip
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    this.tooltips = [...tooltipTriggerList].map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl,
+        {delay: {show: 500, hide: 50}}));
+  },
+  beforeUnmount() {
+    for(const tooltip of this.tooltips){
+      tooltip.hide();
+    }
   },
   computed: {
     ...mapGetters([

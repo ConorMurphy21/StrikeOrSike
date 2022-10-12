@@ -50,6 +50,7 @@ export default {
     packLabels: {
         standard: 'Basic',
         canadian: 'Canadian',
+        whimsical: 'Whimsical',
         custom: 'Custom'
     },
 

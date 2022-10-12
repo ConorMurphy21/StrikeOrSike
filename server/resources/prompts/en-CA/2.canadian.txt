@@ -225,7 +225,8 @@ Things used in the garden
 Ice cream flavours
 Things people do to look better
 Items that are plugged into a computer
-East coast Canadian cities
+Eastern Canadian cities
+Western Canadian cities
 Things seen at a parade
 Items in a student's backpack
 Things people do at night before falling asleep
@@ -244,3 +245,4 @@ Things that are often in a basket
 French things
 Clothing manufacturers
 Categories of books at a book store
+Winter activities

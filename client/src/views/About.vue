@@ -10,7 +10,7 @@
         <a href="https://github.com/ConorMurphy21/StrikeOrSike/issues/new" v-t="'about.issues'"/>
       </template>
       <template v-slot:gmail>
-        <a href="mailto:strikeorsike@gmail.com" v-t="'about.gmail'"/>
+        <a href="mailto:strikeorsike@gmail.com">strikeorsike@gmail.com</a>
       </template>
     </i18n-t>
     <i18n-t keypath="about.me" tag="p">

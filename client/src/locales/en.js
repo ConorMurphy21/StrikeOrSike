@@ -186,7 +186,6 @@ export default {
         me: 'This project was designed by Conor Murphy. You can learn more about me and my projects {profile}. A big thank you to Jen Gu, who designed all of the art assets and helped with UI/UX design. If you have enjoyed playing this game and want to support the website, you can buy us a {coffee}.',
         github: 'GitHub',
         issues: 'issue',
-        gmail: 'strikeorsike@gmail.com',
         profile: 'here',
         coffee: 'tea',
     }

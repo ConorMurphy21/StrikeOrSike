@@ -37,6 +37,10 @@ $sizes: (
   width: 93%;
 }
 
+.ratio-1x1 {
+  aspect-ratio: 1 / 1;
+}
+
 body {
   background-color: $burgundy;
   background-image: url('@/assets/images/background.svg');

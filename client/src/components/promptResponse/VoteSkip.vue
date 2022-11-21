@@ -1,9 +1,9 @@
 <template>
-  <button class="btn btn-orange text-white position-relative"
+  <button class="btn btn-orange ratio-1x1 text-white rounded-pill position-relative"
           :class="{'btn-blue': !skipVoteNext}"
           data-bs-toggle="tooltip" data-bs-placement="left" :title="$t('tooltip.voteSkip')"
           @click="sendVote">
-    <i class="bi-skip-end display-6"/>
+    <i class="bi-skip-end-fill display-6 p-0"/>
     <span v-if="skipVoteCount" class="position-absolute top-0 start-100 translate-middle badge bg-burgundy">
       {{ $n(skipVoteCount) }}
     </span>

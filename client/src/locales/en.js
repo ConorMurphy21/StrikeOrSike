@@ -51,6 +51,7 @@ export default {
         standard: 'Basic',
         canadian: 'Canadian',
         whimsical: 'Whimsical',
+        personal: 'Personal',
         custom: 'Custom'
     },
 

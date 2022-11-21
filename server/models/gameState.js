@@ -109,6 +109,7 @@ const GameState = class {
             if(!changed) return false;
             this.prompts = new Prompts(this.options.packs, this.options.customPrompts, this.room.lang, this.prompts);
             this.prompt = this.prompts.newPrompt();
+            this.prompt = this._fillPlayerName(this.prompt);
         }
         this.stage = 'response';
         this.corrections = {};
@@ -122,6 +123,16 @@ const GameState = class {
             player.used = [];
         }
         return true;
+    }
+
+    _fillPlayerName(prompt){
+        if(prompt.includes('!n')){
+            const activePlayers = this.players.filter(p => this.isActive(p.id));
+            const chosen = activePlayers[Math.floor(Math.random() * activePlayers.length)];
+            return prompt.replace('!n', chosen.name);
+        }
+        // if there's nothing to replace
+        return prompt;
     }
 
     acceptPromptResponse(id, response) {

@@ -94,7 +94,7 @@ const GameState = class {
         if (this.round >= this.options.numRounds) {
             return false;
         }
-        this.prompt = this.prompts.newPrompt();
+        this.prompt = this.prompts.newPrompt(this._activeRoomPlayers());
 
         // if no more unique prompts try adding a pack
         while(!this.prompt) {
@@ -108,8 +108,7 @@ const GameState = class {
             }
             if(!changed) return false;
             this.prompts = new Prompts(this.options.packs, this.options.customPrompts, this.room.lang, this.prompts);
-            this.prompt = this.prompts.newPrompt();
-            this.prompt = this._fillPlayerName(this.prompt);
+            this.prompt = this.prompts.newPrompt(this._activeRoomPlayers());
         }
         this.stage = 'response';
         this.corrections = {};
@@ -123,16 +122,6 @@ const GameState = class {
             player.used = [];
         }
         return true;
-    }
-
-    _fillPlayerName(prompt){
-        if(prompt.includes('!n')){
-            const activePlayers = this.players.filter(p => this.isActive(p.id));
-            const chosen = activePlayers[Math.floor(Math.random() * activePlayers.length)];
-            return prompt.replace('!n', chosen.name);
-        }
-        // if there's nothing to replace
-        return prompt;
     }
 
     acceptPromptResponse(id, response) {
@@ -416,6 +405,10 @@ const GameState = class {
     isSelector(id) {
         const selector = this.players[this.selector].id;
         return selector === id;
+    }
+
+    _activeRoomPlayers(){
+        return this.room.players.filter(player => player.active);
     }
 
     isActive(id) {

@@ -166,7 +166,7 @@ const Prompts = class {
         }
     }
 
-    newPrompt() {
+    newPrompt(players) {
         if (this.numRemaining <= 0) {
             return '';
         }
@@ -177,7 +177,16 @@ const Prompts = class {
             retVal = this._chooseRegular();
         }
         this.numRemaining--;
-        return retVal;
+        return this._fillPlayerName(players, retVal);
+    }
+
+    _fillPlayerName(players, prompt){
+        if(prompt.includes('!n')){
+            const chosen = players[Math.floor(Math.random() * players.length)];
+            return prompt.replace('!n', chosen.name);
+        }
+        // if there's nothing to replace
+        return prompt;
     }
 
     // non-deterministic but with enough prompts should be better

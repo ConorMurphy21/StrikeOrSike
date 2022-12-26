@@ -134,7 +134,7 @@ export default {
     onNumChange(event, label, options) {
       const inputValue = parseInt(event.currentTarget.value);
       const actualValue = this.options[label];
-      if (Math.abs(inputValue - actualValue) === 1) {
+      if (Math.abs(inputValue - actualValue) !== 0) {
         this.validateNum(event, label, options);
       }
     },

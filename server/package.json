@@ -8,8 +8,7 @@
   },
   "scripts": {
     "start": "node bin/www",
-    "test": "mocha tests --recursive --exit",
-    "formatPrompts": "node scripts/formatPrompts"
+    "test": "mocha tests --recursive --exit"
   },
   "dependencies": {
     "aws-sdk": "^2.1218.0",

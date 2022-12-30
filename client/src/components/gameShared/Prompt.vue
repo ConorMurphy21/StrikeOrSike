@@ -1,8 +1,8 @@
 <template>
-  <h1 v-if="containsBlank" class="display-4">
+  <h1 v-if="containsBlank" class="display-5">
     {{left}} <span class="blank"/> {{right}}
   </h1>
-  <h1 v-else class="display-4">{{prompt}}</h1>
+  <h1 v-else class="display-5">{{prompt}}</h1>
 </template>
 <script>
 export default {
@@ -17,7 +17,7 @@ export default {
       return this.prompt.substring(0, this.prompt.indexOf('_'));
     },
     right(){
-      return this.prompt.substr(this.prompt.lastIndexOf('_')+1);
+      return this.prompt.substring(this.prompt.lastIndexOf('_')+1);
     }
   }
 }
@@ -26,6 +26,8 @@ export default {
 h1 {
   font-weight: 650;
   text-align: center;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 .blank {
   width: 3.2em;

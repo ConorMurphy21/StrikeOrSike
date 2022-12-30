@@ -1,5 +1,5 @@
 <template>
-  <div class="w-100 d-flex flex-column justify-content-start align-items-center gap-3">
+  <div class="w-100 d-flex flex-column justify-content-start align-items-center gap-3 py-3 px-4">
     <h1 class="mt-2 text-center display-1 text-red font-fancy" v-t="'playerScores'"/>
 
     <div class="list-group w-75 w-xl-50">

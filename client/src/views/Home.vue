@@ -1,5 +1,5 @@
 <template>
-  <div class="main-content w-93 w-lg-50 px-3 px-lg-5 py-3 py-lg-4">
+  <div class="main-content w-93 w-lg-50 px-3 px-lg-5 py-3 py-lg-4" :class="{'shake': receivedError}">
     <form class="form" @submit.prevent="onSubmit(true)">
 
       <h4 class="mb-1 text-center text-red fs-4" v-if="error" v-t="error"/>
@@ -64,7 +64,8 @@ export default {
   },
   computed: {
     ...mapState([
-      'error'
+      'error',
+      'receivedError'
     ])
   },
   methods: {

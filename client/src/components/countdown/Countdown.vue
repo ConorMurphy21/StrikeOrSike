@@ -1,6 +1,6 @@
 <template>
-  <div class="w-100 d-flex justify-content-center">
-    <h1>{{ $n(timer) }}</h1>
+  <div class="w-100 d-flex justify-content-center bounce">
+    <h1 class="flip">{{ $n(timer) }}</h1>
   </div>
 </template>
 

@@ -6,6 +6,7 @@ const state = () => ({
     name: '',
     roomName: '',
     error: '',
+    receivedError: false,
     route: 'home',
 })
 
@@ -25,9 +26,12 @@ const mutations = {
     setError(state, data) {
         state.error = data;
     },
+    setReceivedError(state, data) {
+        state.receivedError = data;
+    },
     setRoute(state, data){
         state.route = data;
-    }
+    },
 }
 
 const socketMutations = {
@@ -55,6 +59,10 @@ const socketActions = {
                 await router.push({name: 'home', params: {error: data.error}});
             } else {
                 commit('setError', data.error);
+                commit('setReceivedError', true);
+                setTimeout(() => {
+                    commit('setReceivedError', false);
+                }, 1000);
             }
         }
     },

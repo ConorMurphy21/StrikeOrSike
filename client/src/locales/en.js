@@ -51,6 +51,8 @@ export default {
         standard: 'Basic',
         canadian: 'Canadian',
         whimsical: 'Whimsical',
+        personal: 'Personal',
+        videogames: 'Video Games',
         custom: 'Custom'
     },
 
@@ -145,7 +147,7 @@ export default {
                 {
                     key: 'custom',
                     header: 'Custom Prompts',
-                    body: 'Write out all of the prompts that make you and your friends click. Paste your custom prompts in the text area as a newline separated list. If you have a list of prompts that you think other players might like feel free to share it with me!',
+                    body: 'Write out all of the prompts that make you and your friends click. Paste your custom prompts in the text area as a newline separated list. Use !n to randomly insert a players name into your prompt and make it personal e.g. "!n\'s hobbies". If you have a list of prompts that you think other players might like feel free to share it with me!',
                     children: []
                 },
                 {

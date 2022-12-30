@@ -7,7 +7,8 @@
          @click="sendVote">
       {{ $t('startNextRound') }}
 
-      <span v-if="startNextRoundCount" class="position-absolute top-0 start-100 translate-middle badge bg-burgundy">
+      <span v-if="startNextRoundCount"
+            class="position-absolute top-0 start-100 translate-middle rounded-pill badge bg-burgundy fs-6">
     {{ $n(startNextRoundCount) }}</span>
     </button>
   </div>

@@ -4,7 +4,8 @@
           data-bs-toggle="tooltip" :data-bs-placement="placement" :title="$t('tooltip.dispute', {response})"
           @click="sendVote">
     <i class="bi-hand-thumbs-down fs-5"/>
-    <span v-if="sikeDisputeCount" class="position-absolute top-0 start-100 translate-middle badge bg-burgundy">
+    <span v-if="sikeDisputeCount"
+          class="position-absolute top-0 start-100 translate-middle rounded-pill badge bg-burgundy">
       {{ $n(sikeDisputeCount) }}
     </span>
   </button>

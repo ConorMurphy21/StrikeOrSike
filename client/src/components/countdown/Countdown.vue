@@ -1,6 +1,6 @@
 <template>
-  <div class="w-100 d-flex justify-content-center">
-    <h1>{{ $n(timer) }}</h1>
+  <div class="w-100 d-flex justify-content-center bounce">
+    <h1 class="flip">{{ $n(timer) }}</h1>
   </div>
 </template>
 
@@ -33,4 +33,29 @@ h1 {
   margin: auto;
 }
 
+.bounce {
+  animation: bounce 1s cubic-bezier(.33,.47,.28,.93) infinite;
+}
+
+.flip {
+  animation: flip 1s cubic-bezier(.81,.06,.89,.25) infinite;
+}
+
+@keyframes flip {
+  0%{
+    transform: rotate(0deg);
+  }
+  100%{
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bounce {
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.5);
+  }
+}
 </style>

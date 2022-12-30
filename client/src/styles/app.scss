@@ -1,6 +1,24 @@
 @import "min-bootstrap";
 @import "variables";
 @import "loading-icon";
+@import "animations";
+
+$utilities: map-merge(
+                $utilities,
+                (
+                        "translate-40": (
+                                property: transform,
+                                class: translate-40,
+                                values: (
+                                        null: translate(-65%, -35%),
+                                        x: translateX(-65%),
+                                        y: translateY(-35%),
+                                )
+                        ),
+
+                )
+);
+@import "bootstrap/scss/utilities/api";
 
 @font-face {
   font-family: "Pacifico";
@@ -37,6 +55,12 @@ $sizes: (
   width: 93%;
 }
 
+.ratio-1x1 {
+  aspect-ratio: 1 / 1;
+}
+
+
+
 body {
   background-color: $burgundy;
   background-image: url('@/assets/images/background.svg');
@@ -65,3 +89,4 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font: inherit;
 }
+

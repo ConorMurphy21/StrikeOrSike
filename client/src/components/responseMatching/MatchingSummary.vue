@@ -1,5 +1,5 @@
 <template>
-  <div class="w-100 d-flex flex-column align-items-center justify-content-between gap-2 p-3">
+  <div class="w-100 d-flex flex-column align-items-center justify-content-between gap-2 py-3 px-4">
 
     <div class="d-flex flex-column align-items-center justify-content-start">
       <prompt :prompt="prompt"/>
@@ -10,7 +10,7 @@
         {{ $t('scoreMessage', {player: selector.name, score: $n(roundPoints)}) }}
       </h3>
       <span class="d-flex flex-row align-items-center justify-content-center gap-2">
-        <h2 class="fs-2 fw-bolder text-red my-auto">{{ selectedResponse }}</h2>
+        <span class="fs-2 fw-bolder text-red my-auto">{{ selectedResponse }}</span>
         <dispute-icon :disabled="isSelector" v-if="sikeDisputeCount"
                       :response="selectedResponse" :placement="'right'"/>
       </span>

@@ -2,7 +2,7 @@ Pokémon
 Mario cart power ups
 Valorant map callouts
 Valorant ability names
-Valorant tactics
+Valorant strategies and tactics
 MOBAs
 Iconic protagonists
 Iconic bosses and villains
@@ -27,10 +27,13 @@ Common player stats
 Common speed running games
 Stereotypical gaming snacks
 Game studios
-Video game player controlled devices
+Gaming peripherals
+Gaming peripheral brands
 CS:GO items
 Among us map callouts
 Words used to describe a player who is playing poorly
 Common graphics settings
 Common character classes
-Game currency names
+In-game currencies
+E-sport franchises
+Minecraft mobs

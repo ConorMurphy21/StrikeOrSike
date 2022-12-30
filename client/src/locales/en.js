@@ -52,6 +52,7 @@ export default {
         canadian: 'Canadian',
         whimsical: 'Whimsical',
         personal: 'Personal',
+        videogames: 'Video Games',
         custom: 'Custom'
     },
 

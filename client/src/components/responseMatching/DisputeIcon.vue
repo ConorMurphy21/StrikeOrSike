@@ -37,7 +37,7 @@ export default {
     //init tooltip
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     this.tooltips = [...tooltipTriggerList].map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl,
-        {delay: {show: 500, hide: 50}}));
+        {delay: {show: 500, hide: 50}, trigger: 'hover'}));
   },
   beforeUnmount() {
     for(const tooltip of this.tooltips){

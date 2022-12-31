@@ -4,16 +4,17 @@
           data-bs-toggle="tooltip" data-bs-placement="left" :title="$t('tooltip.voteSkip')"
           @click="sendVote">
     <i class="bi-skip-end-fill display-6 p-0"/>
-    <span v-if="skipVoteCount"
-          class="position-absolute top-0 start-100 translate-40 rounded-pill badge bg-burgundy fs-6">
+
+    <notification-count v-if='skipVoteCount' class="position-absolute top-0 start-100 translate-40 fs-6">
       {{ $n(skipVoteCount) }}
-    </span>
+    </notification-count>
   </button>
 </template>
 
 <script>
 import {createNamespacedHelpers} from 'vuex';
 import ClickMp3 from '@/assets/audio/click2.mp3';
+import NotificationCount from '@/components/gameShared/NotificationCount.vue';
 import {Tooltip} from 'bootstrap';
 
 const {mapGetters} = createNamespacedHelpers('game');
@@ -23,6 +24,9 @@ export default {
     return {
       tooltips: []
     }
+  },
+  components: {
+    NotificationCount
   },
   computed: {
     ...mapGetters([

@@ -1,12 +1,15 @@
 <template>
   <div class="w-100 d-flex flex-column justify-content-between align-items-center py-3 px-4">
     <prompt :prompt="prompt"/>
-    <response-list :selectable="false" :height="43"/>
+    <response-list :selectable="false" :height="38"/>
+    <div class="w-100 d-flex flex-column justify-content-evenly align-items-center mb-2">
+      <span class="text-orange">You missed Test: 5</span>
+      <span class="text-blue">Your best Sike was Test: 5</span>
+    </div>
     <button class="btn btn-orange w-75 w-lg-50 w-xl-25 fs-4 mb-3 position-relative"
             :class="{'btn-blue': !startNextRoundNext}"
          @click="sendVote">
       {{ $t('startNextRound') }}
-
       <span v-if="startNextRoundCount"
             class="position-absolute top-0 start-100 translate-middle rounded-pill badge bg-burgundy fs-6">
     {{ $n(startNextRoundCount) }}</span>

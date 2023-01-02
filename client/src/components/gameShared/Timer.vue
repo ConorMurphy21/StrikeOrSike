@@ -3,8 +3,8 @@
     <h1 v-if='time' class="display-5" :class="{'bounce bold-black': time > 10, 'bounce-fast bolder-red': time <= 10}">
       {{ $n(time) }}
     </h1>
-    <h1 v-else class="display-5 bolder-red bounce">
-      <i class="bi-hourglass-bottom"/>
+    <h1 v-else class="display-5 bolder-red shake-rotate">
+      <i class="bi-alarm"/>
     </h1>
   </div>
 </template>
@@ -79,5 +79,53 @@ h1 {
   }
 }
 
+.flip {
+  animation: flip 0.8s cubic-bezier(.23,1,.32,1);
+}
+
+.shake-rotate {
+  animation: shake-rotate 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes flip {
+  0%{
+    transform: rotate(0deg);
+  }
+  100%{
+    transform: rotate(180deg);
+  }
+}
+
+@keyframes flip {
+  0%{
+    transform: rotate(0deg);
+  }
+  100%{
+    transform: rotate(180deg);
+  }
+}
+
+@keyframes shake-rotate {
+  10%,
+  90% {
+    transform: rotate(-8deg);
+  }
+
+  20%,
+  80% {
+    transform: rotate(8deg);
+  }
+
+  30%,
+  50%,
+  70% {
+    transform: rotate(-16deg);
+  }
+
+  40%,
+  60% {
+    transform: rotate(16deg);
+  }
+}
 
 </style>

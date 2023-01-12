@@ -5,8 +5,8 @@
     <component :is="scene"/>
 
     <portal to="banner">
-      <a v-if="scene==='lobby'" href="https://www.buymeacoffee.com/ConorMurphy/" target="_blank"
-         class="link-yellow fs-6 text-center mb-2">
+      <a v-if="scene==='lobby' || scene==='endGame'" href="https://www.buymeacoffee.com/ConorMurphy/" target="_blank"
+         class="link-yellow fs-6 text-center">
         <div class="d-flex align-items-center justify-content-center gap-1">
           <span v-t="'coffeeBannerLink'"/>
           <img :alt="$t('coffeeAlt')" src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg"

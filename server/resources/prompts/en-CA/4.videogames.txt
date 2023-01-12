@@ -6,7 +6,7 @@ Valorant strategies and tactics
 MOBAs
 Iconic protagonists
 Iconic bosses and villains
-MMOs
+Massive Multiplayer Online (MMOs)
 Rogue-like games
 2D platformers
 3D platformers
@@ -17,8 +17,8 @@ Puzzle games
 Party games
 Strategy games
 Horror games
-FPSs
-RPGs
+First-person shooters
+Role playing games
 Web games
 Phone games
 classic retro games
@@ -37,3 +37,5 @@ Common character classes
 In-game currencies
 E-sport franchises
 Minecraft mobs
+Report worthy offences
+League of legends characters

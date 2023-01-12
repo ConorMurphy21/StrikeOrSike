@@ -7,9 +7,9 @@
          @click="sendVote">
       {{ $t('startNextRound') }}
 
-      <span v-if="startNextRoundCount"
-            class="position-absolute top-0 start-100 translate-middle rounded-pill badge bg-burgundy fs-6">
-    {{ $n(startNextRoundCount) }}</span>
+      <notification-count v-if='startNextRoundCount' class="position-absolute top-0 start-100 translate-middle fs-6">
+        {{ $n(startNextRoundCount) }}
+      </notification-count>
     </button>
   </div>
 </template>
@@ -18,6 +18,7 @@
 import {createNamespacedHelpers} from 'vuex';
 import Prompt from '@/components/gameShared/Prompt.vue';
 import ResponseList from '@/components/gameShared/ResponseList.vue';
+import NotificationCount from '@/components/gameShared/NotificationCount.vue';
 import ClickMp3 from '@/assets/audio/click2.mp3';
 
 const {mapState, mapGetters} = createNamespacedHelpers('game');
@@ -25,7 +26,8 @@ const {mapState, mapGetters} = createNamespacedHelpers('game');
 export default {
   components: {
     Prompt,
-    ResponseList
+    ResponseList,
+    NotificationCount
   },
   computed: {
     ...mapState([
@@ -45,6 +47,11 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
+.notif {
+  min-width: 24px;
+  height: 24px;
+}
 
 </style>
+

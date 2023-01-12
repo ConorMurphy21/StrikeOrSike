@@ -4,15 +4,16 @@
           data-bs-toggle="tooltip" :data-bs-placement="placement" :title="$t('tooltip.dispute', {response})"
           @click="sendVote">
     <i class="bi-hand-thumbs-down fs-5"/>
-    <span v-if="sikeDisputeCount"
-          class="position-absolute top-0 start-100 translate-middle rounded-pill badge bg-burgundy">
+
+    <notification-count :width="21" v-if="sikeDisputeCount" class="position-absolute top-0 start-100 translate-middle">
       {{ $n(sikeDisputeCount) }}
-    </span>
+    </notification-count>
   </button>
 </template>
 
 <script>
 import {createNamespacedHelpers} from 'vuex';
+import NotificationCount from '@/components/gameShared/NotificationCount.vue';
 import ClickMp3 from '@/assets/audio/click2.mp3';
 import {Tooltip} from 'bootstrap';
 
@@ -24,6 +25,9 @@ export default {
       tooltips: []
     }
   },
+  components: {
+    NotificationCount
+  },
   props: {
     disabled: Boolean,
     response: String,
@@ -33,7 +37,7 @@ export default {
     //init tooltip
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     this.tooltips = [...tooltipTriggerList].map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl,
-        {delay: {show: 500, hide: 50}}));
+        {delay: {show: 500, hide: 50}, trigger: 'hover'}));
   },
   beforeUnmount() {
     for(const tooltip of this.tooltips){

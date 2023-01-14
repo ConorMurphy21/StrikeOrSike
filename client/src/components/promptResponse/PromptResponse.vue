@@ -1,6 +1,6 @@
 <template>
   <div class="w-100 d-flex flex-column justify-content-between align-items-center py-3 px-4">
-    <prompt :prompt="prompt"/>
+    <prompt :prompt="prompt" :skippable="true"/>
     <response-list :selectable="false" :height="35"/>
     <div class="d-flex flex-column align-items-center w-100 gap-2">
       <input ref="resInput" type="text" maxlength="60" class="form-control w-75" autocomplete="off" enterkeyhint="send" v-model="response"
@@ -8,7 +8,7 @@
       <div class="d-flex align-items-center justify-content-between w-100">
         <vote-skip class="invisible" v-if="promptSkipping"/>
         <timer :time="timer"></timer>
-        <vote-skip v-if="promptSkipping"/>
+        <vote-skip class="invisible" v-if="promptSkipping"/>
       </div>
     </div>
   </div>

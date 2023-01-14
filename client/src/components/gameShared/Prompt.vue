@@ -1,11 +1,8 @@
 <template>
-  <div class="d-flex align-items-center justify-content-center gap-3">
     <h1 v-if="containsBlank" class="display-5">
       {{ left }} <span class="blank"/> {{ right }} <vote-skip v-if="skippable"/>
     </h1>
-    <h1 v-else class="display-5">{{ prompt }} <vote-skip v-if="skippable"/> </h1>
-
-  </div>
+    <h1 v-else class="display-5">{{ prompt }} <vote-skip class="mb-2" v-if="skippable"/> </h1>
 </template>
 <script>
 import VoteSkip from '@/components/promptResponse/VoteSkip.vue';

@@ -3,7 +3,7 @@
           :class="{'btn-blue': !skipVoteNext}"
           data-bs-toggle="tooltip" data-bs-placement="left" :title="$t('tooltip.voteSkip')"
           @click="sendVote">
-    <i class="bi-hand-thumbs-down fs-3"/>
+    <i class="bi-hand-thumbs-down fs-3 p-0 lh-sm"/>
 
     <notification-count :width="22" v-if='skipVoteCount' class="position-absolute top-0 start-100 translate-middle fs-6">
       {{ $n(skipVoteCount) }}

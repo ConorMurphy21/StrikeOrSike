@@ -33,11 +33,11 @@ export default {
       for (const [rank, score] of this.scores.entries()) {
         if (score.points < lastScore) {
           result.push(rank + 1);
+          lastRank = rank + 1;
         } else {
           result.push(lastRank);
         }
         lastScore = score.points;
-        lastRank = rank + 1;
       }
       return result;
     }

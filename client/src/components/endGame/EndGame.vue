@@ -28,12 +28,16 @@ export default {
     ]),
     rank() {
       let result = [];
-      let rank = 1;
-      let last = -1;
-      for (let score of this.scores) {
-        if (score.points < last) rank++;
-        result.push(rank);
-        last = score.points;
+      let lastScore = -1;
+      let lastRank = 1;
+      for (const [rank, score] of this.scores.entries()) {
+        if (score.points < lastScore) {
+          result.push(rank + 1);
+          lastRank = rank + 1;
+        } else {
+          result.push(lastRank);
+        }
+        lastScore = score.points;
       }
       return result;
     }

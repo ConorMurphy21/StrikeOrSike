@@ -5,9 +5,11 @@
       <div class="list-group w-100 h-100">
         <button v-for="(response, index) in responses"
                 class='list-group-item text-start fw-bold'
-                :class="{'list-group-item-action': selectable && !used(response),
-                    'pe-none': !selectable || used(response),
+                :class="{'list-group-item-action': responseSelectable(response),
+                    'pe-none': !responseSelectable(response),
                     'active': selected === index,
+                    'list-group-item-orange': response === strikedResponse, // will override used
+                    'list-group-item-blue': response === sikedResponse,
                     'list-group-item-red': used(response)}"
                 @click="select(index, response)">
           {{ response }}
@@ -33,7 +35,7 @@ const {mapState} = createNamespacedHelpers('game');
 export default {
   data() {
     return {
-      selected: -1
+      selected: -1,
     }
   },
   props: {
@@ -47,11 +49,10 @@ export default {
   computed: {
     ...mapState([
       'responses',
-      'usedResponses'
+      'usedResponses',
+      'strikedResponse',
+      'sikedResponse',
     ]),
-    responsesLength() {
-      return this.responses.length;
-    },
     cssProps() {
       return {
         '--max-height': this.height + 'vh'
@@ -77,17 +78,15 @@ export default {
     confirm() {
       this.select(this.selected, this.responses[this.selected]);
     },
+    responseSelectable(response) {
+      return !this.usedResponses.includes(response) && this.selectable;
+    },
     used(response) {
-      return this.usedResponses.includes(response);
-    }
+      return response !== this.strikedResponse &&
+          response !== this.sikedResponse &&
+          this.usedResponses.includes(response);
+    },
   },
-  watch: {
-    responsesLength() {
-      setTimeout(() => {
-        this.$refs.box.scrollTop = this.$refs.box.scrollHeight;
-      }, 50);
-    }
-  }
 }
 </script>
 

@@ -7,12 +7,15 @@ const state = () => ({
     // for cancelling the timer
     timeoutId: null,
     responses: [],
+    usedResponses: [],
+    strikedResponse: '',
+    sikedResponse: '',
     selectionTypeChoice: false,
     selectionType: '',
     selector: {},
     selectedResponse: '',
     matches: [],
-    usedResponses: [],
+
     scores: [],
     // optional state
     voteCounts: {
@@ -20,18 +23,7 @@ const state = () => ({
         startNextRound: {count: 0, next: false},
         sikeDispute: {count: 0, next: false},
     },
-    // options:
-    options: {
-        promptTimer: 35,
-        numRounds: 1,
-        promptSkipping: false,
-        packs: {
-            basic: true,
-            canadian: false,
-            custom: false,
-        }
-    },
-
+    options: {},
     firstSelection: true,
 });
 
@@ -114,6 +106,8 @@ const mutations = {
     clearResponses(state) {
         state.responses = [];
         state.usedResponses = [];
+        state.sikedResponse = '';
+        state.strikedResponse = '';
     },
     setResponses(state, data) {
         state.responses = data;
@@ -135,6 +129,14 @@ const mutations = {
     },
     clearMatches(state) {
         state.matches = [];
+    },
+    useSelectorResponse(state, data) {
+        state.usedResponses.push(data);
+        if(state.selectionType === 'strike'){
+            state.strikedResponse = data;
+        } else {
+            state.sikedResponse = data;
+        }
     },
     useResponse(state, data) {
         state.usedResponses.push(data);
@@ -195,11 +197,11 @@ const socketActions = {
         }
         commit('setScene', 'selection');
     },
-    async SOCKET_beginMatching({state, commit, rootGetters}, response) {
+    async SOCKET_beginMatching({state, commit, getters}, response) {
         commit('setFirstSelection', false);
         commit('setSelectedResponse', response);
-        if (state.selector.id === rootGetters['room/self'].id) {
-            commit('useResponse', response);
+        if (getters.isSelector) {
+            commit('useSelectorResponse', response);
             commit('setScene', 'matchingSummary');
         } else {
             commit('setScene', 'activeMatching');

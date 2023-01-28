@@ -1,14 +1,14 @@
 <template>
-  <button class="btn btn-orange ratio-1x1 text-white rounded-pill position-relative shadow"
+  <a class="btn btn-sm btn-orange text-white ratio-1x1 position-relative d-inline-flex justify-content-center align-items-center"
           :class="{'btn-blue': !skipVoteNext}"
           data-bs-toggle="tooltip" data-bs-placement="left" :title="$t('tooltip.voteSkip')"
           @click="sendVote">
-    <i class="bi-skip-end-fill display-6 p-0"/>
+    <i class="bi-hand-thumbs-down fs-3 p-0 lh-sm"/>
 
-    <notification-count v-if='skipVoteCount' class="position-absolute top-0 start-100 translate-40 fs-6">
+    <notification-count :width="22" v-if='skipVoteCount' class="position-absolute top-0 start-100 translate-middle fs-6">
       {{ $n(skipVoteCount) }}
     </notification-count>
-  </button>
+  </a>
 </template>
 
 <script>

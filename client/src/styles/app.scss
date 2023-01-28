@@ -45,7 +45,7 @@ $sizes: (
         width: $length !important;
       }
       .h-#{$breakpoint}-#{$size} {
-        width: $length !important;
+        height: $length !important;
       }
     }
   }

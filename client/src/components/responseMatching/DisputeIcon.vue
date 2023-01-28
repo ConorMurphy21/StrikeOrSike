@@ -1,14 +1,15 @@
 <template>
-  <button class="btn btn-orange text-white position-relative" :class="{'btn-blue': !sikeDisputeNext}"
+  <a class="btn btn-sm btn-orange text-white ratio-1x1 position-relative d-inline-flex justify-content-center align-items-center"
+     :class="{'btn-blue': !sikeDisputeNext}"
           :disabled="disabled"
           data-bs-toggle="tooltip" :data-bs-placement="placement" :title="$t('tooltip.dispute', {response})"
           @click="sendVote">
-    <i class="bi-hand-thumbs-down fs-5"/>
+    <i class="bi-hand-thumbs-down fs-5 lh-sm"/>
 
     <notification-count :width="21" v-if="sikeDisputeCount" class="position-absolute top-0 start-100 translate-middle">
       {{ $n(sikeDisputeCount) }}
     </notification-count>
-  </button>
+  </a>
 </template>
 
 <script>

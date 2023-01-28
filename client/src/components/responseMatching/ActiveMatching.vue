@@ -7,7 +7,7 @@
       </template>
       <template v-slot:response>
         <span class="responseMessage fs-4">{{ selectedResponse }}</span>
-        <dispute-icon v-if="sikeDispute && selectionType === 'sike'" class="ms-2 me-1 float"
+        <dispute-icon v-if="sikeDispute && selectionType === 'sike'" class="ms-2 me-1"
                       :response="selectedResponse" :placement="'top'"/>
       </template>
       <template v-slot:type>
@@ -31,6 +31,7 @@ import Prompt from '@/components/gameShared/Prompt.vue';
 import ClickMp3 from '@/assets/audio/click2.mp3';
 import AlertMp3 from '@/assets/audio/alert.mp3';
 import DisputeIcon from '@/components/responseMatching/DisputeIcon.vue';
+import VoteSkip from '@/components/promptResponse/VoteSkip.vue';
 
 const click = new Audio(ClickMp3);
 const alert = new Audio(AlertMp3);
@@ -46,7 +47,8 @@ export default {
   components: {
     DisputeIcon,
     ResponseList,
-    Prompt
+    Prompt,
+    VoteSkip
   },
   mounted() {
     alert.play();

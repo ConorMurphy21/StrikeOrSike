@@ -342,6 +342,10 @@ const GameState = class {
         if (!matcher) return {error: 'spectator'};
         if (this.stage !== 'matching' || selector.id === id) return {error: 'badRequest'};
 
+        // if already matched remove match from used list
+        if(matcher.matchingComplete)
+            matcher.used = matcher.used.filter(response => response !== matcher.match);
+
         // Sike
         if (!match) {
             matcher.matchingComplete = true;
@@ -358,6 +362,9 @@ const GameState = class {
             return {success: true};
         }
 
+        // if matching was unsuccessful insert back into list
+        if(matcher.match)
+            matcher.used.push(matcher.match);
         return {error: 'badRequest'};
     }
 

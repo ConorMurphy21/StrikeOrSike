@@ -199,7 +199,7 @@ const socketActions = {
         // before we clear matches, make sure we used our match, this can happen if a next selection happens between
         // unmatch and match
         const selfMatch = state.matches.find(match => match.player.id === rootGetters['room/self'].id);
-        if(!state.usedResponses.includes(selfMatch.response))
+        if(selfMatch && !state.usedResponses.includes(selfMatch.response))
             commit('useResponse', selfMatch.response)
 
         commit('clearMatches');

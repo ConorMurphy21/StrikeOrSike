@@ -254,10 +254,6 @@ const GameState = class {
         if(player.matchingComplete) return;
         if (player.responses.length <= player.used.length) {
             player.matchingComplete = true;
-            // only add to score if they were active when round ends
-            if (this.selectionType === 'sike' && this.isActive(player.id)) {
-                this.players[this.selector].points++;
-            }
         } else {
             const match = player.responses.map(r => {
                 return {value: r, chance: this._match_chance(r, response)};
@@ -267,9 +263,6 @@ const GameState = class {
                 player.used.push(match.value);
                 player.match = match.value;
                 player.matchingComplete = true;
-                if (this.selectionType === 'strike') {
-                    this.players[this.selector].points++;
-                }
             }
         }
     }
@@ -347,15 +340,11 @@ const GameState = class {
         const selector = this.players[this.selector];
         const matcher = this.players.find(player => player.id === id);
         if (!matcher) return {error: 'spectator'};
-        if (matcher.matchingComplete) return {error: 'duplicateRequest'};
         if (this.stage !== 'matching' || selector.id === id) return {error: 'badRequest'};
 
         // Sike
         if (!match) {
             matcher.matchingComplete = true;
-            if (this.selectionType === 'sike') {
-                selector.points++;
-            }
             this._cbIfMatchingComplete();
             return {success: true};
         }
@@ -365,9 +354,6 @@ const GameState = class {
             matcher.match = match;
             matcher.matchingComplete = true;
             matcher.used.push(match);
-            if (this.selectionType === 'strike') {
-                selector.points++;
-            }
             this._cbIfMatchingComplete();
             return {success: true};
         }
@@ -391,6 +377,17 @@ const GameState = class {
             }
         }
         return matches;
+    }
+
+    selectionComplete() {
+        // opportunity to do end round stats, for now just count the points
+        const selector = this.players[this.selector];
+        for(const matcher of this.players){
+            if(matcher.id === selector.id) continue;
+            if(!matcher.match && !this.isActive(matcher.id)) continue;
+            if(this.selectionType === 'sike' && !matcher.match) selector.points++;
+            if(this.selectionType === 'strike' && matcher.match) selector.points++;
+        }
     }
 
     /*** MATCHING state changes ***/

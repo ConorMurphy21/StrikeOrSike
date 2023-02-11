@@ -4,8 +4,7 @@ version: 0.2
 phases:
   install:
     commands:
-      - n 14.18.3
-      - npm install -g npm@latest
+      - npm --version
       - echo Installing server node modules...
       - cd server
       - npm install --omit=dev
@@ -21,9 +20,8 @@ phases:
       - npm run build
       - cd ..
       - echo Make file structure match static Express.js app
-      - mv server/* ./
       - mkdir public
-      - mv client/dist/* public/
+      - mv client/dist/* server/public/
   post_build:
     commands:
       - echo Build completed on `date`
@@ -32,7 +30,7 @@ artifacts:
   type: zip
   files:
     - '**/*'
+  base-directory: server
   exclude-paths:
-    - scripts
-    - tests
-    - node_modules
+    - tests/*
+    - node_modules/*

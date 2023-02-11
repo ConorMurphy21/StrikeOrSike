@@ -2,8 +2,8 @@
   "name": "strikeorsike-client",
   "version": "1.0.0",
   "engines": {
-    "node": ">=14.18.3",
-    "npm": ">= 8.3.1"
+    "node": ">=16.19.0",
+    "npm": ">=8.3.1"
   },
   "scripts": {
     "dev": "vite",

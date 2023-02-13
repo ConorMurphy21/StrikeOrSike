@@ -22,7 +22,7 @@ phases:
       - npm run build
       - cd ..
       - echo Make file structure match static Express.js app
-      - mv .ebextensions/* server
+      - mv .ebextensions server
       - mkdir server/public
       - mv client/dist/* server/public/
   post_build:

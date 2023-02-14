@@ -34,5 +34,4 @@ artifacts:
     - '**/*'
   base-directory: server
   exclude-paths:
-    - tests/*
-    - node_modules/*
+    - tests

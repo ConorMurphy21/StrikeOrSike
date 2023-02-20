@@ -5,6 +5,7 @@ import i18n from './locales';
 import router from './router';
 import VueSocketIO from 'vue-3-socket.io';
 import Portal from 'vue3-portal';
+import vClickOutside from 'click-outside-vue3'
 
 // only import bootstrap components that are used
 import {Collapse} from 'bootstrap';
@@ -18,6 +19,7 @@ app.use(store);
 app.use(router);
 app.use(i18n);
 app.use(Portal);
+app.use(vClickOutside);
 
 const socket = new VueSocketIO({
     debug,

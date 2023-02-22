@@ -227,7 +227,8 @@ const socketActions = {
         for(const match of matches) {
             commit('addMatch', {
                 player: rootState.room.players.find(player => player.id === match.player),
-                response: match.response
+                response: match.response,
+                exact: match.exact
             });
             if (match.player === rootGetters['room/self'].id) {
                 commit('useResponse', match.response);

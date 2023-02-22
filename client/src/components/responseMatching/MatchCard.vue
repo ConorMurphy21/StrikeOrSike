@@ -39,8 +39,11 @@ export default {
     ...room.mapState([
       'name'
     ]),
+    ...game.mapState([
+        'selectedResponse'
+    ]),
     showUnmatch() {
-      return this.player.name === this.name;
+      return this.player.name === this.name && !this.match.exact;
     }
   },
   methods: {

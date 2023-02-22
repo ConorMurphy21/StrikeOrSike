@@ -55,6 +55,7 @@ const GameState = class {
                     responses: [],
                     selected: '',
                     match: '',
+                    exactMatch: false,
                     matchingComplete: false, // set to true if explicitly no match was found or a match was found
                 }
             )
@@ -254,6 +255,7 @@ const GameState = class {
         if(player.matchingComplete) return;
         if (player.responses.length <= player.used.length) {
             player.matchingComplete = true;
+            player.exactMatch = true;
         } else {
             const match = player.responses.map(r => {
                 return {value: r, chance: this._match_chance(r, response)};
@@ -262,6 +264,7 @@ const GameState = class {
             if (match.chance > 0.8 && !player.used.includes(match.value)) {
                 player.used.push(match.value);
                 player.match = match.value;
+                player.exactMatch = match.chance > 0.9999;
                 player.matchingComplete = true;
             }
         }
@@ -380,7 +383,7 @@ const GameState = class {
         const matches = [];
         for (const player of this.players) {
             if (player.matchingComplete) {
-                matches.push({player: player.id, response: player.match});
+                matches.push({player: player.id, response: player.match, exact: player.exactMatch});
             }
         }
         return matches;

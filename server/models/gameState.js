@@ -55,6 +55,7 @@ const GameState = class {
                     responses: [],
                     selected: '',
                     match: '',
+                    exactMatch: false,
                     matchingComplete: false, // set to true if explicitly no match was found or a match was found
                 }
             )
@@ -254,10 +255,7 @@ const GameState = class {
         if(player.matchingComplete) return;
         if (player.responses.length <= player.used.length) {
             player.matchingComplete = true;
-            // only add to score if they were active when round ends
-            if (this.selectionType === 'sike' && this.isActive(player.id)) {
-                this.players[this.selector].points++;
-            }
+            player.exactMatch = true;
         } else {
             const match = player.responses.map(r => {
                 return {value: r, chance: this._match_chance(r, response)};
@@ -266,10 +264,8 @@ const GameState = class {
             if (match.chance > 0.8 && !player.used.includes(match.value)) {
                 player.used.push(match.value);
                 player.match = match.value;
+                player.exactMatch = match.chance > 0.9999;
                 player.matchingComplete = true;
-                if (this.selectionType === 'strike') {
-                    this.players[this.selector].points++;
-                }
             }
         }
     }
@@ -347,15 +343,15 @@ const GameState = class {
         const selector = this.players[this.selector];
         const matcher = this.players.find(player => player.id === id);
         if (!matcher) return {error: 'spectator'};
-        if (matcher.matchingComplete) return {error: 'duplicateRequest'};
         if (this.stage !== 'matching' || selector.id === id) return {error: 'badRequest'};
+
+        // if already matched remove match from used list
+        if(matcher.matchingComplete)
+            matcher.used = matcher.used.filter(response => response !== matcher.match);
 
         // Sike
         if (!match) {
             matcher.matchingComplete = true;
-            if (this.selectionType === 'sike') {
-                selector.points++;
-            }
             this._cbIfMatchingComplete();
             return {success: true};
         }
@@ -365,13 +361,13 @@ const GameState = class {
             matcher.match = match;
             matcher.matchingComplete = true;
             matcher.used.push(match);
-            if (this.selectionType === 'strike') {
-                selector.points++;
-            }
             this._cbIfMatchingComplete();
             return {success: true};
         }
 
+        // if matching was unsuccessful insert back into list
+        if(matcher.match)
+            matcher.used.push(matcher.match);
         return {error: 'badRequest'};
     }
 
@@ -387,10 +383,21 @@ const GameState = class {
         const matches = [];
         for (const player of this.players) {
             if (player.matchingComplete) {
-                matches.push({player: player.id, response: player.match});
+                matches.push({player: player.id, response: player.match, exact: player.exactMatch});
             }
         }
         return matches;
+    }
+
+    selectionComplete() {
+        // opportunity to do end round stats, for now just count the points
+        const selector = this.players[this.selector];
+        for(const matcher of this.players){
+            if(matcher.id === selector.id) continue;
+            if(!matcher.match && !this.isActive(matcher.id)) continue;
+            if(this.selectionType === 'sike' && !matcher.match) selector.points++;
+            if(this.selectionType === 'strike' && matcher.match) selector.points++;
+        }
     }
 
     /*** MATCHING state changes ***/

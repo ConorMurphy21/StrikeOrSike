@@ -141,6 +141,7 @@ module.exports = (io, socket) => {
         }
         const state = room.state;
         if (state.matchingComplete() && state.isSelector(socket.id)) {
+            room.state.selectionComplete();
             continueSelection(io, room);
         } else {
             logger.error('(gameHandlers) selectionComplete attempted at wrong stage');

@@ -73,15 +73,6 @@ export default {
       click.play();
       this.$socket.emit('selectionComplete');
     },
-    rows: function () {
-      const matchers = this.players.filter(player => player.active && player.id !== this.selector.id);
-      if (matchers.length < 5) {
-        return [matchers];
-      } else {
-        const med = Math.ceil(this.players.length / 2);
-        return [matchers.slice(0, med), matchers.slice(med)];
-      }
-    },
     match(player) {
       const ret = this.matches.find(match => player.id === match.player.id);
       console.log('returning match:');

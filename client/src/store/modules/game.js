@@ -125,7 +125,16 @@ const mutations = {
         state.selectedResponse = data;
     },
     addMatch(state, data) {
-        state.matches.push(data);
+        // only keep 1 match per player
+        const match = state.matches.find(match => match.player.id === data.player.id);
+        if (match) {
+            match.response = data.response;
+        } else {
+            state.matches.push(data);
+        }
+    },
+    removeMatch(state, data) {
+        state.matches = state.matches.filter(match => match.player.id !== data);
     },
     clearMatches(state) {
         state.matches = [];
@@ -141,6 +150,7 @@ const mutations = {
     useResponse(state, data) {
         state.usedResponses.push(data);
     },
+
     setUsedResponses(state, data) {
         state.usedResponses = data;
     },
@@ -186,6 +196,12 @@ const socketActions = {
     },
     async SOCKET_nextSelection({state, commit, rootGetters, rootState}, data) {
         const selector = rootState.room.players.find(player => player.id === data.selector);
+        // before we clear matches, make sure we used our match, this can happen if a next selection happens between
+        // unmatch and match
+        const selfMatch = state.matches.find(match => match.player.id === rootGetters['room/self'].id);
+        if(selfMatch && !state.usedResponses.includes(selfMatch.response))
+            commit('useResponse', selfMatch.response)
+
         commit('clearMatches');
         commit('setSelector', selector);
         commit('setSelectionType', data.selectionType);
@@ -211,7 +227,8 @@ const socketActions = {
         for(const match of matches) {
             commit('addMatch', {
                 player: rootState.room.players.find(player => player.id === match.player),
-                response: match.response
+                response: match.response,
+                exact: match.exact
             });
             if (match.player === rootGetters['room/self'].id) {
                 commit('useResponse', match.response);
@@ -221,7 +238,7 @@ const socketActions = {
     },
     async SOCKET_endRound({commit}) {
       commit('setScene', 'endRound');
-      commit('SOCKET_setVoteCount', {pollName:'startNextRound', count: 0})
+      commit('SOCKET_setVoteCount', {pollName:'startNextRound', count: 0});
     },
     async SOCKET_gameOver({state, commit, rootState}, data) {
         commit('setScene', 'endGame');
@@ -294,6 +311,11 @@ const actions = {
             expected += interval;
             commit('setTimer', initialTimer - tick * (interval / 1000));
         }
+    },
+    async unmatch({state, commit, rootGetters}) {
+        const usedResponse = state.matches.find(match => match.player.id === rootGetters['room/self'].id).response;
+        commit('setUsedResponses', state.usedResponses.filter(response => response !== usedResponse));
+        commit('setScene', 'activeMatching');
     }
 }
 

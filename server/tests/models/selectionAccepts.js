@@ -58,8 +58,19 @@ describe('Selection Accepting tests', () => {
             gameState.acceptResponseSelection(selectorId, firstResponse);
             gameState.acceptMatch(matcherId, synonym);
             const result = gameState.acceptMatch(matcherId, synonym);
-            assert.isNotOk(result.success);
-            assert.isOk(result.error);
+            assert.isOk(result.success);
+        });
+
+        it('Match Accept new match', () => {
+            const synonym = '#1Response';
+            const synonym2 = '#2Response';
+            gameState.players[matcherIndex].responses.push(synonym);
+            gameState.players[matcherIndex].responses.push(synonym2);
+            gameState.acceptResponseSelection(selectorId, firstResponse);
+            gameState.acceptMatch(matcherId, synonym);
+            const result = gameState.acceptMatch(matcherId, synonym2);
+            assert.isOk(result.success);
+            assert.strictEqual(gameState.players[matcherIndex].match, synonym2);
         });
 
         it('Match Accept used', () => {

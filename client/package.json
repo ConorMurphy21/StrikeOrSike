@@ -24,7 +24,6 @@
     "vue3-portal": "^1.0.3",
     "vuex": "^4.0.2",
     "vuex-extensions": "^4.0.0",
-    "click-outside-vue3": "^4.0.1"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^3.0.3",

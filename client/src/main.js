@@ -19,7 +19,6 @@ app.use(store);
 app.use(router);
 app.use(i18n);
 app.use(Portal);
-app.use(vClickOutside);
 
 const socket = new VueSocketIO({
     debug,

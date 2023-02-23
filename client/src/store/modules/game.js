@@ -25,7 +25,8 @@ const state = () => ({
     },
     options: {},
     firstSelection: true,
-    hasNextRound: true
+    hasNextRound: true,
+    unmatched: false
 });
 
 export const getters = {
@@ -167,6 +168,9 @@ const mutations = {
     },
     setHasNextRound(state, data) {
         state.hasNextRound = data;
+    },
+    setUnmatched(state, data) {
+        state.unmatched = data;
     }
 }
 
@@ -220,6 +224,7 @@ const socketActions = {
     },
     async SOCKET_beginMatching({state, commit, getters}, response) {
         commit('setFirstSelection', false);
+        commit('setUnmatched', false);
         commit('setSelectedResponse', response);
         if (getters.isSelector) {
             commit('useSelectorResponse', response);
@@ -321,6 +326,7 @@ const actions = {
     async unmatch({state, commit, rootGetters}) {
         const usedResponse = state.matches.find(match => match.player.id === rootGetters['room/self'].id).response;
         commit('setUsedResponses', state.usedResponses.filter(response => response !== usedResponse));
+        commit('setUnmatched', true);
         commit('setScene', 'activeMatching');
     }
 }

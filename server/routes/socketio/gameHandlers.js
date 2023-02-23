@@ -224,7 +224,9 @@ function continueSelection(io, room) {
                 selectionType: state.selectionType
             });
     } else {
-        io.to(room.name).emit('endRound');
+        io.to(room.name).emit('endRound', {
+            hasNextRound: state.hasNewPrompt()
+        });
     }
 }
 

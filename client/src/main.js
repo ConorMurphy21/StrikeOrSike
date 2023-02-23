@@ -5,7 +5,6 @@ import i18n from './locales';
 import router from './router';
 import VueSocketIO from 'vue-3-socket.io';
 import Portal from 'vue3-portal';
-import vClickOutside from 'click-outside-vue3'
 
 // only import bootstrap components that are used
 import {Collapse} from 'bootstrap';

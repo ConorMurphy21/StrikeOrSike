@@ -65,6 +65,7 @@ export default {
 
     /*** END ROUND STRINGS ***/
     startNextRound: 'Next Round',
+    viewResults: 'Final Scores',
 
     /*** END GAME STRINGS ***/
     playerScores: 'Player Scores',

@@ -23,7 +23,7 @@ const GameState = class {
         this.name = room.name;
         this.stage = 'lobby'; // enum: 'lobby', 'response', 'selection', 'matching', 'endRound'
         this.options = options;
-        if(!options) this.options = defaultOptions(room.lang);
+        if (!options) this.options = defaultOptions(room.lang);
         this.prompts = new Prompts(this.options.packs, this.options.customPrompts, room.lang, oldPrompts);
         this.room = room;
         this.round = 0;
@@ -89,6 +89,19 @@ const GameState = class {
     }
 
     /*** PROMPT RESPONSE state changes ***/
+    hasNewPrompt() {
+        // return false if no rounds left
+        if (this.round >= this.options.numRounds) return false;
+        // return true if there are still prompts available
+        if (this.prompts.hasNewPrompt()) return true;
+
+        // this is true as long as no pack is a subset of another pack
+        for (const pack in this.options.packs) {
+            if(!this.options.packs[pack]) return true;
+        }
+        return false;
+    }
+
     beginNewPrompt() {
         // wrap in promise to avoid blocking
         // check if game is over
@@ -98,16 +111,16 @@ const GameState = class {
         this.prompt = this.prompts.newPrompt(this._activeRoomPlayers());
 
         // if no more unique prompts try adding a pack
-        while(!this.prompt) {
+        while (!this.prompt) {
             let changed = false;
-            for(const pack in this.options.packs){
-                if(!this.options.packs[pack]){
+            for (const pack in this.options.packs) {
+                if (!this.options.packs[pack]) {
                     this.options.packs[pack] = true;
                     changed = true;
                     break;
                 }
             }
-            if(!changed) return false;
+            if (!changed) return false;
             this.prompts = new Prompts(this.options.packs, this.options.customPrompts, this.room.lang, this.prompts);
             this.prompt = this.prompts.newPrompt(this._activeRoomPlayers());
         }
@@ -252,7 +265,7 @@ const GameState = class {
         const selector = this.players[this.selector];
         const response = selector.selected;
         if (player.id === selector.id) return;
-        if(player.matchingComplete) return;
+        if (player.matchingComplete) return;
         if (player.responses.length <= player.used.length) {
             player.matchingComplete = true;
             player.exactMatch = true;
@@ -346,7 +359,7 @@ const GameState = class {
         if (this.stage !== 'matching' || selector.id === id) return {error: 'badRequest'};
 
         // if already matched remove match from used list
-        if(matcher.matchingComplete)
+        if (matcher.matchingComplete)
             matcher.used = matcher.used.filter(response => response !== matcher.match);
 
         // Sike
@@ -366,14 +379,14 @@ const GameState = class {
         }
 
         // if matching was unsuccessful insert back into list
-        if(matcher.match)
+        if (matcher.match)
             matcher.used.push(matcher.match);
         return {error: 'badRequest'};
     }
 
     getMatch(id) {
         const matcher = this.players.find(player => player.id === id);
-        if(matcher.matchingComplete) {
+        if (matcher.matchingComplete) {
             return matcher.match;
         }
         return undefined;
@@ -392,11 +405,11 @@ const GameState = class {
     selectionComplete() {
         // opportunity to do end round stats, for now just count the points
         const selector = this.players[this.selector];
-        for(const matcher of this.players){
-            if(matcher.id === selector.id) continue;
-            if(!matcher.match && !this.isActive(matcher.id)) continue;
-            if(this.selectionType === 'sike' && !matcher.match) selector.points++;
-            if(this.selectionType === 'strike' && matcher.match) selector.points++;
+        for (const matcher of this.players) {
+            if (matcher.id === selector.id) continue;
+            if (!matcher.match && !this.isActive(matcher.id)) continue;
+            if (this.selectionType === 'sike' && !matcher.match) selector.points++;
+            if (this.selectionType === 'strike' && matcher.match) selector.points++;
         }
     }
 
@@ -414,7 +427,7 @@ const GameState = class {
         return selector === id;
     }
 
-    _activeRoomPlayers(){
+    _activeRoomPlayers() {
         return this.room.players.filter(player => player.active);
     }
 

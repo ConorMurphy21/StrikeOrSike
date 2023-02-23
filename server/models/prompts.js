@@ -166,11 +166,15 @@ const Prompts = class {
         }
     }
 
+    hasNewPrompt() {
+        return this.numRemaining > 0;
+    }
+
     newPrompt(players) {
         if (this.numRemaining <= 0) {
             return '';
         }
-        let retVal = '';
+        let retVal;
         if (this._useRemainingMethod()) {
             retVal = this._chooseFromRemaining();
         } else {

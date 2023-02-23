@@ -1,6 +1,7 @@
 const {joinRoom, disconnectPlayer, createRoom, getRoomById, getRoomByName} = require('../../models/rooms');
 const Joi = require('joi');
 const logger = require('../../logger/logger');
+const {midgameJoin} = require('./gameHandlers');
 
 /*** handler validation schemas ***/
 const roomSchema = Joi.object({
@@ -70,14 +71,7 @@ module.exports = (io, socket) => {
             });
             socket.emit('setOptions', room.state.getOptions());
             if (room.state.stage !== 'lobby') {
-                socket.emit('midgameConnect', room.state.midgameConnect(socket.id, result.oldId));
-                if(room.state.stage === 'matching') {
-                    const match = room.state.getMatch(socket.id);
-                    if(match !== undefined) {
-                        socket.to(room.name).emit('matchesFound', [{player: socket.id, response: match}]);
-                    }
-
-                }
+                midgameJoin(socket, room, result.oldId);
             }
         }
     });

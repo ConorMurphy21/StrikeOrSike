@@ -6,7 +6,7 @@ const logger = require('../../logger/logger');
 /*** handler validation schemas ***/
 let setOptionsSchema = require('../../models/optionsSchema');
 
-module.exports = (io, socket) => {
+const registerGameHandlers = (io, socket) => {
     /*** GAME STATE ENDPOINTS ***/
     socket.on('setOptions', (options, callback) => {
         const room = roomIfLeader(socket.id);
@@ -259,3 +259,16 @@ function roomIfLeader(id) {
     if (!player.leader) return;
     return room;
 }
+
+function midgameJoin(socket, room, oldId) {
+    socket.emit('midgameConnect', room.state.midgameConnect(socket.id, oldId));
+    if(room.state.stage === 'matching') {
+        const match = room.state.getMatch(socket.id);
+        if(match !== undefined) {
+            // exact only matters if it's the original user
+            socket.to(room.name).emit('matchesFound', [{player: socket.id, response: match, exact: true}]);
+        }
+    }
+}
+
+module.exports = {registerGameHandlers, midgameJoin};

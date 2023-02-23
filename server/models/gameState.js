@@ -365,6 +365,7 @@ const GameState = class {
         // Sike
         if (!match) {
             matcher.matchingComplete = true;
+            matcher.match = '';
             this._cbIfMatchingComplete();
             return {success: true};
         }

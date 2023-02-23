@@ -25,7 +25,7 @@ const state = () => ({
     },
     options: {},
     firstSelection: true,
-    hasNewPrompt: true
+    hasNextRound: true
 });
 
 export const getters = {
@@ -165,8 +165,8 @@ const mutations = {
     setVoteCounts(state, data) {
         state.voteCounts = data;
     },
-    setHasNewPrompt(state, data) {
-        state.hasNewPrompt = data;
+    setHasNextRound(state, data) {
+        state.hasNextRound = data;
     }
 }
 
@@ -243,7 +243,7 @@ const socketActions = {
     },
     async SOCKET_endRound({commit}, data) {
       commit('setScene', 'endRound');
-      commit('setHasNewPrompt', data.hasNewPrompt);
+      commit('setHasNextRound', data.hasNextRound);
       commit('SOCKET_setVoteCount', {pollName:'startNextRound', count: 0});
     },
     async SOCKET_gameOver({state, commit, rootState}, data) {

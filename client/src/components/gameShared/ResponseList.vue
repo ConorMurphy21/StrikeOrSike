@@ -8,8 +8,8 @@
                 :class="{'list-group-item-action': responseSelectable(response),
                     'pe-none': !responseSelectable(response),
                     'active': selected === index,
-                    'list-group-item-orange': response === strikedResponse, // will override used
-                    'list-group-item-blue': response === sikedResponse,
+                    'list-group-item-orange': response === selectedStrike, // will override used
+                    'list-group-item-blue': response === selectedSike,
                     'list-group-item-red': used(response)}"
                 @click="select(index, response)">
           {{ response }}
@@ -30,7 +30,7 @@ import {createNamespacedHelpers} from 'vuex';
 import Click1Mp3 from '@/assets/audio/click1.mp3'
 import Click2Mp3 from '@/assets/audio/click2.mp3'
 
-const {mapState} = createNamespacedHelpers('game');
+const {mapGetters} = createNamespacedHelpers('game');
 
 export default {
   data() {
@@ -43,16 +43,29 @@ export default {
     height: {
       type: Number,
       default: 30
+    },
+    playerId: {
+      type: String,
+      default: ''
     }
   },
   emits: ['update:modelValue'],
   computed: {
-    ...mapState([
-      'responses',
-      'usedResponses',
-      'strikedResponse',
-      'sikedResponse',
+    ...mapGetters([
+      'playerResponses'
     ]),
+    responses() {
+      return this.playerResponses(this.playerId).all;
+    },
+    usedResponses() {
+      return this.playerResponses(this.playerId).used;
+    },
+    selectedStrike() {
+      return this.playerResponses(this.playerId).selectedStrike;
+    },
+    selectedSike() {
+      return this.playerResponses(this.playerId).selectedSike;
+    },
     cssProps() {
       return {
         '--max-height': this.height + 'vh'
@@ -82,8 +95,8 @@ export default {
       return !this.usedResponses.includes(response) && this.selectable;
     },
     used(response) {
-      return response !== this.strikedResponse &&
-          response !== this.sikedResponse &&
+      return response !== this.selectedStrike &&
+          response !== this.selectedSike &&
           this.usedResponses.includes(response);
     },
   },

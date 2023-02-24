@@ -147,6 +147,22 @@ const registerGameHandlers = (io, socket) => {
             logger.error('(gameHandlers) selectionComplete attempted at wrong stage');
         }
     });
+
+    socket.on('getResponses', (id) => {
+        const room = getRoomById(socket.id);
+        if (!room) {
+            logger.error('(gameHandlers) getResponses attempted with no room');
+            return;
+        }
+        const state = room.state;
+        const result = state.getResponses(id);
+        if(result.success){
+            socket.emit('getResponses');
+        } else {
+            logger.error(`(gameHandlers) getResponses failed due to ${result.error}`);
+        }
+
+    });
 }
 
 function registerCallbacks(io, room) {

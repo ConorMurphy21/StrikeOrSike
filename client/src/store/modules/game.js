@@ -6,10 +6,7 @@ const state = () => ({
     timer: 0,
     // for cancelling the timer
     timeoutId: null,
-    responses: [],
-    usedResponses: [],
-    strikedResponse: '',
-    sikedResponse: '',
+    responses: {},
     selectionTypeChoice: false,
     selectionType: '',
     selector: {},
@@ -31,6 +28,13 @@ const state = () => ({
 export const getters = {
     isSelector(state, getters, rootState, rootGetters) {
         return state.selector.id === rootGetters['room/self'].id;
+    },
+    playerResponses(state, getters, rootsState, rootGetters) {
+      return (id) => {
+          // default to self if not provided
+          if(!id) id = rootGetters['room/self'].id;
+          return state.responses[id];
+      }
     },
     roundPoints(state) {
         if (state.selectionType === 'strike') {
@@ -105,14 +109,37 @@ const mutations = {
     setTimeoutId(state, data) {
         state.timeoutId = data;
     },
-    clearResponses(state) {
-        state.responses = [];
-        state.usedResponses = [];
-        state.sikedResponse = '';
-        state.strikedResponse = '';
+    resetResponses(state, selfId) {
+        state.responses = {}
+        state.responses[selfId] = {
+            all: [],
+            used: [],
+            selectedStrike: '',
+            selectedSike: ''
+        };
+    },
+    addResponse(state, data) {
+        state.responses[data.id].all.push(data.response);
     },
     setResponses(state, data) {
-        state.responses = data;
+        state.responses[data.id] = data;
+    },
+    useSelectorResponse(state, data) {
+        state.responses[data.id].used.push(data.response);
+        if (state.selectionType === 'strike') {
+            state.responses[data.id].selectedStrike = data.response;
+        } else {
+            state.responses[data.id].selectedSike = data.response;
+        }
+    },
+    useResponse(state, data) {
+        state.responses[data.id].used.push(data.response);
+    },
+    unuseResponse(state, data) {
+        state.responses[data.id].used = state.responses[data.id].used.filter(r => r !== data.response);
+    },
+    setUsedResponses(state, data) {
+        state.usedResponses = data;
     },
     setSelectionType(state, data) {
         state.selectionType = data;
@@ -141,25 +168,10 @@ const mutations = {
     clearMatches(state) {
         state.matches = [];
     },
-    useSelectorResponse(state, data) {
-        state.usedResponses.push(data);
-        if(state.selectionType === 'strike'){
-            state.strikedResponse = data;
-        } else {
-            state.sikedResponse = data;
-        }
-    },
-    useResponse(state, data) {
-        state.usedResponses.push(data);
-    },
-
-    setUsedResponses(state, data) {
-        state.usedResponses = data;
-    },
     setScores(state, data) {
         state.scores = data;
     },
-    setFirstSelection(state, data){
+    setFirstSelection(state, data) {
         state.firstSelection = data;
     },
     setVoteCounts(state, data) {
@@ -174,9 +186,6 @@ const socketMutations = {
     SOCKET_setOptions(state, options) {
         state.options = options;
     },
-    SOCKET_promptResponse(state, response) {
-        state.responses.push(response);
-    },
     SOCKET_selectionTypeChosen(state, selectionType) {
         state.selectionType = selectionType;
     },
@@ -189,8 +198,8 @@ const socketActions = {
     async SOCKET_beginPrompt({state, commit, dispatch}, prompt) {
         commit('setTimer', 3);
         commit('setPrompt', prompt);
-        commit('clearResponses');
-        commit('SOCKET_setVoteCount', {pollName:'skipPrompt', count: 0});
+        dispatch('resetResponses');
+        commit('SOCKET_setVoteCount', {pollName: 'skipPrompt', count: 0});
         commit('setScene', 'countdown');
         commit('setFirstSelection', true);
         dispatch('startTimer').then(() => {
@@ -199,18 +208,23 @@ const socketActions = {
             commit('setScene', 'promptResponse');
         });
     },
-    async SOCKET_nextSelection({state, commit, rootGetters, rootState}, data) {
+    async SOCKET_promptResponse({state, commit, rootGetters}, response) {
+        const selfId = rootGetters['room/self'].id;
+        commit('addResponse', {id: selfId, response});
+    },
+    async SOCKET_nextSelection({state, commit, rootGetters, rootState, dispatch}, data) {
         const selector = rootState.room.players.find(player => player.id === data.selector);
         // before we clear matches, make sure we used our match, this can happen if a next selection happens between
         // unmatch and match
-        const selfMatch = state.matches.find(match => match.player.id === rootGetters['room/self'].id);
-        if(selfMatch && !state.usedResponses.includes(selfMatch.response))
-            commit('useResponse', selfMatch.response)
+        const selfId = rootGetters['room/self'].id;
+        const selfMatch = state.matches.find(match => match.player.id === selfId);
+        if (selfMatch && !state.responses[selfId].used.includes(selfMatch.response))
+            dispatch('useResponse', selfMatch.response);
 
         commit('clearMatches');
         commit('setSelector', selector);
         commit('setSelectionType', data.selectionType);
-        commit('SOCKET_setVoteCount', {pollName:'sikeDispute', count: 0});
+        commit('SOCKET_setVoteCount', {pollName: 'sikeDispute', count: 0});
         if (data.selectionType === 'choice') {
             commit('setSelectionTypeChoice', true);
         } else {
@@ -218,33 +232,33 @@ const socketActions = {
         }
         commit('setScene', 'selection');
     },
-    async SOCKET_beginMatching({state, commit, getters}, response) {
+    async SOCKET_beginMatching({state, commit, getters, dispatch}, response) {
         commit('setFirstSelection', false);
         commit('setSelectedResponse', response);
         if (getters.isSelector) {
-            commit('useSelectorResponse', response);
+            dispatch('useSelectorResponse', response);
             commit('setScene', 'matchingSummary');
         } else {
             commit('setScene', 'activeMatching');
         }
     },
-    async SOCKET_matchesFound({state, commit, rootState, rootGetters}, matches) {
-        for(const match of matches) {
+    async SOCKET_matchesFound({state, commit, rootState, rootGetters, dispatch}, matches) {
+        for (const match of matches) {
             commit('addMatch', {
                 player: rootState.room.players.find(player => player.id === match.player),
                 response: match.response,
                 exact: match.exact
             });
             if (match.player === rootGetters['room/self'].id) {
-                commit('useResponse', match.response);
+                dispatch('useResponse', match.response);
                 commit('setScene', 'matchingSummary');
             }
         }
     },
     async SOCKET_endRound({commit}, data) {
-      commit('setScene', 'endRound');
-      commit('setHasNextRound', data.hasNextRound);
-      commit('SOCKET_setVoteCount', {pollName:'startNextRound', count: 0});
+        commit('setScene', 'endRound');
+        commit('setHasNextRound', data.hasNextRound);
+        commit('SOCKET_setVoteCount', {pollName: 'startNextRound', count: 0});
     },
     async SOCKET_gameOver({state, commit, rootState}, data) {
         commit('setScene', 'endGame');
@@ -259,19 +273,18 @@ const socketActions = {
     },
     async SOCKET_midgameConnect({state, commit, dispatch, rootState, rootGetters}, data) {
         commit('setSelectionType', data.selectionType);
-        if(data.selectionType === 'choice'){
+        if (data.selectionType === 'choice') {
             commit('setSelectionTypeChoice', true);
         }
         commit('SOCKET_setOptions', data.options);
         commit('setResponses', data.responses);
-        commit('setUsedResponses', data.usedResponses);
         commit('setSelector', rootState.room.players.find(player => player.id === data.selector));
         commit('setSelectedResponse', data.selectedResponse);
         commit('setPrompt', data.prompt);
         commit('setTimer', data.timer);
         commit('setVoteCounts', data.voteCounts);
 
-        if(data.timer){
+        if (data.timer) {
             dispatch('startTimer');
         }
         const isSelector = state.selector.id === rootGetters['room/self'].id;
@@ -301,6 +314,22 @@ const socketActions = {
 }
 
 const actions = {
+    async resetResponses({commit, rootGetters}) {
+        const selfId = rootGetters['room/self'].id;
+        commit('resetResponses', selfId);
+    },
+    async useResponse({commit, rootGetters}, response) {
+        const selfId = rootGetters['room/self'].id;
+        commit('useResponse', {id: selfId, response});
+    },
+    async useSelectorResponse({commit, rootGetters}, response) {
+        const selfId = rootGetters['room/self'].id;
+        commit('useSelectorResponse', {id: selfId, response});
+    },
+    async unuseResponse({commit, rootGetters}) {
+        const selfId = rootGetters['room/self'].id;
+        commit('unuseResponse', selfId);
+    },
     async startTimer({state, commit}) {
         clearTimeout(state.timeoutId);
         const initialTimer = state.timer;
@@ -319,8 +348,9 @@ const actions = {
         }
     },
     async unmatch({state, commit, rootGetters}) {
-        const usedResponse = state.matches.find(match => match.player.id === rootGetters['room/self'].id).response;
-        commit('setUsedResponses', state.usedResponses.filter(response => response !== usedResponse));
+        const selfId = rootGetters['room/self'].id;
+        const usedResponse = state.matches.find(match => match.player.id === selfId).response;
+        commit('unuseResponse', {id: selfId, response: usedResponse});
         commit('setScene', 'activeMatching');
     }
 }

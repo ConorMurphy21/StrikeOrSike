@@ -190,7 +190,6 @@ const GameState = class {
         }
         this.pollService.clearPoll('sikeDispute');
         for (const player of this.players) {
-            player.selected = '';
             player.match = '';
             player.matchingComplete = false;
         }

@@ -148,7 +148,11 @@ const registerGameHandlers = (io, socket) => {
         }
     });
 
-    socket.on('getResponses', (id) => {
+    socket.on('getResponses', (id, callback) => {
+        if(!callback || !Joi.string().validate(id)) {
+            logger.error('(gameHandlers) getResponse attempted with invalid arguments');
+            return;
+        }
         const room = getRoomById(socket.id);
         if (!room) {
             logger.error('(gameHandlers) getResponses attempted with no room');
@@ -156,12 +160,10 @@ const registerGameHandlers = (io, socket) => {
         }
         const state = room.state;
         const result = state.getResponses(id);
-        if(result.success){
-            socket.emit('getResponses');
-        } else {
+        if(!result.success){
             logger.error(`(gameHandlers) getResponses failed due to ${result.error}`);
         }
-
+        if(callback) callback(result);
     });
 }
 

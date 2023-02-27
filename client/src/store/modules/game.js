@@ -199,6 +199,7 @@ const socketActions = {
         commit('setTimer', 3);
         commit('setPrompt', prompt);
         dispatch('resetResponses');
+        commit('clearMatches');
         commit('SOCKET_setVoteCount', {pollName: 'skipPrompt', count: 0});
         commit('setScene', 'countdown');
         commit('setFirstSelection', true);
@@ -309,7 +310,6 @@ const socketActions = {
         }
         commit('setScene', scene);
         dispatch('SOCKET_matchesFound', data.matches);
-
     }
 }
 
@@ -352,6 +352,23 @@ const actions = {
         const usedResponse = state.matches.find(match => match.player.id === selfId).response;
         commit('unuseResponse', {id: selfId, response: usedResponse});
         commit('setScene', 'activeMatching');
+    },
+    async getResponses({state, commit}, id) {
+        const socket = this.$socket;
+        return new Promise(function(resolve, reject) {
+            if(state.responses.hasOwnProperty(id)){
+                resolve();
+                return;
+            }
+            socket.io.emit('getResponses', id, (data) => {
+                if(data.success) {
+                    commit('setResponses', data.responses);
+                    resolve();
+                } else {
+                    reject();
+                }
+            });
+        });
     }
 }
 

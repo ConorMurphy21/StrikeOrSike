@@ -1,5 +1,5 @@
 <template>
-  <select class="form-select-lg">
+  <select class="form-select-lg" @input="$emit('update:modelValue', $event.target.value)">
     <option v-for="player in players" :selected="player.id === self.id" :value="player.id">
       {{player.name}}
     </option>
@@ -18,8 +18,8 @@ export default {
     ]),
     ...mapGetters([
         'self'
-    ])
+    ]),
   },
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue']
 }
 </script>

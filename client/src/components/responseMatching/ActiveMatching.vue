@@ -51,14 +51,17 @@ export default {
     VoteSkip
   },
   mounted() {
-    alert.play();
+    if(!this.unmatched){
+     alert.play();
+    }
   },
   computed: {
     ...mapState([
       'prompt',
       'selectionType',
       'selectedResponse',
-      'selector'
+      'selector',
+      'unmatched'
     ]),
     ...mapGetters([
         'sikeDispute'

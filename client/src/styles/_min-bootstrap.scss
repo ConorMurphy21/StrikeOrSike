@@ -3,12 +3,11 @@
 @import "~bootstrap/scss/variables";
 @import "~bootstrap/scss/maps";
 @import "~bootstrap/scss/mixins";
+@import "~bootstrap/scss/root";
 @import "~bootstrap/scss/utilities";
 @import "~bootstrap/scss/helpers";
-@import "~bootstrap/scss/utilities/api";
 
 // Layout & components
-@import "~bootstrap/scss/root";
 @import "~bootstrap/scss/reboot";
 @import "~bootstrap/scss/type";
 @import "~bootstrap/scss/images";
@@ -38,6 +37,8 @@
 //@import "~bootstrap/scss/carousel";
 //@import "~bootstrap/scss/spinners";
 //@import "~bootstrap/scss/offcanvas";
+
+@import "~bootstrap/scss/utilities/api";
 
 // Icons
 @import "~bootstrap-icons/font/bootstrap-icons";

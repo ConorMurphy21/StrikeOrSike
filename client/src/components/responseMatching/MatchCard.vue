@@ -9,8 +9,9 @@
       <a @click="unmatchClick"
          @mouseenter="hovering=true"
          @mouseleave="hovering=false"
+         class="bi-trash3-fill text-red fw-bolder fs-4"
          :class="{'hover': hovering}"
-         v-if="showUnmatch"><i class="bi-trash3-fill text-red fw-bolder fs-4"/></a>
+         v-if="showUnmatch"/>
     </div>
     <h2 class="player-name fs-5">{{ player.name }}</h2>
   </div>

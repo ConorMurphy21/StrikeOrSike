@@ -417,9 +417,12 @@ const GameState = class {
 
     getResponses(id) {
         if(this.stage !== 'endRound'){
-            return {error: 'forbidden request during current stage'};
+            return {error: 'invalidStage'};
         }
         const player = this.players.find(player => player.id === id);
+        if(!player){
+            return {error: 'playerDoesNotExist'}
+        }
         const responses = this._getResponses(player);
         return {success: true, responses};
     }

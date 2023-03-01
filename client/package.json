@@ -21,7 +21,8 @@
     "vue-router": "^4.1.6",
     "vue3-portal": "^1.0.3",
     "vuex": "^4.1.0",
-    "vuex-extensions": "^4.0.0"
+    "vuex-extensions": "^4.0.0",
+    "vue-select": "^4.0.0-beta.6"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.0.0",

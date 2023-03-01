@@ -23,12 +23,13 @@ import ClickMp3 from '@/assets/audio/click2.mp3';
 import PlayerChooser from '@/components/endRound/PlayerChooser.vue';
 
 const {mapState, mapGetters, mapActions} = createNamespacedHelpers('game');
+const room = createNamespacedHelpers('room');
 
 export default {
   data(){
     return {
       responsesId: '',
-      selectedId: ''
+      selectedId: '',
     }
   },
   components: {
@@ -45,7 +46,13 @@ export default {
     ...mapGetters([
       'startNextRoundCount',
       'startNextRoundNext',
+    ]),
+    ...room.mapGetters([
+        'self'
     ])
+  },
+  mounted() {
+    this.selectedId = this.self.id;
   },
   methods: {
     sendVote() {

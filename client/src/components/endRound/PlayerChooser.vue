@@ -1,13 +1,9 @@
 <template>
-  <select class="form-select-lg" @input="$emit('update:modelValue', $event.target.value)">
-    <option v-for="player in players" :selected="player.id === self.id" :value="player.id">
-      {{player.name}}
-    </option>
-  </select>
+  <v-select v-model="value" :options="players" label="name" :reduce="(option) => option.id"
+            :searchable="false" :clearable="false" />
 </template>
 
 <script>
-
 import {createNamespacedHelpers} from 'vuex';
 const {mapState, mapGetters} = createNamespacedHelpers('room');
 
@@ -16,10 +12,19 @@ export default {
     ...mapState([
         'players'
     ]),
-    ...mapGetters([
-        'self'
-    ]),
+    value: {
+      get() {
+        return this.modelValue;
+      },
+      set(value) {
+        this.$emit('update:modelValue', value);
+      }
+    }
   },
+  props: ['modelValue'],
   emits: ['update:modelValue']
 }
 </script>
+<style scoped>
+
+</style>

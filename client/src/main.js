@@ -5,18 +5,15 @@ import i18n from './locales';
 import router from './router';
 import VueSocketIO from 'vue-3-socket.io';
 import Portal from 'vue3-portal';
-import vSelect from "vue-select";
-import "vue-select/dist/vue-select.css";
 
 // only import bootstrap components that are used
-import {Collapse} from 'bootstrap';
+import {Collapse, Dropdown} from 'bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const debug = process.env.NODE_ENV !== 'production';
 //const debug = true
 
 const app = createApp(App);
-app.component('v-select', vSelect);
 app.use(store);
 app.use(router);
 app.use(i18n);

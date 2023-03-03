@@ -19,7 +19,7 @@
       <img class="my-auto w-75 w-sm-50 w-lg-25" src="@/assets/images/sike.png" :alt="$t('sike')">
     </button>
     or
-    <response-list :selectable="true" :height="35" v-model="matchedResponse"/>
+    <response-list :selectable="true" :height="40" v-model="matchedResponse"/>
 
   </div>
 </template>

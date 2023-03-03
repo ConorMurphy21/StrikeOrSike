@@ -9,7 +9,7 @@
       </template>
     </i18n-t>
     <selection-picker/>
-    <response-list :selectable="isSelector && selectionType !== 'choice'" :height="35" v-model="response"/>
+    <response-list :selectable="isSelector && selectionType !== 'choice'" :height="40" v-model="response"/>
   </div>
 </template>
 

@@ -54,6 +54,7 @@ const GameState = class {
                     used: [],
                     responses: [],
                     selected: '',
+                    selectionType: '',
                     match: '',
                     exactMatch: false,
                     matchingComplete: false, // set to true if explicitly no match was found or a match was found
@@ -189,7 +190,6 @@ const GameState = class {
         }
         this.pollService.clearPoll('sikeDispute');
         for (const player of this.players) {
-            player.selected = '';
             player.match = '';
             player.matchingComplete = false;
         }
@@ -304,6 +304,7 @@ const GameState = class {
             // response must be in selectors responses but not used
             if (selector.responses.includes(response) && !selector.used.includes(response)) {
                 selector.selected = response;
+                selector.selectionType = this.selectionType;
                 selector.used.push(response);
                 // automatically match any obvious matches
                 this._autoMatch();
@@ -365,6 +366,7 @@ const GameState = class {
         // Sike
         if (!match) {
             matcher.matchingComplete = true;
+            matcher.match = '';
             this._cbIfMatchingComplete();
             return {success: true};
         }
@@ -413,7 +415,29 @@ const GameState = class {
         }
     }
 
-    /*** MATCHING state changes ***/
+    getResponses(id) {
+        if(this.stage !== 'endRound'){
+            return {error: 'invalidStage'};
+        }
+        const player = this.players.find(player => player.id === id);
+        if(!player){
+            return {error: 'playerDoesNotExist'}
+        }
+        const responses = this._getResponses(player);
+        return {success: true, responses};
+    }
+
+    _getResponses(player){
+        return {
+            id: player.id,
+            all: player.responses,
+            used: player.used,
+            selectedStrike: player.selectionType === 'strike' ? player.selected : '',
+            selectedSike: player.selectionType === 'sike' ? player.selected : '',
+        }
+    }
+
+    /*** GAMEOVER state changes ***/
     gameOver() {
         this.stage = 'lobby';
         return this.players.map(player => {
@@ -454,9 +478,10 @@ const GameState = class {
                 {
                     id: id,
                     points: 0,
-                    used: [],
                     responses: [],
+                    used: [],
                     selected: '',
+                    selectionType: '',
                     match: '',
                     matchingComplete: false, // set to true if explicitly no match was found or a match was found
                 }
@@ -474,8 +499,7 @@ const GameState = class {
         return {
             stage: this.stage,
             selectionType: this.selectionType,
-            responses: player.responses,
-            usedResponses: player.used,
+            responses: this._getResponses(player),
             selector: this.selectorId(),
             selectedResponse: this.selectedResponse(),
             prompt: this.prompt,

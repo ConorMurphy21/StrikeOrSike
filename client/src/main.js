@@ -7,14 +7,13 @@ import VueSocketIO from 'vue-3-socket.io';
 import Portal from 'vue3-portal';
 
 // only import bootstrap components that are used
-import {Collapse} from 'bootstrap';
+import {Collapse, Dropdown} from 'bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const debug = process.env.NODE_ENV !== 'production';
 //const debug = true
 
 const app = createApp(App);
-
 app.use(store);
 app.use(router);
 app.use(i18n);

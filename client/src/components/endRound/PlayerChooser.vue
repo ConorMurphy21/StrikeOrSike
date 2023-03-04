@@ -5,7 +5,8 @@
        :class="{'hover': hoverLeft, 'text-dark': !hoverLeft}"
        @click="nextPlayer(false)"/>
     <div class="dropdown flex-grow-1">
-      <button class="btn btn-dark dropdown-toggle w-100 cutoff-text"
+      <button class="btn btn-dark w-100 cutoff-text"
+              @click="clickDropdown()"
               type="button"
               id="playerChooser"
               data-bs-toggle="dropdown"
@@ -15,7 +16,7 @@
       <ul class="dropdown-menu w-100" aria-labelledby="playerChooser">
         <li v-for="player in players">
           <button class="btn dropdown-item cutoff-text text-center"
-                  @click="value=player.id">
+                  @click="clickOption(player.id)">
             {{ player.name }}
           </button>
         </li>
@@ -30,6 +31,8 @@
 
 <script>
 import {createNamespacedHelpers} from 'vuex';
+import Click1Mp3 from '@/assets/audio/click1.mp3';
+import Click2Mp3 from '@/assets/audio/click2.mp3';
 
 const {mapState, mapGetters} = createNamespacedHelpers('room');
 
@@ -65,6 +68,15 @@ export default {
       let index = this.players.findIndex(player => player.id === this.modelValue);
       index = (index + direction + this.players.length) % this.players.length;
       this.value = this.players[index].id;
+      new Audio(Click2Mp3).play();
+    },
+    clickOption(value){
+      this.value = value;
+      new Audio(Click2Mp3).play();
+
+    },
+    clickDropdown(){
+      new Audio(Click1Mp3).play();
     }
   }
 }

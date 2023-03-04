@@ -27,8 +27,8 @@
 </template>
 <script>
 import {createNamespacedHelpers} from 'vuex';
-import Click1Mp3 from '@/assets/audio/click1.mp3'
-import Click2Mp3 from '@/assets/audio/click2.mp3'
+import Click1Mp3 from '@/assets/audio/click1.mp3';
+import Click2Mp3 from '@/assets/audio/click2.mp3';
 
 const {mapGetters} = createNamespacedHelpers('game');
 

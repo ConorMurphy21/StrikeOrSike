@@ -31,7 +31,7 @@ module.exports = (io, socket) => {
         disconnect(socket);
 
         const validateResult = roomSchema.validate({name, roomName, langs});
-        if(validateResult.error) return;
+        if (validateResult.error) return;
 
         const result = createRoom(socket.id, name, roomName, langs);
         // store name in session variable
@@ -53,7 +53,7 @@ module.exports = (io, socket) => {
         disconnect(socket);
 
         const validateResult = roomSchema.validate({name, roomName, langs: []});
-        if(validateResult.error) return;
+        if (validateResult.error) return;
 
         const result = joinRoom(socket.id, name, roomName);
         if (result.error) {
@@ -77,7 +77,6 @@ module.exports = (io, socket) => {
     });
 
     socket.on('disconnect', () => {
-        logger.info('(roomHandlers) Player disconnected');
         disconnect(socket);
     });
 };
@@ -86,7 +85,10 @@ function disconnect(socket) {
     let roomName = getRoomById(socket.id)?.name;
     disconnectPlayer(socket.id);
     // remove socket from room
-    if (roomName) socket.leave(roomName);
+    if (roomName) {
+        socket.leave(roomName);
+        logger.info('(roomHandlers) player disconnected from room');
+    }
 
     const room = getRoomByName(roomName);
     if (room) {

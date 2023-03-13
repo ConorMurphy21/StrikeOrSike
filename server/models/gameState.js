@@ -2,6 +2,7 @@ const {Prompts} = require('./prompts');
 const {stringMatch, getCorrections} = require('./matchUtils');
 const PollService = require('./pollService');
 const optionsSchema = require('./optionsSchema');
+const logger = require('../logger/logger');
 
 const defaultOptions = (lang) => {
     return {
@@ -474,6 +475,7 @@ const GameState = class {
     midgameConnect(id, oldId) {
         let player = this.players.find(player => player.id === oldId);
         if (!player) {
+            logger.info('(gameState) midgame join');
             this.players.push(
                 {
                     id: id,
@@ -483,10 +485,12 @@ const GameState = class {
                     selected: '',
                     selectionType: '',
                     match: '',
+                    exactMatch: false,
                     matchingComplete: false, // set to true if explicitly no match was found or a match was found
                 }
             );
         } else {
+            logger.info('(gameState) midgame rejoin');
             player.id = id;
         }
         player = this.players.find(player => player.id === id);

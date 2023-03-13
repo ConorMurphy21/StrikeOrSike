@@ -9,8 +9,9 @@ const http = require('http');
 
 const logger = require('../logger/logger');
 process.on('uncaughtException', err => {
-    logger.error(`(www) crash report: ${err.stack}`);
-    process.exit(1);
+    logger.error(`(www) crash report: ${err.stack}`, () => {
+        process.exit(1);
+    });
 });
 
 /**

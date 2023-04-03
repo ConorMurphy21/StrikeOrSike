@@ -16,7 +16,8 @@ export default defineConfig({
     alias: {
       '@': resolve(__dirname, 'src'),
       '~bootstrap': 'bootstrap',
-      '~bootstrap-icons': 'bootstrap-icons'
+      '~bootstrap-icons': 'bootstrap-icons',
+      '~vue-slider-component': 'vue-slider-component'
     }
   },
   server: {
@@ -24,5 +25,13 @@ export default defineConfig({
     proxy: {
       '/api': 'http://localhost:3000'
     }
-  }
+  },
+  build: {
+    commonjsOptions: {
+      /**
+       * Setting to make prod-build working with vue-slider-component
+       **/
+      requireReturnsDefault: true,
+    },
+  },
 })

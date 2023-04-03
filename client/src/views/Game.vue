@@ -14,6 +14,8 @@
         </div>
       </a>
     </portal>
+
+    <volume-control/>
   </div>
 </template>
 
@@ -26,8 +28,8 @@ import ActiveMatching from '@/components/responseMatching/ActiveMatching.vue';
 import MatchingSummary from '@/components/responseMatching/MatchingSummary.vue';
 import EndRound from '@/components/endRound/EndRound.vue';
 import EndGame from '@/components/endGame/EndGame.vue';
+import VolumeControl from '@/components/gameShared/VolumeControl.vue';
 import {mapState} from 'vuex';
-
 
 export default {
   components: {
@@ -38,7 +40,8 @@ export default {
     ActiveMatching,
     MatchingSummary,
     EndRound,
-    EndGame
+    EndGame,
+    VolumeControl
   },
   props: {
     roomName: String

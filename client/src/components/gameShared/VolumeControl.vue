@@ -33,10 +33,10 @@ export default {
     ]),
     value: {
       set: function (val) {
-        this.setVolume(val);
+        this.setVolume(val / 100);
       },
       get: function () {
-        return this.volume;
+        return Math.round(this.volume * 100);
       }
     },
   },

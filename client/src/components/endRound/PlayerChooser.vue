@@ -33,6 +33,7 @@
 import {createNamespacedHelpers} from 'vuex';
 import Click1Mp3 from '@/assets/audio/click1.mp3';
 import Click2Mp3 from '@/assets/audio/click2.mp3';
+import {AudioWrap} from '@/mixins/AudioWrap';
 
 const {mapState, mapGetters} = createNamespacedHelpers('room');
 
@@ -68,15 +69,15 @@ export default {
       let index = this.players.findIndex(player => player.id === this.modelValue);
       index = (index + direction + this.players.length) % this.players.length;
       this.value = this.players[index].id;
-      new Audio(Click2Mp3).play();
+      new AudioWrap(Click2Mp3).play();
     },
     clickOption(value){
       this.value = value;
-      new Audio(Click2Mp3).play();
+      new AudioWrap(Click2Mp3).play();
 
     },
     clickDropdown(){
-      new Audio(Click1Mp3).play();
+      new AudioWrap(Click1Mp3).play();
     }
   }
 }

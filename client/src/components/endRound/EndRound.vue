@@ -21,6 +21,7 @@ import ResponseList from '@/components/gameShared/ResponseList.vue';
 import NotificationCount from '@/components/gameShared/NotificationCount.vue';
 import ClickMp3 from '@/assets/audio/click2.mp3';
 import PlayerChooser from '@/components/endRound/PlayerChooser.vue';
+import {AudioWrap} from '@/mixins/AudioWrap';
 
 const {mapState, mapGetters, mapActions} = createNamespacedHelpers('game');
 const room = createNamespacedHelpers('room');
@@ -56,7 +57,7 @@ export default {
   },
   methods: {
     sendVote() {
-      new Audio(ClickMp3).play();
+      new AudioWrap(ClickMp3).play();
       this.$socket.emit('pollVote', 'startNextRound');
     },
     ...mapActions([

@@ -34,8 +34,9 @@ import SelectionType from '@/components/gameShared/SelectionType.vue';
 import MatchCard from '@/components/responseMatching/MatchCard.vue';
 import DisputeIcon from '@/components/responseMatching/DisputeIcon.vue';
 import ClickMp3 from '@/assets/audio/click2.mp3';
+import {AudioWrap} from '@/mixins/AudioWrap';
 
-const click = new Audio(ClickMp3);
+const click = new AudioWrap(ClickMp3);
 
 const game = createNamespacedHelpers('game');
 const room = createNamespacedHelpers('room');

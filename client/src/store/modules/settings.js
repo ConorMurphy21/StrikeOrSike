@@ -1,7 +1,7 @@
 const state = () => ({
-    volume: 0.8,
+    volume: 1,
     // used for muting and unmuting
-    lastVolume: 0.8,
+    lastVolume: 1,
 });
 
 const mutations = {

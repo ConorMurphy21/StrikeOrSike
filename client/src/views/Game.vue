@@ -15,7 +15,7 @@
       </a>
     </portal>
 
-    <volume-control/>
+    <volume-control v-if="!isMobile"/>
   </div>
 </template>
 
@@ -68,6 +68,9 @@ export default {
         endGame: '#overview',
       }
       return this.$router.resolve({name: 'howToPlay', hash: tips[this.scene]}).href
+    },
+    isMobile() {
+      return /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     }
   },
   sockets: {

@@ -7,18 +7,29 @@
 <script>
 import timerMp3 from '@/assets/audio/countdown.mp3';
 import {createNamespacedHelpers} from 'vuex';
+import {AudioWrap} from '@/mixins/AudioWrap';
 
-const {mapState} = createNamespacedHelpers('game');
+const game = createNamespacedHelpers('game');
+const settings = createNamespacedHelpers('settings');
 
+const timer = new AudioWrap(timerMp3);
 
 export default {
   computed: {
-    ...mapState([
+    ...game.mapState([
       'timer'
+    ]),
+    ...settings.mapState([
+      'volume'
     ])
   },
+  watch: {
+    volume(val){
+      timer.volume = val;
+    }
+  },
   mounted() {
-    new Audio(timerMp3).play();
+    timer.play();
   },
 }
 </script>

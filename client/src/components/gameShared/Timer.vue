@@ -10,17 +10,29 @@
 </template>
 
 <script>
+import {createNamespacedHelpers} from 'vuex';
 import timerMp3 from '@/assets/audio/timer_full.mp3';
 import timerCompleteMp3 from '@/assets/audio/timerComplete.mp3';
+import {AudioWrap} from '@/mixins/AudioWrap';
 
-const timer = new Audio(timerMp3);
-const timerComplete = new Audio(timerCompleteMp3);
+const {mapState} = createNamespacedHelpers('settings');
+
+const timer = new AudioWrap(timerMp3);
+const timerComplete = new AudioWrap(timerCompleteMp3);
 export default {
   props: {
-    time: Number
+    time: Number,
+  },
+  computed: {
+    ...mapState([
+      'volume'
+    ])
   },
   watch: {
-    'time': (val) => {
+    volume(val) {
+      timer.volume = val;
+    },
+    time(val) {
       if (val === 10) {
         timer.play();
       } else if (val <= 0) {
@@ -80,7 +92,7 @@ h1 {
 }
 
 .flip {
-  animation: flip 0.8s cubic-bezier(.23,1,.32,1);
+  animation: flip 0.8s cubic-bezier(.23, 1, .32, 1);
 }
 
 .shake-rotate {
@@ -88,19 +100,19 @@ h1 {
 }
 
 @keyframes flip {
-  0%{
+  0% {
     transform: rotate(0deg);
   }
-  100%{
+  100% {
     transform: rotate(180deg);
   }
 }
 
 @keyframes flip {
-  0%{
+  0% {
     transform: rotate(0deg);
   }
-  100%{
+  100% {
     transform: rotate(180deg);
   }
 }

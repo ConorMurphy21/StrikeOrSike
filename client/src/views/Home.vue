@@ -41,8 +41,9 @@
 <script>
 import {createNamespacedHelpers} from 'vuex';
 import ClickMp3 from '@/assets/audio/click2.mp3'
+import {AudioWrap} from '@/mixins/AudioWrap';
 
-const click = new Audio(ClickMp3);
+const click = new AudioWrap(ClickMp3);
 
 const {mapMutations, mapState} = createNamespacedHelpers('room');
 

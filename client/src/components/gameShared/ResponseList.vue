@@ -29,6 +29,7 @@
 import {createNamespacedHelpers} from 'vuex';
 import Click1Mp3 from '@/assets/audio/click1.mp3';
 import Click2Mp3 from '@/assets/audio/click2.mp3';
+import {AudioWrap} from '@/mixins/AudioWrap';
 
 const {mapGetters} = createNamespacedHelpers('game');
 
@@ -76,16 +77,16 @@ export default {
     select(index, response) {
       if (this.selectable && !this.used(response)) {
         if (this.selected !== index) {
-          new Audio(Click1Mp3).play();
+          new AudioWrap(Click1Mp3).play();
           this.selected = index;
         } else {
-          new Audio(Click2Mp3).play();
+          new AudioWrap(Click2Mp3).play();
           this.$emit('update:modelValue', response);
         }
       }
     },
     deselect() {
-      new Audio(Click2Mp3).play();
+      new AudioWrap(Click2Mp3).play();
       this.selected = -1;
     },
     confirm() {

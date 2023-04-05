@@ -1,4 +1,4 @@
-<template xmlns="http://www.w3.org/1999/html">
+<template>
   <div class="accordion w-75">
     <div class="accordion-item">
 
@@ -28,7 +28,7 @@
                 <label for="timerDuration" class="form-label" v-t="'timerDurationLabel'"/>
                 <input type="number" min="15" max="60" class="form-control" :class="{'Disabled': disabled}"
                        :disabled="disabled" id="timerDuration" ref="timerDuration" :value="options.promptTimer"
-                       data-bs-toggle="tooltip" data-bs-placement="left" :title="$t('tooltip.options.timer')"
+                       v-tooltip.left="$t('tooltip.options.timer')"
                        @focusout="validateNum($event, 'promptTimer')"
                        @change="onNumChange($event, 'promptTimer')">
               </div>
@@ -37,7 +37,7 @@
                 <input type="number" min="1" max="20" class="form-control" :class="{'Disabled': disabled}"
                        :disabled="disabled" id="numRounds"
                        :value="(options.autoNumRounds) ? players.length : options.numRounds"
-                       data-bs-toggle="tooltip" data-bs-placement="right" :title="$t('tooltip.options.rounds')"
+                       v-tooltip.right="$t('tooltip.options.rounds')"
                        @focusout="validateNumRounds($event)"
                        @change="onNumRoundChange($event, 'numRounds')">
               </div>
@@ -48,7 +48,7 @@
                   <label for="sikeDispute" class="form-check-label" v-t="'sikeDisputeLabel'"/>
                   <input type="checkbox" class="form-check-input" :class="{'Disabled': disabled}" :disabled="disabled"
                          id="sikeDispute" :checked="options.sikeDispute"
-                         data-bs-toggle="tooltip" data-bs-placement="left" :title="$t('tooltip.options.dispute')"
+                         v-tooltip.left="$t('tooltip.options.dispute')"
                          @click="validateSikeDispute($event, 'sikeDispute')">
                 </div>
               </div>
@@ -57,7 +57,7 @@
                 <input type="number" min="0" max="2" class="form-control" id="sikeRetries" :value="options.sikeRetries"
                        :class="{'Disabled': disabled || !options.sikeDispute}"
                        :disabled="disabled || !options.sikeDispute"
-                       data-bs-toggle="tooltip" data-bs-placement="right" :title="$t('tooltip.options.retries')"
+                       v-tooltip.right="$t('tooltip.options.retries')"
                        @focusout="validateNum($event, 'sikeRetries')"
                        @change="onNumChange($event, 'sikeRetries')">
               </div>
@@ -107,16 +107,6 @@ export default {
       const firstForm = this.$refs.pack0[0];
       firstForm.focus();
     });
-
-    //init tooltip
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    this.tooltips = [...tooltipTriggerList].map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl,
-        {delay: {show: 500, hide: 50}, trigger: 'hover'}));
-  },
-  beforeUnmount() {
-    for(const tooltip of this.tooltips){
-      tooltip.hide();
-    }
   },
   methods: {
     arraysEqual(a, b) {

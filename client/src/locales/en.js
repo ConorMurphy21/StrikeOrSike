@@ -85,6 +85,9 @@ export default {
             dispute: 'Allow players to dispute a sike if it doesn\'t fit the prompt',
             retries: 'Allow a player with a failed sike to retry',
         },
+        strike: 'Something you think everyone thought of',
+        sike: 'Something you think no one thought of',
+        choice: '', // exists to toggle off selectionType tooltip
         voteSkip: 'Vote to skip current prompt',
         dispute: 'Vote to dispute {response}'
     },

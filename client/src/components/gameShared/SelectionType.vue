@@ -1,5 +1,7 @@
 <template>
-  <img :src="typeImg" :alt="$t(type)">
+  <img v-if="tooltip" :src="typeImg" :alt="$t(type)"
+       v-tooltip.left.ds750="$t('tooltip.' + type)">
+  <img v-else :src="typeImg" :alt="$t(type)">
 </template>
 
 <script>
@@ -9,8 +11,12 @@ const {mapState, mapGetters} = createNamespacedHelpers('game');
 import StrikeImg from '@/assets/images/strike.png';
 import SikeImg from '@/assets/images/sike.png';
 import ChoiceImg from '@/assets/images/choice.png';
+import {Tooltip} from 'bootstrap';
 
 export default {
+  props: {
+    tooltip: true
+  },
   computed: {
     ...mapState({
       type: 'selectionType',
@@ -22,8 +28,8 @@ export default {
         return SikeImg;
       }
       return ChoiceImg;
-    }
-  },
+    },
+  }
 }
 </script>
 

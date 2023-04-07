@@ -1,7 +1,7 @@
 import {nextTick} from 'vue';
 import {Tooltip} from 'bootstrap';
 
-const placementRE = /^(auto|top(left|right)?|bottom(left|right)?|left(top|bottom)?|right(top|bottom)?)$/i
+const placementRE = /^(auto|top|bottom|left|right)$/i
 const delayShowRE = /^ds\d+$/i
 const delayHideRE = /^dh\d+$/i
 
@@ -10,11 +10,15 @@ const parseBindings = (bindings) => /* istanbul ignore next: not easy to test */
     let config = {
         title: undefined,
         triggers: 'hover', // Default set below if needed
-        placement: 'top',
+        placement: 'auto',
         delay: {show: 500, hide: 100},
     }
 
-    config.title = bindings.value;
+    if (typeof bindings.value === 'string'){
+        config.title = bindings.value;
+    } else {
+        config = {...config, ...bindings.value}
+    }
 
     // Process modifiers
     Object.keys(bindings.modifiers).forEach(mod => {

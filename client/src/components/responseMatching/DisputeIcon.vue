@@ -1,9 +1,9 @@
 <template>
   <a class="btn btn-sm btn-orange text-white ratio-1x1 position-relative d-inline-flex justify-content-center align-items-center"
      :class="{'btn-blue': !sikeDisputeNext}"
-          :disabled="disabled"
-          data-bs-toggle="tooltip" :data-bs-placement="placement" :title="$t('tooltip.dispute', {response})"
-          @click="sendVote">
+     :disabled="disabled"
+     v-tooltip="{title: $t('tooltip.dispute', {response}), placement}"
+     @click="sendVote">
     <i class="bi-hand-thumbs-down fs-5 lh-sm"/>
 
     <notification-count :width="21" v-if="sikeDisputeCount" class="position-absolute top-0 start-100 translate-middle">
@@ -35,17 +35,6 @@ export default {
     response: String,
     placement: String
   },
-  mounted() {
-    //init tooltip
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    this.tooltips = [...tooltipTriggerList].map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl,
-        {delay: {show: 500, hide: 50}, trigger: 'hover'}));
-  },
-  beforeUnmount() {
-    for(const tooltip of this.tooltips){
-      tooltip.hide();
-    }
-  },
   computed: {
     ...mapGetters([
       'sikeDisputeCount',
@@ -60,4 +49,3 @@ export default {
   }
 }
 </script>
-

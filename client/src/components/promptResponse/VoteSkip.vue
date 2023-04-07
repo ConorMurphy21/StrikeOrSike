@@ -1,7 +1,7 @@
 <template>
   <a class="btn btn-sm btn-orange text-white ratio-1x1 position-relative d-inline-flex justify-content-center align-items-center"
           :class="{'btn-blue': !skipVoteNext}"
-          v-tooltip.left="$t('tooltip.voteSkip')"
+          v-tooltip.right="$t('tooltip.voteSkip')"
           @click="sendVote">
     <i class="bi-hand-thumbs-down fs-3 p-0 lh-sm"/>
 

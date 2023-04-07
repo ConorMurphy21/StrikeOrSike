@@ -9,7 +9,7 @@ const parseBindings = (bindings) => /* istanbul ignore next: not easy to test */
     // We start out with a basic config
     let config = {
         title: undefined,
-        triggers: 'hover', // Default set below if needed
+        trigger: 'hover', // Default set below if needed
         placement: 'auto',
         delay: {show: 500, hide: 100},
     }

@@ -46,12 +46,7 @@ export default {
       'toggleMute'
     ]),
     click() {
-      if (!this.showing) {
-        this.showing = true;
-        //this.resetTimer();
-      } else {
         this.toggleMute();
-      }
     },
     resetTimer() {
       this.clearTimer();
@@ -61,6 +56,7 @@ export default {
       }, 1200);
     },
     clearTimer() {
+      this.showing = true;
       if(this.timer){
         clearTimeout(this.timer);
       }

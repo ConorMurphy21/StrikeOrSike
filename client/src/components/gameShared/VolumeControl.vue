@@ -2,7 +2,7 @@
   <div class="position-fixed bottom-0 end-0 m-4 d-flex flex-column justify-content-center align-items-center"
        @mouseenter="clearTimer" @mouseleave="resetTimer">
     <transition>
-      <vue-slider v-show="showing" v-model="value" direction="btt" height="80px" :duration="0.3" />
+      <vue-slider v-if="showing" v-model="value" direction="btt" height="80px" :duration="0.3" />
     </transition>
     <button class="btn btn-sm fs-1 text-black"
             :class="{
@@ -53,7 +53,7 @@ export default {
       this.timer = setTimeout(() => {
         this.timer = null;
         this.showing = false;
-      }, 1200);
+      }, 700);
     },
     clearTimer() {
       this.showing = true;

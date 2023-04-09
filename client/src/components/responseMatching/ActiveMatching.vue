@@ -15,8 +15,10 @@
       </template>
     </i18n-t>
 
-    <button class="btn btn-primary w-50 fs-4" @click="noMatch">
-      <img class="my-auto w-75 w-sm-50 w-lg-25" src="@/assets/images/sike.png" :alt="$t('sike')">
+    <button class="btn btn-primary w-50 fs-4 d-flex justify-content-center align-items-center" @click="noMatch">
+      <div class="d-flex justify-content-center align-items-center w-75">
+        <img class="my-auto w-75 w-sm-50 w-lg-25" src="@/assets/images/sike.png" :alt="$t('sike')">
+      </div>
     </button>
     or
     <response-list :selectable="true" :height="40" v-model="matchedResponse"/>
@@ -52,8 +54,8 @@ export default {
     VoteSkip
   },
   mounted() {
-    if(!this.unmatched){
-     alert.play();
+    if (!this.unmatched) {
+      alert.play();
     }
   },
   computed: {
@@ -65,7 +67,7 @@ export default {
       'unmatched'
     ]),
     ...mapGetters([
-        'sikeDispute'
+      'sikeDispute'
     ])
   },
   watch: {
@@ -84,18 +86,21 @@ export default {
 
 <style lang="scss" scoped>
 
-p{
+p {
   text-align: center;
 }
-.responseMessage{
+
+.responseMessage {
   text-align: center;
   font-weight: 900;
   color: $red;
 }
-.strike{
+
+.strike {
   color: $orange;
 }
-.sike{
+
+.sike {
   color: $blue;
 }
 </style>

@@ -1,6 +1,7 @@
 <template>
   <!-- desktop view -->
-  <div class="d-md-flex d-none flex-row align-items-center justify-content-around w-75">
+  <div class="d-md-flex d-none flex-row align-items-center justify-content-center w-75"
+       :class="{'justify-content-between': choice && isSelector}">
     <button v-if="choice && isSelector" class="btn btn-orange w-25"
             @click="selectSelectionType(true)"
             v-tooltip.left.ds750="$t('tooltip.strike')"

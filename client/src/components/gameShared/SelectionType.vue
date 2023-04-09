@@ -1,7 +1,7 @@
 <template>
-  <img v-if="tooltip" :src="typeImg" :alt="$t(type)"
+  <img v-if="tooltip" :src="typeImg" :alt="$t(type)" :class="{'sike-img': type === 'sike'}"
        v-tooltip.left.ds750="$t('tooltip.' + type)">
-  <img v-else :src="typeImg" :alt="$t(type)">
+  <img v-else :src="typeImg" :alt="$t(type)" :class="{'sike-img': type === 'sike'}">
 </template>
 
 <script>
@@ -9,13 +9,15 @@ import {createNamespacedHelpers} from 'vuex';
 
 const {mapState, mapGetters} = createNamespacedHelpers('game');
 import StrikeImg from '@/assets/images/strike.png';
-import SikeImg from '@/assets/images/sike.png';
+import SikeImg from '@/assets/images/sike2.png';
 import ChoiceImg from '@/assets/images/choice.png';
-import {Tooltip} from 'bootstrap';
 
 export default {
   props: {
-    tooltip: true
+    tooltip: {
+      type: Boolean,
+      default: true
+    }
   },
   computed: {
     ...mapState({
@@ -34,9 +36,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-img {
+img.sike-img {
+  min-width: 96px;
+  max-width: 22.5%;
+}
+img:not(.sike-img) {
   min-width: 150px;
   max-width: 35%;
+}
+img {
   color: $black;
   font-family: $header-font !important;
   font-weight: normal;

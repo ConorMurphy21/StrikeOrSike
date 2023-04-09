@@ -15,7 +15,8 @@
       </template>
     </i18n-t>
 
-    <button class="btn btn-primary w-50 fs-4 d-flex justify-content-center align-items-center" @click="noMatch">
+    <button class="btn btn-primary w-50 fs-4 d-flex justify-content-center align-items-center" @click="noMatch"
+            v-tooltip.left.ds900="$t('tooltip.noMatch', {response: selectedResponse})">
       <div class="d-flex justify-content-center align-items-center w-75">
         <img class="my-auto w-75 w-sm-50 w-lg-25" src="@/assets/images/sike.png" :alt="$t('sike')">
       </div>

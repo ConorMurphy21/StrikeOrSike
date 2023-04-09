@@ -1,7 +1,7 @@
 <template>
   <div class="w-100 d-flex flex-column align-items-center justify-content-between gap-2 py-3 px-4">
 
-    <div class="d-flex flex-column align-items-center justify-content-start">
+    <div class="w-100 d-flex flex-column align-items-center justify-content-start">
       <prompt :prompt="prompt"/>
       <h3 v-if="isSelector" class="fs-3">
         {{ $t('selfScoreMessage', {score: $n(roundPoints)}) }}
@@ -14,7 +14,9 @@
         <dispute-icon :disabled="isSelector" v-if="sikeDisputeCount"
                       :response="selectedResponse" :placement="'right'"/>
       </span>
-      <selection-type/>
+      <div class="w-75 d-flex justify-content-center align-items-center">
+        <selection-type/>
+      </div>
     </div>
 
     <div class="matches d-flex flex-row w-75 gap-2 justify-content-around align-items-center">
@@ -75,10 +77,7 @@ export default {
       this.$socket.emit('selectionComplete');
     },
     match(player) {
-      const ret = this.matches.find(match => player.id === match.player.id);
-      console.log('returning match:');
-      console.dir(ret);
-      return ret;
+      return this.matches.find(match => player.id === match.player.id);
     }
   }
 }

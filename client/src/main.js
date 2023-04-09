@@ -3,8 +3,10 @@ import { createApp } from 'vue';
 import store from './store';
 import i18n from './locales';
 import router from './router';
+import {CBSTooltip} from './directives/tooltip';
 import VueSocketIO from 'vue-3-socket.io';
 import Portal from 'vue3-portal';
+import {AudioWrap} from './mixins/AudioWrap';
 
 // only import bootstrap components that are used
 import {Collapse, Dropdown} from 'bootstrap';
@@ -19,6 +21,8 @@ app.use(router);
 app.use(i18n);
 app.use(Portal);
 
+app.directive('tooltip', CBSTooltip);
+
 const socket = new VueSocketIO({
     debug,
     connection: debug ? 'http://localhost:5000' : location.origin, //options object is Optional
@@ -32,7 +36,9 @@ const socket = new VueSocketIO({
 
 store.$socket = socket;
 
+AudioWrap.store = store;
+
 router.isReady().then(() => {
     app.use(socket);
-    app.mount('#app')
+    app.mount('#app');
 })

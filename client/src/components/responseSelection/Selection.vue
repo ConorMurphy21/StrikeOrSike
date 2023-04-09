@@ -2,7 +2,7 @@
   <div class="w-100 d-flex flex-column justify-content-start align-items-center py-3 px-4">
     <prompt :prompt="prompt"/>
     <p v-if="!isSelector" class="display-6 passiveMessage mb-0"
-       v-t="{path: 'selection.message', args: {'player':selector.name}}"/>
+       v-t="{path: 'selection.message', args: {'player': selector.name}}"/>
     <i18n-t v-else keypath="selection.selfMessage" tag="p" class="display-6 activeMessage mb-0">
       <template v-slot:self>
         <span class="activeSelector display-6" v-t="'selection.self'"/>
@@ -64,6 +64,7 @@ export default {
   font-weight: 500;
   text-align: center;
 }
+
 .passiveMessage {
   font-weight: 500;
   text-align: center;

@@ -2,7 +2,7 @@
   <div class="root d-flex flex-column gap-0">
     <div class="d-flex flex-row w-100 gap-1 justify-content-center align-items-center">
       <h2 v-if="match && match.response" class="match-content fs-3"> {{ match.response }} </h2>
-      <img v-else-if="match" class="fs-3" src="@/assets/images/sike2.png" :alt="$t('sike')"/>
+      <img v-else-if="match" class="fs-3" src="@/assets/images/sike.png" :alt="$t('sike')"/>
       <div v-else class=" p-3 d-flex justify-content-center align-items-center position-relative">
         <div class="dot-pulse"/>
       </div>

@@ -73,10 +73,10 @@ const joinRoom = (id, name, roomName) => {
     const room = rooms[parameterize(roomName)];
     if (!room)
         return { error: 'noRoom' };
-    if(room.players.length >= room.state.options.maxPlayers) {
+    // don't hold spots for inactive players
+    if(room.players.find(p => p.active).length >= room.state.options.maxPlayers) {
         return { error: 'noSpace' };
     }
-
 
     const existingPlayer = room.players.find(player => player.name === name);
     if(existingPlayer && existingPlayer.active){

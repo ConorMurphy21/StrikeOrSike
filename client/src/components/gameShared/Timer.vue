@@ -13,7 +13,7 @@
 import {createNamespacedHelpers} from 'vuex';
 import timerMp3 from '@/assets/audio/timer_full.mp3';
 import timerCompleteMp3 from '@/assets/audio/timerComplete.mp3';
-import {AudioWrap} from '@/mixins/AudioWrap';
+import {AudioWrap} from '@/mixins/audiowrap';
 
 const {mapState} = createNamespacedHelpers('settings');
 

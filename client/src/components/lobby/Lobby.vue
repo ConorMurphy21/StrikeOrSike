@@ -16,7 +16,7 @@ import {createNamespacedHelpers} from 'vuex';
 import PlayerList from '@/components/lobby/PlayerList.vue'
 import Options from '@/components/lobby/Options.vue'
 import ClickMp3 from '@/assets/audio/click2.mp3'
-import {AudioWrap} from '@/mixins/AudioWrap';
+import {AudioWrap} from '@/mixins/audiowrap';
 
 const click = new AudioWrap(ClickMp3);
 

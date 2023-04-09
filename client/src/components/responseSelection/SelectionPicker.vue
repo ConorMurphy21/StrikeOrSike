@@ -33,7 +33,7 @@
 import {createNamespacedHelpers} from 'vuex';
 import SelectionType from '@/components/gameShared/SelectionType.vue';
 import ClickMp3 from '@/assets/audio/click2.mp3'
-import {AudioWrap} from '@/mixins/AudioWrap';
+import {AudioWrap} from '@/mixins/audiowrap';
 
 const {mapState, mapGetters} = createNamespacedHelpers('game');
 

@@ -21,7 +21,7 @@ import ResponseList from '@/components/gameShared/ResponseList.vue';
 import NotificationCount from '@/components/gameShared/NotificationCount.vue';
 import ClickMp3 from '@/assets/audio/click2.mp3';
 import PlayerChooser from '@/components/endRound/PlayerChooser.vue';
-import {AudioWrap} from '@/mixins/AudioWrap';
+import {AudioWrap} from '@/mixins/audiowrap';
 
 const {mapState, mapGetters, mapActions} = createNamespacedHelpers('game');
 const room = createNamespacedHelpers('room');

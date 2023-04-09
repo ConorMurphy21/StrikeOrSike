@@ -16,7 +16,7 @@ import {createNamespacedHelpers} from 'vuex';
 import ClickMp3 from '@/assets/audio/click2.mp3';
 import NotificationCount from '@/components/gameShared/NotificationCount.vue';
 import {Tooltip} from 'bootstrap';
-import {AudioWrap} from '@/mixins/AudioWrap';
+import {AudioWrap} from '@/mixins/audiowrap';
 
 const {mapGetters} = createNamespacedHelpers('game');
 

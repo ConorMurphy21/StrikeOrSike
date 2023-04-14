@@ -85,6 +85,7 @@ export default {
             dispute: 'Allow players to dispute a sike if it doesn\'t fit the prompt',
             retries: 'Allow a player with a failed sike to retry',
         },
+        startDisabled: '3 players are needed to start a game',
         strike: 'Something you think everyone thought of',
         sike: 'Something you think no one thought of',
         choice: '', // exists to toggle off selectionType tooltip

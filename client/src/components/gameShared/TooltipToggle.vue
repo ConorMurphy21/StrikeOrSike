@@ -21,6 +21,7 @@ export default {
     ]),
     click() {
       this.setShowTooltips(!this.showTooltips);
+      this.$forceUpdate();
     },
   }
 }

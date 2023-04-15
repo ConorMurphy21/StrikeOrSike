@@ -77,7 +77,6 @@
 
 <script>
 import {createNamespacedHelpers} from 'vuex';
-import {Tooltip} from 'bootstrap';
 
 const game = createNamespacedHelpers('game')
 const room = createNamespacedHelpers('room')

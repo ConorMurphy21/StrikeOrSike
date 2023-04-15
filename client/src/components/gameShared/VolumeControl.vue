@@ -2,14 +2,15 @@
   <div class="position-fixed bottom-0 end-0 m-4 d-flex flex-column justify-content-center align-items-center"
        @mouseenter="clearTimer" @mouseleave="resetTimer">
     <transition>
-      <vue-slider v-if="showing" v-model="value" direction="btt" height="80px" :duration="0.3" />
+      <vue-slider tabindex="1" v-if="showing" v-model="value" direction="btt" height="80px" :duration="0.3"
+                  @focusin="clearTimer" @focusout="resetTimer"/>
     </transition>
-    <button class="btn btn-sm fs-1 text-black"
+    <button class="text-black"
             :class="{
                 'bi-volume-up-fill': value > 50,
                 'bi-volume-down-fill': value <= 50 && value > 0,
                 'bi-volume-mute-fill': value === 0}"
-            @click="click"/>
+            @click="click" @focusin="clearTimer" @focusout="resetTimer"/>
   </div>
 </template>
 <script>
@@ -65,7 +66,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .v-enter-active,
 .v-leave-active {
   transition: opacity 0.3s ease;
@@ -75,6 +76,20 @@ export default {
   opacity: 0;
 }
 button {
+  font-size: 48px;
+  background: none;
   border: none;
+  outline: none;
 }
+
+button:hover {
+  text-shadow: 0 0 18px $red;
+  cursor: pointer;
+}
+
+button:focus {
+  text-shadow: 0 0 18px $red;
+  cursor: pointer;
+}
+
 </style>

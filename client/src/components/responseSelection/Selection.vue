@@ -19,7 +19,7 @@ import ResponseList from '@/components/gameShared/ResponseList.vue';
 import SelectionPicker from '@/components/responseSelection/SelectionPicker.vue';
 import Prompt from '@/components/gameShared/Prompt.vue';
 import AlertMp3 from '@/assets/audio/alert.mp3';
-import {AudioWrap} from '@/mixins/AudioWrap';
+import {AudioWrap} from '@/mixins/audiowrap';
 
 const alert = new AudioWrap(AlertMp3);
 const {mapState, mapGetters} = createNamespacedHelpers('game');

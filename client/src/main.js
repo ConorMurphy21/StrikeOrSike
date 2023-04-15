@@ -6,7 +6,7 @@ import router from './router';
 import {CBSTooltip} from './directives/tooltip';
 import VueSocketIO from 'vue-3-socket.io';
 import Portal from 'vue3-portal';
-import {AudioWrap} from './mixins/AudioWrap';
+import {AudioWrap} from './mixins/audiowrap';
 
 // only import bootstrap components that are used
 import {Collapse, Dropdown} from 'bootstrap';

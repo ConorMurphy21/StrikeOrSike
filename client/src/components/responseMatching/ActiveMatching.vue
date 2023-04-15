@@ -35,7 +35,7 @@ import ClickMp3 from '@/assets/audio/click2.mp3';
 import AlertMp3 from '@/assets/audio/alert.mp3';
 import DisputeIcon from '@/components/responseMatching/DisputeIcon.vue';
 import VoteSkip from '@/components/promptResponse/VoteSkip.vue';
-import {AudioWrap} from '@/mixins/AudioWrap';
+import {AudioWrap} from '@/mixins/audiowrap';
 
 const click = new AudioWrap(ClickMp3);
 const alert = new AudioWrap(AlertMp3);

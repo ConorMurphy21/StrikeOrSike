@@ -7,7 +7,7 @@
 <script>
 import timerMp3 from '@/assets/audio/countdown.mp3';
 import {createNamespacedHelpers} from 'vuex';
-import {AudioWrap} from '@/mixins/AudioWrap';
+import {AudioWrap} from '@/mixins/audiowrap';
 
 const game = createNamespacedHelpers('game');
 const settings = createNamespacedHelpers('settings');

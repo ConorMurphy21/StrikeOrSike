@@ -35,7 +35,6 @@ const socket = new VueSocketIO({
 });
 
 store.$socket = socket;
-
 AudioWrap.store = store;
 
 router.isReady().then(() => {

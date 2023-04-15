@@ -86,6 +86,7 @@ export default {
             retries: 'Allow a player with a failed sike to retry',
         },
         startDisabled: '3 players are needed to start a game',
+        showTooltips: 'Click to make me disappear',
         strike: 'Something you think everyone thought of',
         sike: 'Something you think no one thought of',
         choice: '', // exists to toggle off selectionType tooltip

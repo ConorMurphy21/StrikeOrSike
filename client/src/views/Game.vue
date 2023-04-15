@@ -15,7 +15,11 @@
       </a>
     </portal>
 
-    <volume-control v-if="!isMobile"/>
+    <!-- client side preferences -->
+    <div class="position-fixed bottom-0 end-0 m-4 gap-1 d-flex justify-content-end align-items-end" v-if="!isMobile">
+      <tooltip-toggle class="mb-1"/>
+      <volume-control/>
+    </div>
   </div>
 </template>
 
@@ -29,6 +33,7 @@ import MatchingSummary from '@/components/responseMatching/MatchingSummary.vue';
 import EndRound from '@/components/endRound/EndRound.vue';
 import EndGame from '@/components/endGame/EndGame.vue';
 import VolumeControl from '@/components/gameShared/VolumeControl.vue';
+import TooltipToggle from '@/components/gameShared/TooltipToggle.vue';
 import {mapState} from 'vuex';
 
 export default {
@@ -41,7 +46,8 @@ export default {
     MatchingSummary,
     EndRound,
     EndGame,
-    VolumeControl
+    VolumeControl,
+    TooltipToggle,
   },
   props: {
     roomName: String

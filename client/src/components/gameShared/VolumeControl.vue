@@ -1,8 +1,8 @@
 <template>
-  <div class="position-fixed bottom-0 end-0 m-4 d-flex flex-column justify-content-center align-items-center"
+  <div class="d-flex flex-column justify-content-center align-items-center"
        @mouseenter="clearTimer" @mouseleave="resetTimer">
     <transition>
-      <vue-slider tabindex="1" v-if="showing" v-model="value" direction="btt" height="80px" :duration="0.3"
+      <vue-slider v-if="showing" v-model="value" direction="btt" height="80px" :duration="0.3"
                   @focusin="clearTimer" @focusout="resetTimer"/>
     </transition>
     <button class="text-black"

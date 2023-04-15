@@ -38,6 +38,12 @@ const parseBindings = (bindings) => /* istanbul ignore next: not easy to test */
 }
 
 const applyTooltip = (el, bindings) => {
+    const store = bindings.instance.$store;
+    const enabled = store.state.settings.showTooltips;
+    if (!enabled) {
+        removeTooltip(el);
+        return;
+    }
     const config = parseBindings(bindings);
     const tooltip = Tooltip.getInstance(el);
     if (tooltip && tooltip.title !== config.title) {
@@ -54,15 +60,19 @@ const removeTooltip = (el) => {
 // Export our directive
 export const CBSTooltip = {
     beforeMount(el, bindings, vnode) {
-        applyTooltip(el, bindings, vnode)
+        const store = bindings.instance.$store;
+        store.commit('settings/addTooltipUpdateFunc', bindings.instance.$forceUpdate);
+        applyTooltip(el, bindings, vnode);
     },
     updated(el, bindings, vnode) {
         // Performed in a `$nextTick()` to prevent render update loops
         nextTick(() => {
-            applyTooltip(el, bindings, vnode)
+            applyTooltip(el, bindings, vnode);
         })
     },
-    unmounted(el) {
-        removeTooltip(el)
+    unmounted(el, bindings) {
+        const store = bindings.instance.$store;
+        store.commit('settings/removeTooltipUpdateFunc', bindings.instance.$forceUpdate);
+        removeTooltip(el);
     }
 }

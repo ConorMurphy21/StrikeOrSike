@@ -26,12 +26,4 @@ export default defineConfig({
       '/api': 'http://localhost:3000'
     }
   },
-  build: {
-    commonjsOptions: {
-      /**
-       * Setting to make prod-build working with vue-slider-component
-       **/
-      requireReturnsDefault: true,
-    },
-  },
 })

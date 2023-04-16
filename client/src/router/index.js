@@ -1,9 +1,8 @@
 import { createWebHistory, createRouter } from 'vue-router';
 import Home from '@/views/Home.vue';
-import Game from '@/views/Game.vue';
-import About from '@/views/About.vue';
-import NotFound from '@/views/NotFound.vue';
-import HowToPlay from '@/views/HowToPlay.vue';
+const Game = () => import('@/views/Game.vue');
+const About = () => import('@/views/About.vue');
+const HowToPlay = () => import('@/views/HowToPlay.vue');
 import store from '@/store/index';
 
 const routes = [
@@ -31,10 +30,6 @@ const routes = [
         name: 'game',
         props: route => ({roomName: route.params.roomName}),
         meta: { title: 'Game' }
-    },
-    {
-        path: '/:path(.*)',
-        component: NotFound
     },
 ];
 

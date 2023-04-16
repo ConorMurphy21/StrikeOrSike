@@ -90,7 +90,7 @@ export default {
         strike: 'Something you think everyone thought of',
         sike: 'Something you think no one thought of',
         choice: '', // exists to toggle off selectionType tooltip
-        noMatch: 'Nothing matches: {response}',
+        noMatch: 'Nothing listed is similar to {response}',
         voteSkip: 'Vote to skip current prompt',
         dispute: 'Vote to dispute {response}'
     },

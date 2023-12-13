@@ -145,6 +145,9 @@ const GameState = class {
             return {error: 'emptyResponse'};
         }
         response = response.trim().normalize().trim();
+        if(!response){
+            return {error: 'emptyResponse'};
+        }
         if (this.stage === 'response') {
             const playerState = this.players.find(player => player.id === id);
             if (!playerState) {

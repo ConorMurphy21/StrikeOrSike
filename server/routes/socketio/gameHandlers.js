@@ -42,7 +42,7 @@ const registerGameHandlers = (io, socket) => {
     });
 
     socket.on('promptResponse', (response) => {
-        if (Joi.string().max(60).validate(response).error) {
+        if (Joi.string().max(60).min(1).validate(response).error) {
             logger.error('(gameHandlers) Prompt Response too large')
             return;
         }
@@ -96,7 +96,7 @@ const registerGameHandlers = (io, socket) => {
     });
 
     socket.on('selectResponse', (response) => {
-        if (Joi.string().max(60).validate(response).error) {
+        if (Joi.string().max(60).min(1).validate(response).error) {
             logger.error('(gameHandlers) selectResponse attempted with invalid match');
             return;
         }

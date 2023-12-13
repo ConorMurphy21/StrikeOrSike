@@ -42,7 +42,7 @@ const registerGameHandlers = (io, socket) => {
     });
 
     socket.on('promptResponse', (response) => {
-        if (Joi.string().max(60).min(1).validate(response).error) {
+        if (Joi.string().max(60).min(1).required().validate(response).error) {
             logger.error('(gameHandlers) Prompt Response too large')
             return;
         }
@@ -62,7 +62,7 @@ const registerGameHandlers = (io, socket) => {
 
     // true to vote to skip, false to unvote to skip
     socket.on('pollVote', (pollName) => {
-        if (Joi.string().validate(pollName).error) {
+        if (Joi.string().required().validate(pollName).error) {
             logger.error('(gameHandlers) PollVote invalid format');
             return;
         }
@@ -81,6 +81,10 @@ const registerGameHandlers = (io, socket) => {
     });
 
     socket.on('selectSelectionType', (isStrike) => {
+        if (Joi.boolean().required().validate(isStrike).error) {
+            logger.error('(gameHandlers) isStrike invalid format');
+            return;
+        }
         const room = getRoomById(socket.id);
         if (!room) {
             logger.error('(gameHandlers) selectSelectionType attempted with no room');
@@ -96,7 +100,7 @@ const registerGameHandlers = (io, socket) => {
     });
 
     socket.on('selectResponse', (response) => {
-        if (Joi.string().max(60).min(1).validate(response).error) {
+        if (Joi.string().max(60).min(1).required().validate(response).error) {
             logger.error('(gameHandlers) selectResponse attempted with invalid match');
             return;
         }
@@ -115,7 +119,7 @@ const registerGameHandlers = (io, socket) => {
     });
 
     socket.on('selectMatch', (match) => {
-        if (Joi.string().max(60).allow('').validate(match).error) {
+        if (Joi.string().max(60).allow('').required().validate(match).error) {
             logger.error('(gameHandlers) selectMatch attempted with invalid match');
             return;
         }
@@ -149,7 +153,7 @@ const registerGameHandlers = (io, socket) => {
     });
 
     socket.on('getResponses', (id, callback) => {
-        if(!callback || !Joi.string().validate(id)) {
+        if(!callback || !Joi.string().required().validate(id)) {
             logger.error('(gameHandlers) getResponse attempted with invalid arguments');
             return;
         }

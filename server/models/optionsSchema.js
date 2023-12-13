@@ -30,7 +30,7 @@ let setOptionsSchema = Joi.object({
                 .min(1)
                 .max(200))
         .max(400)
-})
+}).required();
 
 // be a little more permissive with options so unit tests can run
 if (process.env.NODE_ENV !== 'production') {
@@ -64,7 +64,7 @@ if (process.env.NODE_ENV !== 'production') {
                     .min(1)
                     .max(200))
             .max(400)
-    })
+    }).required();
 }
 
 module.exports = setOptionsSchema;

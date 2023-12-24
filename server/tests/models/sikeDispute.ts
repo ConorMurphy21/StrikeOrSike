@@ -1,60 +1,79 @@
-import {GameState} from "../../src/models/gameState";
-import {assert} from "chai";
-import {Player} from "../../src/models/rooms";
+import { GameState } from '../../src/models/gameState';
+import { assert } from 'chai';
+import { Player } from '../../src/models/rooms';
 
 describe('Sike Dispute tests', () => {
+  const selectorId = '0';
+  const matcherId = '1';
+  const selectorIndex = 0;
+  const matcherIndex = 1;
+  let gameState: GameState;
+  const firstResponse = 'firstResponse';
+  const secondResponse = 'secondResponse';
+  // must be even
+  const evenLen = 8;
+  const players: Player[] = [];
 
-    const selectorId = '0';
-    const matcherId = '1';
-    const selectorIndex = 0;
-    const matcherIndex = 1;
-    let gameState: GameState;
-    const firstResponse = 'firstResponse';
-    const secondResponse = 'secondResponse';
-    // must be even
-    const evenLen = 8;
-    const players: Player[] = [];
+  beforeEach(() => {
+    for (let i = 0; i < evenLen; i++) {
+      players[i] = {
+        id: i.toString(),
+        name: i.toString(),
+        leader: false,
+        active: true
+      };
+    }
+    players[0].leader = true;
+    const room = {
+      name: 'test',
+      lastActivity: 0,
+      players,
+      lang: 'en-CA',
+      state: null
+    };
+    gameState = new GameState(room);
+    gameState.options.sikeDispute = true;
+    gameState.players[selectorIndex].responses.push(firstResponse);
+    gameState.players[selectorIndex].responses.push(secondResponse);
+  });
 
+  describe('Strike selectionType', () => {
     beforeEach(() => {
-        for (let i = 0; i < evenLen; i++) {
-            players[i] = {id: i.toString(), name: i.toString(), leader: false, active: true};
-        }
-        players[0].leader = true;
-        const room = {name: 'test', lastActivity: 0, players, lang: 'en-CA', state: null};
-        gameState = new GameState(room);
-        gameState.options.sikeDispute = true;
-        gameState.players[selectorIndex].responses.push(firstResponse);
-        gameState.players[selectorIndex].responses.push(secondResponse);
+      gameState.beginSelection();
+      gameState.selectionType = 'strike';
     });
 
-    describe('Strike selectionType', () => {
-        beforeEach(() => {
-            gameState.beginSelection();
-            gameState.selectionType = 'strike';
-        });
-
-        it('PromptSelection Accept Happy', () => {
-            const result = gameState.acceptResponseSelection(selectorId, firstResponse);
-            assert.isOk('success' in result);
-            assert.isNotOk('error' in result);
-        });
-
-        it('PromptSelection Accept NotSelector', () => {
-            gameState.players[matcherIndex].responses.push(firstResponse);
-            const result = gameState.acceptResponseSelection(matcherId, firstResponse);
-            assert.isNotOk('success' in result);
-            assert.isOk('error' in result);
-        });
-
-        it('PromptSelection Accept used', () => {
-            gameState.players[selectorIndex].used.push(firstResponse);
-            const result = gameState.acceptResponseSelection(selectorId, firstResponse);
-            assert.isNotOk('success' in result);
-            assert.isOk('error' in result);
-        });
+    it('PromptSelection Accept Happy', () => {
+      const result = gameState.acceptResponseSelection(
+        selectorId,
+        firstResponse
+      );
+      assert.isOk('success' in result);
+      assert.isNotOk('error' in result);
     });
 
-/*    describe('Sike selectionType', () => {
+    it('PromptSelection Accept NotSelector', () => {
+      gameState.players[matcherIndex].responses.push(firstResponse);
+      const result = gameState.acceptResponseSelection(
+        matcherId,
+        firstResponse
+      );
+      assert.isNotOk('success' in result);
+      assert.isOk('error' in result);
+    });
+
+    it('PromptSelection Accept used', () => {
+      gameState.players[selectorIndex].used.push(firstResponse);
+      const result = gameState.acceptResponseSelection(
+        selectorId,
+        firstResponse
+      );
+      assert.isNotOk('success' in result);
+      assert.isOk('error' in result);
+    });
+  });
+
+  /*    describe('Sike selectionType', () => {
         beforeEach(() => {
             gameState.options.sikeRetries = 0;
             gameState.beginSelection();

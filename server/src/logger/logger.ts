@@ -1,23 +1,23 @@
-import winston from "winston";
-import WinstonCloudWatch from "winston-cloudwatch";
+import winston from 'winston';
+import WinstonCloudWatch from 'winston-cloudwatch';
 
 const logger = winston.createLogger({
-    format: winston.format.json(),
-    transports: [
-        new winston.transports.Console()
-    ]
+  format: winston.format.json(),
+  transports: [new winston.transports.Console()]
 });
 if (process.env.NODE_ENV === 'production') {
-    const cloudwatchConfig = {
-        logGroupName: 'application/logs',
-        logStreamName: 'application/logs-production',
-        awsRegion: 'us-west-2',
-        messageFormatter: ({
-                               level,
-                               message,
-                           }: {level: string, message: string}) => `[${level}] : ${message}`
-
-    }
-    logger.add(new WinstonCloudWatch(cloudwatchConfig))
+  const cloudwatchConfig = {
+    logGroupName: 'application/logs',
+    logStreamName: 'application/logs-production',
+    awsRegion: 'us-west-2',
+    messageFormatter: ({
+      level,
+      message
+    }: {
+      level: string;
+      message: string;
+    }) => `[${level}] : ${message}`
+  };
+  logger.add(new WinstonCloudWatch(cloudwatchConfig));
 }
 export = logger;

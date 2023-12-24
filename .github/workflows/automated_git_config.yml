@@ -29,5 +29,5 @@ jobs:
       working-directory: ./server
     - run: npm test
       working-directory: ./server
-    - run: npm lint
+    - run: npm run lint
       working-directory: ./server

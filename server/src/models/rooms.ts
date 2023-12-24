@@ -81,7 +81,7 @@ const createRoom = (id: string, name: string, roomName: string, langs: string): 
 }
 
 const joinRoom = (id: string, name: string, roomName: string): Failable<{room: Room, oldId?: string}> => {
-    let result = isValidName(name);
+    const result = isValidName(name);
     if ('error' in result)
         return result;
     if(typeof roomName !== 'string') {

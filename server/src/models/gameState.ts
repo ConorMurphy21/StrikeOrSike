@@ -46,7 +46,7 @@ type Player = {
     exactMatch: boolean,
     matchingComplete: boolean, // set to true if explicitly no match was found or a match was found
 };
-type Failable<T extends Object> = { error: string } | T & { success: boolean };
+type Failable<T extends object> = { error: string } | T & { success: boolean };
 type Error = { error: string } | { success: boolean };
 
 type Match = {
@@ -55,7 +55,13 @@ type Match = {
     exact: boolean;
 };
 
-type Responses = {};
+type Responses = {
+    id: string,
+    all: string[],
+    used: string[],
+    selectedStrike: string,
+    selectedSike: string,
+};
 
 class GameState {
     private name: string;
@@ -547,7 +553,8 @@ class GameState {
 
     _getTimeLeft(timeout: NodeJS.Timeout) {
         // todo: do this in a safer way
-        // @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         return Math.ceil((timeout._idleStart + timeout._idleTimeout) / 1000 - process.uptime())
     }
 
@@ -615,6 +622,6 @@ class GameState {
         this.pollService.disconnect(id);
         this.pollService.checkComplete();
     }
-};
+}
 
 export {GameState, defaultOptions, Stage, Failable};

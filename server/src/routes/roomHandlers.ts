@@ -80,10 +80,10 @@ export function registerRoomHandlers(io: Server, socket: Socket): void {
     socket.on('disconnect', (): void => {
         disconnect(socket);
     });
-};
+}
 
 function disconnect(socket: Socket): void {
-    let roomName = getRoomById(socket.id)?.name;
+    const roomName = getRoomById(socket.id)?.name;
     disconnectPlayer(socket.id);
     // remove socket from room
     if (roomName) {

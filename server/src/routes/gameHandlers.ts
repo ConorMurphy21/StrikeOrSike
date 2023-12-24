@@ -5,7 +5,7 @@ import logger from "../logger/logger";
 import {Server, Socket} from "socket.io";
 
 /*** handler validation schemas ***/
-let setOptionsSchema = require('../models/optionsSchema');
+import setOptionsSchema from "../models/optionsSchema";
 
 const registerGameHandlers = (io: Server, socket: Socket) => {
     /*** GAME STATE ENDPOINTS ***/
@@ -276,7 +276,7 @@ function beginMatching(io: Server, room: Room) {
 
 // return the room only if the user is the party leader
 function roomIfLeader(id: string): Room | undefined {
-    let room = getRoomById(id);
+    const room = getRoomById(id);
     if (!room) return;
     const player = room.players.find(p => p.id === id);
     if (!player || !player.leader) return;

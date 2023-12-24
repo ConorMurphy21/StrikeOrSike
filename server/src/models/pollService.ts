@@ -25,7 +25,7 @@ class PollService {
     }
 
     acceptVote(pollName: string, id: string, stage: Stage): Failable<{count: number; next: boolean}> {
-        if(!this.polls.hasOwnProperty(pollName) || this.polls[pollName] === null) {
+        if(!Object.prototype.hasOwnProperty.call(this.polls, pollName) || this.polls[pollName] === null) {
             return {error: 'noPoll'};
         }
         const poll = this.polls[pollName];

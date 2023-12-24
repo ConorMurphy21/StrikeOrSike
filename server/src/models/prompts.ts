@@ -121,7 +121,7 @@ class Prompts {
         // use prompts to avoid intersection between packs
         for (let i = 0; i < packIds.length; i++) {
             for (let j = i + 1; j < packIds.length; j++) {
-                let intersect = Prompts.intersections[packIds[i] + packIds[j]] ??
+                const intersect = Prompts.intersections[packIds[i] + packIds[j]] ??
                     Prompts.intersections[packIds[j] + packIds[i]];
                 this.packs[i].oou = new Set([...this.packs[i].oou, ...intersect[packIds[i]]]); // Always use the smaller i to avoid intersections
             }
@@ -154,7 +154,7 @@ class Prompts {
                 if (oldPack.id === newPack.id) {
                     newPack.used = new Set([...newPack.used, ...oldPack.used])
                 } else {
-                    let intersect = Prompts.intersections[oldPack.id + newPack.id] ??
+                    const intersect = Prompts.intersections[oldPack.id + newPack.id] ??
                         Prompts.intersections[newPack.id + oldPack.id];
                     for (const u of oldPack.used) {
                         if (intersect[oldPack.id].has(u)) {

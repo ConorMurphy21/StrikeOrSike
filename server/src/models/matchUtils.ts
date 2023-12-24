@@ -4,7 +4,7 @@ import pluralize from "pluralize";
 const en = new Spellchecker.Spellchecker();
 en.setSpellcheckerType(Spellchecker.ALWAYS_USE_HUNSPELL);
 en.setDictionary('en_CA', './resources/dictionaries');
-let spellcheckers: Record<string, Spellchecker.Spellchecker> = {
+const spellcheckers: Record<string, Spellchecker.Spellchecker> = {
     'en_CA': en
 }
 

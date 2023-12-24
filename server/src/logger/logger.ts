@@ -1,12 +1,10 @@
-const winston = require('winston'),
-    WinstonCloudWatch = require('winston-cloudwatch');
-const logger = new winston.createLogger({
+import winston from "winston";
+import WinstonCloudWatch from "winston-cloudwatch";
+
+const logger = winston.createLogger({
     format: winston.format.json(),
     transports: [
-        new (winston.transports.Console)({
-            timestamp: true,
-            colorize: true,
-        })
+        new winston.transports.Console()
     ]
 });
 if (process.env.NODE_ENV === 'production') {

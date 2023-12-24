@@ -1,22 +1,24 @@
-const {createServer} = require('http');
-const {Server} = require('socket.io');
-const Client = require('socket.io-client');
-const registerHandlers = require('../../routes/socketio/registerHandlers');
-
-const assert = require('chai').assert;
+import {createServer} from "http";
+import {Server} from 'socket.io';
+import {io as ioc, Socket} from 'socket.io-client';
+import { type AddressInfo } from "node:net";
+import {registerHandlers} from '../../src/routes/registerHandlers';
+import {assert} from "chai";
 
 describe('Validation tests', () =>{
-    let io, clientSocket1, clientSocket2, port;
+    let io: Server;
+    let clientSocket1: Socket;
+    let clientSocket2: Socket;
     beforeEach((done) => {
         const httpServer = createServer();
         io = new Server(httpServer);
         httpServer.listen(() => {
-            port = httpServer.address().port;
+            const port = (httpServer.address() as AddressInfo).port;
             io.on('connection', (socket) => registerHandlers(io, socket));
 
-            clientSocket1 = new Client(`http://localhost:${port}`);
+            clientSocket1 = ioc(`http://localhost:${port}`);
             clientSocket1.on('connect', () => {
-                clientSocket2 = new Client(`http://localhost:${port}`);
+                clientSocket2 = ioc(`http://localhost:${port}`);
                 clientSocket2.on('connect', done);
             });
         });
@@ -77,17 +79,17 @@ describe('Validation tests', () =>{
 })
 
 describe('create/join tests', () => {
-    let io, clientSocket1, clientSocket2, port;
+    let io: Server, clientSocket1: Socket, clientSocket2: Socket, port: number;
     beforeEach((done) => {
         const httpServer = createServer();
         io = new Server(httpServer);
         httpServer.listen(() => {
-            port = httpServer.address().port;
+            port = (httpServer.address() as AddressInfo).port;
             io.on('connection', (socket) => registerHandlers(io, socket));
 
-            clientSocket1 = new Client(`http://localhost:${port}`);
+            clientSocket1 = ioc(`http://localhost:${port}`);
             clientSocket1.on('connect', () => {
-                clientSocket2 = new Client(`http://localhost:${port}`);
+                clientSocket2 = ioc(`http://localhost:${port}`);
                 clientSocket2.on('connect', done);
             });
         });
@@ -192,7 +194,7 @@ describe('create/join tests', () => {
             clientSocket2.emit('joinRoom', 'name2', 'room');
         });
         clientSocket2.on('disconnect', () => {
-            let clientSocket3 = new Client(`http://localhost:${port}`);
+            let clientSocket3 = ioc(`http://localhost:${port}`);
             clientSocket3.on('connect', () => {
                 clientSocket3.emit('joinRoom', 'name2', 'room');
             });
@@ -212,7 +214,7 @@ describe('create/join tests', () => {
             clientSocket2.emit('joinRoom', 'name2', 'room');
         });
         clientSocket2.on('disconnect', () => {
-            let clientSocket3 = new Client(`http://localhost:${port}`);
+            let clientSocket3 = ioc(`http://localhost:${port}`);
             clientSocket3.on('connect', () => {
                 clientSocket3.emit('joinRoom', 'name2', 'room');
             });
@@ -220,7 +222,7 @@ describe('create/join tests', () => {
                 clientSocket3.disconnect();
             });
             clientSocket3.on('disconnect', () => {
-                let clientSocket4 = new Client(`http://localhost:${port}`);
+                let clientSocket4 = ioc(`http://localhost:${port}`);
                 clientSocket4.on('connect', () => {
                     clientSocket4.emit('joinRoom', 'name2', 'room');
                 });

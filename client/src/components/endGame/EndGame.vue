@@ -3,8 +3,8 @@
     <h1 class="mt-2 text-center display-1 text-red font-fancy" v-t="'playerScores'"/>
 
     <div class="list-group w-75 w-xl-50">
-      <div v-for="(score, index) in scores" class="list-group-item">
-        {{ rank[index] }}. {{ score.player.name }}: {{ $n(score.points) }}
+      <div v-for="(score, index.ts) in scores" class="list-group-item">
+        {{ rank[index.ts] }}. {{ score.player.name }}: {{ $n(score.points) }}
       </div>
     </div>
 

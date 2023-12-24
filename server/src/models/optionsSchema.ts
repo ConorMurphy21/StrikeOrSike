@@ -1,4 +1,4 @@
-const Joi = require('joi');
+import Joi from "joi";
 
 /*** handler validation schemas ***/
 let setOptionsSchema = Joi.object({
@@ -67,4 +67,4 @@ if (process.env.NODE_ENV !== 'production') {
     }).required();
 }
 
-module.exports = setOptionsSchema;
+export = setOptionsSchema;

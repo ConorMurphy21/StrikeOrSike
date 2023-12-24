@@ -1,9 +1,11 @@
-const {getCount} = require('../models/rooms');
-const logger = require('./logger');
+import logger from "./logger";
+
+import {getCount} from "../models/rooms";
+
 // 5 minute
 const TIMEOUT = 60 * 5000;
 
-module.exports = () => {
+export function startLogServiceLoop(): void {
     setInterval(logActivity, TIMEOUT);
 }
 

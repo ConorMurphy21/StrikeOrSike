@@ -1,7 +1,8 @@
-const {joinRoom, disconnectPlayer, createRoom, getRoomById, getRoomByName} = require('../../models/rooms');
-const Joi = require('joi');
-const logger = require('../../logger/logger');
-const {midgameJoin} = require('./gameHandlers');
+import Joi from "joi";
+import {createRoom, disconnectPlayer, getRoomById, getRoomByName, joinRoom} from "../models/rooms";
+import logger from "../logger/logger";
+import {midgameJoin} from "./gameHandlers";
+import {Server, Socket} from "socket.io";
 
 /*** handler validation schemas ***/
 const roomSchema = Joi.object({
@@ -13,9 +14,9 @@ const roomSchema = Joi.object({
                 .min(2)
                 .max(5)
         )
-})
+}).required();
 
-module.exports = (io, socket) => {
+export function registerRoomHandlers(io: Server, socket: Socket): void {
 
     socket.onAny(() => {
         // update activity
@@ -26,7 +27,7 @@ module.exports = (io, socket) => {
     })
 
     /*** CONNECTION AND ROOM CREATION ***/
-    socket.on('createRoom', (name, roomName, langs) => {
+    socket.on('createRoom', (name: string, roomName: string, langs: string) => {
         // disconnect for cleanup
         disconnect(socket);
 
@@ -35,7 +36,7 @@ module.exports = (io, socket) => {
 
         const result = createRoom(socket.id, name, roomName, langs);
         // store name in session variable
-        if (result.error) {
+        if ('error' in result) {
             logger.info(`(roomHandlers) Room creation failed due to ${result.error}`);
             socket.emit('joinRoom', {error: result.error});
         } else {
@@ -44,11 +45,11 @@ module.exports = (io, socket) => {
             socket.join(room.name);
             socket.emit('joinRoom', {success: true, roomName: room.name});
             socket.emit('updatePlayers', {modifies: room.players, deletes: []});
-            socket.emit('setOptions', room.state.getOptions());
+            socket.emit('setOptions', room.state!.getOptions());
         }
     });
 
-    socket.on('joinRoom', (name, roomName) => {
+    socket.on('joinRoom', (name: string, roomName: string) => {
         // disconnect for cleanup
         disconnect(socket);
 
@@ -56,7 +57,7 @@ module.exports = (io, socket) => {
         if (validateResult.error) return;
 
         const result = joinRoom(socket.id, name, roomName);
-        if (result.error) {
+        if ('error' in result) {
             logger.info(`(roomHandlers) Player failed to join room due to ${result.error}`);
             socket.emit('joinRoom', {error: result.error});
         } else {
@@ -69,19 +70,19 @@ module.exports = (io, socket) => {
                 modifies: [room.players.find(p => p.name === name)],
                 deletes: []
             });
-            socket.emit('setOptions', room.state.getOptions());
-            if (room.state.stage !== 'lobby') {
+            socket.emit('setOptions', room.state!.getOptions());
+            if (room.state!.stage !== 'lobby') {
                 midgameJoin(socket, room, result.oldId);
             }
         }
     });
 
-    socket.on('disconnect', () => {
+    socket.on('disconnect', (): void => {
         disconnect(socket);
     });
 };
 
-function disconnect(socket) {
+function disconnect(socket: Socket): void {
     let roomName = getRoomById(socket.id)?.name;
     disconnectPlayer(socket.id);
     // remove socket from room

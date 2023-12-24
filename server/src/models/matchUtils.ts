@@ -1,38 +1,39 @@
-const Spellchecker = require('spellchecker');
-const pluralize = require('pluralize');
+import Spellchecker from "spellchecker";
+import pluralize from "pluralize";
+
 const en = new Spellchecker.Spellchecker();
 en.setSpellcheckerType(Spellchecker.ALWAYS_USE_HUNSPELL);
 en.setDictionary('en_CA', './resources/dictionaries');
-spellcheckers = {
-    en
+let spellcheckers: Record<string, Spellchecker.Spellchecker> = {
+    'en_CA': en
 }
 
-const getCorrections = async (string, lang) => {
-    if(string.includes(' ')) return [];
+const getCorrections = async (string: string, lang: string) => {
+    if (string.includes(' ')) return [];
     const spellchecker = spellcheckers[lang] ?? en;
-    if(spellchecker.isMisspelled(string)){
+    if (spellchecker.isMisspelled(string)) {
         return spellchecker.getCorrectionsForMisspelling(string);
     }
     return [];
 }
 
-const certainMatch = (string1, string2, lang) => {
+const certainMatch = (string1: string, string2: string, lang: string): boolean => {
     return exactMatch(string1, string2, lang) || pluralMatch(string1, string2, lang);
 }
 
-const exactMatch = (string1, string2, lang) => {
+const exactMatch = (string1: string, string2: string, lang: string): boolean => {
     return string1.localeCompare(string2, lang,
         {sensitivity: 'base', ignorePunctuation: true, usage: 'search'}) === 0;
 }
 
-const pluralMatch = (string1, string2, lang) => {
-    if(lang && !lang.startsWith('en')) return false;
-    if(string1.includes(' ') || string2.includes(' ')) return false;
+const pluralMatch = (string1: string, string2: string, lang: string): boolean => {
+    if (lang && !lang.startsWith('en')) return false;
+    if (string1.includes(' ') || string2.includes(' ')) return false;
     return exactMatch(pluralize.plural(string1), pluralize.plural(string2), lang);
 }
 
-const stringMatch = (string1, string2, corrections1, corrections2, lang) => {
-    if(certainMatch(string1, string2, lang)) return 1;
+const stringMatch = (string1: string, string2: string, corrections1: string[], corrections2: string[], lang: string): number => {
+    if (certainMatch(string1, string2, lang)) return 1;
 
     if (!corrections1.length && !corrections2.length) return 0;
     if (corrections1.length && corrections2.length) {
@@ -60,4 +61,4 @@ const stringMatch = (string1, string2, corrections1, corrections2, lang) => {
     }
 }
 
-module.exports = {getCorrections, stringMatch};
+export {getCorrections, stringMatch};

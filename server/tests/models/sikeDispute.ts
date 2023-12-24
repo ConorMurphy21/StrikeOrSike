@@ -1,5 +1,6 @@
-const assert = require('chai').assert;
-const {GameState} = require('../../models/gameState');
+import {GameState} from "../../src/models/gameState";
+import {assert} from "chai";
+import {Player} from "../../src/models/rooms";
 
 describe('Sike Dispute tests', () => {
 
@@ -7,18 +8,20 @@ describe('Sike Dispute tests', () => {
     const matcherId = '1';
     const selectorIndex = 0;
     const matcherIndex = 1;
-    let gameState;
+    let gameState: GameState;
     const firstResponse = 'firstResponse';
     const secondResponse = 'secondResponse';
     // must be even
     const evenLen = 8;
-    const players = [];
+    const players: Player[] = [];
 
     beforeEach(() => {
         for (let i = 0; i < evenLen; i++) {
-            players[i] = {id: i.toString(), active: true};
+            players[i] = {id: i.toString(), name: i.toString(), leader: false, active: true};
         }
-        gameState = new GameState({players});
+        players[0].leader = true;
+        const room = {name: 'test', lastActivity: 0, players, lang: 'en-CA', state: null};
+        gameState = new GameState(room);
         gameState.options.sikeDispute = true;
         gameState.players[selectorIndex].responses.push(firstResponse);
         gameState.players[selectorIndex].responses.push(secondResponse);
@@ -32,22 +35,22 @@ describe('Sike Dispute tests', () => {
 
         it('PromptSelection Accept Happy', () => {
             const result = gameState.acceptResponseSelection(selectorId, firstResponse);
-            assert.isOk(result.success);
-            assert.isNotOk(result.error);
+            assert.isOk('success' in result);
+            assert.isNotOk('error' in result);
         });
 
         it('PromptSelection Accept NotSelector', () => {
             gameState.players[matcherIndex].responses.push(firstResponse);
             const result = gameState.acceptResponseSelection(matcherId, firstResponse);
-            assert.isNotOk(result.success);
-            assert.isOk(result.error);
+            assert.isNotOk('success' in result);
+            assert.isOk('error' in result);
         });
 
         it('PromptSelection Accept used', () => {
             gameState.players[selectorIndex].used.push(firstResponse);
             const result = gameState.acceptResponseSelection(selectorId, firstResponse);
-            assert.isNotOk(result.success);
-            assert.isOk(result.error);
+            assert.isNotOk('success' in result);
+            assert.isOk('error' in result);
         });
     });
 
@@ -60,19 +63,19 @@ describe('Sike Dispute tests', () => {
 
         it('PromptSelection Accept Happy', () => {
             const result = gameState.acceptResponseSelection(selectorId, firstResponse);
-            assert.isOk(result.success);
-            assert.isNotOk(result.error);
+            assert.isOk('success' in result);
+            assert.isNotOk('error' in result);
         });
 
         it('Dispute vote in favor', () => {
             gameState.acceptResponseSelection(selectorId, firstResponse);
             for (let i = 1; i < evenLen-1; i++) {
                 const result = gameState.acceptSikeDisputeVote(i.toString(), !!(i % 2));
-                assert.isOk(result.success);
+                assert.isOk('success' in result);
                 assert.strictEqual(result.action, 'noOp');
             }
             const result = gameState.acceptSikeDisputeVote((evenLen-1).toString(), true);
-            assert.isOk(result.success);
+            assert.isOk('success' in result);
             assert.strictEqual(result.action, 'beginMatching');
         });
 
@@ -80,11 +83,11 @@ describe('Sike Dispute tests', () => {
             gameState.acceptResponseSelection(selectorId, firstResponse);
             for (let i = 1; i < evenLen-1; i++) {
                 const result = gameState.acceptSikeDisputeVote(i.toString(), !(i % 2));
-                assert.isOk(result.success);
+                assert.isOk('success' in result);
                 assert.strictEqual(result.action, 'noOp');
             }
             const result = gameState.acceptSikeDisputeVote((evenLen-1).toString(), false);
-            assert.isOk(result.success);
+            assert.isOk('success' in result);
             assert.strictEqual(result.action, 'nextSelection');
         });
 
@@ -92,7 +95,7 @@ describe('Sike Dispute tests', () => {
             gameState.acceptResponseSelection(selectorId, firstResponse);
             for(let i = 0; i < evenLen; i++){
                 const result = gameState.acceptSikeDisputeVote('2', true);
-                assert.isOk(result.success);
+                assert.isOk('success' in result);
                 assert.strictEqual(result.action, 'noOp');
             }
         });
@@ -101,8 +104,8 @@ describe('Sike Dispute tests', () => {
             gameState.acceptResponseSelection(selectorId, firstResponse);
             const countBefore = gameState.sikeDisputeUpVotes;
             const result = gameState.acceptSikeDisputeVote('0', true);
-            assert.isNotOk(result.success);
-            assert.isOk(result.error);
+            assert.isNotOk('success' in result);
+            assert.isOk('error' in result);
             assert.strictEqual(gameState.sikeDisputeUpVotes, countBefore);
         });
 
@@ -110,11 +113,11 @@ describe('Sike Dispute tests', () => {
             gameState.acceptResponseSelection(selectorId, firstResponse);
             for (let i = 1; i < evenLen-1; i++) {
                 const result = gameState.acceptSikeDisputeVote(i.toString(), !!(i % 2));
-                assert.isOk(result.success);
+                assert.isOk('success' in result);
                 assert.strictEqual(result.action, 'noOp');
             }
             const result = gameState.acceptSikeDisputeVote((evenLen-1).toString(), true);
-            assert.isOk(result.success);
+            assert.isOk('success' in result);
             assert.strictEqual(result.action, 'beginMatching');
         });
 
@@ -125,7 +128,7 @@ describe('Sike Dispute tests', () => {
             }
             gameState.acceptSikeDisputeVote((evenLen-2).toString(), true);
             const result = gameState.acceptSikeDisputeVote((evenLen-1).toString(), true);
-            assert.isOk(result.success);
+            assert.isOk('success' in result);
             assert.strictEqual(result.action, 'beginMatching');
         });
 
@@ -135,16 +138,16 @@ describe('Sike Dispute tests', () => {
             const nVoters = evenLen - 2;
             for (let i = 1; i < nVoters/2 + 1; i++) {
                 const result = gameState.acceptSikeDisputeVote(i.toString(), false);
-                assert.isOk(result.success);
+                assert.isOk('success' in result);
                 assert.strictEqual(result.action, 'noOp');
             }
             for (let i = nVoters/2 + 1; i < evenLen-2; i++) {
                 const result = gameState.acceptSikeDisputeVote(i.toString(), true);
-                assert.isOk(result.success);
+                assert.isOk('success' in result);
                 assert.strictEqual(result.action, 'noOp');
             }
             const result = gameState.acceptSikeDisputeVote((evenLen-2).toString(), true);
-            assert.isOk(result.success);
+            assert.isOk('success' in result);
             assert.strictEqual(result.action, 'beginMatching');
         });
 
@@ -154,16 +157,16 @@ describe('Sike Dispute tests', () => {
             const nVoters = evenLen - 2;
             for (let i = 1; i < nVoters/2; i++) {
                 const result = gameState.acceptSikeDisputeVote(i.toString(), true);
-                assert.isOk(result.success);
+                assert.isOk('success' in result);
                 assert.strictEqual(result.action, 'noOp');
             }
             for (let i = nVoters/2; i < evenLen-2; i++) {
                 const result = gameState.acceptSikeDisputeVote(i.toString(), false);
-                assert.isOk(result.success);
+                assert.isOk('success' in result);
                 assert.strictEqual(result.action, 'noOp');
             }
             const result = gameState.acceptSikeDisputeVote((evenLen-2).toString(), false);
-            assert.isOk(result.success);
+            assert.isOk('success' in result);
             assert.strictEqual(result.action, 'nextSelection');
         });
 
@@ -181,22 +184,22 @@ describe('Sike Dispute tests', () => {
             gameState.acceptResponseSelection(selectorId, firstResponse);
             for (let i = 1; i < evenLen - 1; i++) {
                 const result = gameState.acceptSikeDisputeVote(i.toString(), !(i % 2));
-                assert.isOk(result.success);
+                assert.isOk('success' in result);
                 assert.strictEqual(result.action, 'noOp');
             }
             let result = gameState.acceptSikeDisputeVote((evenLen - 1).toString(), false);
-            assert.isOk(result.success);
+            assert.isOk('success' in result);
             assert.strictEqual(result.action, 'reSelect');
 
             // reselect valid response
             gameState.acceptResponseSelection(selectorId, secondResponse);
             for (let i = 1; i < evenLen - 1; i++) {
                 const result = gameState.acceptSikeDisputeVote(i.toString(), !(i % 2));
-                assert.isOk(result.success);
+                assert.isOk('success' in result);
                 assert.strictEqual(result.action, 'noOp');
             }
             result = gameState.acceptSikeDisputeVote((evenLen - 1).toString(), false);
-            assert.isOk(result.success);
+            assert.isOk('success' in result);
             assert.strictEqual(result.action, 'nextSelection');
         });
 
@@ -207,11 +210,11 @@ describe('Sike Dispute tests', () => {
 
             for (let i = 1; i < evenLen - 1; i++) {
                 const result = gameState.acceptSikeDisputeVote(i.toString(), !(i % 2));
-                assert.isOk(result.success);
+                assert.isOk('success' in result);
                 assert.strictEqual(result.action, 'noOp');
             }
             let result = gameState.acceptSikeDisputeVote((evenLen - 1).toString(), false);
-            assert.isOk(result.success);
+            assert.isOk('success' in result);
             assert.strictEqual(result.action, 'nextSelection');
         });
 
@@ -220,11 +223,11 @@ describe('Sike Dispute tests', () => {
             gameState.acceptResponseSelection(selectorId, firstResponse);
             for (let i = 1; i < evenLen - 1; i++) {
                 const result = gameState.acceptSikeDisputeVote(i.toString(), !(i % 2));
-                assert.isOk(result.success);
+                assert.isOk('success' in result);
                 assert.strictEqual(result.action, 'noOp');
             }
             let result = gameState.acceptSikeDisputeVote((evenLen - 1).toString(), false);
-            assert.isOk(result.success);
+            assert.isOk('success' in result);
             assert.strictEqual(result.action, 'nextSelection');
         });
 
@@ -232,16 +235,16 @@ describe('Sike Dispute tests', () => {
             gameState.acceptResponseSelection(selectorId, firstResponse);
             for (let i = 1; i < evenLen - 1; i++) {
                 const result = gameState.vote('sikeDispute', i.toString());
-                assert.isOk(result.success);
+                assert.isOk('success' in result);
                 assert.strictEqual(result.action, 'noOp');
             }
             let result = gameState.acceptSikeDisputeVote((evenLen - 1).toString(), false);
-            assert.isOk(result.success);
+            assert.isOk('success' in result);
             assert.strictEqual(result.action, 'reSelect');
 
             result = gameState.acceptResponseSelection(selectorId, firstResponse);
-            assert.isNotOk(result.success);
-            assert.isOk(result.error);
+            assert.isNotOk('success' in result);
+            assert.isOk('error' in result);
         });
     });*/
 });

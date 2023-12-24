@@ -1,18 +1,30 @@
-module.exports = class pollService {
-    constructor(gameState) {
+import {Failable, GameState, Stage} from "./gameState";
+
+type Poll = {
+    stage: Stage;
+    completeCb: () => void;
+    majorityPercent: number;
+    exclude: string | undefined;
+    inFavor: string[];
+};
+
+class PollService {
+    private gameState: GameState;
+    private polls: Record<string, Poll>
+    constructor(gameState: GameState) {
         this.gameState = gameState;
         this.polls = {}
     }
 
-    registerPoll(pollName, completeCb, stage, exclude = null, majorityPercent = 0.501) {
+    registerPoll(pollName: string, completeCb: () => void, stage: Stage, exclude?: string, majorityPercent = 0.501): void {
         this.polls[pollName] = {completeCb, majorityPercent, stage, exclude, inFavor: []};
     }
 
-    clearPoll(pollName) {
-        this.polls[pollName] = null;
+    clearPoll(pollName: string) {
+        delete this.polls[pollName];
     }
 
-    acceptVote(pollName, id, stage) {
+    acceptVote(pollName: string, id: string, stage: Stage): Failable<{count: number; next: boolean}> {
         if(!this.polls.hasOwnProperty(pollName) || this.polls[pollName] === null) {
             return {error: 'noPoll'};
         }
@@ -36,19 +48,19 @@ module.exports = class pollService {
         return {success: true, count, next: this.nextComplete(pollName)};
     }
 
-    getVoteCounts(){
-        const ret = {}
+    getVoteCounts(): Record<string, {count: number; next: boolean}>{
+        const ret: Record<string, {count: number; next: boolean}> = {}
         for(const poll in this.polls) {
             if(this.polls[poll]) {
                 ret[poll] = {count: this.countVotes(poll), next: this.nextComplete(poll)};
             } else {
-                ret[poll] = {count: 0, next: 0};
+                ret[poll] = {count: 0, next: false};
             }
         }
         return ret;
     }
 
-    cbIfComplete(pollName){
+    cbIfComplete(pollName: string): boolean{
         const poll = this.polls[pollName];
         if(this.complete(pollName)) {
             this.clearPoll(pollName);
@@ -58,29 +70,29 @@ module.exports = class pollService {
         return false;
     }
 
-    complete(pollName) {
+    complete(pollName: string) {
         const poll = this.polls[pollName];
         const threshold = Math.ceil(this.gameState.numVoters(poll.exclude) * poll.majorityPercent);
         return this.countVotes(pollName) >= threshold;
     }
 
-    nextComplete(pollName){
+    nextComplete(pollName: string){
         const poll = this.polls[pollName];
         const threshold = Math.ceil(this.gameState.numVoters(poll.exclude) * poll.majorityPercent);
         return this.countVotes(pollName) + 1 >= threshold;
     }
 
-    countVotes(pollName) {
+    countVotes(pollName: string) {
         return this.polls[pollName].inFavor.length;
     }
 
-    checkComplete(){
+    checkComplete(): void{
         for(const pollName in this.polls) {
             if(this.polls[pollName]) this.cbIfComplete(pollName);
         }
     }
 
-    disconnect(id){
+    disconnect(id: string): void{
         for(const poll in this.polls) {
             if(this.polls[poll]) {
                 const index = this.polls[poll].inFavor.indexOf(id);
@@ -90,5 +102,6 @@ module.exports = class pollService {
             }
         }
     }
-
 }
+
+export = PollService;

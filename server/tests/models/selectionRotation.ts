@@ -1,16 +1,21 @@
-const assert = require('chai').assert;
-const {GameState} = require('../../models/gameState');
+import {Player, Room} from "../../src/models/rooms";
+import {GameState} from "../../src/models/gameState";
+import {assert} from "chai";
 
 describe('Selection Rotation tests', () => {
-    let players, room, gameState, len;
+    let players: Player[];
+    let room: Room;
+    let gameState: GameState;
+    let len: number;
 
     beforeEach(() => {
         const len = 8;
         players = [];
         for (let i = 0; i < len; i++) {
-            players[i] = {id: i.toString(), active: true};
+            players[i] = {id: i.toString(), name: i.toString(), leader: false, active: true};
         }
-        room = {players};
+        players[0].leader = true;
+        room = {name: 'test', lastActivity: 0, players, lang: 'en-CA', state: null};
         gameState = new GameState(room);
         for (const player of gameState.players) {
             player.responses.push('response');

@@ -1,12 +1,19 @@
 // retrieve meta data
-const fs = require('fs');
-const path = require('path');
-const klawSync = require('klaw-sync');
+import fs from "fs";
+import path from "path";
+import klawSync from "klaw-sync";
 
 const CUSTOM = 'custom';
 
+type Meta = {
+    id: string;
+    path: string;
+    lang: string;
+    prompts: string[];
+};
+
 // retrieve meta info for what prompts can be served
-const retrieveMetas = (root) => {
+const retrieveMetas = (root: string): Meta[] => {
     const metas = []
     const items = klawSync(root, {nodir: true});
     for (const item of items) {
@@ -29,18 +36,20 @@ const retrieveMetas = (root) => {
 /*
     returns: a map of intersections
     an id to the intersection is id1 + id2, for example if pack1 is standard and pack2 is canadian than standardcanadian
-    is an index
-    the intersection just lists the index of each intersecting value
+    is an index.ts
+    the intersection just lists the index.ts of each intersecting value
  */
-const retrieveIntersections = (metas) => {
-    const intersections = {};
+
+type Intersections = Record<string, Record<string, Set<number>>>;
+const retrieveIntersections = (metas: Meta[]) => {
+    const intersections: Intersections = {};
     for (const meta1 of metas) {
         for (const meta2 of metas) {
             if (meta1.id === meta2.id || meta1.lang !== meta2.lang) continue;
             // already computed this intersection
             if (intersections[meta2.id + meta1.id]) continue;
-            const overlapsA = new Set();
-            const overlapsB = new Set();
+            const overlapsA = new Set<number>();
+            const overlapsB = new Set<number>();
             for (let i = 0; i < meta1.prompts.length; i++) {
                 for (let j = 0; j < meta2.prompts.length; j++) {
                     if (meta1.prompts[i] === meta2.prompts[j]) {
@@ -59,13 +68,24 @@ const retrieveIntersections = (metas) => {
 
 const promptsRoot = './resources/prompts/';
 
-const Prompts = class {
+type Pack = {
+    id: string,
+    prompts: string[],
+    used: Set<number>, // used by the room
+    oou: Set<number>,  // out of use (used to avoid repeats)
+    remaining: Set<number>
+};
+
+class Prompts {
 
     static metas = retrieveMetas(promptsRoot);
     static intersections = retrieveIntersections(this.metas);
+    private readonly numPrompts: number;
+    numRemaining: number;
+    packs: Pack[];
 
-    static packOptions(lang) {
-        const packs = {}
+    static packOptions(lang: string): Record<string, boolean> {
+        const packs: Record<string, boolean> = {};
         for (const meta of Prompts.metas) {
             if (meta.lang === lang) {
                 packs[meta.id] = false;
@@ -76,7 +96,7 @@ const Prompts = class {
         return packs;
     }
 
-    constructor(packs, customPrompts, lang = 'en-CA', oldPrompts) {
+    constructor(packs: Record<string, boolean>, customPrompts: string[], lang: string = 'en-CA', oldPrompts?: Prompts) {
         this.numPrompts = customPrompts?.length ?? 0;
         this.numRemaining = 0;
         this.packs = [];
@@ -86,14 +106,15 @@ const Prompts = class {
             if (packs[id]) {
                 const meta = Prompts.metas.find(meta => meta.id === id && meta.lang === lang);
                 // skip any packs that can't be found
-                if(!meta) continue;
+                if (!meta) continue;
 
                 packIds.push(id);
                 this.packs.push({
-                    id: meta.id, prompts: meta.prompts,
-                    used: new Set(), // used by the room
-                    oou: new Set(),  // out of use (used to avoid repeats)
-                    remaining: new Set()
+                    id: meta.id,
+                    prompts: meta.prompts,
+                    used: new Set<number>(), // used by the room
+                    oou: new Set<number>(),  // out of use (used to avoid repeats)
+                    remaining: new Set<number>()
                 }); // for alternative method when too much storage is required
             }
         }
@@ -107,8 +128,10 @@ const Prompts = class {
         }
         // add customPrompts to packs list
         customPrompts = customPrompts.map(p => p.trim());
-        this.packs.push({id: CUSTOM, prompts: customPrompts, used: new Set(), oou: new Set(), remaining: new Set()})
-        this._keepOldUsed(oldPrompts);
+        this.packs.push({id: CUSTOM, prompts: customPrompts, used: new Set(), oou: new Set(), remaining: new Set()});
+        if(oldPrompts){
+            this._keepOldUsed(oldPrompts);
+        }
 
         // set counters
         for (const pack of this.packs) {
@@ -121,7 +144,7 @@ const Prompts = class {
         }
     }
 
-    _keepOldUsed(oldPrompts) {
+    _keepOldUsed(oldPrompts: Prompts): void {
         // this will only work as long as the prompts are the same
         if (!oldPrompts) return;
         for (const oldPack of oldPrompts.packs) {
@@ -155,27 +178,27 @@ const Prompts = class {
         }
     }
 
-    _useRemainingMethod(numRemaining) {
+    _useRemainingMethod(numRemaining: number): boolean {
         return numRemaining < this.numPrompts / 6;
     }
 
-    _setRemainingSets() {
+    _setRemainingSets(): void {
         for (const pack of this.packs) {
-            pack.remaining = new Set(Array.from({length: this.numPrompts}, (v, i) => i)
+            pack.remaining = new Set<number>(Array.from({length: pack.prompts.length}, (_v, i) => i)
                 .filter(index => !(pack.used.has(index) || pack.oou.has(index))));
         }
     }
 
-    hasNewPrompt() {
+    hasNewPrompt(): boolean {
         return this.numRemaining > 0;
     }
 
-    newPrompt(players) {
+    newPrompt(players: { name: string }[]): string {
         if (this.numRemaining <= 0) {
             return '';
         }
         let retVal;
-        if (this._useRemainingMethod()) {
+        if (this._useRemainingMethod(this.numRemaining)) {
             retVal = this._chooseFromRemaining();
         } else {
             retVal = this._chooseRegular();
@@ -184,8 +207,8 @@ const Prompts = class {
         return this._fillPlayerName(players, retVal);
     }
 
-    _fillPlayerName(players, prompt){
-        if(prompt.includes('!n')){
+    _fillPlayerName(players: { name: string }[], prompt: string): string {
+        if (prompt.includes('!n')) {
             const chosen = players[Math.floor(Math.random() * players.length)];
             return prompt.replace('!n', chosen.name);
         }
@@ -194,9 +217,9 @@ const Prompts = class {
     }
 
     // non-deterministic but with enough prompts should be better
-    _chooseRegular() {
-        let r;
-        let pack;
+    _chooseRegular(): string {
+        let r: number;
+        let pack!: Pack;
         do {
             r = Math.floor(Math.random() * this.numPrompts);
             for (pack of this.packs) {
@@ -212,25 +235,25 @@ const Prompts = class {
     }
 
     // more consistent but more memory usage, avoided if possible but fallback on if the number of prompts is small
-    _chooseFromRemaining() {
+    _chooseFromRemaining(): string {
         // this means this is the first time using the remaining method
         if (!this._useRemainingMethod(this.numRemaining + 1)) {
             this._setRemainingSets();
         }
-        let rr = Math.floor(Math.random() * this.numRemaining);
-        let pack;
+        let rr: number = Math.floor(Math.random() * this.numRemaining);
+        let pack!: Pack;
         for (pack of this.packs) {
-            if (rr >= pack.remaining.length) {
-                rr -= pack.remaining.length;
+            if (rr >= pack.remaining.size) {
+                rr -= pack.remaining.size;
             } else {
                 break;
             }
         }
-        const r = pack.remaining[rr];
-        pack.used.push(r);
-        pack.remaining.splice(rr, 1);
-        return r;
+        const r = Array.from(pack.remaining)[rr];
+        pack.used.add(r);
+        pack.remaining.delete(r);
+        return pack.prompts[r];
     }
 }
 
-module.exports = {Prompts, retrieveMetas, retrieveIntersections};
+export {Prompts, retrieveMetas, retrieveIntersections};

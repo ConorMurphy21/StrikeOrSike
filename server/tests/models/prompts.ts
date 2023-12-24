@@ -1,6 +1,6 @@
-const assert = require('chai').assert;
-const {Prompts, retrieveMetas, retrieveIntersections} = require('../../models/prompts');
-const fs = require('fs');
+import {Prompts, retrieveIntersections, retrieveMetas} from "../../src/models/prompts";
+import {assert} from "chai";
+import fs from "fs";
 
 describe('prompts tests', () => {
 
@@ -105,8 +105,8 @@ describe('prompts tests', () => {
     });
 });
 
-function z(pack) {
-    const ret = {}
+function z(pack: string[]):Record<string, boolean> {
+    const ret: Record<string, boolean> = {}
     for (const id of pack) {
         ret[id] = true;
     }
@@ -114,66 +114,66 @@ function z(pack) {
 }
 
 
-function test_prompts(packs, customPrompts, lang, carryover) {
+function test_prompts(packs: Record<string, boolean>, customPrompts: string[], lang: string, carryover = false) {
     let prompts = new Prompts(packs, customPrompts, lang);
     let lines = customPrompts;
     for (const pack of prompts.packs) {
         if (pack.id !== 'custom') {
             const meta = Prompts.metas.find(p => p.id === pack.id && p.lang === lang);
-            const packLines = fs.readFileSync(meta.path, 'utf-8').split(/\r?\n/);
+            const packLines = fs.readFileSync(meta!.path, 'utf-8').split(/\r?\n/);
             lines = lines.concat(packLines);
         }
     }
     lines = lines.map(p => p.trim()).filter(Boolean);
-    lines = new Set(lines);
+    const lineSet = new Set(lines);
 
     const used = new Set();
-    for (let i = 0; i < lines.size; i++) {
-        const p = prompts.newPrompt();
+    for (let i = 0; i < lineSet.size; i++) {
+        const p = prompts.newPrompt([]);
         if (carryover) {
             prompts = new Prompts(packs, customPrompts, lang, prompts);
         }
         assert.isOk(p);
         assert.isFalse(used.has(p));
         used.add(p);
-        assert.isTrue(lines.has(p));
+        assert.isTrue(lineSet.has(p));
     }
-    const p = prompts.newPrompt();
+    const p = prompts.newPrompt([]);
     assert.strictEqual(p, '');
 }
 
-function test_pack_swap_carryover(packs1, packs2, lang, percent) {
+function test_pack_swap_carryover(packs1: Record<string, boolean>, packs2: Record<string, boolean>, lang: string, percent: number) {
     //just to retrieve the lines
     let prompts = new Prompts(packs2, [], lang);
-    let lines = []
+    let lines: string[] = [];
     for (const pack of prompts.packs) {
         if (pack.id !== 'custom') {
             const meta = Prompts.metas.find(p => p.id === pack.id && p.lang === lang);
-            const packLines = fs.readFileSync(meta.path, 'utf-8').split(/\r?\n/);
+            const packLines = fs.readFileSync(meta!.path, 'utf-8').split(/\r?\n/);
             lines = lines.concat(packLines);
         }
     }
     // no carryover start with packs1
     prompts = new Prompts(packs1, [], lang);
     lines = lines.map(p => p.trim()).filter(Boolean);
-    lines = new Set(lines);
+    const lineSet = new Set(lines);
 
     // use percent of the prompts from the first pack
     const used = new Set();
     for(let i = 0; i < prompts.numRemaining * percent; i++){
-        let p = prompts.newPrompt();
+        let p = prompts.newPrompt([]);
         used.add(p);
-        if(lines.has(p)) lines.delete(p);
+        if(lineSet.has(p)) lineSet.delete(p);
     }
     prompts = new Prompts(packs2, [], lang, prompts);
 
-    for (let i = 0; i < lines.size; i++) {
-        const p = prompts.newPrompt();
+    for (let i = 0; i < lineSet.size; i++) {
+        const p = prompts.newPrompt([]);
         assert.isOk(p);
         assert.isFalse(used.has(p));
         used.add(p);
-        assert.isTrue(lines.has(p));
+        assert.isTrue(lineSet.has(p));
     }
-    const p = prompts.newPrompt();
+    const p = prompts.newPrompt([]);
     assert.strictEqual(p, '');
 }

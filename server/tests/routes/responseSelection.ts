@@ -1,10 +1,10 @@
-//with { 'type': 'commonjs' } in your package.json
-
-const {createServer} = require('http');
-const {Server} = require('socket.io');
-const Client = require('socket.io-client');
-const registerHandlers = require('../../routes/socketio/registerHandlers');
-const assert = require('chai').assert;
+import {createServer} from "http";
+import {Server} from 'socket.io';
+import {io as ioc, Socket} from 'socket.io-client';
+import { type AddressInfo } from "node:net";
+import {registerHandlers} from '../../src/routes/registerHandlers';
+import {assert} from "chai";
+import { Player } from "../../src/models/rooms";
 
 const SHARED_RESPONSE = 'sharedResponse';
 const C1_RESPONSE = 'c1Response';
@@ -12,20 +12,20 @@ const C2_RESPONSE = 'c2Response';
 
 describe('responseSelection tests', () => {
     const roomName = 'room';
-    let io, clientSocket1, clientSocket2, c1Id, c2Id;
+    let io: Server, clientSocket1: Socket, clientSocket2: Socket, c1Id: string, c2Id: string;
     beforeEach((done) => {
         const httpServer = createServer();
         io = new Server(httpServer);
         httpServer.listen(() => {
-            const port = httpServer.address().port;
+            const port = (httpServer.address() as AddressInfo).port;
             io.on('connection', (socket) => registerHandlers(io, socket));
-            clientSocket1 = new Client(`http://localhost:${port}`);
+            clientSocket1 = ioc(`http://localhost:${port}`);
             clientSocket1.on('connect', () => {
-                clientSocket2 = new Client(`http://localhost:${port}`);
+                clientSocket2 = ioc(`http://localhost:${port}`);
                 clientSocket2.on('connect', () => {
 
                     clientSocket1.on('updatePlayers', (data) => {
-                        data.modifies.forEach(player => {
+                        data.modifies.forEach((player: Player) => {
                            if(player.name === 'name1') c1Id = player.id;
                            else c2Id = player.id;
                         });
@@ -66,7 +66,7 @@ describe('responseSelection tests', () => {
 
     it('makeSelection happy', (done) => {
         clientSocket1.on('nextSelection', (data) => {
-            let selectingClient, selectingResponse;
+            let selectingClient: Socket, selectingResponse: string;
             if(data.selector === c1Id){
                 selectingClient = clientSocket1;
                 selectingResponse = C1_RESPONSE;

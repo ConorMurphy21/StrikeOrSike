@@ -1,6 +1,6 @@
-
-const {roomService} = require('../../models/rooms');
-const logger = require('../../logger/logger');
+import {roomService} from "../models/rooms";
+import logger from "../logger/logger";
+import {Server} from "socket.io";
 // 1 minute
 const TIMEOUT = 60 * 1000;
 // 1 second
@@ -10,11 +10,12 @@ const MAX_INACTIVITY = 30 * 60 * 1000;
 // 30 seconds
 //const MAX_INACTIVITY = 30 * 1000;
 
-module.exports = (io) => {
+
+export function startCleanupLoop(io: Server): void {
     setInterval(() => cleanup(io), TIMEOUT);
 }
 
-const cleanup = (io) => {
+const cleanup = (io: Server) => {
     const inactiveRoomNames = roomService(MAX_INACTIVITY);
     for (const name of inactiveRoomNames) {
         logger.info('(roomService) Room closed due to inactivity');

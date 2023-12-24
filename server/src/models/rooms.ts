@@ -1,16 +1,31 @@
-const {GameState} = require('./gameState');
-const parameterize = require('parameterize');
-const locale = require("locale");
+import {Failable, GameState} from "./gameState";
+import parameterize from "parameterize";
+import locale from "locale";
+
+type Player = {
+    id: string,
+    name: string,
+    leader: boolean,
+    active: boolean;
+};
+
+type Room = {
+    name: string,
+    lastActivity: number,
+    lang: string,
+    players: Player[],
+    state: GameState | null
+};
 
 const supportedLocales = new locale.Locales(['en-CA'], 'en-CA');
 
 // map model to rooms
-const playerRoom = {}
+const playerRoom: Record<string, Room> = {}
 
 // map rooms to model
-const rooms = {}
+const rooms: {[key: string]: Room} = {}
 
-const isValidName = (name) => {
+const isValidName = (name: string): {error: string} | {success: boolean} => {
     if(typeof name !== 'string')
         return { error: 'noName' };
     if(name.length < 2)
@@ -21,7 +36,7 @@ const isValidName = (name) => {
     return { success: true };
 }
 
-const isValidRoomName = (name) => {
+const isValidRoomName = (name: string): {error: string} | {success: boolean} => {
     if(typeof name !== 'string')
         return { error: 'noRoomName' };
     if(name.length < 2)
@@ -34,19 +49,20 @@ const isValidRoomName = (name) => {
 }
 
 
-const createRoom = (id, name, roomName, langs) => {
+
+const createRoom = (id: string, name: string, roomName: string, langs: string): Failable<{room: Room}> => {
     let result = isValidName(name);
-    if (!result.success)
+    if ('error' in result)
         return result;
     roomName = parameterize(roomName);
     result = isValidRoomName(roomName);
-    if (!result.success)
+    if ('error' in result)
         return result;
 
     const locales = new locale.Locales(langs);
 
     // clone default room
-    const room = {
+    const room: Room = {
         name: roomName,
         lastActivity: (new Date()).getTime(),
         lang: locales.best(supportedLocales).code,
@@ -55,17 +71,18 @@ const createRoom = (id, name, roomName, langs) => {
             name,
             leader: true,
             active: true,
-        }]
+        }],
+        state: null
     };
     room.state = new GameState(room);
     rooms[roomName] = room;
     playerRoom[id] = room;
-    return { room };
+    return { success: true, room };
 }
 
-const joinRoom = (id, name, roomName) => {
+const joinRoom = (id: string, name: string, roomName: string): Failable<{room: Room, oldId?: string}> => {
     let result = isValidName(name);
-    if (!result.success)
+    if ('error' in result)
         return result;
     if(typeof roomName !== 'string') {
         return { error: 'noRoom' };
@@ -74,7 +91,8 @@ const joinRoom = (id, name, roomName) => {
     if (!room)
         return { error: 'noRoom' };
     // don't hold spots for inactive players
-    if(room.players.find(p => p.active).length >= room.state.options.maxPlayers) {
+    const activePlayers = room.players.filter(p => p.active);
+    if(activePlayers.length >= room.state!.options.maxPlayers) {
         return { error: 'noSpace' };
     }
 
@@ -87,7 +105,7 @@ const joinRoom = (id, name, roomName) => {
         playerRoom[id] = room;
         existingPlayer.active = true;
         existingPlayer.id = id;
-        return { room, oldId };
+        return { success: true, room, oldId };
     }
 
     room.players.push({
@@ -98,32 +116,36 @@ const joinRoom = (id, name, roomName) => {
     });
 
     playerRoom[id] = room;
-    return { room }
+    return { success: true, room }
 }
 
-const getRoomByName = roomName => {
+const getRoomByName = (roomName: string): Room => {
     return rooms[roomName];
 }
 
-const getRoomById = id => {
+const getRoomById = (id: string): Room => {
     return playerRoom[id];
 }
 
-const disconnectPlayer = id => {
+const disconnectPlayer = (id: string): void => {
     const room = playerRoom[id];
     if(!room)
         return;
     delete playerRoom[id];
     const player = room.players.find(player => player.id === id);
-    player.active = false;
+    if(player) {
+        player.active = false;
+    }
     // if no model are still active delete the room
     const activePlayer = room.players.find(player => player.active);
     if(!activePlayer) {
-        clearTimeout(room.state.promptTimeout);
+        if(room.state!.promptTimeout) {
+            clearTimeout(room.state!.promptTimeout);
+        }
         delete rooms[room.name];
     } else {
-        room.state.disconnect(id);
-        if(player.leader) {
+        room.state!.disconnect(id);
+        if(player && player.leader) {
             player.leader = false;
             activePlayer.leader = true;
         }
@@ -132,7 +154,7 @@ const disconnectPlayer = id => {
 
 // cleanup all data concerning inactive rooms
 // return list of rooms removed
-const roomService = (maxInactivity) => {
+const roomService = (maxInactivity: number) => {
     const time = (new Date).getTime();
 
     const inactiveRooms = [];
@@ -140,7 +162,9 @@ const roomService = (maxInactivity) => {
         const room = rooms[name];
         if(time - room.lastActivity > maxInactivity){
             inactiveRooms.push(name);
-            clearTimeout(room.state.promptTimeout);
+            if(room.state!.promptTimeout) {
+                clearTimeout(room.state!.promptTimeout);
+            }
             // delete the player record of the room
             for(const player of room.players){
                 delete playerRoom[player.id];
@@ -158,4 +182,4 @@ const getCount = () => {
     return {rooms: Object.keys(rooms).length, players: Object.keys(playerRoom).length};
 }
 
-module.exports = {createRoom, joinRoom, getRoomById, getRoomByName, disconnectPlayer, roomService, getCount}
+export {Room, Player, createRoom, joinRoom, getRoomById, getRoomByName, disconnectPlayer, roomService, getCount}

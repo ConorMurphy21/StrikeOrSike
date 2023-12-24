@@ -17,9 +17,9 @@ if (process.env.NODE_ENV === 'production') {
         messageFormatter: ({
                                level,
                                message,
-                           }) => `[${level}] : ${message}`
+                           }: {level: string, message: string}) => `[${level}] : ${message}`
 
     }
     logger.add(new WinstonCloudWatch(cloudwatchConfig))
 }
-module.exports = logger;
+export = logger;

@@ -1,23 +1,22 @@
-//with { 'type': 'commonjs' } in your package.json
-
-const {createServer} = require('http');
-const {Server} = require('socket.io');
-const Client = require('socket.io-client');
-const registerHandlers = require('../../routes/socketio/registerHandlers');
-const assert = require('chai').assert;
+import {createServer} from "http";
+import {Server} from 'socket.io';
+import {io as ioc, Socket} from 'socket.io-client';
+import { type AddressInfo } from "node:net";
+import {registerHandlers} from '../../src/routes/registerHandlers';
+import {assert} from "chai";
 
 describe('lobby tests', () => {
-    let io, clientSocket1, clientSocket2;
+    let io: Server, clientSocket1: Socket, clientSocket2: Socket;
     beforeEach((done) => {
         const httpServer = createServer();
         io = new Server(httpServer);
         httpServer.listen(() => {
-            const port = httpServer.address().port;
+            const port = (httpServer.address() as AddressInfo).port;
             io.on('connection', (socket) => registerHandlers(io, socket));
 
-            clientSocket1 = new Client(`http://localhost:${port}`);
+            clientSocket1 = ioc(`http://localhost:${port}`);
             clientSocket1.on('connect', () => {
-                clientSocket2 = new Client(`http://localhost:${port}`);
+                clientSocket2 = ioc(`http://localhost:${port}`);
                 clientSocket2.on('connect', done);
             });
         });

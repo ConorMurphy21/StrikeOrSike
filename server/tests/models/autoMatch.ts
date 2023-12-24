@@ -1,17 +1,21 @@
-const assert = require('chai').assert;
-const {GameState} = require('../../models/gameState');
+import {assert} from "chai";
+import {GameState} from "../../src/models/gameState";
+import {Player, Room} from "../../src/models/rooms";
 
 describe('Automatch tests', () => {
     const selectorId = 'selector';
     const matcherId = 'matcher';
     const selectorIndex = 0;
     const matcherIndex = 1;
-    let gameState;
+    let gameState: GameState;
     const firstResponse = 'firstResponse';
 
     beforeEach(() => {
-        const players = [{id: selectorId, active: true}, {id: matcherId, active: true}];
-        gameState = new GameState({players, lang: 'en-CA'});
+        const players: Player[] = [
+            {id: selectorId, name: selectorId, leader: true, active: true},
+            {id: matcherId, name: matcherId, leader: false, active: true}];
+        const room: Room = {name: 'test', lastActivity: 0, players, lang: 'en-CA', state: null};
+        gameState = new GameState(room);
         gameState.beginNewPrompt();
         gameState.acceptPromptResponse(selectorId, firstResponse);
     });
@@ -59,10 +63,10 @@ describe('Automatch tests', () => {
         });
 
         it('punctuation', () => {
-            gameState.players[matcherIndex].responses = [firstResponse + '!!!'];
+            gameState.players[matcherIndex].responses = [firstResponse + '!'];
             gameState.acceptResponseSelection(selectorId, firstResponse);
             assert.isTrue(gameState.players[matcherIndex].matchingComplete);
-            assert.strictEqual(gameState.players[matcherIndex].match, firstResponse + '!!!');
+            assert.strictEqual(gameState.players[matcherIndex].match, firstResponse + '!');
         });
 
     })
@@ -155,15 +159,15 @@ describe('Automatch tests', () => {
         });
     });
 
-    async function acceptPrompts(selectorResponses, matcherResponses){
-        for(resp of selectorResponses){
-            gameState.acceptPromptResponse(selectorId, resp);
+    async function acceptPrompts(selectorResponses: string[], matcherResponses: string[]){
+        for(const resp of selectorResponses){
+            gameState!.acceptPromptResponse(selectorId, resp);
         }
-        for(resp of matcherResponses){
-            gameState.acceptPromptResponse(matcherId, resp);
+        for(const resp of matcherResponses){
+            gameState!.acceptPromptResponse(matcherId, resp);
         }
-        gameState.beginSelection();
-        gameState.selectionType = 'strike';
+        gameState!.beginSelection();
+        gameState!.selectionType = 'strike';
         // to make sure prompt response correction is done
         await new Promise(r => setTimeout(r, 100));
     }

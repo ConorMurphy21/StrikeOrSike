@@ -3,11 +3,29 @@
 /**
  * Module dependencies.
  */
-const app = require('../app');
-const debug = require('debug')('strikeorsike:server');
-const http = require('http');
+import express from 'express';
 
-const logger = require('../logger/logger');
+import cors from 'cors';
+import path from 'path';
+
+
+import logger from "./logger/logger";
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+app.use('/assets', express.static(path.join(__dirname, 'public/assets')));
+
+app.get('/*', function(req: any, res: { sendFile: (arg0: any) => void; }){
+    res.sendFile( path.join(__dirname, 'public/index.html'));
+});
+
+import Debug from "debug";
+const debug = Debug('strikeorsike:server');
+import http from 'http';
+
 process.on('uncaughtException', err => {
     logger.error(`(www) crash report: ${err.stack}`, () => {
         process.exit(1);
@@ -28,7 +46,9 @@ const server = http.createServer(app);
 /**
  * Create socket server
  */
-const io = require('socket.io')(server, {
+
+import {Server, Socket} from "socket.io";
+const io = new Server(server, {
     cors: {
         origin: ['http://localhost:8080', 'http://localhost:5001'],
         methods: ['GET', 'POST'],
@@ -40,17 +60,18 @@ const io = require('socket.io')(server, {
 /**
  * Listen on socket server
  */
-const registerHandlers = require('../routes/socketio/registerHandlers');
-io.on('connection', (socket) => registerHandlers(io, socket));
+import {registerHandlers} from './routes/registerHandlers';
+io.on('connection', (socket: Socket) => registerHandlers(io, socket));
 
 /**
  * Start room service
  */
-const roomService = require('../routes/socketio/roomService');
-roomService(io);
+import {startCleanupLoop} from './routes/roomService';
+startCleanupLoop(io);
 
-const logService = require('../logger/logService');
-logService();
+
+import {startLogServiceLoop} from './logger/logService';
+startLogServiceLoop();
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -64,7 +85,7 @@ server.on('listening', onListening);
  * Normalize a port into a number, string, or false.
  */
 
-function normalizePort(val) {
+function normalizePort(val: string) {
     const port = parseInt(val, 10);
 
     if (isNaN(port)) {
@@ -84,7 +105,7 @@ function normalizePort(val) {
  * Event listener for HTTP server 'error' event.
  */
 
-function onError(error) {
+function onError(error: { syscall: string; code: string; }) {
     if (error.syscall !== 'listen') {
         throw error;
     }
@@ -116,6 +137,6 @@ function onListening() {
     const addr = server.address();
     const bind = typeof addr === 'string'
         ? 'pipe ' + addr
-        : 'port ' + addr.port;
+        : 'port ' + addr!.port;
     debug('Listening on ' + bind);
 }

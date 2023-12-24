@@ -1,10 +1,23 @@
-const {Prompts} = require('./prompts');
-const {stringMatch, getCorrections} = require('./matchUtils');
-const PollService = require('./pollService');
-const optionsSchema = require('./optionsSchema');
-const logger = require('../logger/logger');
+import {Prompts} from "./prompts";
+import {getCorrections, stringMatch} from "./matchUtils";
+import PollService from "./pollService";
+import optionsSchema from "./optionsSchema";
+import logger from "../logger/logger";
+import {Room, Player as RoomPlayer} from "./rooms";
 
-const defaultOptions = (lang) => {
+type Options = {
+    promptTimer: number,
+    autoNumRounds: boolean, // set numRounds to num players when game starts
+    numRounds: number,
+    sikeDispute: boolean,
+    sikeRetries: number,
+    promptSkipping: boolean,
+    minPlayers: number,
+    maxPlayers: number,
+    packs: Record<string, boolean>,
+    customPrompts: string[]
+};
+const defaultOptions = (lang: string): Options => {
     return {
         promptTimer: 35,
         autoNumRounds: true, // set numRounds to num players when game starts
@@ -19,12 +32,64 @@ const defaultOptions = (lang) => {
     }
 }
 
-const GameState = class {
-    constructor(room, options, oldPrompts) {
+// todo: convert to enum
+type Stage = 'lobby' | 'response' | 'selection' | 'matching' | 'endRound';
+type Selection = '' | 'strike' | 'sike' | 'choice';
+type Player = {
+    id: string,
+    points: number,
+    used: string[],
+    responses: string[],
+    selected: string,
+    selectionType: string,
+    match: string,
+    exactMatch: boolean,
+    matchingComplete: boolean, // set to true if explicitly no match was found or a match was found
+};
+type Failable<T extends Object> = { error: string } | T & { success: boolean };
+type Error = { error: string } | { success: boolean };
+
+type Match = {
+    player: string;
+    response: string;
+    exact: boolean;
+};
+
+type Responses = {};
+
+class GameState {
+    private name: string;
+    stage: Stage;
+    public options: Options;
+    prompts: Prompts;
+    room: Room;
+    private round: number;
+    prompt: string;
+    players: Player[];
+    initialSelector: number;
+    selector: number;
+    selectionTypeChoice: boolean;
+    selectionType: Selection;
+    private remainingSikeRetries: number;
+
+    private _startNextPromptCb: null | (() => void);
+    private _promptSkippedCb: null | (() => void);
+    private _selectionUnsuccessfulCb: null | (() => void);
+    private _disputeCompleteCb: null | ((action: string) => void);
+    private _matchingCompleteCb: null | ((selectorActive: boolean) => void);
+    private corrections: Record<string, string[]>;
+    public promptTimeout: NodeJS.Timeout | null;
+    private pollService: PollService;
+
+
+    constructor(room: Room, options?: Options, oldPrompts?: Prompts) {
         this.name = room.name;
         this.stage = 'lobby'; // enum: 'lobby', 'response', 'selection', 'matching', 'endRound'
-        this.options = options;
-        if (!options) this.options = defaultOptions(room.lang);
+        if (options) {
+            this.options = options;
+        } else {
+            this.options = defaultOptions(room.lang);
+        }
         this.prompts = new Prompts(this.options.packs, this.options.customPrompts, room.lang, oldPrompts);
         this.room = room;
         this.round = 0;
@@ -44,8 +109,8 @@ const GameState = class {
         this._startNextPromptCb = null;
         this._promptSkippedCb = null;
         this._selectionUnsuccessfulCb = null;
-        this._matchingCompleteCb = null;
         this._disputeCompleteCb = null;
+        this._matchingCompleteCb = null;
 
         for (const player of room.players) {
             this.players.push(
@@ -64,34 +129,35 @@ const GameState = class {
         }
 
         if (this.options.autoNumRounds) {
-            this.options.numRounds = this.numVoters()
+            this.options.numRounds = this.numVoters();
         }
 
     }
 
     /*** Callback registry for events that may happen from disconnect ***/
-    registerStartNextPromptCb(cb) {
+    registerStartNextPromptCb(cb: () => void): void {
         this._startNextPromptCb = cb;
     }
 
-    registerPromptSkippedCb(cb) {
+    registerPromptSkippedCb(cb: () => void): void {
         this._promptSkippedCb = cb;
     }
 
-    registerMatchingCompleteCb(cb) {
-        this._matchingCompleteCb = cb;
-    }
 
-    registerSelectionUnsuccessfulCb(cb) {
+    registerSelectionUnsuccessfulCb(cb: () => void): void {
         this._selectionUnsuccessfulCb = cb;
     }
 
-    registerDisputeCompleteCb(cb) {
+    registerDisputeCompleteCb(cb: (action: string) => void): void {
         this._disputeCompleteCb = cb;
     }
 
+    registerMatchingCompleteCb(cb: (selectorActive: boolean) => void): void {
+        this._matchingCompleteCb = cb;
+    }
+
     /*** PROMPT RESPONSE state changes ***/
-    hasNewPrompt() {
+    hasNewPrompt(): boolean {
         // return false if no rounds left
         if (this.round >= this.options.numRounds) return false;
         // return true if there are still prompts available
@@ -99,12 +165,12 @@ const GameState = class {
 
         // this is true as long as no pack is a subset of another pack
         for (const pack in this.options.packs) {
-            if(!this.options.packs[pack]) return true;
+            if (!this.options.packs[pack]) return true;
         }
         return false;
     }
 
-    beginNewPrompt() {
+    beginNewPrompt(): boolean {
         // wrap in promise to avoid blocking
         // check if game is over
         if (this.round >= this.options.numRounds) {
@@ -130,7 +196,9 @@ const GameState = class {
         this.corrections = {};
 
         if (this.options.promptSkipping) {
-            this.pollService.registerPoll('skipPrompt', this._promptSkippedCb, 'response');
+            if(this._promptSkippedCb) {
+                this.pollService.registerPoll('skipPrompt', this._promptSkippedCb, 'response');
+            }
         }
 
         for (const player of this.players) {
@@ -140,12 +208,12 @@ const GameState = class {
         return true;
     }
 
-    acceptPromptResponse(id, response) {
+    acceptPromptResponse(id: string, response: string): Failable<{ response: string }> {
         if (!response || typeof response !== 'string') {
             return {error: 'emptyResponse'};
         }
         response = response.trim().normalize().trim();
-        if(!response){
+        if (!response) {
             return {error: 'emptyResponse'};
         }
         if (this.stage === 'response') {
@@ -169,11 +237,11 @@ const GameState = class {
         return {success: true, response};
     }
 
-    pollVote(id, pollName) {
+    pollVote(id: string, pollName: string): Failable<{count: number; next: boolean}> {
         return this.pollService.acceptVote(pollName, id, this.stage);
     }
 
-    _randomizeSelectionType() {
+    _randomizeSelectionType(): void {
         const r = Math.floor(Math.random() * 6);
         this.selectionTypeChoice = false;
         if (r < 3) {
@@ -188,7 +256,7 @@ const GameState = class {
         // this.selectionTypeChoice = true;
     }
 
-    _resetSelection(resetRetries = true) {
+    _resetSelection(resetRetries = true): void {
         if (resetRetries) {
             this.remainingSikeRetries = this.options.sikeRetries;
         }
@@ -200,7 +268,7 @@ const GameState = class {
     }
 
     /*** PROMPT SELECTION state changes ***/
-    beginSelection() {
+    beginSelection(): boolean {
         this.stage = 'selection';
         this.pollService.clearPoll('skipPrompt');
 
@@ -225,7 +293,7 @@ const GameState = class {
         return false;
     }
 
-    nextSelection() {
+    nextSelection(): boolean {
         this.stage = 'selection';
         //clear selections
         this._resetSelection();
@@ -244,28 +312,30 @@ const GameState = class {
         }
         this.initialSelector = (this.initialSelector + 1) % this.players.length;
         this.stage = 'endRound';
-        this.pollService.registerPoll('startNextRound', this._startNextPromptCb, 'endRound', null, 0.75);
+        if(this._startNextPromptCb) {
+            this.pollService.registerPoll('startNextRound', this._startNextPromptCb, 'endRound', undefined, 0.75);
+        }
         return false;
     }
 
-    _exact_matches(string1, string2) {
+    _exact_matches(string1: string, string2: string): boolean {
         return this._match_chance(string1, string2) > 0.9999;
     }
 
-    _match_chance(string1, string2) {
+    _match_chance(string1: string, string2: string): number {
         string1 = string1.trim().normalize().trim();
         string2 = string2.trim().normalize().trim();
         return stringMatch(string1, string2,
             this.corrections[string1] ?? [], this.corrections[string2] ?? [], this.room.lang);
     }
 
-    _autoMatch() {
+    _autoMatch(): void {
         for (const player of this.players) {
             this._autoMatchSingle(player);
         }
     }
 
-    _autoMatchSingle(player) {
+    _autoMatchSingle(player: Player): void {
         const selector = this.players[this.selector];
         const response = selector.selected;
         if (player.id === selector.id) return;
@@ -287,7 +357,7 @@ const GameState = class {
         }
     }
 
-    acceptSelectionType(id, isStrike) {
+    acceptSelectionType(id: string, isStrike: boolean): Error {
         const selector = this.players[this.selector];
         if (this.selectionTypeChoice) {
             if (this.stage === 'selection' && selector.id === id) {
@@ -298,7 +368,7 @@ const GameState = class {
         return {error: 'badRequest'};
     }
 
-    acceptResponseSelection(id, response) {
+    acceptResponseSelection(id: string, response: string): Error {
         const selector = this.players[this.selector];
         // selectionType needs to be chosen before choosing a response
         if (this.selectionType === 'choice') return {error: 'badRequest'};
@@ -324,40 +394,43 @@ const GameState = class {
         return {error: 'badRequest'};
     }
 
-    _sikeDisputeAction() {
+    _sikeDisputeAction(): void {
         if (this.remainingSikeRetries <= 0) {
-            this._disputeCompleteCb('nextSelection');
+            if (this._disputeCompleteCb)
+                this._disputeCompleteCb('nextSelection');
         } else {
             if (this.isActive(this.selectorId()) &&
                 this.players[this.selector].responses.length > this.players[this.selector].used.length) {
                 this.stage = 'selection';
                 this.remainingSikeRetries--;
                 this._resetSelection(false);
-                this._disputeCompleteCb('reSelect');
+                if (this._disputeCompleteCb)
+                    this._disputeCompleteCb('reSelect');
             } else {
-                this._disputeCompleteCb('nextSelection');
+                if (this._disputeCompleteCb)
+                    this._disputeCompleteCb('nextSelection');
             }
         }
     }
 
-    numVoters(excludedId) {
+    numVoters(excludedId?: string): number {
         return this.players.filter(player => player.id !== excludedId && this.isActive(player.id)).length;
     }
 
     /*** MATCHING state changes ***/
-    matchingComplete() {
-        return !this.players.find(player => player.active && (!player.matchingComplete || player.selected))
+    matchingComplete(): boolean {
+        return this.players.every(player => !this.isActive(player.id) || player.matchingComplete || player.selected)
             && this.stage === 'matching';
     }
 
 
-    _cbIfMatchingComplete() {
+    _cbIfMatchingComplete(): void {
         if (this.matchingComplete() && this._matchingCompleteCb) {
             this._matchingCompleteCb(this.isActive(this.selectorId()));
         }
     }
 
-    acceptMatch(id, match) {
+    acceptMatch(id: string, match: string): Error {
         const selector = this.players[this.selector];
         const matcher = this.players.find(player => player.id === id);
         if (!matcher) return {error: 'spectator'};
@@ -390,15 +463,15 @@ const GameState = class {
         return {error: 'badRequest'};
     }
 
-    getMatch(id) {
+    getMatch(id: string): string | undefined {
         const matcher = this.players.find(player => player.id === id);
-        if (matcher.matchingComplete) {
+        if (matcher && matcher.matchingComplete) {
             return matcher.match;
         }
         return undefined;
     }
 
-    matches() {
+    matches(): Match[] {
         const matches = [];
         for (const player of this.players) {
             if (player.matchingComplete) {
@@ -408,7 +481,7 @@ const GameState = class {
         return matches;
     }
 
-    selectionComplete() {
+    selectionComplete(): void {
         // opportunity to do end round stats, for now just count the points
         const selector = this.players[this.selector];
         for (const matcher of this.players) {
@@ -419,19 +492,19 @@ const GameState = class {
         }
     }
 
-    getResponses(id) {
-        if(this.stage !== 'endRound'){
+    getResponses(id: string): Failable<{ responses: Responses }> {
+        if (this.stage !== 'endRound') {
             return {error: 'invalidStage'};
         }
         const player = this.players.find(player => player.id === id);
-        if(!player){
+        if (!player) {
             return {error: 'playerDoesNotExist'}
         }
         const responses = this._getResponses(player);
         return {success: true, responses};
     }
 
-    _getResponses(player){
+    _getResponses(player: Player): Responses {
         return {
             id: player.id,
             all: player.responses,
@@ -442,7 +515,7 @@ const GameState = class {
     }
 
     /*** GAMEOVER state changes ***/
-    gameOver() {
+    gameOver(): { player: string, points: number }[] {
         this.stage = 'lobby';
         return this.players.map(player => {
             return {player: player.id, points: player.points};
@@ -450,32 +523,35 @@ const GameState = class {
     }
 
     /*** UTILS AND DISCONNECT ***/
-    isSelector(id) {
+    isSelector(id: string): boolean {
         const selector = this.players[this.selector].id;
         return selector === id;
     }
 
-    _activeRoomPlayers() {
+    _activeRoomPlayers(): RoomPlayer[] {
         return this.room.players.filter(player => player.active);
     }
 
-    isActive(id) {
-        return this.room.players.find(player => player.id === id)?.active;
+    isActive(id: string): boolean {
+        const player = this.room.players.find(player => player.id === id);
+        return !!player && player.active;
     }
 
-    selectedResponse() {
+    selectedResponse(): string {
         return this.players[this.selector].selected;
     }
 
-    selectorId() {
+    selectorId(): string {
         return this.players[this.selector].id;
     }
 
-    _getTimeLeft(timeout) {
+    _getTimeLeft(timeout: NodeJS.Timeout) {
+        // todo: do this in a safer way
+        // @ts-ignore
         return Math.ceil((timeout._idleStart + timeout._idleTimeout) / 1000 - process.uptime())
     }
 
-    midgameConnect(id, oldId) {
+    midgameConnect(id: string, oldId?: string) {
         let player = this.players.find(player => player.id === oldId);
         if (!player) {
             logger.info('(gameState) midgame join');
@@ -496,12 +572,12 @@ const GameState = class {
             logger.info('(gameState) midgame rejoin');
             player.id = id;
         }
-        player = this.players.find(player => player.id === id);
+        player = this.players.find(player => player.id === id)!;
         // ensure if someone joins mid matching that they don't have to match since they have no responses
         if (this.stage === 'matching') {
             this._autoMatchSingle(player);
         }
-        const timeleft = this._getTimeLeft(this.promptTimeout) - 1;
+        const timeleft = this.promptTimeout ? this._getTimeLeft(this.promptTimeout) - 1 : 0;
 
         return {
             stage: this.stage,
@@ -517,14 +593,14 @@ const GameState = class {
         }
     }
 
-    getOptions() {
+    getOptions(): Options {
         const result = optionsSchema.validate(this.options, {stripUnknown: true});
         const ret = result.value;
         delete ret.customPrompts; // too big and not worth the other clients seeing
         return ret;
     }
 
-    disconnect(id) {
+    disconnect(id: string): void {
         // disconnect was not hooked up properly
         // now that it is, this seems too harsh
         // so this temporarily removed at the expense of allowing an unprogressable state
@@ -541,4 +617,4 @@ const GameState = class {
     }
 };
 
-module.exports = {GameState, defaultOptions};
+export {GameState, defaultOptions, Stage, Failable};

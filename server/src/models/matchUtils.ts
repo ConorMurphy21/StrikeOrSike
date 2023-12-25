@@ -8,30 +8,19 @@ const spellcheckers: Record<string, Spellchecker.Spellchecker> = {
   en_CA: en
 };
 
-const getCorrections = async (string: string, lang: string) => {
+export async function getCorrections(string: string, lang: string) {
   if (string.includes(' ')) return [];
   const spellchecker = spellcheckers[lang] ?? en;
   if (spellchecker.isMisspelled(string)) {
     return spellchecker.getCorrectionsForMisspelling(string);
   }
   return [];
-};
+}
 
-const certainMatch = (
-  string1: string,
-  string2: string,
-  lang: string
-): boolean => {
-  return (
-    exactMatch(string1, string2, lang) || pluralMatch(string1, string2, lang)
-  );
-};
-
-const exactMatch = (
-  string1: string,
-  string2: string,
-  lang: string
-): boolean => {
+function certainMatch(string1: string, string2: string, lang: string): boolean {
+  return exactMatch(string1, string2, lang) || pluralMatch(string1, string2, lang);
+}
+function exactMatch(string1: string, string2: string, lang: string): boolean {
   return (
     string1.localeCompare(string2, lang, {
       sensitivity: 'base',
@@ -39,25 +28,21 @@ const exactMatch = (
       usage: 'search'
     }) === 0
   );
-};
+}
 
-const pluralMatch = (
-  string1: string,
-  string2: string,
-  lang: string
-): boolean => {
+function pluralMatch(string1: string, string2: string, lang: string): boolean {
   if (lang && !lang.startsWith('en')) return false;
   if (string1.includes(' ') || string2.includes(' ')) return false;
   return exactMatch(pluralize.plural(string1), pluralize.plural(string2), lang);
-};
+}
 
-const stringMatch = (
+export function stringMatch(
   string1: string,
   string2: string,
   corrections1: string[],
   corrections2: string[],
   lang: string
-): number => {
+): number {
   if (certainMatch(string1, string2, lang)) return 1;
 
   if (!corrections1.length && !corrections2.length) return 0;
@@ -70,10 +55,7 @@ const stringMatch = (
     });
     let percent = 1;
     for (const element of intersection) {
-      const ind = Math.max(
-        corrections1.indexOf(element),
-        corrections2.indexOf(element)
-      );
+      const ind = Math.max(corrections1.indexOf(element), corrections2.indexOf(element));
       percent *= 0.15 * (ind / 3);
     }
     return 1 - percent;
@@ -87,6 +69,4 @@ const stringMatch = (
     }
     return index === -1 ? 0 : 0.95 - index * 0.03;
   }
-};
-
-export { getCorrections, stringMatch };
+}

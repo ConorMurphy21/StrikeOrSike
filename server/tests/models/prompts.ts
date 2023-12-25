@@ -1,8 +1,4 @@
-import {
-  Prompts,
-  retrieveIntersections,
-  retrieveMetas
-} from '../../src/models/prompts';
+import { Prompts, retrieveIntersections, retrieveMetas } from '../../src/models/prompts';
 import { assert } from 'chai';
 import fs from 'fs';
 
@@ -51,12 +47,7 @@ describe('prompts tests', () => {
       });
 
       it('double pack reduced', () => {
-        test_pack_swap_carryover(
-          z(['standard', 'canadian']),
-          z(['canadian']),
-          'en-CA',
-          0.5
-        );
+        test_pack_swap_carryover(z(['standard', 'canadian']), z(['canadian']), 'en-CA', 0.5);
       });
     });
   });
@@ -118,19 +109,12 @@ function z(pack: string[]): Record<string, boolean> {
   return ret;
 }
 
-function test_prompts(
-  packs: Record<string, boolean>,
-  customPrompts: string[],
-  lang: string,
-  carryover = false
-) {
+function test_prompts(packs: Record<string, boolean>, customPrompts: string[], lang: string, carryover = false) {
   let prompts = new Prompts(packs, customPrompts, lang);
   let lines = customPrompts;
   for (const pack of prompts.packs) {
     if (pack.id !== 'custom') {
-      const meta = Prompts.metas.find(
-        (p) => p.id === pack.id && p.lang === lang
-      );
+      const meta = Prompts.metas.find((p) => p.id === pack.id && p.lang === lang);
       const packLines = fs.readFileSync(meta!.path, 'utf-8').split(/\r?\n/);
       lines = lines.concat(packLines);
     }
@@ -164,9 +148,7 @@ function test_pack_swap_carryover(
   let lines: string[] = [];
   for (const pack of prompts.packs) {
     if (pack.id !== 'custom') {
-      const meta = Prompts.metas.find(
-        (p) => p.id === pack.id && p.lang === lang
-      );
+      const meta = Prompts.metas.find((p) => p.id === pack.id && p.lang === lang);
       const packLines = fs.readFileSync(meta!.path, 'utf-8').split(/\r?\n/);
       lines = lines.concat(packLines);
     }

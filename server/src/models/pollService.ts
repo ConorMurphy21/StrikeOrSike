@@ -8,7 +8,7 @@ type Poll = {
   inFavor: string[];
 };
 
-class PollService {
+export class PollService {
   private gameState: GameState;
   private polls: Record<string, Poll>;
   constructor(gameState: GameState) {
@@ -36,15 +36,8 @@ class PollService {
     delete this.polls[pollName];
   }
 
-  acceptVote(
-    pollName: string,
-    id: string,
-    stage: Stage
-  ): Failable<{ count: number; next: boolean }> {
-    if (
-      !Object.prototype.hasOwnProperty.call(this.polls, pollName) ||
-      this.polls[pollName] === null
-    ) {
+  acceptVote(pollName: string, id: string, stage: Stage): Failable<{ count: number; next: boolean }> {
+    if (!Object.prototype.hasOwnProperty.call(this.polls, pollName) || this.polls[pollName] === null) {
       return { error: 'noPoll' };
     }
     const poll = this.polls[pollName];
@@ -94,17 +87,13 @@ class PollService {
 
   complete(pollName: string) {
     const poll = this.polls[pollName];
-    const threshold = Math.ceil(
-      this.gameState.numVoters(poll.exclude) * poll.majorityPercent
-    );
+    const threshold = Math.ceil(this.gameState.numVoters(poll.exclude) * poll.majorityPercent);
     return this.countVotes(pollName) >= threshold;
   }
 
   nextComplete(pollName: string) {
     const poll = this.polls[pollName];
-    const threshold = Math.ceil(
-      this.gameState.numVoters(poll.exclude) * poll.majorityPercent
-    );
+    const threshold = Math.ceil(this.gameState.numVoters(poll.exclude) * poll.majorityPercent);
     return this.countVotes(pollName) + 1 >= threshold;
   }
 
@@ -129,5 +118,3 @@ class PollService {
     }
   }
 }
-
-export = PollService;

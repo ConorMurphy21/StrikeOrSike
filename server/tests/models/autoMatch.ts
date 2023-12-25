@@ -58,30 +58,21 @@ describe('Automatch tests', () => {
       gameState.players[matcherIndex].responses = [firstResponse + ' '];
       gameState.acceptResponseSelection(selectorId, firstResponse);
       assert.isTrue(gameState.players[matcherIndex].matchingComplete);
-      assert.strictEqual(
-        gameState.players[matcherIndex].match,
-        firstResponse + ' '
-      );
+      assert.strictEqual(gameState.players[matcherIndex].match, firstResponse + ' ');
     });
 
     it('capitalization', () => {
       gameState.players[matcherIndex].responses = [firstResponse.toUpperCase()];
       gameState.acceptResponseSelection(selectorId, firstResponse);
       assert.isTrue(gameState.players[matcherIndex].matchingComplete);
-      assert.strictEqual(
-        gameState.players[matcherIndex].match,
-        firstResponse.toUpperCase()
-      );
+      assert.strictEqual(gameState.players[matcherIndex].match, firstResponse.toUpperCase());
     });
 
     it('punctuation', () => {
       gameState.players[matcherIndex].responses = [firstResponse + '!'];
       gameState.acceptResponseSelection(selectorId, firstResponse);
       assert.isTrue(gameState.players[matcherIndex].matchingComplete);
-      assert.strictEqual(
-        gameState.players[matcherIndex].match,
-        firstResponse + '!'
-      );
+      assert.strictEqual(gameState.players[matcherIndex].match, firstResponse + '!');
     });
   });
 
@@ -91,10 +82,7 @@ describe('Automatch tests', () => {
     acceptPrompts([selectorResponse], [matcherResponse]).then(() => {
       gameState.acceptResponseSelection(selectorId, selectorResponse);
       assert.isTrue(gameState.players[matcherIndex].matchingComplete);
-      assert.strictEqual(
-        gameState.players[matcherIndex].match,
-        matcherResponse
-      );
+      assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
       done();
     });
   });
@@ -105,10 +93,7 @@ describe('Automatch tests', () => {
     acceptPrompts([selectorResponse], [matcherResponse]).then(() => {
       gameState.acceptResponseSelection(selectorId, selectorResponse);
       assert.isTrue(gameState.players[matcherIndex].matchingComplete);
-      assert.strictEqual(
-        gameState.players[matcherIndex].match,
-        matcherResponse
-      );
+      assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
       done();
     });
   });
@@ -119,10 +104,7 @@ describe('Automatch tests', () => {
     acceptPrompts([selectorResponse], [matcherResponse]).then(() => {
       gameState.acceptResponseSelection(selectorId, selectorResponse);
       assert.isTrue(gameState.players[matcherIndex].matchingComplete);
-      assert.strictEqual(
-        gameState.players[matcherIndex].match,
-        matcherResponse
-      );
+      assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
       done();
     });
   });
@@ -144,10 +126,7 @@ describe('Automatch tests', () => {
     acceptPrompts([selectorResponse], [matcherResponse]).then(() => {
       gameState.acceptResponseSelection(selectorId, selectorResponse);
       assert.isTrue(gameState.players[matcherIndex].matchingComplete);
-      assert.strictEqual(
-        gameState.players[matcherIndex].match,
-        matcherResponse
-      );
+      assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
       done();
     });
   });
@@ -158,10 +137,7 @@ describe('Automatch tests', () => {
     acceptPrompts([selectorResponse], [matcherResponse]).then(() => {
       gameState.acceptResponseSelection(selectorId, selectorResponse);
       assert.isTrue(gameState.players[matcherIndex].matchingComplete);
-      assert.strictEqual(
-        gameState.players[matcherIndex].match,
-        matcherResponse
-      );
+      assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
       done();
     });
   });
@@ -172,10 +148,7 @@ describe('Automatch tests', () => {
     acceptPrompts([selectorResponse], [matcherResponse]).then(() => {
       gameState.acceptResponseSelection(selectorId, selectorResponse);
       assert.isTrue(gameState.players[matcherIndex].matchingComplete);
-      assert.strictEqual(
-        gameState.players[matcherIndex].match,
-        matcherResponse
-      );
+      assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
       done();
     });
   });
@@ -186,18 +159,12 @@ describe('Automatch tests', () => {
     acceptPrompts([selectorResponse], [matcherResponse]).then(() => {
       gameState.acceptResponseSelection(selectorId, selectorResponse);
       assert.isTrue(gameState.players[matcherIndex].matchingComplete);
-      assert.strictEqual(
-        gameState.players[matcherIndex].match,
-        matcherResponse
-      );
+      assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
       done();
     });
   });
 
-  async function acceptPrompts(
-    selectorResponses: string[],
-    matcherResponses: string[]
-  ) {
+  async function acceptPrompts(selectorResponses: string[], matcherResponses: string[]) {
     for (const resp of selectorResponses) {
       gameState!.acceptPromptResponse(selectorId, resp);
     }

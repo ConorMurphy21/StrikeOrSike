@@ -2,14 +2,14 @@ import { Failable, GameState } from './gameState';
 import parameterize from 'parameterize';
 import locale from 'locale';
 
-type Player = {
+export type Player = {
   id: string;
   name: string;
   leader: boolean;
   active: boolean;
 };
 
-type Room = {
+export type Room = {
   name: string;
   lastActivity: number;
   lang: string;
@@ -25,32 +25,23 @@ const playerRoom: Record<string, Room> = {};
 // map rooms to model
 const rooms: { [key: string]: Room } = {};
 
-const isValidName = (
-  name: string
-): { error: string } | { success: boolean } => {
+function isValidName(name: string): { error: string } | { success: boolean } {
   if (typeof name !== 'string') return { error: 'noName' };
   if (name.length < 2) return { error: 'shortName' };
   if (name.length > 20) return { error: 'longName' };
 
   return { success: true };
-};
+}
 
-const isValidRoomName = (
-  name: string
-): { error: string } | { success: boolean } => {
+function isValidRoomName(name: string): { error: string } | { success: boolean } {
   if (typeof name !== 'string') return { error: 'noRoomName' };
   if (name.length < 2) return { error: 'shortRoomName' };
   if (name.length > 15) return { error: 'longRoomName' };
   if (rooms[name]) return { error: 'roomTaken' };
   return { success: true };
-};
+}
 
-const createRoom = (
-  id: string,
-  name: string,
-  roomName: string,
-  langs: string
-): Failable<{ room: Room }> => {
+export function createRoom(id: string, name: string, roomName: string, langs: string): Failable<{ room: Room }> {
   let result = isValidName(name);
   if ('error' in result) return result;
   roomName = parameterize(roomName);
@@ -78,13 +69,9 @@ const createRoom = (
   rooms[roomName] = room;
   playerRoom[id] = room;
   return { success: true, room };
-};
+}
 
-const joinRoom = (
-  id: string,
-  name: string,
-  roomName: string
-): Failable<{ room: Room; oldId?: string }> => {
+export function joinRoom(id: string, name: string, roomName: string): Failable<{ room: Room; oldId?: string }> {
   const result = isValidName(name);
   if ('error' in result) return result;
   if (typeof roomName !== 'string') {
@@ -119,17 +106,17 @@ const joinRoom = (
 
   playerRoom[id] = room;
   return { success: true, room };
-};
+}
 
-const getRoomByName = (roomName: string): Room => {
+export function getRoomByName(roomName: string): Room {
   return rooms[roomName];
-};
+}
 
-const getRoomById = (id: string): Room => {
+export function getRoomById(id: string): Room {
   return playerRoom[id];
-};
+}
 
-const disconnectPlayer = (id: string): void => {
+export function disconnectPlayer(id: string): void {
   const room = playerRoom[id];
   if (!room) return;
   delete playerRoom[id];
@@ -151,11 +138,11 @@ const disconnectPlayer = (id: string): void => {
       activePlayer.leader = true;
     }
   }
-};
+}
 
 // cleanup all data concerning inactive rooms
 // return list of rooms removed
-const roomService = (maxInactivity: number) => {
+export function roomService(maxInactivity: number) {
   const time = new Date().getTime();
 
   const inactiveRooms = [];
@@ -177,23 +164,11 @@ const roomService = (maxInactivity: number) => {
   }
 
   return inactiveRooms;
-};
+}
 
-const getCount = () => {
+export function getCount() {
   return {
     rooms: Object.keys(rooms).length,
     players: Object.keys(playerRoom).length
   };
-};
-
-export {
-  Room,
-  Player,
-  createRoom,
-  joinRoom,
-  getRoomById,
-  getRoomByName,
-  disconnectPlayer,
-  roomService,
-  getCount
-};
+}

@@ -12,11 +12,7 @@ const C2_RESPONSE = 'c2Response';
 
 describe('responseSelection tests', () => {
   const roomName = 'room';
-  let io: Server,
-    clientSocket1: Socket,
-    clientSocket2: Socket,
-    c1Id: string,
-    c2Id: string;
+  let io: Server, clientSocket1: Socket, clientSocket2: Socket, c1Id: string, c2Id: string;
   beforeEach((done) => {
     const httpServer = createServer();
     io = new Server(httpServer);
@@ -37,11 +33,7 @@ describe('responseSelection tests', () => {
             clientSocket2.emit('joinRoom', 'name2', roomName);
           });
           clientSocket2.on('joinRoom', () => {
-            clientSocket1.emit(
-              'setOptions',
-              { promptTimer: 0, minPlayers: 1 },
-              () => done()
-            );
+            clientSocket1.emit('setOptions', { promptTimer: 0, minPlayers: 1 }, () => done());
           });
           clientSocket1.on('beginPrompt', () => {
             clientSocket1.emit('promptResponse', SHARED_RESPONSE);

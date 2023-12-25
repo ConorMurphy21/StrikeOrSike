@@ -57,9 +57,7 @@ const registerGameHandlers = (io: Server, socket: Socket) => {
     if ('success' in result) {
       socket.emit('promptResponse', result.response);
     } else {
-      logger.error(
-        `(gameHandlers) PromptResponse failed due to ${result.error}`
-      );
+      logger.error(`(gameHandlers) PromptResponse failed due to ${result.error}`);
     }
   });
 
@@ -102,17 +100,13 @@ const registerGameHandlers = (io: Server, socket: Socket) => {
     if ('success' in result) {
       io.to(room.name).emit('selectionTypeChosen', state.selectionType);
     } else {
-      logger.error(
-        `(gameHandlers) selectSelectionType failed due to ${result.error}`
-      );
+      logger.error(`(gameHandlers) selectSelectionType failed due to ${result.error}`);
     }
   });
 
   socket.on('selectResponse', (response: string) => {
     if (Joi.string().max(60).min(1).required().validate(response).error) {
-      logger.error(
-        '(gameHandlers) selectResponse attempted with invalid match'
-      );
+      logger.error('(gameHandlers) selectResponse attempted with invalid match');
       return;
     }
     const room = getRoomById(socket.id);
@@ -125,9 +119,7 @@ const registerGameHandlers = (io: Server, socket: Socket) => {
     if ('success' in result) {
       beginMatching(io, room);
     } else {
-      logger.error(
-        `(gameHandlers) selectResponse failed due to ${result.error}`
-      );
+      logger.error(`(gameHandlers) selectResponse failed due to ${result.error}`);
     }
   });
 
@@ -144,9 +136,7 @@ const registerGameHandlers = (io: Server, socket: Socket) => {
     const state = room.state!;
     const result = state.acceptMatch(socket.id, match);
     if ('success' in result) {
-      io.to(room.name).emit('matchesFound', [
-        { player: socket.id, response: match }
-      ]);
+      io.to(room.name).emit('matchesFound', [{ player: socket.id, response: match }]);
     } else {
       logger.error(`(gameHandlers) selectMatch failed due to ${result.error}`);
     }
@@ -169,9 +159,7 @@ const registerGameHandlers = (io: Server, socket: Socket) => {
 
   socket.on('getResponses', (id, callback) => {
     if (!callback || !Joi.string().required().validate(id)) {
-      logger.error(
-        '(gameHandlers) getResponse attempted with invalid arguments'
-      );
+      logger.error('(gameHandlers) getResponse attempted with invalid arguments');
       return;
     }
     const room = getRoomById(socket.id);
@@ -221,9 +209,7 @@ function beginPrompt(io: Server, room: Room) {
   const state = room.state!;
   if (state.beginNewPrompt()) {
     io.to(room.name).emit('beginPrompt', state.prompt);
-    const timeToWait = state.options.promptTimer
-      ? state.options.promptTimer * 1000 + 3000 + 1000
-      : 500;
+    const timeToWait = state.options.promptTimer ? state.options.promptTimer * 1000 + 3000 + 1000 : 500;
     state.promptTimeout = setTimeout(() => {
       beginSelection(io, room);
       // time to respond          + countdown + tolerance
@@ -304,11 +290,7 @@ function midgameJoin(socket: Socket, room: Room, oldId?: string) {
     const match = room.state!.getMatch(socket.id);
     if (match) {
       // exact only matters if it's the original user
-      socket
-        .to(room.name)
-        .emit('matchesFound', [
-          { player: socket.id, response: match, exact: true }
-        ]);
+      socket.to(room.name).emit('matchesFound', [{ player: socket.id, response: match, exact: true }]);
     }
   }
 }

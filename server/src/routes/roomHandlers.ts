@@ -1,11 +1,5 @@
 import Joi from 'joi';
-import {
-  createRoom,
-  disconnectPlayer,
-  getRoomById,
-  getRoomByName,
-  joinRoom
-} from '../models/rooms';
+import { createRoom, disconnectPlayer, getRoomById, getRoomByName, joinRoom } from '../models/rooms';
 import logger from '../logger/logger';
 import { midgameJoin } from './gameHandlers';
 import { Server, Socket } from 'socket.io';
@@ -58,9 +52,7 @@ export function registerRoomHandlers(io: Server, socket: Socket): void {
 
     const result = joinRoom(socket.id, name, roomName);
     if ('error' in result) {
-      logger.info(
-        `(roomHandlers) Player failed to join room due to ${result.error}`
-      );
+      logger.info(`(roomHandlers) Player failed to join room due to ${result.error}`);
       socket.emit('joinRoom', { error: result.error });
     } else {
       logger.info('(roomHandlers) Player joined room');
@@ -98,8 +90,6 @@ function disconnect(socket: Socket): void {
     const player = room.players.find((p) => p.id === socket.id);
     // could be modified
     const leader = room.players.find((p) => p.leader);
-    socket
-      .to(room.name)
-      .emit('updatePlayers', { modifies: [player, leader], deletes: [] });
+    socket.to(room.name).emit('updatePlayers', { modifies: [player, leader], deletes: [] });
   }
 }

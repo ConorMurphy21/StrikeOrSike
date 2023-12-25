@@ -24,11 +24,7 @@ describe('promptResponse tests', () => {
           clientSocket1.emit('createRoom', 'name1', roomName);
         });
         clientSocket2.on('joinRoom', () => {
-          clientSocket1.emit(
-            'setOptions',
-            { promptTimer: 30, minPlayers: 1 },
-            () => done()
-          );
+          clientSocket1.emit('setOptions', { promptTimer: 30, minPlayers: 1 }, () => done());
         });
       });
     });

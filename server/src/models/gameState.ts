@@ -46,9 +46,7 @@ type Player = {
   exactMatch: boolean;
   matchingComplete: boolean; // set to true if explicitly no match was found or a match was found
 };
-type Failable<T extends object> =
-  | { error: string }
-  | (T & { success: boolean });
+type Failable<T extends object> = { error: string } | (T & { success: boolean });
 type Error = { error: string } | { success: boolean };
 
 type Match = {
@@ -97,12 +95,7 @@ class GameState {
     } else {
       this.options = defaultOptions(room.lang);
     }
-    this.prompts = new Prompts(
-      this.options.packs,
-      this.options.customPrompts,
-      room.lang,
-      oldPrompts
-    );
+    this.prompts = new Prompts(this.options.packs, this.options.customPrompts, room.lang, oldPrompts);
     this.room = room;
     this.round = 0;
     this.prompt = '';
@@ -197,12 +190,7 @@ class GameState {
         }
       }
       if (!changed) return false;
-      this.prompts = new Prompts(
-        this.options.packs,
-        this.options.customPrompts,
-        this.room.lang,
-        this.prompts
-      );
+      this.prompts = new Prompts(this.options.packs, this.options.customPrompts, this.room.lang, this.prompts);
       this.prompt = this.prompts.newPrompt(this._activeRoomPlayers());
     }
     this.stage = 'response';
@@ -210,11 +198,7 @@ class GameState {
 
     if (this.options.promptSkipping) {
       if (this._promptSkippedCb) {
-        this.pollService.registerPoll(
-          'skipPrompt',
-          this._promptSkippedCb,
-          'response'
-        );
+        this.pollService.registerPoll('skipPrompt', this._promptSkippedCb, 'response');
       }
     }
 
@@ -225,10 +209,7 @@ class GameState {
     return true;
   }
 
-  acceptPromptResponse(
-    id: string,
-    response: string
-  ): Failable<{ response: string }> {
+  acceptPromptResponse(id: string, response: string): Failable<{ response: string }> {
     if (!response || typeof response !== 'string') {
       return { error: 'emptyResponse' };
     }
@@ -241,9 +222,7 @@ class GameState {
       if (!playerState) {
         return { error: 'spectator' };
       }
-      if (
-        playerState.responses.find((res) => this._exact_matches(res, response))
-      ) {
+      if (playerState.responses.find((res) => this._exact_matches(res, response))) {
         return { error: 'duplicateResponse' };
       }
       playerState.responses.push(response);
@@ -259,10 +238,7 @@ class GameState {
     return { success: true, response };
   }
 
-  pollVote(
-    id: string,
-    pollName: string
-  ): Failable<{ count: number; next: boolean }> {
+  pollVote(id: string, pollName: string): Failable<{ count: number; next: boolean }> {
     return this.pollService.acceptVote(pollName, id, this.stage);
   }
 
@@ -338,13 +314,7 @@ class GameState {
     this.initialSelector = (this.initialSelector + 1) % this.players.length;
     this.stage = 'endRound';
     if (this._startNextPromptCb) {
-      this.pollService.registerPoll(
-        'startNextRound',
-        this._startNextPromptCb,
-        'endRound',
-        undefined,
-        0.75
-      );
+      this.pollService.registerPoll('startNextRound', this._startNextPromptCb, 'endRound', undefined, 0.75);
     }
     return false;
   }
@@ -414,10 +384,7 @@ class GameState {
     // id must be currently selecting
     if (this.stage === 'selection' && selector.id === id) {
       // response must be in selectors responses but not used
-      if (
-        selector.responses.includes(response) &&
-        !selector.used.includes(response)
-      ) {
+      if (selector.responses.includes(response) && !selector.used.includes(response)) {
         selector.selected = response;
         selector.selectionType = this.selectionType;
         selector.used.push(response);
@@ -425,12 +392,7 @@ class GameState {
         this._autoMatch();
         this.stage = 'matching';
         if (this.options.sikeDispute && this.selectionType === 'sike') {
-          this.pollService.registerPoll(
-            'sikeDispute',
-            () => this._sikeDisputeAction(),
-            'matching',
-            this.selectorId()
-          );
+          this.pollService.registerPoll('sikeDispute', () => this._sikeDisputeAction(), 'matching', this.selectorId());
         }
         return { success: true };
       }
@@ -444,8 +406,7 @@ class GameState {
     } else {
       if (
         this.isActive(this.selectorId()) &&
-        this.players[this.selector].responses.length >
-          this.players[this.selector].used.length
+        this.players[this.selector].responses.length > this.players[this.selector].used.length
       ) {
         this.stage = 'selection';
         this.remainingSikeRetries--;
@@ -458,20 +419,14 @@ class GameState {
   }
 
   numVoters(excludedId?: string): number {
-    return this.players.filter(
-      (player) => player.id !== excludedId && this.isActive(player.id)
-    ).length;
+    return this.players.filter((player) => player.id !== excludedId && this.isActive(player.id)).length;
   }
 
   /*** MATCHING state changes ***/
   matchingComplete(): boolean {
     return (
-      this.players.every(
-        (player) =>
-          !this.isActive(player.id) ||
-          player.matchingComplete ||
-          player.selected
-      ) && this.stage === 'matching'
+      this.players.every((player) => !this.isActive(player.id) || player.matchingComplete || player.selected) &&
+      this.stage === 'matching'
     );
   }
 
@@ -485,14 +440,10 @@ class GameState {
     const selector = this.players[this.selector];
     const matcher = this.players.find((player) => player.id === id);
     if (!matcher) return { error: 'spectator' };
-    if (this.stage !== 'matching' || selector.id === id)
-      return { error: 'badRequest' };
+    if (this.stage !== 'matching' || selector.id === id) return { error: 'badRequest' };
 
     // if already matched remove match from used list
-    if (matcher.matchingComplete)
-      matcher.used = matcher.used.filter(
-        (response) => response !== matcher.match
-      );
+    if (matcher.matchingComplete) matcher.used = matcher.used.filter((response) => response !== matcher.match);
 
     // Sike
     if (!match) {
@@ -607,10 +558,8 @@ class GameState {
   _getTimeLeft(timeout: NodeJS.Timeout) {
     // todo: do this in a safer way
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    return Math.ceil(
-      (timeout._idleStart + timeout._idleTimeout) / 1000 - process.uptime()
-    );
+    // ts-expect-error
+    return Math.ceil((timeout._idleStart + timeout._idleTimeout) / 1000 - process.uptime());
   }
 
   midgameConnect(id: string, oldId?: string) {
@@ -637,9 +586,7 @@ class GameState {
     if (this.stage === 'matching') {
       this._autoMatchSingle(player);
     }
-    const timeleft = this.promptTimeout
-      ? this._getTimeLeft(this.promptTimeout) - 1
-      : 0;
+    const timeleft = this.promptTimeout ? this._getTimeLeft(this.promptTimeout) - 1 : 0;
 
     return {
       stage: this.stage,

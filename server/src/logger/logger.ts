@@ -10,13 +10,7 @@ if (process.env.NODE_ENV === 'production') {
     logGroupName: 'application/logs',
     logStreamName: 'application/logs-production',
     awsRegion: 'us-west-2',
-    messageFormatter: ({
-      level,
-      message
-    }: {
-      level: string;
-      message: string;
-    }) => `[${level}] : ${message}`
+    messageFormatter: ({ level, message }: { level: string; message: string }) => `[${level}] : ${message}`
   };
   logger.add(new WinstonCloudWatch(cloudwatchConfig));
 }

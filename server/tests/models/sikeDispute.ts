@@ -44,30 +44,21 @@ describe('Sike Dispute tests', () => {
     });
 
     it('PromptSelection Accept Happy', () => {
-      const result = gameState.acceptResponseSelection(
-        selectorId,
-        firstResponse
-      );
+      const result = gameState.acceptResponseSelection(selectorId, firstResponse);
       assert.isOk('success' in result);
       assert.isNotOk('error' in result);
     });
 
     it('PromptSelection Accept NotSelector', () => {
       gameState.players[matcherIndex].responses.push(firstResponse);
-      const result = gameState.acceptResponseSelection(
-        matcherId,
-        firstResponse
-      );
+      const result = gameState.acceptResponseSelection(matcherId, firstResponse);
       assert.isNotOk('success' in result);
       assert.isOk('error' in result);
     });
 
     it('PromptSelection Accept used', () => {
       gameState.players[selectorIndex].used.push(firstResponse);
-      const result = gameState.acceptResponseSelection(
-        selectorId,
-        firstResponse
-      );
+      const result = gameState.acceptResponseSelection(selectorId, firstResponse);
       assert.isNotOk('success' in result);
       assert.isOk('error' in result);
     });

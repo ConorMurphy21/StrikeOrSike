@@ -8,9 +8,7 @@ let setOptionsSchema = Joi.object({
   promptSkipping: Joi.boolean(),
   sikeDispute: Joi.boolean(),
   sikeRetries: Joi.number().integer().min(0).max(2),
-  packs: Joi.object()
-    .pattern(Joi.string().min(3).max(20), Joi.boolean())
-    .max(10),
+  packs: Joi.object().pattern(Joi.string().min(3).max(20), Joi.boolean()).max(10),
   customPrompts: Joi.array().items(Joi.string().min(1).max(200)).max(400)
 }).required();
 
@@ -24,9 +22,7 @@ if (process.env.NODE_ENV !== 'production') {
     promptSkipping: Joi.boolean(),
     sikeDispute: Joi.boolean(),
     sikeRetries: Joi.number().integer().min(0).max(2),
-    packs: Joi.object()
-      .pattern(Joi.string().min(3).max(20), Joi.boolean())
-      .max(10),
+    packs: Joi.object().pattern(Joi.string().min(3).max(20), Joi.boolean()).max(10),
     customPrompts: Joi.array().items(Joi.string().min(1).max(200)).max(400)
   }).required();
 }

@@ -14,7 +14,7 @@ export function startCleanupLoop(io: Server): void {
   setInterval(() => cleanup(io), TIMEOUT);
 }
 
-const cleanup = (io: Server) => {
+function cleanup(io: Server) {
   const inactiveRoomNames = roomService(MAX_INACTIVITY);
   for (const name of inactiveRoomNames) {
     logger.info('(roomService) Room closed due to inactivity');
@@ -22,4 +22,4 @@ const cleanup = (io: Server) => {
     io.to(name).emit('kickPlayer', { error: 'inactiveRoom' });
     io.in(name).socketsLeave(name);
   }
-};
+}

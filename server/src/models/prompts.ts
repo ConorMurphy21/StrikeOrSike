@@ -13,7 +13,7 @@ type Meta = {
 };
 
 // retrieve meta info for what prompts can be served
-const retrieveMetas = (root: string): Meta[] => {
+export function retrieveMetas(root: string): Meta[] {
   const metas = [];
   const items = klawSync(root, { nodir: true });
   for (const item of items) {
@@ -32,7 +32,9 @@ const retrieveMetas = (root: string): Meta[] => {
     });
   }
   return metas;
-};
+}
+
+type Intersections = Record<string, Record<string, Set<number>>>;
 
 /*
     returns: a map of intersections
@@ -40,9 +42,7 @@ const retrieveMetas = (root: string): Meta[] => {
     is an index.ts
     the intersection just lists the index.ts of each intersecting value
  */
-
-type Intersections = Record<string, Record<string, Set<number>>>;
-const retrieveIntersections = (metas: Meta[]) => {
+export function retrieveIntersections(metas: Meta[]): Intersections {
   const intersections: Intersections = {};
   for (const meta1 of metas) {
     for (const meta2 of metas) {
@@ -65,7 +65,7 @@ const retrieveIntersections = (metas: Meta[]) => {
     }
   }
   return intersections;
-};
+}
 
 const promptsRoot = './resources/prompts/';
 
@@ -77,7 +77,7 @@ type Pack = {
   remaining: Set<number>;
 };
 
-class Prompts {
+export class Prompts {
   static metas = retrieveMetas(promptsRoot);
   static intersections = retrieveIntersections(this.metas);
   private readonly numPrompts: number;
@@ -96,12 +96,7 @@ class Prompts {
     return packs;
   }
 
-  constructor(
-    packs: Record<string, boolean>,
-    customPrompts: string[],
-    lang: string = 'en-CA',
-    oldPrompts?: Prompts
-  ) {
+  constructor(packs: Record<string, boolean>, customPrompts: string[], lang: string = 'en-CA', oldPrompts?: Prompts) {
     this.numPrompts = customPrompts?.length ?? 0;
     this.numRemaining = 0;
     this.packs = [];
@@ -109,9 +104,7 @@ class Prompts {
     const packIds = [];
     for (const id in packs) {
       if (packs[id]) {
-        const meta = Prompts.metas.find(
-          (meta) => meta.id === id && meta.lang === lang
-        );
+        const meta = Prompts.metas.find((meta) => meta.id === id && meta.lang === lang);
         // skip any packs that can't be found
         if (!meta) continue;
 
@@ -129,12 +122,8 @@ class Prompts {
     for (let i = 0; i < packIds.length; i++) {
       for (let j = i + 1; j < packIds.length; j++) {
         const intersect =
-          Prompts.intersections[packIds[i] + packIds[j]] ??
-          Prompts.intersections[packIds[j] + packIds[i]];
-        this.packs[i].oou = new Set([
-          ...this.packs[i].oou,
-          ...intersect[packIds[i]]
-        ]); // Always use the smaller i to avoid intersections
+          Prompts.intersections[packIds[i] + packIds[j]] ?? Prompts.intersections[packIds[j] + packIds[i]];
+        this.packs[i].oou = new Set([...this.packs[i].oou, ...intersect[packIds[i]]]); // Always use the smaller i to avoid intersections
       }
     }
     // add customPrompts to packs list
@@ -153,8 +142,7 @@ class Prompts {
     // set counters
     for (const pack of this.packs) {
       this.numPrompts += pack.prompts.length;
-      this.numRemaining +=
-        pack.prompts.length - new Set([...pack.used, ...pack.oou]).size;
+      this.numRemaining += pack.prompts.length - new Set([...pack.used, ...pack.oou]).size;
     }
 
     if (this._useRemainingMethod(this.numRemaining)) {
@@ -173,8 +161,7 @@ class Prompts {
           newPack.used = new Set([...newPack.used, ...oldPack.used]);
         } else {
           const intersect =
-            Prompts.intersections[oldPack.id + newPack.id] ??
-            Prompts.intersections[newPack.id + oldPack.id];
+            Prompts.intersections[oldPack.id + newPack.id] ?? Prompts.intersections[newPack.id + oldPack.id];
           for (const u of oldPack.used) {
             if (intersect[oldPack.id].has(u)) {
               const index = [...intersect[oldPack.id]].indexOf(u);
@@ -276,5 +263,3 @@ class Prompts {
     return pack.prompts[r];
   }
 }
-
-export { Prompts, retrieveMetas, retrieveIntersections };

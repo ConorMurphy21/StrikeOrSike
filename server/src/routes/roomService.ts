@@ -1,4 +1,4 @@
-import { roomService } from '../models/rooms';
+import { roomService } from '../state/rooms';
 import logger from '../logger/logger';
 import { Server } from 'socket.io';
 // 1 minute

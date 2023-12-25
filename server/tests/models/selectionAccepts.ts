@@ -1,6 +1,7 @@
 import { assert } from 'chai';
-import { GameState } from '../../src/models/gameState';
-import { Player, Room } from '../../src/models/rooms';
+import { GameState } from '../../src/state/gameState';
+import { Player, Room } from '../../src/state/rooms';
+import { isSuccess, isErr } from '../../src/types/result';
 
 describe('Selection Accepting tests', () => {
   const selectorId = 'selector';
@@ -35,22 +36,19 @@ describe('Selection Accepting tests', () => {
 
     it('PromptSelection Accept Happy', () => {
       const result = gameState.acceptResponseSelection(selectorId, firstResponse);
-      assert.isOk('success' in result);
-      assert.isNotOk('error' in result);
+      assert.isOk(isSuccess(result));
     });
 
     it('PromptSelection Accept NotSelector', () => {
       gameState.players[matcherIndex].responses.push(firstResponse);
       const result = gameState.acceptResponseSelection(matcherId, firstResponse);
-      assert.isNotOk('success' in result);
-      assert.isOk('error' in result);
+      assert.isOk(isErr(result));
     });
 
     it('PromptSelection Accept used', () => {
       gameState.players[selectorIndex].used.push(firstResponse);
       const result = gameState.acceptResponseSelection(selectorId, firstResponse);
-      assert.isNotOk('success' in result);
-      assert.isOk('error' in result);
+      assert.isOk(isErr(result));
     });
 
     it('Match Accept Happy', () => {
@@ -58,8 +56,7 @@ describe('Selection Accepting tests', () => {
       gameState.players[matcherIndex].responses.push(synonym);
       gameState.acceptResponseSelection(selectorId, firstResponse);
       const result = gameState.acceptMatch(matcherId, synonym);
-      assert.isOk('success' in result);
-      assert.isNotOk('error' in result);
+      assert.isOk(isSuccess(result));
     });
 
     it('Match Accept DuplicateRequest', () => {
@@ -68,7 +65,7 @@ describe('Selection Accepting tests', () => {
       gameState.acceptResponseSelection(selectorId, firstResponse);
       gameState.acceptMatch(matcherId, synonym);
       const result = gameState.acceptMatch(matcherId, synonym);
-      assert.isOk('success' in result);
+      assert.isOk(isSuccess(result));
     });
 
     it('Match Accept new match', () => {
@@ -79,7 +76,7 @@ describe('Selection Accepting tests', () => {
       gameState.acceptResponseSelection(selectorId, firstResponse);
       gameState.acceptMatch(matcherId, synonym);
       const result = gameState.acceptMatch(matcherId, synonym2);
-      assert.isOk('success' in result);
+      assert.isOk(isSuccess(result));
       assert.strictEqual(gameState.players[matcherIndex].match, synonym2);
     });
 
@@ -89,8 +86,7 @@ describe('Selection Accepting tests', () => {
       gameState.players[matcherIndex].used.push(synonym);
       gameState.acceptResponseSelection(selectorId, firstResponse);
       const result = gameState.acceptMatch(matcherId, synonym);
-      assert.isNotOk('success' in result);
-      assert.isOk('error' in result);
+      assert.isOk(isErr(result));
     });
   });
 
@@ -102,48 +98,40 @@ describe('Selection Accepting tests', () => {
 
     it('Accept Happy', () => {
       let result = gameState.acceptSelectionType(selectorId, true);
-      assert.isOk('success' in result);
-      assert.isNotOk('error' in result);
+      assert.isOk(isSuccess(result));
       assert.strictEqual(gameState.selectionType, 'strike');
       result = gameState.acceptResponseSelection(selectorId, firstResponse);
-      assert.isOk('success' in result);
-      assert.isNotOk('error' in result);
+      assert.isOk(isSuccess(result));
       assert.strictEqual(gameState.selectionType, 'strike');
     });
 
     it('Error No Choice', () => {
       const result = gameState.acceptResponseSelection(selectorId, firstResponse);
-      assert.isNotOk('success' in result);
-      assert.isOk('error' in result);
+      assert.isOk(isErr(result));
     });
 
     it('Accept double choice', () => {
       let result = gameState.acceptSelectionType(selectorId, false);
-      assert.isOk('success' in result);
-      assert.isNotOk('error' in result);
+      assert.isOk(isSuccess(result));
       assert.strictEqual(gameState.selectionType, 'sike');
       result = gameState.acceptSelectionType(selectorId, true);
-      assert.isOk('success' in result);
-      assert.isNotOk('error' in result);
+      assert.isOk(isSuccess(result));
       assert.strictEqual(gameState.selectionType, 'strike');
       result = gameState.acceptResponseSelection(selectorId, firstResponse);
-      assert.isOk('success' in result);
-      assert.isNotOk('error' in result);
+      assert.isOk(isSuccess(result));
       assert.strictEqual(gameState.selectionType, 'strike');
     });
 
     it('Not selecting', () => {
       const result = gameState.acceptSelectionType(matcherId, true);
-      assert.isNotOk('success' in result);
-      assert.isOk('error' in result);
+      assert.isOk(isErr(result));
     });
 
     it('Not choosing acceptSelectionType', () => {
       gameState.selectionTypeChoice = false;
       gameState.selectionType = 'strike';
       const result = gameState.acceptSelectionType(selectorId, true);
-      assert.isNotOk('success' in result);
-      assert.isOk('error' in result);
+      assert.isOk(isErr(result));
     });
   });
 });

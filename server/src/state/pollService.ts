@@ -1,4 +1,5 @@
-import { Failable, GameState, Stage } from './gameState';
+import { GameState, Stage } from './gameState';
+import { Err, Ok, Result } from '../types/result';
 
 type Poll = {
   stage: Stage;
@@ -36,16 +37,16 @@ export class PollService {
     delete this.polls[pollName];
   }
 
-  acceptVote(pollName: string, id: string, stage: Stage): Failable<{ count: number; next: boolean }> {
+  acceptVote(pollName: string, id: string, stage: Stage): Result<{ count: number; next: boolean }> {
     if (!Object.prototype.hasOwnProperty.call(this.polls, pollName) || this.polls[pollName] === null) {
-      return { error: 'noPoll' };
+      return Err(`noPoll${pollName}`);
     }
     const poll = this.polls[pollName];
     if (poll.stage && stage !== poll.stage) {
-      return { error: 'wrongStage' };
+      return Err('invalidStage');
     }
     if (poll.exclude === id) {
-      return { error: 'invalidVoter' };
+      return Err('invalidVoter');
     }
     const index = poll.inFavor.indexOf(id);
     if (index >= 0) {
@@ -55,9 +56,9 @@ export class PollService {
     }
     const count = this.countVotes(pollName);
     if (this.cbIfComplete(pollName)) {
-      return { success: true, count: 0, next: false };
+      return Ok({ count: 0, next: false });
     }
-    return { success: true, count, next: this.nextComplete(pollName) };
+    return Ok({ count, next: this.nextComplete(pollName) });
   }
 
   getVoteCounts(): Record<string, { count: number; next: boolean }> {

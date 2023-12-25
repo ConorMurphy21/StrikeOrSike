@@ -1,9 +1,10 @@
 import { Prompts } from './prompts';
 import { getCorrections, stringMatch } from './matchUtils';
 import { PollService } from './pollService';
-import optionsSchema from './optionsSchema';
+import optionsSchema from '../types/optionsSchema';
 import logger from '../logger/logger';
 import { Room, Player as RoomPlayer } from './rooms';
+import { Err, Info, Ok, Result, Success, VoidResult, Warning } from '../types/result';
 
 type Options = {
   promptTimer: number;
@@ -17,7 +18,8 @@ type Options = {
   packs: Record<string, boolean>;
   customPrompts: string[];
 };
-const defaultOptions = (lang: string): Options => {
+
+export function defaultOptions(lang: string): Options {
   return {
     promptTimer: 35,
     autoNumRounds: true, // set numRounds to num players when game starts
@@ -26,14 +28,14 @@ const defaultOptions = (lang: string): Options => {
     sikeRetries: 0,
     promptSkipping: true,
     minPlayers: 3,
-    maxPlayers: 10,
+    maxPlayers: 12,
     packs: Prompts.packOptions(lang),
     customPrompts: []
   };
-};
+}
 
 // todo: convert to enum
-type Stage = 'lobby' | 'response' | 'selection' | 'matching' | 'endRound';
+export type Stage = 'lobby' | 'response' | 'selection' | 'matching' | 'endRound';
 type Selection = '' | 'strike' | 'sike' | 'choice';
 type Player = {
   id: string;
@@ -46,8 +48,6 @@ type Player = {
   exactMatch: boolean;
   matchingComplete: boolean; // set to true if explicitly no match was found or a match was found
 };
-type Failable<T extends object> = { error: string } | (T & { success: boolean });
-type Error = { error: string } | { success: boolean };
 
 type Match = {
   player: string;
@@ -63,7 +63,7 @@ type Responses = {
   selectedSike: string;
 };
 
-class GameState {
+export class GameState {
   private name: string;
   stage: Stage;
   public options: Options;
@@ -209,21 +209,21 @@ class GameState {
     return true;
   }
 
-  acceptPromptResponse(id: string, response: string): Failable<{ response: string }> {
+  acceptPromptResponse(id: string, response: string): Result<{ response: string }> {
     if (!response || typeof response !== 'string') {
-      return { error: 'emptyResponse' };
+      return Warning('emptyResponse');
     }
     response = response.trim().normalize().trim();
     if (!response) {
-      return { error: 'emptyResponse' };
+      return Warning('emptyResponse');
     }
     if (this.stage === 'response') {
       const playerState = this.players.find((player) => player.id === id);
       if (!playerState) {
-        return { error: 'spectator' };
+        return Err('spectator');
       }
       if (playerState.responses.find((res) => this._exact_matches(res, response))) {
-        return { error: 'duplicateResponse' };
+        return Info('duplicateResponse');
       }
       playerState.responses.push(response);
       if (!this.corrections[response]) {
@@ -232,13 +232,13 @@ class GameState {
         });
       }
     } else {
-      return { error: 'badRequest' };
+      return Info('invalidStage');
     }
 
-    return { success: true, response };
+    return Ok({ response });
   }
 
-  pollVote(id: string, pollName: string): Failable<{ count: number; next: boolean }> {
+  pollVote(id: string, pollName: string): Result<{ count: number; next: boolean }> {
     return this.pollService.acceptVote(pollName, id, this.stage);
   }
 
@@ -365,21 +365,21 @@ class GameState {
     }
   }
 
-  acceptSelectionType(id: string, isStrike: boolean): Error {
+  acceptSelectionType(id: string, isStrike: boolean): VoidResult {
     const selector = this.players[this.selector];
     if (this.selectionTypeChoice) {
       if (this.stage === 'selection' && selector.id === id) {
         this.selectionType = isStrike ? 'strike' : 'sike';
-        return { success: true };
+        return Success();
       }
     }
-    return { error: 'badRequest' };
+    return Err('badRequest');
   }
 
-  acceptResponseSelection(id: string, response: string): Error {
+  acceptResponseSelection(id: string, response: string): VoidResult {
     const selector = this.players[this.selector];
     // selectionType needs to be chosen before choosing a response
-    if (this.selectionType === 'choice') return { error: 'badRequest' };
+    if (this.selectionType === 'choice') return Err('notChoosen');
 
     // id must be currently selecting
     if (this.stage === 'selection' && selector.id === id) {
@@ -394,10 +394,10 @@ class GameState {
         if (this.options.sikeDispute && this.selectionType === 'sike') {
           this.pollService.registerPoll('sikeDispute', () => this._sikeDisputeAction(), 'matching', this.selectorId());
         }
-        return { success: true };
+        return Success();
       }
     }
-    return { error: 'badRequest' };
+    return Err('badRequest');
   }
 
   _sikeDisputeAction(): void {
@@ -436,11 +436,11 @@ class GameState {
     }
   }
 
-  acceptMatch(id: string, match: string): Error {
+  acceptMatch(id: string, match: string): VoidResult {
     const selector = this.players[this.selector];
     const matcher = this.players.find((player) => player.id === id);
-    if (!matcher) return { error: 'spectator' };
-    if (this.stage !== 'matching' || selector.id === id) return { error: 'badRequest' };
+    if (!matcher) return Err('spectator');
+    if (this.stage !== 'matching' || selector.id === id) return Err('badRequest');
 
     // if already matched remove match from used list
     if (matcher.matchingComplete) matcher.used = matcher.used.filter((response) => response !== matcher.match);
@@ -450,7 +450,7 @@ class GameState {
       matcher.matchingComplete = true;
       matcher.match = '';
       this._cbIfMatchingComplete();
-      return { success: true };
+      return Success();
     }
 
     // Strike
@@ -459,12 +459,12 @@ class GameState {
       matcher.matchingComplete = true;
       matcher.used.push(match);
       this._cbIfMatchingComplete();
-      return { success: true };
+      return Success();
     }
 
     // if matching was unsuccessful insert back into list
     if (matcher.match) matcher.used.push(matcher.match);
-    return { error: 'badRequest' };
+    return Err('badRequest');
   }
 
   getMatch(id: string): string | undefined {
@@ -500,16 +500,16 @@ class GameState {
     }
   }
 
-  getResponses(id: string): Failable<{ responses: Responses }> {
+  getResponses(id: string): Result<Responses> {
     if (this.stage !== 'endRound') {
-      return { error: 'invalidStage' };
+      return Err('invalidStage');
     }
     const player = this.players.find((player) => player.id === id);
     if (!player) {
-      return { error: 'playerDoesNotExist' };
+      return Err('playerDoesNotExist');
     }
     const responses = this._getResponses(player);
-    return { success: true, responses };
+    return Ok(responses);
   }
 
   _getResponses(player: Player): Responses {
@@ -625,5 +625,3 @@ class GameState {
     this.pollService.checkComplete();
   }
 }
-
-export { GameState, defaultOptions, Stage, Failable };

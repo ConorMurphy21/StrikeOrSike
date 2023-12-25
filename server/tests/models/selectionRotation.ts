@@ -1,5 +1,5 @@
-import { Player, Room } from '../../src/models/rooms';
-import { GameState } from '../../src/models/gameState';
+import { Player, Room } from '../../src/state/rooms';
+import { GameState } from '../../src/state/gameState';
 import { assert } from 'chai';
 
 describe('Selection Rotation tests', () => {

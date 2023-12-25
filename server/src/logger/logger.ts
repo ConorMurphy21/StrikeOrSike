@@ -1,4 +1,4 @@
-import winston from 'winston';
+import winston, { LogEntry } from 'winston';
 import WinstonCloudWatch from 'winston-cloudwatch';
 
 const logger = winston.createLogger({
@@ -10,7 +10,7 @@ if (process.env.NODE_ENV === 'production') {
     logGroupName: 'application/logs',
     logStreamName: 'application/logs-production',
     awsRegion: 'us-west-2',
-    messageFormatter: ({ level, message }: { level: string; message: string }) => `[${level}] : ${message}`
+    messageFormatter: ({ level, message }: LogEntry) => `[${level}] : ${message}`
   };
   logger.add(new WinstonCloudWatch(cloudwatchConfig));
 }

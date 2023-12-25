@@ -1,8 +1,9 @@
 import Joi from 'joi';
-import { createRoom, disconnectPlayer, getRoomById, getRoomByName, joinRoom } from '../models/rooms';
+import { createRoom, disconnectPlayer, getRoomById, getRoomByName, joinRoom } from '../state/rooms';
 import logger from '../logger/logger';
 import { midgameJoin } from './gameHandlers';
 import { Server, Socket } from 'socket.io';
+import { isErr } from '../types/result';
 
 /*** handler validation schemas ***/
 const roomSchema = Joi.object({
@@ -30,9 +31,9 @@ export function registerRoomHandlers(io: Server, socket: Socket): void {
 
     const result = createRoom(socket.id, name, roomName, langs);
     // store name in session variable
-    if ('error' in result) {
-      logger.info(`(roomHandlers) Room creation failed due to ${result.error}`);
-      socket.emit('joinRoom', { error: result.error });
+    if (isErr(result)) {
+      logger.log(result.wrap('(roomHandlers) Room creation failed due to %1$s'));
+      socket.emit('joinRoom', { error: result.message });
     } else {
       logger.info('(roomHandlers) Room created');
       const room = result.room;
@@ -51,9 +52,9 @@ export function registerRoomHandlers(io: Server, socket: Socket): void {
     if (validateResult.error) return;
 
     const result = joinRoom(socket.id, name, roomName);
-    if ('error' in result) {
-      logger.info(`(roomHandlers) Player failed to join room due to ${result.error}`);
-      socket.emit('joinRoom', { error: result.error });
+    if (isErr(result)) {
+      logger.log(result.wrap('(roomHandlers) Player failed to join room due to %1$s'));
+      socket.emit('joinRoom', { error: result.message });
     } else {
       logger.info('(roomHandlers) Player joined room');
       const room = result.room;

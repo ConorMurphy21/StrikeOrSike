@@ -1,6 +1,6 @@
 import logger from './logger';
 
-import { getCount } from '../models/rooms';
+import { getCount } from '../state/rooms';
 
 // 5 minute
 const TIMEOUT = 60 * 5000;

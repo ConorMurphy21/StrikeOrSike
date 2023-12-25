@@ -1,6 +1,7 @@
-import { Failable, GameState } from './gameState';
+import { GameState } from './gameState';
 import parameterize from 'parameterize';
 import locale from 'locale';
+import { Info, isErr, Ok, Result, Success, VoidResult, Warning } from '../types/result';
 
 export type Player = {
   id: string;
@@ -25,28 +26,27 @@ const playerRoom: Record<string, Room> = {};
 // map rooms to model
 const rooms: { [key: string]: Room } = {};
 
-function isValidName(name: string): { error: string } | { success: boolean } {
-  if (typeof name !== 'string') return { error: 'noName' };
-  if (name.length < 2) return { error: 'shortName' };
-  if (name.length > 20) return { error: 'longName' };
-
-  return { success: true };
+function isValidName(name: string): VoidResult {
+  if (typeof name !== 'string') return Warning('noName');
+  if (name.length < 2) return Warning('shortName');
+  if (name.length > 20) return Warning('longName');
+  return Success();
 }
 
-function isValidRoomName(name: string): { error: string } | { success: boolean } {
-  if (typeof name !== 'string') return { error: 'noRoomName' };
-  if (name.length < 2) return { error: 'shortRoomName' };
-  if (name.length > 15) return { error: 'longRoomName' };
-  if (rooms[name]) return { error: 'roomTaken' };
-  return { success: true };
+function isValidRoomName(name: string): VoidResult {
+  if (typeof name !== 'string') return Warning('noRoomName');
+  if (name.length < 2) return Warning('shortRoomName');
+  if (name.length > 15) return Warning('longRoomName');
+  if (rooms[name]) return Info('roomTaken');
+  return Success();
 }
 
-export function createRoom(id: string, name: string, roomName: string, langs: string): Failable<{ room: Room }> {
+export function createRoom(id: string, name: string, roomName: string, langs: string): Result<{ room: Room }> {
   let result = isValidName(name);
-  if ('error' in result) return result;
+  if (isErr(result)) return result;
   roomName = parameterize(roomName);
   result = isValidRoomName(roomName);
-  if ('error' in result) return result;
+  if (isErr(result)) return result;
 
   const locales = new locale.Locales(langs);
 
@@ -68,33 +68,33 @@ export function createRoom(id: string, name: string, roomName: string, langs: st
   room.state = new GameState(room);
   rooms[roomName] = room;
   playerRoom[id] = room;
-  return { success: true, room };
+  return Ok({ room });
 }
 
-export function joinRoom(id: string, name: string, roomName: string): Failable<{ room: Room; oldId?: string }> {
+export function joinRoom(id: string, name: string, roomName: string): Result<{ room: Room; oldId?: string }> {
   const result = isValidName(name);
-  if ('error' in result) return result;
+  if (isErr(result)) return result;
   if (typeof roomName !== 'string') {
-    return { error: 'noRoom' };
+    return Info('noRoom');
   }
   const room = rooms[parameterize(roomName)];
-  if (!room) return { error: 'noRoom' };
+  if (!room) return Info('noRoom');
   // don't hold spots for inactive players
   const activePlayers = room.players.filter((p) => p.active);
   if (activePlayers.length >= room.state!.options.maxPlayers) {
-    return { error: 'noSpace' };
+    return Info('noSpace');
   }
 
   const existingPlayer = room.players.find((player) => player.name === name);
   if (existingPlayer && existingPlayer.active) {
-    return { error: 'nameTaken' };
+    return Info('nameTaken');
   } else if (existingPlayer) {
     // if player disconnected, let them join back in as who they were previously
     const oldId = existingPlayer.id;
     playerRoom[id] = room;
     existingPlayer.active = true;
     existingPlayer.id = id;
-    return { success: true, room, oldId };
+    return Ok({ room, oldId });
   }
 
   room.players.push({
@@ -105,7 +105,7 @@ export function joinRoom(id: string, name: string, roomName: string): Failable<{
   });
 
   playerRoom[id] = room;
-  return { success: true, room };
+  return Ok({ room });
 }
 
 export function getRoomByName(roomName: string): Room {

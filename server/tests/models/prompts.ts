@@ -1,4 +1,4 @@
-import { Prompts, retrieveIntersections, retrieveMetas } from '../../src/models/prompts';
+import { Prompts, retrieveIntersections, retrieveMetas } from '../../src/state/prompts';
 import { assert } from 'chai';
 import fs from 'fs';
 

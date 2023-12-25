@@ -1,11 +1,12 @@
-import { getRoomById, Room } from '../models/rooms';
-import { GameState } from '../models/gameState';
+import { getRoomById, Room } from '../state/rooms';
+import { GameState } from '../state/gameState';
 import Joi from 'joi';
 import logger from '../logger/logger';
 import { Server, Socket } from 'socket.io';
 
 /*** handler validation schemas ***/
-import setOptionsSchema from '../models/optionsSchema';
+import setOptionsSchema from '../types/optionsSchema';
+import { isErr, isOk, isSuccess } from '../types/result';
 
 const registerGameHandlers = (io: Server, socket: Socket) => {
   /*** GAME STATE ENDPOINTS ***/
@@ -54,10 +55,10 @@ const registerGameHandlers = (io: Server, socket: Socket) => {
     }
     const state = room.state!;
     const result = state.acceptPromptResponse(socket.id, response);
-    if ('success' in result) {
+    if (isOk(result)) {
       socket.emit('promptResponse', result.response);
     } else {
-      logger.error(`(gameHandlers) PromptResponse failed due to ${result.error}`);
+      logger.log(result.wrap('(gameHandlers) PromptResponse failed due to %1$s'));
     }
   });
 
@@ -74,14 +75,14 @@ const registerGameHandlers = (io: Server, socket: Socket) => {
     }
     const state = room.state!;
     const result = state.pollVote(socket.id, pollName);
-    if ('success' in result) {
+    if (isOk(result)) {
       io.to(room.name).emit('setVoteCount', {
         pollName,
         count: result.count,
         next: result.next
       });
     } else {
-      logger.error(`(gameHandlers) pollVote failed due to ${result.error}`);
+      logger.log(result.wrap('(gameHandlers) pollVote failed due to %1$s'));
     }
   });
 
@@ -97,10 +98,10 @@ const registerGameHandlers = (io: Server, socket: Socket) => {
     }
     const state = room.state!;
     const result = state.acceptSelectionType(socket.id, isStrike);
-    if ('success' in result) {
+    if (isSuccess(result)) {
       io.to(room.name).emit('selectionTypeChosen', state.selectionType);
     } else {
-      logger.error(`(gameHandlers) selectSelectionType failed due to ${result.error}`);
+      logger.log(result.wrap('(gameHandlers) selectSelectionType failed due to %1$s'));
     }
   });
 
@@ -116,10 +117,10 @@ const registerGameHandlers = (io: Server, socket: Socket) => {
     }
     const state = room.state!;
     const result = state.acceptResponseSelection(socket.id, response);
-    if ('success' in result) {
+    if (isSuccess(result)) {
       beginMatching(io, room);
     } else {
-      logger.error(`(gameHandlers) selectResponse failed due to ${result.error}`);
+      logger.log(result.wrap('(gameHandlers) selectResponse failed due to %1$s'));
     }
   });
 
@@ -135,10 +136,10 @@ const registerGameHandlers = (io: Server, socket: Socket) => {
     }
     const state = room.state!;
     const result = state.acceptMatch(socket.id, match);
-    if ('success' in result) {
+    if (isSuccess(result)) {
       io.to(room.name).emit('matchesFound', [{ player: socket.id, response: match }]);
     } else {
-      logger.error(`(gameHandlers) selectMatch failed due to ${result.error}`);
+      logger.log(result.wrap('(gameHandlers) selectMatch failed due to %1$s'));
     }
   });
 
@@ -169,8 +170,8 @@ const registerGameHandlers = (io: Server, socket: Socket) => {
     }
     const state = room.state!;
     const result = state.getResponses(id);
-    if ('error' in result) {
-      logger.error(`(gameHandlers) getResponses failed due to ${result.error}`);
+    if (isErr(result)) {
+      logger.log(result.wrap('(gameHandlers) getResponses failed due to %1$s'));
     }
     if (callback) callback(result);
   });

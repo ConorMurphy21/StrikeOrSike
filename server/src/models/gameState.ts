@@ -558,7 +558,7 @@ class GameState {
   _getTimeLeft(timeout: NodeJS.Timeout) {
     // todo: do this in a safer way
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // ts-expect-error
+    // @ts-expect-error
     return Math.ceil((timeout._idleStart + timeout._idleTimeout) / 1000 - process.uptime());
   }
 

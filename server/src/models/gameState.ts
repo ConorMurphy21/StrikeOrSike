@@ -1,6 +1,6 @@
 import { Prompts } from './prompts';
 import { getCorrections, stringMatch } from './matchUtils';
-import PollService from './pollService';
+import { PollService } from './pollService';
 import optionsSchema from './optionsSchema';
 import logger from '../logger/logger';
 import { Room, Player as RoomPlayer } from './rooms';

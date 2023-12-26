@@ -1,4 +1,4 @@
-import { GameState } from '../../src/state/gameState';
+import { GameState, SelectionType } from '../../src/state/gameState';
 import { assert } from 'chai';
 import { Player } from '../../src/state/rooms';
 import { isErr, isSuccess } from '../../src/types/result';
@@ -41,7 +41,7 @@ describe('Sike Dispute tests', () => {
   describe('Strike selectionType', () => {
     beforeEach(() => {
       gameState.beginSelection();
-      gameState.selectionType = 'strike';
+      gameState.selectionType = SelectionType.Strike;
     });
 
     it('PromptSelection Accept Happy', () => {

@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import { GameState } from '../../src/state/gameState';
+import { GameState, SelectionType } from '../../src/state/gameState';
 import { Player, Room } from '../../src/state/rooms';
 
 describe('Automatch tests', () => {
@@ -30,7 +30,7 @@ describe('Automatch tests', () => {
   describe('no misspell', () => {
     beforeEach(() => {
       gameState.beginSelection();
-      gameState.selectionType = 'strike';
+      gameState.selectionType = SelectionType.Strike;
     });
 
     it('match empty responses', () => {
@@ -172,7 +172,7 @@ describe('Automatch tests', () => {
       gameState!.acceptPromptResponse(matcherId, resp);
     }
     gameState!.beginSelection();
-    gameState!.selectionType = 'strike';
+    gameState!.selectionType = SelectionType.Strike;
     // to make sure prompt response correction is done
     await new Promise((r) => setTimeout(r, 100));
   }

@@ -81,7 +81,7 @@ describe('responseSelection tests', () => {
         done();
       });
       if (data.selectionType === 'choice') {
-        selectingClient.emit('selectSelectionType', 'strike');
+        selectingClient.emit('selectSelectionType', true);
       }
       selectingClient.emit('selectResponse', selectingResponse);
     });

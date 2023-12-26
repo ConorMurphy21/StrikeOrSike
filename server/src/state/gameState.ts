@@ -34,16 +34,26 @@ export function defaultOptions(lang: string): Options {
   };
 }
 
-// todo: convert to enum
-export type Stage = 'lobby' | 'response' | 'selection' | 'matching' | 'endRound';
-type Selection = '' | 'strike' | 'sike' | 'choice';
+export enum Stage {
+  Lobby,
+  Response,
+  Selection,
+  Matching,
+  EndRound
+}
+export enum SelectionType {
+  Strike = 'strike',
+  Sike = 'sike',
+  Choice = 'choice'
+}
+
 type Player = {
   id: string;
   points: number;
   used: string[];
   responses: string[];
   selected: string;
-  selectionType: string;
+  selectionType: SelectionType;
   match: string;
   exactMatch: boolean;
   matchingComplete: boolean; // set to true if explicitly no match was found or a match was found
@@ -75,7 +85,7 @@ export class GameState {
   initialSelector: number;
   selector: number;
   selectionTypeChoice: boolean;
-  selectionType: Selection;
+  selectionType: SelectionType;
   private remainingSikeRetries: number;
 
   private _startNextPromptCb: null | (() => void);
@@ -89,7 +99,7 @@ export class GameState {
 
   constructor(room: Room, options?: Options, oldPrompts?: Prompts) {
     this.name = room.name;
-    this.stage = 'lobby'; // enum: 'lobby', 'response', 'selection', 'matching', 'endRound'
+    this.stage = Stage.Lobby;
     if (options) {
       this.options = options;
     } else {
@@ -103,7 +113,7 @@ export class GameState {
     this.initialSelector = 0;
     this.selector = 0;
     this.selectionTypeChoice = false;
-    this.selectionType = '';
+    this.selectionType = SelectionType.Strike;
     this.remainingSikeRetries = this.options.sikeRetries;
     this.corrections = {};
     this.pollService = new PollService(this);
@@ -124,7 +134,7 @@ export class GameState {
         used: [],
         responses: [],
         selected: '',
-        selectionType: '',
+        selectionType: SelectionType.Sike,
         match: '',
         exactMatch: false,
         matchingComplete: false // set to true if explicitly no match was found or a match was found
@@ -193,12 +203,12 @@ export class GameState {
       this.prompts = new Prompts(this.options.packs, this.options.customPrompts, this.room.lang, this.prompts);
       this.prompt = this.prompts.newPrompt(this._activeRoomPlayers());
     }
-    this.stage = 'response';
+    this.stage = Stage.Response;
     this.corrections = {};
 
     if (this.options.promptSkipping) {
       if (this._promptSkippedCb) {
-        this.pollService.registerPoll('skipPrompt', this._promptSkippedCb, 'response');
+        this.pollService.registerPoll('skipPrompt', this._promptSkippedCb, Stage.Response);
       }
     }
 
@@ -217,7 +227,7 @@ export class GameState {
     if (!response) {
       return Warning('emptyResponse');
     }
-    if (this.stage === 'response') {
+    if (this.stage === Stage.Response) {
       const playerState = this.players.find((player) => player.id === id);
       if (!playerState) {
         return Err('spectator');
@@ -246,14 +256,14 @@ export class GameState {
     const r = Math.floor(Math.random() * 6);
     this.selectionTypeChoice = false;
     if (r < 3) {
-      this.selectionType = 'strike';
+      this.selectionType = SelectionType.Strike;
     } else if (r < 5) {
-      this.selectionType = 'sike';
+      this.selectionType = SelectionType.Sike;
     } else {
-      this.selectionType = 'choice';
+      this.selectionType = SelectionType.Choice;
       this.selectionTypeChoice = true;
     }
-    // this.selectionType = 'choice';
+    // this.selectionType = SelectionType.Choice;
     // this.selectionTypeChoice = true;
   }
 
@@ -270,7 +280,7 @@ export class GameState {
 
   /*** PROMPT SELECTION state changes ***/
   beginSelection(): boolean {
-    this.stage = 'selection';
+    this.stage = Stage.Selection;
     this.pollService.clearPoll('skipPrompt');
 
     // increment round here, this way skipping prompts doesn't increment the round count
@@ -295,7 +305,7 @@ export class GameState {
   }
 
   nextSelection(): boolean {
-    this.stage = 'selection';
+    this.stage = Stage.Selection;
     //clear selections
     this._resetSelection();
 
@@ -312,9 +322,9 @@ export class GameState {
       }
     }
     this.initialSelector = (this.initialSelector + 1) % this.players.length;
-    this.stage = 'endRound';
+    this.stage = Stage.EndRound;
     if (this._startNextPromptCb) {
-      this.pollService.registerPoll('startNextRound', this._startNextPromptCb, 'endRound', undefined, 0.75);
+      this.pollService.registerPoll('startNextRound', this._startNextPromptCb, Stage.EndRound, undefined, 0.75);
     }
     return false;
   }
@@ -368,8 +378,8 @@ export class GameState {
   acceptSelectionType(id: string, isStrike: boolean): VoidResult {
     const selector = this.players[this.selector];
     if (this.selectionTypeChoice) {
-      if (this.stage === 'selection' && selector.id === id) {
-        this.selectionType = isStrike ? 'strike' : 'sike';
+      if (this.stage === Stage.Selection && selector.id === id) {
+        this.selectionType = isStrike ? SelectionType.Strike : SelectionType.Sike;
         return Success();
       }
     }
@@ -379,10 +389,10 @@ export class GameState {
   acceptResponseSelection(id: string, response: string): VoidResult {
     const selector = this.players[this.selector];
     // selectionType needs to be chosen before choosing a response
-    if (this.selectionType === 'choice') return Err('notChoosen');
+    if (this.selectionType === SelectionType.Choice) return Err('notChoosen');
 
     // id must be currently selecting
-    if (this.stage === 'selection' && selector.id === id) {
+    if (this.stage === Stage.Selection && selector.id === id) {
       // response must be in selectors responses but not used
       if (selector.responses.includes(response) && !selector.used.includes(response)) {
         selector.selected = response;
@@ -390,9 +400,14 @@ export class GameState {
         selector.used.push(response);
         // automatically match any obvious matches
         this._autoMatch();
-        this.stage = 'matching';
-        if (this.options.sikeDispute && this.selectionType === 'sike') {
-          this.pollService.registerPoll('sikeDispute', () => this._sikeDisputeAction(), 'matching', this.selectorId());
+        this.stage = Stage.Matching;
+        if (this.options.sikeDispute && this.selectionType === SelectionType.Sike) {
+          this.pollService.registerPoll(
+            'sikeDispute',
+            () => this._sikeDisputeAction(),
+            Stage.Matching,
+            this.selectorId()
+          );
         }
         return Success();
       }
@@ -408,7 +423,7 @@ export class GameState {
         this.isActive(this.selectorId()) &&
         this.players[this.selector].responses.length > this.players[this.selector].used.length
       ) {
-        this.stage = 'selection';
+        this.stage = Stage.Selection;
         this.remainingSikeRetries--;
         this._resetSelection(false);
         if (this._disputeCompleteCb) this._disputeCompleteCb('reSelect');
@@ -426,7 +441,7 @@ export class GameState {
   matchingComplete(): boolean {
     return (
       this.players.every((player) => !this.isActive(player.id) || player.matchingComplete || player.selected) &&
-      this.stage === 'matching'
+      this.stage === Stage.Matching
     );
   }
 
@@ -440,7 +455,7 @@ export class GameState {
     const selector = this.players[this.selector];
     const matcher = this.players.find((player) => player.id === id);
     if (!matcher) return Err('spectator');
-    if (this.stage !== 'matching' || selector.id === id) return Err('badRequest');
+    if (this.stage !== Stage.Matching || selector.id === id) return Err('badRequest');
 
     // if already matched remove match from used list
     if (matcher.matchingComplete) matcher.used = matcher.used.filter((response) => response !== matcher.match);
@@ -495,13 +510,13 @@ export class GameState {
     for (const matcher of this.players) {
       if (matcher.id === selector.id) continue;
       if (!matcher.match && !this.isActive(matcher.id)) continue;
-      if (this.selectionType === 'sike' && !matcher.match) selector.points++;
-      if (this.selectionType === 'strike' && matcher.match) selector.points++;
+      if (this.selectionType === SelectionType.Sike && !matcher.match) selector.points++;
+      if (this.selectionType === SelectionType.Strike && matcher.match) selector.points++;
     }
   }
 
   getResponses(id: string): Result<Responses> {
-    if (this.stage !== 'endRound') {
+    if (this.stage !== Stage.EndRound) {
       return Err('invalidStage');
     }
     const player = this.players.find((player) => player.id === id);
@@ -517,14 +532,14 @@ export class GameState {
       id: player.id,
       all: player.responses,
       used: player.used,
-      selectedStrike: player.selectionType === 'strike' ? player.selected : '',
-      selectedSike: player.selectionType === 'sike' ? player.selected : ''
+      selectedStrike: player.selectionType === SelectionType.Strike ? player.selected : '',
+      selectedSike: player.selectionType === SelectionType.Sike ? player.selected : ''
     };
   }
 
   /*** GAMEOVER state changes ***/
   gameOver(): { player: string; points: number }[] {
-    this.stage = 'lobby';
+    this.stage = Stage.Lobby;
     return this.players
       .map((player) => {
         return { player: player.id, points: player.points };
@@ -572,7 +587,7 @@ export class GameState {
         responses: [],
         used: [],
         selected: '',
-        selectionType: '',
+        selectionType: SelectionType.Strike,
         match: '',
         exactMatch: false,
         matchingComplete: false // set to true if explicitly no match was found or a match was found
@@ -583,7 +598,7 @@ export class GameState {
     }
     player = this.players.find((player) => player.id === id)!;
     // ensure if someone joins mid matching that they don't have to match since they have no responses
-    if (this.stage === 'matching') {
+    if (this.stage === Stage.Matching) {
       this._autoMatchSingle(player);
     }
     const timeleft = this.promptTimeout ? this._getTimeLeft(this.promptTimeout) - 1 : 0;
@@ -613,12 +628,12 @@ export class GameState {
     // disconnect was not hooked up properly
     // now that it is, this seems too harsh
     // so this temporarily removed at the expense of allowing an unprogressable state
-    // if (this.stage === 'selection') {
+    // if (this.stage === Stage.Selection) {
     //     if (this.isSelector(id)) {
     //         if (this._selectionUnsuccessfulCb) this._selectionUnsuccessfulCb();
     //     }
     // }
-    if (this.stage === 'matching') {
+    if (this.stage === Stage.Matching) {
       this._cbIfMatchingComplete();
     }
     this.pollService.disconnect(id);

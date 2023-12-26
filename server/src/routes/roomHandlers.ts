@@ -4,6 +4,7 @@ import logger from '../logger/logger';
 import { midgameJoin } from './gameHandlers';
 import { Server, Socket } from 'socket.io';
 import { isErr } from '../types/result';
+import { Stage } from '../state/gameState';
 
 /*** handler validation schemas ***/
 const roomSchema = Joi.object({
@@ -66,7 +67,7 @@ export function registerRoomHandlers(io: Server, socket: Socket): void {
         deletes: []
       });
       socket.emit('setOptions', room.state!.getOptions());
-      if (room.state!.stage !== 'lobby') {
+      if (room.state!.stage !== Stage.Lobby) {
         midgameJoin(socket, room, result.oldId);
       }
     }

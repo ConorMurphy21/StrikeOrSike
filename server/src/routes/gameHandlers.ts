@@ -1,5 +1,5 @@
 import { getRoomById, Room } from '../state/rooms';
-import { GameState } from '../state/gameState';
+import { GameState, Stage } from '../state/gameState';
 import Joi from 'joi';
 import logger from '../logger/logger';
 import { Server, Socket } from 'socket.io';
@@ -287,7 +287,7 @@ function roomIfLeader(id: string): Room | undefined {
 
 function midgameJoin(socket: Socket, room: Room, oldId?: string) {
   socket.emit('midgameConnect', room.state!.midgameConnect(socket.id, oldId));
-  if (room.state!.stage === 'matching') {
+  if (room.state!.stage === Stage.Matching) {
     const match = room.state!.getMatch(socket.id);
     if (match) {
       // exact only matters if it's the original user

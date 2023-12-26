@@ -1,4 +1,4 @@
-import { GameState } from '../../src/state/gameState';
+import { GameState, SelectionType } from '../../src/state/gameState';
 import { assert } from 'chai';
 import { Player, Room } from '../../src/state/rooms';
 
@@ -55,7 +55,7 @@ describe('Complete callback tests', () => {
       gameState.players[selectorIndex].responses.push(firstResponse);
       gameState.players[matcherIndex].responses.push(differentResponse);
       gameState.beginSelection();
-      gameState.selectionType = 'strike';
+      gameState.selectionType = SelectionType.Strike;
     });
 
     it.skip('Selector Disconnects while selecting', (done) => {
@@ -111,7 +111,7 @@ describe('Complete callback tests', () => {
       gameState.players[matcherIndex].responses.push(differentResponse);
       gameState.options.sikeDispute = true;
       gameState.beginSelection();
-      gameState.selectionType = 'sike';
+      gameState.selectionType = SelectionType.Sike;
       gameState.acceptResponseSelection(selectorId, firstResponse);
     });
 

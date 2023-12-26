@@ -1,7 +1,6 @@
 import { Prompts, retrieveIntersections, retrieveMetas } from '../../src/state/prompts';
 import { assert } from 'chai';
-import fs from 'fs';
-
+import * as fs from 'fs';
 describe('prompts tests', () => {
   describe('actual files', () => {
     before(() => {

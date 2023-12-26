@@ -190,7 +190,7 @@ export class GameState {
   }
 
   acceptPromptResponse(id: string, response: string): Result<{ response: string }> {
-    if (!response || typeof response !== 'string') {
+    if (!response) {
       return Warning('emptyResponse');
     }
     response = response.trim().normalize().trim();

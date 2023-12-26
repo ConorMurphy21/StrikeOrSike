@@ -27,14 +27,12 @@ const playerRoom: Record<string, Room> = {};
 const rooms: { [key: string]: Room } = {};
 
 function isValidName(name: string): VoidResult {
-  if (typeof name !== 'string') return Warning('noName');
   if (name.length < 2) return Warning('shortName');
   if (name.length > 20) return Warning('longName');
   return Success();
 }
 
 function isValidRoomName(name: string): VoidResult {
-  if (typeof name !== 'string') return Warning('noRoomName');
   if (name.length < 2) return Warning('shortRoomName');
   if (name.length > 15) return Warning('longRoomName');
   if (rooms[name]) return Info('roomTaken');
@@ -74,9 +72,6 @@ export function createRoom(id: string, name: string, roomName: string, langs?: s
 export function joinRoom(id: string, name: string, roomName: string): Result<{ room: Room; oldId?: string }> {
   const result = isValidName(name);
   if (isErr(result)) return result;
-  if (typeof roomName !== 'string') {
-    return Info('noRoom');
-  }
   const room = rooms[parameterize(roomName)];
   if (!room) return Info('noRoom');
   // don't hold spots for inactive players

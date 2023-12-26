@@ -1,29 +1,32 @@
 import { getRoomById, Room } from '../state/rooms';
-import { GameState, Stage } from '../state/gameState';
-import Joi from 'joi';
+import { GameState, Responses, Stage } from '../state/gameState';
+import { z } from 'zod';
 import logger from '../logger/logger';
 import { Server, Socket } from 'socket.io';
 
 /*** handler validation schemas ***/
-import setOptionsSchema from '../types/optionsSchema';
-import { isErr, isOk, isSuccess } from '../types/result';
+import { ApiResult, isErr, isOk, isSuccess } from '../types/result';
+import { ConfigurableOptions, getConfigurableOptionsSchema } from '../state/options';
 
 const registerGameHandlers = (io: Server, socket: Socket) => {
   /*** GAME STATE ENDPOINTS ***/
-  socket.on('setOptions', (options, callback) => {
+  socket.on('setOptions', (options: ConfigurableOptions, callback?: (p: { success: boolean }) => void) => {
     const room = roomIfLeader(socket.id);
     if (!room) {
       logger.error('(gameHandlers) Set options attempted with no room');
       return;
     }
-    const result = setOptionsSchema.validate(options, { stripUnknown: true });
-    if (result.error) {
+    const validationResult = z
+      .object({ options: getConfigurableOptionsSchema(), callback: z.function().optional() })
+      .safeParse({ options, callback });
+    if (!validationResult.success) {
       logger.error('(gameHandlers) Invalid options schema used');
       return;
     }
-    options = result.value;
+    ({ options, callback } = validationResult.data);
     room.state!.options = { ...room.state!.options, ...options };
     io.to(room.name).emit('setOptions', room.state!.getOptions());
+
     if (callback) callback({ success: true });
   });
 
@@ -44,10 +47,12 @@ const registerGameHandlers = (io: Server, socket: Socket) => {
   });
 
   socket.on('promptResponse', (response: string) => {
-    if (Joi.string().max(60).min(1).required().validate(response).error) {
+    const validationResult = z.string().max(60).min(1).safeParse(response);
+    if (!validationResult.success) {
       logger.error('(gameHandlers) Prompt Response too large');
       return;
     }
+    response = validationResult.data;
     const room = getRoomById(socket.id);
     if (!room) {
       logger.error('(gameHandlers) PromptResponse attempted with no room');
@@ -64,10 +69,12 @@ const registerGameHandlers = (io: Server, socket: Socket) => {
 
   // true to vote to skip, false to unvote to skip
   socket.on('pollVote', (pollName: string) => {
-    if (Joi.string().required().validate(pollName).error) {
+    const validationResult = z.string().safeParse(pollName);
+    if (!validationResult.success) {
       logger.error('(gameHandlers) PollVote invalid format');
       return;
     }
+    pollName = validationResult.data;
     const room = getRoomById(socket.id);
     if (!room) {
       logger.error('(gameHandlers) PollVote attempted with no room');
@@ -87,10 +94,12 @@ const registerGameHandlers = (io: Server, socket: Socket) => {
   });
 
   socket.on('selectSelectionType', (isStrike: boolean) => {
-    if (Joi.boolean().required().validate(isStrike).error) {
+    const validationResult = z.boolean().safeParse(isStrike);
+    if (!validationResult.success) {
       logger.error('(gameHandlers) isStrike invalid format');
       return;
     }
+    isStrike = validationResult.data;
     const room = getRoomById(socket.id);
     if (!room) {
       logger.error('(gameHandlers) selectSelectionType attempted with no room');
@@ -106,10 +115,13 @@ const registerGameHandlers = (io: Server, socket: Socket) => {
   });
 
   socket.on('selectResponse', (response: string) => {
-    if (Joi.string().max(60).min(1).required().validate(response).error) {
+    const validationResult = z.string().max(60).min(1).safeParse(response);
+    if (!validationResult.success) {
       logger.error('(gameHandlers) selectResponse attempted with invalid match');
       return;
     }
+    response = validationResult.data;
+
     const room = getRoomById(socket.id);
     if (!room) {
       logger.error('(gameHandlers) selectResponse attempted with no room');
@@ -125,10 +137,12 @@ const registerGameHandlers = (io: Server, socket: Socket) => {
   });
 
   socket.on('selectMatch', (match: string) => {
-    if (Joi.string().max(60).allow('').required().validate(match).error) {
+    const validationResult = z.string().max(60).safeParse(match);
+    if (!validationResult.success) {
       logger.error('(gameHandlers) selectMatch attempted with invalid match');
       return;
     }
+    match = validationResult.data;
     const room = getRoomById(socket.id);
     if (!room) {
       logger.error('(gameHandlers) selectMatch attempted with no room');
@@ -158,11 +172,14 @@ const registerGameHandlers = (io: Server, socket: Socket) => {
     }
   });
 
-  socket.on('getResponses', (id, callback) => {
-    if (!callback || !Joi.string().required().validate(id)) {
-      logger.error('(gameHandlers) getResponse attempted with invalid arguments');
+  // todo: change client side to accept Result type instead of this dumb ApiResult
+  socket.on('getResponses', (id, callback: (result: ApiResult<Responses>) => void) => {
+    const validationResult = z.object({ id: z.string(), callback: z.function() }).safeParse({ id, callback });
+    if (!validationResult.success) {
+      logger.error('(gameHandlers) getResponses attempted with invalid arguments');
       return;
     }
+    ({ id, callback } = validationResult.data);
     const room = getRoomById(socket.id);
     if (!room) {
       logger.error('(gameHandlers) getResponses attempted with no room');
@@ -172,8 +189,10 @@ const registerGameHandlers = (io: Server, socket: Socket) => {
     const result = state.getResponses(id);
     if (isErr(result)) {
       logger.log(result.wrap('(gameHandlers) getResponses failed due to %1$s'));
+      callback({ success: true, ...result });
+    } else {
+      callback({ success: true, ...result });
     }
-    if (callback) callback(result);
   });
 };
 

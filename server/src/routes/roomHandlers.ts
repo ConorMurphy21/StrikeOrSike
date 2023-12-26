@@ -1,18 +1,17 @@
-import Joi from 'joi';
 import { createRoom, disconnectPlayer, getRoomById, getRoomByName, joinRoom } from '../state/rooms';
 import logger from '../logger/logger';
 import { midgameJoin } from './gameHandlers';
 import { Server, Socket } from 'socket.io';
 import { isErr } from '../types/result';
 import { Stage } from '../state/gameState';
+import { z } from 'zod';
 
 /*** handler validation schemas ***/
-const roomSchema = Joi.object({
-  name: Joi.string().allow(''),
-  roomName: Joi.string().allow(''),
-  langs: Joi.array().items(Joi.string().min(2).max(5))
-}).required();
-
+const roomSchema = z.object({
+  name: z.string(),
+  roomName: z.string(),
+  langs: z.array(z.string().min(2).max(5)).optional()
+});
 export function registerRoomHandlers(io: Server, socket: Socket): void {
   socket.onAny(() => {
     // update activity
@@ -23,13 +22,16 @@ export function registerRoomHandlers(io: Server, socket: Socket): void {
   });
 
   /*** CONNECTION AND ROOM CREATION ***/
-  socket.on('createRoom', (name: string, roomName: string, langs: string) => {
+  socket.on('createRoom', (name: string, roomName: string, langs?: string[]) => {
     // disconnect for cleanup
     disconnect(socket);
 
-    const validateResult = roomSchema.validate({ name, roomName, langs });
-    if (validateResult.error) return;
-
+    const validateResult = roomSchema.safeParse({ name, roomName, langs });
+    if (!validateResult.success) {
+      logger.warn(`(roomHandlers) Missing handling for room creation: ${validateResult.error.message}`);
+      return;
+    }
+    ({ name, roomName, langs } = validateResult.data);
     const result = createRoom(socket.id, name, roomName, langs);
     // store name in session variable
     if (isErr(result)) {
@@ -49,8 +51,9 @@ export function registerRoomHandlers(io: Server, socket: Socket): void {
     // disconnect for cleanup
     disconnect(socket);
 
-    const validateResult = roomSchema.validate({ name, roomName, langs: [] });
-    if (validateResult.error) return;
+    const validateResult = roomSchema.safeParse({ name, roomName, langs: [] });
+    if (!validateResult.success) return;
+    ({ name, roomName } = validateResult.data);
 
     const result = joinRoom(socket.id, name, roomName);
     if (isErr(result)) {

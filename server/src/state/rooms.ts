@@ -41,7 +41,7 @@ function isValidRoomName(name: string): VoidResult {
   return Success();
 }
 
-export function createRoom(id: string, name: string, roomName: string, langs: string): Result<{ room: Room }> {
+export function createRoom(id: string, name: string, roomName: string, langs?: string[]): Result<{ room: Room }> {
   let result = isValidName(name);
   if (isErr(result)) return result;
   roomName = parameterize(roomName);

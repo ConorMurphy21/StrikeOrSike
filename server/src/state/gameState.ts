@@ -1,38 +1,10 @@
 import { Prompts } from './prompts';
 import { getCorrections, stringMatch } from './matchUtils';
 import { PollService } from './pollService';
-import optionsSchema from '../types/optionsSchema';
 import logger from '../logger/logger';
 import { Room, Player as RoomPlayer } from './rooms';
 import { Err, Info, Ok, Result, Success, VoidResult, Warning } from '../types/result';
-
-type Options = {
-  promptTimer: number;
-  autoNumRounds: boolean; // set numRounds to num players when game starts
-  numRounds: number;
-  sikeDispute: boolean;
-  sikeRetries: number;
-  promptSkipping: boolean;
-  minPlayers: number;
-  maxPlayers: number;
-  packs: Record<string, boolean>;
-  customPrompts: string[];
-};
-
-export function defaultOptions(lang: string): Options {
-  return {
-    promptTimer: 35,
-    autoNumRounds: true, // set numRounds to num players when game starts
-    numRounds: 3,
-    sikeDispute: true,
-    sikeRetries: 0,
-    promptSkipping: true,
-    minPlayers: 3,
-    maxPlayers: 12,
-    packs: Prompts.packOptions(lang),
-    customPrompts: []
-  };
-}
+import { ConfigurableOptions, defaultOptions, getConfigurableOptionsSchema, Options } from './options';
 
 export enum Stage {
   Lobby,
@@ -65,7 +37,7 @@ type Match = {
   exact: boolean;
 };
 
-type Responses = {
+export type Responses = {
   id: string;
   all: string[];
   used: string[];
@@ -74,7 +46,6 @@ type Responses = {
 };
 
 export class GameState {
-  private name: string;
   stage: Stage;
   public options: Options;
   prompts: Prompts;
@@ -98,7 +69,6 @@ export class GameState {
   private pollService: PollService;
 
   constructor(room: Room, options?: Options, oldPrompts?: Prompts) {
-    this.name = room.name;
     this.stage = Stage.Lobby;
     if (options) {
       this.options = options;
@@ -617,11 +587,10 @@ export class GameState {
     };
   }
 
-  getOptions(): Options {
-    const result = optionsSchema.validate(this.options, { stripUnknown: true });
-    const ret = result.value;
-    delete ret.customPrompts; // too big and not worth the other clients seeing
-    return ret;
+  getOptions(): ConfigurableOptions {
+    const result = getConfigurableOptionsSchema().parse(this.options);
+    delete result.customPrompts; // too big and not worth the other clients seeing
+    return result;
   }
 
   disconnect(id: string): void {

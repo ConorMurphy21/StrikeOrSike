@@ -1,8 +1,8 @@
 import { Prompts } from './prompts';
 import { getCorrections, stringMatch } from './matchUtils';
-import { PollService } from './pollService';
+import { PollName, PollService } from './pollService';
 import logger from '../logger/logger';
-import { Room, Player as RoomPlayer } from './rooms';
+import { Player as RoomPlayer, Room } from './rooms';
 import { Err, Info, Ok, Result, Success, VoidResult, Warning } from '../types/result';
 import { ConfigurableOptions, defaultOptions, getConfigurableOptionsSchema, Options } from './options';
 
@@ -178,7 +178,7 @@ export class GameState {
 
     if (this.options.promptSkipping) {
       if (this._promptSkippedCb) {
-        this.pollService.registerPoll('skipPrompt', this._promptSkippedCb, Stage.Response);
+        this.pollService.registerPoll(PollName.SkipPrompt, this._promptSkippedCb, Stage.Response);
       }
     }
 
@@ -218,7 +218,7 @@ export class GameState {
     return Ok({ response });
   }
 
-  pollVote(id: string, pollName: string): Result<{ count: number; next: boolean }> {
+  pollVote(id: string, pollName: PollName): Result<{ count: number; next: boolean }> {
     return this.pollService.acceptVote(pollName, id, this.stage);
   }
 
@@ -241,7 +241,7 @@ export class GameState {
     if (resetRetries) {
       this.remainingSikeRetries = this.options.sikeRetries;
     }
-    this.pollService.clearPoll('sikeDispute');
+    this.pollService.clearPoll(PollName.SikeDispute);
     for (const player of this.players) {
       player.match = '';
       player.matchingComplete = false;
@@ -251,7 +251,7 @@ export class GameState {
   /*** PROMPT SELECTION state changes ***/
   beginSelection(): boolean {
     this.stage = Stage.Selection;
-    this.pollService.clearPoll('skipPrompt');
+    this.pollService.clearPoll(PollName.SkipPrompt);
 
     // increment round here, this way skipping prompts doesn't increment the round count
     this.round++;
@@ -294,7 +294,7 @@ export class GameState {
     this.initialSelector = (this.initialSelector + 1) % this.players.length;
     this.stage = Stage.EndRound;
     if (this._startNextPromptCb) {
-      this.pollService.registerPoll('startNextRound', this._startNextPromptCb, Stage.EndRound, undefined, 0.75);
+      this.pollService.registerPoll(PollName.StartNextRound, this._startNextPromptCb, Stage.EndRound, undefined, 0.75);
     }
     return false;
   }
@@ -373,7 +373,7 @@ export class GameState {
         this.stage = Stage.Matching;
         if (this.options.sikeDispute && this.selectionType === SelectionType.Sike) {
           this.pollService.registerPoll(
-            'sikeDispute',
+            PollName.SikeDispute,
             () => this._sikeDisputeAction(),
             Stage.Matching,
             this.selectorId()

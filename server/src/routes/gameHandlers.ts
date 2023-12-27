@@ -7,6 +7,7 @@ import { Server, Socket } from 'socket.io';
 /*** handler validation schemas ***/
 import { ApiResult, isErr, isOk, isSuccess } from '../types/result';
 import { ConfigurableOptions, getConfigurableOptionsSchema } from '../state/options';
+import { PollName } from '../state/pollService';
 
 const registerGameHandlers = (io: Server, socket: Socket) => {
   /*** GAME STATE ENDPOINTS ***/
@@ -49,7 +50,7 @@ const registerGameHandlers = (io: Server, socket: Socket) => {
   socket.on('promptResponse', (response: string) => {
     const validationResult = z.string().max(60).min(1).safeParse(response);
     if (!validationResult.success) {
-      logger.error('(gameHandlers) Prompt Response too large');
+      logger.warn('(gameHandlers) Prompt Response too large');
       return;
     }
     response = validationResult.data;
@@ -68,8 +69,8 @@ const registerGameHandlers = (io: Server, socket: Socket) => {
   });
 
   // true to vote to skip, false to unvote to skip
-  socket.on('pollVote', (pollName: string) => {
-    const validationResult = z.string().safeParse(pollName);
+  socket.on('pollVote', (pollName: PollName) => {
+    const validationResult = z.nativeEnum(PollName).safeParse(pollName);
     if (!validationResult.success) {
       logger.error('(gameHandlers) PollVote invalid format');
       return;

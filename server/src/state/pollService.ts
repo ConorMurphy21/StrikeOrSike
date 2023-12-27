@@ -1,6 +1,12 @@
 import { GameState, Stage } from './gameState';
 import { Err, Ok, Result } from '../types/result';
 
+export enum PollName {
+  SkipPrompt = 'skipPrompt',
+  StartNextRound = 'startNextRound',
+  SikeDispute = 'sikeDispute'
+}
+
 type Poll = {
   stage: Stage;
   completeCb: () => void;
@@ -11,37 +17,38 @@ type Poll = {
 
 export class PollService {
   private gameState: GameState;
-  private polls: Record<string, Poll>;
+  private polls: Map<PollName, Poll>;
+
   constructor(gameState: GameState) {
     this.gameState = gameState;
-    this.polls = {};
+    this.polls = new Map<PollName, Poll>();
   }
 
   registerPoll(
-    pollName: string,
+    pollName: PollName,
     completeCb: () => void,
     stage: Stage,
     exclude?: string,
     majorityPercent = 0.501
   ): void {
-    this.polls[pollName] = {
+    this.polls.set(pollName, {
       completeCb,
       majorityPercent,
       stage,
       exclude,
       inFavor: []
-    };
+    });
   }
 
-  clearPoll(pollName: string) {
-    delete this.polls[pollName];
+  clearPoll(pollName: PollName) {
+    this.polls.delete(pollName);
   }
 
-  acceptVote(pollName: string, id: string, stage: Stage): Result<{ count: number; next: boolean }> {
-    if (!Object.prototype.hasOwnProperty.call(this.polls, pollName) || this.polls[pollName] === null) {
+  acceptVote(pollName: PollName, id: string, stage: Stage): Result<{ count: number; next: boolean }> {
+    const poll = this.polls.get(pollName);
+    if (!poll) {
       return Err(`noPoll${pollName}`);
     }
-    const poll = this.polls[pollName];
     if (poll.stage && stage !== poll.stage) {
       return Err('invalidStage');
     }
@@ -54,67 +61,63 @@ export class PollService {
     } else {
       poll.inFavor.push(id);
     }
-    const count = this.countVotes(pollName);
-    if (this.cbIfComplete(pollName)) {
+    const count = this._countVotes(poll);
+    if (this._cbIfComplete(poll, pollName)) {
       return Ok({ count: 0, next: false });
     }
-    return Ok({ count, next: this.nextComplete(pollName) });
+    return Ok({ count, next: this._nextComplete(poll) });
   }
 
-  getVoteCounts(): Record<string, { count: number; next: boolean }> {
-    const ret: Record<string, { count: number; next: boolean }> = {};
-    for (const poll in this.polls) {
-      if (this.polls[poll]) {
-        ret[poll] = {
-          count: this.countVotes(poll),
-          next: this.nextComplete(poll)
-        };
-      } else {
-        ret[poll] = { count: 0, next: false };
-      }
+  // TODO: change this to Map<Pollname, ...>, (needs to be changed on client side too)
+  getVoteCounts(): Record<PollName, { count: number; next: boolean }> {
+    const ret: Record<PollName, { count: number; next: boolean }> = {
+      [PollName.SkipPrompt]: { count: 0, next: false },
+      [PollName.SikeDispute]: { count: 0, next: false },
+      [PollName.StartNextRound]: { count: 0, next: false }
+    };
+    for (const [pollName, poll] of this.polls) {
+      ret[pollName] = {
+        count: this._countVotes(poll),
+        next: this._nextComplete(poll)
+      };
     }
     return ret;
   }
 
-  cbIfComplete(pollName: string): boolean {
-    const poll = this.polls[pollName];
-    if (this.complete(pollName)) {
+  _cbIfComplete(poll: Poll, pollName: PollName): boolean {
+    if (this._complete(poll)) {
       this.clearPoll(pollName);
-      poll.completeCb();
+      poll!.completeCb();
       return true;
     }
     return false;
   }
 
-  complete(pollName: string) {
-    const poll = this.polls[pollName];
+  _complete(poll: Poll) {
     const threshold = Math.ceil(this.gameState.numVoters(poll.exclude) * poll.majorityPercent);
-    return this.countVotes(pollName) >= threshold;
+    return this._countVotes(poll) >= threshold;
   }
 
-  nextComplete(pollName: string) {
-    const poll = this.polls[pollName];
+  _nextComplete(poll: Poll) {
     const threshold = Math.ceil(this.gameState.numVoters(poll.exclude) * poll.majorityPercent);
-    return this.countVotes(pollName) + 1 >= threshold;
+    return this._countVotes(poll) + 1 >= threshold;
   }
 
-  countVotes(pollName: string) {
-    return this.polls[pollName].inFavor.length;
+  _countVotes(poll: Poll) {
+    return poll.inFavor.length;
   }
 
   checkComplete(): void {
-    for (const pollName in this.polls) {
-      if (this.polls[pollName]) this.cbIfComplete(pollName);
+    for (const [pollName, poll] of this.polls) {
+      this._cbIfComplete(poll, pollName);
     }
   }
 
   disconnect(id: string): void {
-    for (const poll in this.polls) {
-      if (this.polls[poll]) {
-        const index = this.polls[poll].inFavor.indexOf(id);
-        if (index >= 0) {
-          this.polls[poll].inFavor.splice(index, 1);
-        }
+    for (const poll of this.polls.values()) {
+      const index = poll.inFavor.indexOf(id);
+      if (index >= 0) {
+        poll.inFavor.splice(index, 1);
       }
     }
   }

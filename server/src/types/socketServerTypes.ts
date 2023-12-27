@@ -2,7 +2,7 @@ import { Server, Socket } from 'socket.io';
 import { ConfigurableOptions } from '../state/options';
 import { PollName } from '../state/pollService';
 import { Match, MidgameConnectData, Responses, SelectionType } from './stateTypes';
-import { ApiResult } from './result';
+import { ApiResult, Result, ResultOk } from './result';
 import { Player } from '../state/rooms';
 
 interface ServerToClientRoomEvents {
@@ -58,7 +58,17 @@ interface ClientToServerGameEvents {
 
   selectionComplete(): void;
 
-  getResponses(id: string, callback: (result: ApiResult<Responses>) => void): void;
+  getResponses(
+    id: string,
+    callback: (
+      result:
+        | { error: string }
+        | {
+            success: boolean;
+            responses: Responses;
+          }
+    ) => void
+  ): void;
 }
 
 type ServerToClientEvents = ServerToClientRoomEvents & ServerToClientGameEvents;

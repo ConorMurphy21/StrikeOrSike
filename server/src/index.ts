@@ -46,8 +46,8 @@ const server = http.createServer(app);
  * Create socket server
  */
 
-import { Server, Socket } from 'socket.io';
-const io = new Server(server, {
+import { TypedServer, TypedSocket } from './types/socketServerTypes';
+const io = new TypedServer(server, {
   cors: {
     origin: ['http://localhost:8080', 'http://localhost:5001'],
     methods: ['GET', 'POST'],
@@ -60,7 +60,7 @@ const io = new Server(server, {
  * Listen on socket server
  */
 import { registerHandlers } from './routes/registerHandlers';
-io.on('connection', (socket: Socket) => registerHandlers(io, socket));
+io.on('connection', (socket: TypedSocket) => registerHandlers(io, socket));
 
 /**
  * Start room service

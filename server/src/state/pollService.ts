@@ -1,5 +1,6 @@
-import { GameState, Stage } from './gameState';
+import { GameState } from './gameState';
 import { Err, Ok, Result } from '../types/result';
+import { Stage } from '../types/stateTypes';
 
 export enum PollName {
   SkipPrompt = 'skipPrompt',

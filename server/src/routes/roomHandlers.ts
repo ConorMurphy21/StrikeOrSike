@@ -1,10 +1,10 @@
 import { createRoom, disconnectPlayer, getRoomById, getRoomByName, joinRoom } from '../state/rooms';
 import logger from '../logger/logger';
 import { midgameJoin } from './gameHandlers';
-import { Server, Socket } from 'socket.io';
 import { isErr } from '../types/result';
-import { Stage } from '../state/gameState';
 import { z } from 'zod';
+import { TypedServer, TypedSocket } from '../types/socketServerTypes';
+import { Stage } from '../types/stateTypes';
 
 /*** handler validation schemas ***/
 const roomSchema = z.object({
@@ -12,7 +12,8 @@ const roomSchema = z.object({
   roomName: z.string(),
   langs: z.array(z.string().min(2).max(5)).optional()
 });
-export function registerRoomHandlers(io: Server, socket: Socket): void {
+
+export function registerRoomHandlers(io: TypedServer, socket: TypedSocket): void {
   socket.onAny(() => {
     // update activity
     const room = getRoomById(socket.id);
@@ -66,7 +67,7 @@ export function registerRoomHandlers(io: Server, socket: Socket): void {
       socket.emit('joinRoom', { success: true, roomName: room.name });
       socket.emit('updatePlayers', { modifies: room.players, deletes: [] });
       socket.to(room.name).emit('updatePlayers', {
-        modifies: [room.players.find((p) => p.name === name)],
+        modifies: [room.players.find((p) => p.name === name)!],
         deletes: []
       });
       socket.emit('setOptions', room.state!.getOptions());
@@ -81,7 +82,7 @@ export function registerRoomHandlers(io: Server, socket: Socket): void {
   });
 }
 
-function disconnect(socket: Socket): void {
+function disconnect(socket: TypedSocket): void {
   const roomName = getRoomById(socket.id)?.name;
   disconnectPlayer(socket.id);
   // remove socket from room
@@ -92,9 +93,11 @@ function disconnect(socket: Socket): void {
 
   const room = getRoomByName(roomName);
   if (room) {
-    const player = room.players.find((p) => p.id === socket.id);
+    // safe because we know this player exists
+    const player = room.players.find((p) => p.id === socket.id)!;
     // could be modified
-    const leader = room.players.find((p) => p.leader);
+    // safe because if there was no leader then there would be no room
+    const leader = room.players.find((p) => p.leader)!;
     socket.to(room.name).emit('updatePlayers', { modifies: [player, leader], deletes: [] });
   }
 }

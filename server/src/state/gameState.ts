@@ -5,19 +5,7 @@ import logger from '../logger/logger';
 import { Player as RoomPlayer, Room } from './rooms';
 import { Err, Info, Ok, Result, Success, VoidResult, Warning } from '../types/result';
 import { ConfigurableOptions, defaultOptions, getConfigurableOptionsSchema, Options } from './options';
-
-export enum Stage {
-  Lobby,
-  Response,
-  Selection,
-  Matching,
-  EndRound
-}
-export enum SelectionType {
-  Strike = 'strike',
-  Sike = 'sike',
-  Choice = 'choice'
-}
+import { Match, MidgameConnectData, Responses, SelectionType, Stage } from '../types/stateTypes';
 
 type Player = {
   id: string;
@@ -29,20 +17,6 @@ type Player = {
   match: string;
   exactMatch: boolean;
   matchingComplete: boolean; // set to true if explicitly no match was found or a match was found
-};
-
-type Match = {
-  player: string;
-  response: string;
-  exact: boolean;
-};
-
-export type Responses = {
-  id: string;
-  all: string[];
-  used: string[];
-  selectedStrike: string;
-  selectedSike: string;
 };
 
 export class GameState {
@@ -547,7 +521,7 @@ export class GameState {
     return Math.ceil((timeout._idleStart + timeout._idleTimeout) / 1000 - process.uptime());
   }
 
-  midgameConnect(id: string, oldId?: string) {
+  midgameConnect(id: string, oldId?: string): MidgameConnectData {
     let player = this.players.find((player) => player.id === oldId);
     if (!player) {
       logger.info('(gameState) midgame join');

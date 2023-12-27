@@ -1,7 +1,8 @@
-import { GameState, SelectionType } from '../../src/state/gameState';
+import { GameState } from '../../src/state/gameState';
 import { assert } from 'chai';
 import { Player } from '../../src/state/rooms';
 import { isErr, isSuccess } from '../../src/types/result';
+import { SelectionType } from '../../src/types/stateTypes';
 
 describe('Sike Dispute tests', () => {
   const selectorId = '0';

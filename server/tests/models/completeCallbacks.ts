@@ -1,6 +1,8 @@
-import { GameState, SelectionType } from '../../src/state/gameState';
+import { GameState } from '../../src/state/gameState';
 import { assert } from 'chai';
 import { Player, Room } from '../../src/state/rooms';
+import { PollName } from '../../src/state/pollService';
+import { SelectionType } from '../../src/types/stateTypes';
 
 describe('Complete callback tests', () => {
   let players: Player[];
@@ -43,8 +45,8 @@ describe('Complete callback tests', () => {
       });
       gameState.registerPromptSkippedCb(done);
       gameState.beginNewPrompt();
-      gameState.pollVote(selectorId, 'skipPrompt');
-      gameState.pollVote(matcherId, 'skipPrompt');
+      gameState.pollVote(selectorId, PollName.SkipPrompt);
+      gameState.pollVote(matcherId, PollName.SkipPrompt);
       players[matcher2Index].active = false;
       gameState.disconnect(matcherId);
     });
@@ -120,7 +122,7 @@ describe('Complete callback tests', () => {
         assert.strictEqual(action, 'nextSelection');
         done();
       });
-      gameState.pollVote(matcherId, 'sikeDispute');
+      gameState.pollVote(matcherId, PollName.SikeDispute);
       players[matcher2Index].active = false;
       gameState.disconnect(matcher2Id);
     });

@@ -1,8 +1,8 @@
-import { Server, Socket } from 'socket.io';
 import { registerRoomHandlers } from './roomHandlers';
 import { registerGameHandlers } from './gameHandlers';
+import { TypedServer, TypedSocket } from '../types/socketServerTypes';
 
-export function registerHandlers(io: Server, socket: Socket) {
+export function registerHandlers(io: TypedServer, socket: TypedSocket) {
   registerRoomHandlers(io, socket);
   registerGameHandlers(io, socket);
 }

@@ -1,7 +1,8 @@
 import { assert } from 'chai';
-import { GameState, SelectionType } from '../../src/state/gameState';
+import { GameState } from '../../src/state/gameState';
 import { Player, Room } from '../../src/state/rooms';
 import { isErr, isSuccess } from '../../src/types/result';
+import { SelectionType } from '../../src/types/stateTypes';
 
 describe('Selection Accepting tests', () => {
   const selectorId = 'selector';

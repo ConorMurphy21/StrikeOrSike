@@ -1,15 +1,16 @@
 import { getRoomById, Room } from '../state/rooms';
-import { GameState, Responses, Stage } from '../state/gameState';
+import { GameState } from '../state/gameState';
 import { z } from 'zod';
 import logger from '../logger/logger';
-import { Server, Socket } from 'socket.io';
 
 /*** handler validation schemas ***/
 import { ApiResult, isErr, isOk, isSuccess } from '../types/result';
 import { ConfigurableOptions, getConfigurableOptionsSchema } from '../state/options';
 import { PollName } from '../state/pollService';
+import { TypedServer, TypedSocket } from '../types/socketServerTypes';
+import { Responses, Stage } from '../types/stateTypes';
 
-const registerGameHandlers = (io: Server, socket: Socket) => {
+const registerGameHandlers = (io: TypedServer, socket: TypedSocket) => {
   /*** GAME STATE ENDPOINTS ***/
   socket.on('setOptions', (options: ConfigurableOptions, callback?: (p: { success: boolean }) => void) => {
     const room = roomIfLeader(socket.id);
@@ -152,7 +153,7 @@ const registerGameHandlers = (io: Server, socket: Socket) => {
     const state = room.state!;
     const result = state.acceptMatch(socket.id, match);
     if (isSuccess(result)) {
-      io.to(room.name).emit('matchesFound', [{ player: socket.id, response: match }]);
+      io.to(room.name).emit('matchesFound', [{ player: socket.id, response: match, exact: false }]);
     } else {
       logger.log(result.wrap('(gameHandlers) selectMatch failed due to %1$s'));
     }
@@ -174,7 +175,7 @@ const registerGameHandlers = (io: Server, socket: Socket) => {
   });
 
   // todo: change client side to accept Result type instead of this dumb ApiResult
-  socket.on('getResponses', (id, callback: (result: ApiResult<Responses>) => void) => {
+  socket.on('getResponses', (id: string, callback: (result: ApiResult<Responses>) => void) => {
     const validationResult = z.object({ id: z.string(), callback: z.function() }).safeParse({ id, callback });
     if (!validationResult.success) {
       logger.error('(gameHandlers) getResponses attempted with invalid arguments');
@@ -197,7 +198,7 @@ const registerGameHandlers = (io: Server, socket: Socket) => {
   });
 };
 
-function registerCallbacks(io: Server, room: Room) {
+function registerCallbacks(io: TypedServer, room: Room) {
   const state = room.state!;
 
   state.registerStartNextPromptCb(() => {
@@ -226,7 +227,7 @@ function registerCallbacks(io: Server, room: Room) {
   });
 }
 
-function beginPrompt(io: Server, room: Room) {
+function beginPrompt(io: TypedServer, room: Room) {
   const state = room.state!;
   if (state.beginNewPrompt()) {
     io.to(room.name).emit('beginPrompt', state.prompt);
@@ -241,7 +242,7 @@ function beginPrompt(io: Server, room: Room) {
   }
 }
 
-function skipPrompt(io: Server, room: Room) {
+function skipPrompt(io: TypedServer, room: Room) {
   const state = room.state!;
   if (state.promptTimeout) {
     clearTimeout(state.promptTimeout);
@@ -250,7 +251,7 @@ function skipPrompt(io: Server, room: Room) {
   beginPrompt(io, room);
 }
 
-function beginSelection(io: Server, room: Room) {
+function beginSelection(io: TypedServer, room: Room) {
   const state = room.state!;
   if (state.beginSelection()) {
     io.to(room.name).emit('nextSelection', {
@@ -262,7 +263,7 @@ function beginSelection(io: Server, room: Room) {
   }
 }
 
-function continueSelection(io: Server, room: Room) {
+function continueSelection(io: TypedServer, room: Room) {
   const state = room.state!;
   if (state.nextSelection()) {
     io.to(room.name).emit('nextSelection', {
@@ -276,7 +277,7 @@ function continueSelection(io: Server, room: Room) {
   }
 }
 
-function applyDisputeAction(io: Server, room: Room, action: string) {
+function applyDisputeAction(io: TypedServer, room: Room, action: string) {
   if (action === 'reSelect') {
     io.to(room.name).emit('nextSelection', {
       selector: room.state!.selectorId(),
@@ -287,7 +288,7 @@ function applyDisputeAction(io: Server, room: Room, action: string) {
   }
 }
 
-function beginMatching(io: Server, room: Room) {
+function beginMatching(io: TypedServer, room: Room) {
   const state = room.state!;
   io.to(room.name).emit('beginMatching', state.selectedResponse());
   const matches = state.matches();
@@ -305,7 +306,7 @@ function roomIfLeader(id: string): Room | undefined {
   return room;
 }
 
-function midgameJoin(socket: Socket, room: Room, oldId?: string) {
+function midgameJoin(socket: TypedSocket, room: Room, oldId?: string) {
   socket.emit('midgameConnect', room.state!.midgameConnect(socket.id, oldId));
   if (room.state!.stage === Stage.Matching) {
     const match = room.state!.getMatch(socket.id);

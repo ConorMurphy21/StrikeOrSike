@@ -38,7 +38,7 @@ class ResultErr {
 }
 
 // Construct ResultErr with given log level
-export function Warning(message: string): ResultErr {
+export function Warn(message: string): ResultErr {
   return new ResultErr(message, 'warning');
 }
 

@@ -3,7 +3,7 @@ import { getCorrections, stringMatch } from './matchUtils';
 import { PollName, PollService } from './pollService';
 import logger from '../logger/logger';
 import { Player as RoomPlayer, Room } from './rooms';
-import { Err, Info, Ok, Result, Success, VoidResult, Warning } from '../types/result';
+import { Err, Info, Ok, Result, Success, VoidResult, Warn } from '../types/result';
 import { ConfigurableOptions, defaultOptions, getConfigurableOptionsSchema, Options } from './options';
 import { Match, MidgameConnectData, Responses, SelectionType, Stage } from '../types/stateTypes';
 
@@ -165,11 +165,11 @@ export class GameState {
 
   acceptPromptResponse(id: string, response: string): Result<{ response: string }> {
     if (!response) {
-      return Warning('emptyResponse');
+      return Warn('emptyResponse');
     }
     response = response.trim().normalize().trim();
     if (!response) {
-      return Warning('emptyResponse');
+      return Warn('emptyResponse');
     }
     if (this.stage === Stage.Response) {
       const playerState = this.players.find((player) => player.id === id);

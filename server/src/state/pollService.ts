@@ -1,6 +1,7 @@
 import { GameState } from './gameState';
-import { Err, Ok, Result } from '../types/result';
+import { Err, Ok, Result, Warn } from '../types/result';
 import { Stage } from '../types/stateTypes';
+import logger from '../logger/logger';
 
 export enum PollName {
   SkipPrompt = 'skipPrompt',
@@ -48,7 +49,7 @@ export class PollService {
   acceptVote(pollName: PollName, id: string, stage: Stage): Result<{ count: number; next: boolean }> {
     const poll = this.polls.get(pollName);
     if (!poll) {
-      return Err(`noPoll${pollName}`);
+      return Warn(`noPoll${pollName}`);
     }
     if (poll.stage && stage !== poll.stage) {
       return Err('invalidStage');
@@ -86,7 +87,7 @@ export class PollService {
   }
 
   _cbIfComplete(poll: Poll, pollName: PollName): boolean {
-    if (this._complete(poll)) {
+    if (this._complete(poll, pollName)) {
       this.clearPoll(pollName);
       poll!.completeCb();
       return true;
@@ -94,9 +95,13 @@ export class PollService {
     return false;
   }
 
-  _complete(poll: Poll) {
+  _complete(poll: Poll, pollName: PollName) {
     const threshold = Math.ceil(this.gameState.numVoters(poll.exclude) * poll.majorityPercent);
-    return this._countVotes(poll) >= threshold;
+    if (this._countVotes(poll) >= threshold) {
+      logger.info(`(pollService) ${pollName} completed`);
+      return true;
+    }
+    return false;
   }
 
   _nextComplete(poll: Poll) {

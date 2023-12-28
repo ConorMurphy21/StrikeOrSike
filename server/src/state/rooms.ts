@@ -1,7 +1,7 @@
 import { GameState } from './gameState';
 import parameterize from 'parameterize';
 import locale from 'locale';
-import { Info, isErr, Ok, Result, Success, VoidResult, Warning } from '../types/result';
+import { Info, isErr, Ok, Result, Success, VoidResult, Warn } from '../types/result';
 
 export type Player = {
   id: string;
@@ -27,14 +27,14 @@ const playerRoom: Record<string, Room> = {};
 const rooms: { [key: string]: Room } = {};
 
 function isValidName(name: string): VoidResult {
-  if (name.length < 2) return Warning('shortName');
-  if (name.length > 20) return Warning('longName');
+  if (name.length < 2) return Warn('shortName');
+  if (name.length > 20) return Warn('longName');
   return Success();
 }
 
 function isValidRoomName(name: string): VoidResult {
-  if (name.length < 2) return Warning('shortRoomName');
-  if (name.length > 15) return Warning('longRoomName');
+  if (name.length < 2) return Warn('shortRoomName');
+  if (name.length > 15) return Warn('longRoomName');
   if (rooms[name]) return Info('roomTaken');
   return Success();
 }

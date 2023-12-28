@@ -1,7 +1,8 @@
 import { GameState } from '../../src/state/gameState';
 import { assert } from 'chai';
 import { Player, Room } from '../../src/state/rooms';
-import { Result, isOk } from '../../src/types/result';
+import { isOk, Result } from '../../src/types/result';
+import { PollName } from '../../src/state/pollService';
 
 describe('voteSkipPrompt tests', () => {
   // must be even
@@ -36,7 +37,7 @@ describe('voteSkipPrompt tests', () => {
     gameState.registerPromptSkippedCb(done);
     gameState.beginNewPrompt();
     for (i = 0; i < Math.ceil(evenLen / 2); i++) {
-      result = gameState.pollVote(i.toString(), 'skipPrompt');
+      result = gameState.pollVote(i.toString(), PollName.SkipPrompt);
 
       if (isOk(result)) {
         assert.strictEqual(result.count, i + 1);
@@ -44,7 +45,7 @@ describe('voteSkipPrompt tests', () => {
         assert.fail();
       }
     }
-    result = gameState.pollVote(i.toString(), 'skipPrompt');
+    result = gameState.pollVote(i.toString(), PollName.SkipPrompt);
     if (isOk(result)) {
       assert.strictEqual(result.count, i + 1);
     } else {
@@ -58,20 +59,20 @@ describe('voteSkipPrompt tests', () => {
     gameState.registerPromptSkippedCb(done);
     gameState.beginNewPrompt();
     for (i = 0; i < Math.ceil(evenLen / 2); i++) {
-      result = gameState.pollVote(i.toString(), 'skipPrompt');
+      result = gameState.pollVote(i.toString(), PollName.SkipPrompt);
       if (isOk(result)) {
         assert.strictEqual(result.count, i + 1);
       } else {
         assert.fail();
       }
     }
-    result = gameState.pollVote(i.toString(), 'skipPrompt');
+    result = gameState.pollVote(i.toString(), PollName.SkipPrompt);
     if (isOk(result)) {
       assert.strictEqual(result.count, i - 1);
     } else {
       assert.fail();
     }
-    result = gameState.pollVote(i.toString(), 'skipPrompt');
+    result = gameState.pollVote(i.toString(), PollName.SkipPrompt);
     if (isOk(result)) {
       assert.strictEqual(result.count, i);
     } else {

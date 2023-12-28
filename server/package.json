@@ -9,6 +9,7 @@
   "scripts": {
     "build": "npx tsc",
     "start": "node dist/src/index.js",
+    "dev": "ts-node-transpile-only src/index.ts",
     "test": "mocha tests/**/*.ts --require ts-node/register/transpile-only --exit",
     "lint": "eslint ./{src,tests}/**/*.ts",
     "format": "prettier --config .prettierrc './{src,tests}/**/*.ts' --write"

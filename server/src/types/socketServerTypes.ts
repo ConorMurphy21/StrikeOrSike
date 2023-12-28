@@ -2,7 +2,6 @@ import { Server, Socket } from 'socket.io';
 import { ConfigurableOptions } from '../state/options';
 import { PollName } from '../state/pollService';
 import { Match, MidgameConnectData, Responses, SelectionType } from './stateTypes';
-import { ApiResult, Result, ResultOk } from './result';
 import { Player } from '../state/rooms';
 
 interface ServerToClientRoomEvents {

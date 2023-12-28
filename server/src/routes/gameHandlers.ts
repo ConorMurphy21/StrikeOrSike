@@ -4,7 +4,7 @@ import { z } from 'zod';
 import logger from '../logger/logger';
 
 /*** handler validation schemas ***/
-import { ApiResult, isErr, isOk, isSuccess, Result, ResultOk } from '../types/result';
+import { isErr, isOk, isSuccess } from '../types/result';
 import { ConfigurableOptions, getConfigurableOptionsSchema } from '../state/options';
 import { PollName } from '../state/pollService';
 import { TypedServer, TypedSocket } from '../types/socketServerTypes';

@@ -6,10 +6,9 @@
     <working-directory>$PROJECT_DIR$/server</working-directory>
     <pass-parent-env>true</pass-parent-env>
     <ui>bdd</ui>
-    <extra-mocha-options>--exit</extra-mocha-options>
-    <test-kind>DIRECTORY</test-kind>
-    <test-directory>$PROJECT_DIR$/server/tests</test-directory>
-    <recursive>true</recursive>
+    <extra-mocha-options>--require ts-node/register/transpile-only --exit</extra-mocha-options>
+    <test-kind>PATTERN</test-kind>
+    <test-pattern>tests/**/*.ts</test-pattern>
     <method v="2" />
   </configuration>
 </component>

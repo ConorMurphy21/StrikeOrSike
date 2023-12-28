@@ -2,11 +2,11 @@ import { ConfigurableOptions } from '../state/options';
 import { PollName } from '../state/pollService';
 
 export enum Stage {
-  Lobby,
-  Response,
-  Selection,
-  Matching,
-  EndRound
+  Lobby = 'lobby',
+  Response = 'response',
+  Selection = 'selection',
+  Matching = 'matching',
+  EndRound = 'endRound'
 }
 
 export enum SelectionType {

@@ -34,6 +34,7 @@ import {createNamespacedHelpers} from 'vuex';
 import SelectionType from '@/components/gameShared/SelectionType.vue';
 import ClickMp3 from '@/assets/audio/click2.mp3'
 import {AudioWrap} from '@/mixins/audiowrap';
+import socket from '@/socket/socket';
 
 const {mapState, mapGetters} = createNamespacedHelpers('game');
 
@@ -58,7 +59,7 @@ export default {
     selectSelectionType(strike) {
       new AudioWrap(ClickMp3).play();
       if (this.type === 'choice' || this.lastPicked !== strike) {
-        this.$socket.emit('selectSelectionType', strike);
+        socket.emit('selectSelectionType', strike);
         this.lastPicked = strike;
       }
     }

@@ -16,6 +16,7 @@ import ResponseList from '@/components/gameShared/ResponseList.vue';
 import Timer from '@/components/gameShared/Timer.vue';
 import VoteSkip from '@/components/promptResponse/VoteSkip.vue';
 import Prompt from '@/components/gameShared/Prompt.vue';
+import socket from '@/socket/socket';
 
 const {mapState, mapGetters} = createNamespacedHelpers('game');
 
@@ -49,7 +50,7 @@ export default {
   methods: {
     sendResponse() {
       if (this.response !== '') {
-        this.$socket.emit('promptResponse', this.response);
+        socket.emit('promptResponse', this.response);
         this.response = '';
       }
     }

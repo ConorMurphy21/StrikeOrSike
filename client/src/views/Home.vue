@@ -42,6 +42,7 @@
 import {createNamespacedHelpers} from 'vuex';
 import ClickMp3 from '@/assets/audio/click2.mp3'
 import {AudioWrap} from '@/mixins/audiowrap';
+import socket from '@/socket/socket';
 
 const click = new AudioWrap(ClickMp3);
 
@@ -79,7 +80,7 @@ export default {
       click.play();
       const event = joinGame ? 'joinRoom' : 'createRoom';
       this.setName(this.form.name);
-      this.$socket.emit(event, this.form.name, this.form.roomName, navigator.languages);
+      socket.emit(event, this.form.name, this.form.roomName, navigator.languages);
     }
   }
 }

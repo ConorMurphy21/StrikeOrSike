@@ -36,6 +36,7 @@ import AlertMp3 from '@/assets/audio/alert.mp3';
 import DisputeIcon from '@/components/responseMatching/DisputeIcon.vue';
 import VoteSkip from '@/components/promptResponse/VoteSkip.vue';
 import {AudioWrap} from '@/mixins/audiowrap';
+import socket from '@/socket/socket';
 
 const click = new AudioWrap(ClickMp3);
 const alert = new AudioWrap(AlertMp3);
@@ -73,13 +74,13 @@ export default {
   },
   watch: {
     matchedResponse: function (val) {
-      this.$socket.emit('selectMatch', val);
+      socket.emit('selectMatch', val);
     }
   },
   methods: {
     noMatch() {
       click.play();
-      this.$socket.emit('selectMatch', '');
+      socket.emit('selectMatch', '');
     }
   }
 }

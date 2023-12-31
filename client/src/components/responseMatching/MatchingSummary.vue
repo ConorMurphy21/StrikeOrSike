@@ -37,6 +37,7 @@ import MatchCard from '@/components/responseMatching/MatchCard.vue';
 import DisputeIcon from '@/components/responseMatching/DisputeIcon.vue';
 import ClickMp3 from '@/assets/audio/click2.mp3';
 import {AudioWrap} from '@/mixins/audiowrap';
+import socket from '@/socket/socket';
 
 const click = new AudioWrap(ClickMp3);
 
@@ -74,7 +75,7 @@ export default {
   methods: {
     endRound: function () {
       click.play();
-      this.$socket.emit('selectionComplete');
+      socket.emit('selectionComplete');
     },
     match(player) {
       return this.matches.find(match => player.id === match.player.id);

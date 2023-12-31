@@ -17,10 +17,11 @@
 
 <script>
 import {createNamespacedHelpers} from 'vuex';
-import PlayerList from '@/components/lobby/PlayerList.vue'
-import Options from '@/components/lobby/Options.vue'
-import ClickMp3 from '@/assets/audio/click2.mp3'
+import PlayerList from '@/components/lobby/PlayerList.vue';
+import Options from '@/components/lobby/Options.vue';
+import ClickMp3 from '@/assets/audio/click2.mp3';
 import {AudioWrap} from '@/mixins/audiowrap';
+import socket from '@/socket/socket';
 
 const click = new AudioWrap(ClickMp3);
 
@@ -48,7 +49,7 @@ export default {
   methods: {
     startGame() {
       click.play();
-      this.$socket.emit('startGame');
+      socket.emit('startGame');
     },
   }
 }

@@ -1,9 +1,10 @@
 {
   "name": "strikeorsike-client",
   "version": "1.0.0",
+  "type": "module",
   "engines": {
-    "node": ">=16.19.0",
-    "npm": ">=8.3.1"
+    "node": ">=18.19.4",
+    "npm": ">=10.2.3"
   },
   "scripts": {
     "dev": "vite",
@@ -15,7 +16,7 @@
     "bootstrap": "5.0.2",
     "bootstrap-icons": "^1.11.0",
     "socket.io-client": "^4.7.2",
-    "vite": "^4.1.4",
+    "vite": "^5.0.10",
     "vue": "^3.2.47",
     "vue-i18n": "^9.8.0",
     "vue-router": "^4.2.5",

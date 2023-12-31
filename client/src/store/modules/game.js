@@ -1,5 +1,7 @@
 // noinspection JSUnusedGlobalSymbols
 
+import socket from '@/socket/socket';
+
 const state = () => ({
     scene: 'lobby',
     prompt: '',
@@ -186,6 +188,65 @@ const mutations = {
     }
 }
 
+const actions = {
+    async resetResponses({commit, rootGetters}) {
+        const selfId = rootGetters['room/self'].id;
+        commit('resetResponses', selfId);
+    },
+    async useResponse({commit, rootGetters}, response) {
+        const selfId = rootGetters['room/self'].id;
+        commit('useResponse', {id: selfId, response});
+    },
+    async useSelectorResponse({commit, rootGetters}, response) {
+        const selfId = rootGetters['room/self'].id;
+        commit('useSelectorResponse', {id: selfId, response});
+    },
+    async unuseResponse({commit, rootGetters}) {
+        const selfId = rootGetters['room/self'].id;
+        commit('unuseResponse', selfId);
+    },
+    async startTimer({state, commit}) {
+        clearTimeout(state.timeoutId);
+        const initialTimer = state.timer;
+        const interval = 1000; // 1s
+        const maxTick = initialTimer * (1000 / interval);
+        let expected = Date.now() + interval;
+        let dt = 0;
+        for (let tick = 1; tick <= maxTick; tick++) {
+            await new Promise(resolve => {
+                const timeoutId = setTimeout(resolve, Math.max(0, interval - dt));
+                commit('setTimeoutId', timeoutId);
+            });
+            dt = Date.now() - expected; // the drift (positive for overshooting)
+            expected += interval;
+            commit('setTimer', initialTimer - tick * (interval / 1000));
+        }
+    },
+    async unmatch({state, commit, rootGetters}) {
+        const selfId = rootGetters['room/self'].id;
+        const usedResponse = state.matches.find(match => match.player.id === selfId).response;
+        commit('unuseResponse', {id: selfId, response: usedResponse});
+        commit('setUnmatched', true);
+        commit('setScene', 'activeMatching');
+    },
+    async getResponses({state, commit}, id) {
+        return new Promise(function(resolve, reject) {
+            if(state.responses.hasOwnProperty(id)){
+                resolve();
+                return;
+            }
+            socket.emit('getResponses', id, (data) => {
+                if(data.success) {
+                    commit('setResponses', data.responses);
+                    resolve();
+                } else {
+                    reject();
+                }
+            });
+        });
+    }
+}
+
 const socketMutations = {
     SOCKET_setOptions(state, options) {
         state.options = options;
@@ -315,66 +376,6 @@ const socketActions = {
         }
         commit('setScene', scene);
         dispatch('SOCKET_matchesFound', data.matches);
-    }
-}
-
-const actions = {
-    async resetResponses({commit, rootGetters}) {
-        const selfId = rootGetters['room/self'].id;
-        commit('resetResponses', selfId);
-    },
-    async useResponse({commit, rootGetters}, response) {
-        const selfId = rootGetters['room/self'].id;
-        commit('useResponse', {id: selfId, response});
-    },
-    async useSelectorResponse({commit, rootGetters}, response) {
-        const selfId = rootGetters['room/self'].id;
-        commit('useSelectorResponse', {id: selfId, response});
-    },
-    async unuseResponse({commit, rootGetters}) {
-        const selfId = rootGetters['room/self'].id;
-        commit('unuseResponse', selfId);
-    },
-    async startTimer({state, commit}) {
-        clearTimeout(state.timeoutId);
-        const initialTimer = state.timer;
-        const interval = 1000; // 1s
-        const maxTick = initialTimer * (1000 / interval);
-        let expected = Date.now() + interval;
-        let dt = 0;
-        for (let tick = 1; tick <= maxTick; tick++) {
-            await new Promise(resolve => {
-                const timeoutId = setTimeout(resolve, Math.max(0, interval - dt));
-                commit('setTimeoutId', timeoutId);
-            });
-            dt = Date.now() - expected; // the drift (positive for overshooting)
-            expected += interval;
-            commit('setTimer', initialTimer - tick * (interval / 1000));
-        }
-    },
-    async unmatch({state, commit, rootGetters}) {
-        const selfId = rootGetters['room/self'].id;
-        const usedResponse = state.matches.find(match => match.player.id === selfId).response;
-        commit('unuseResponse', {id: selfId, response: usedResponse});
-        commit('setUnmatched', true);
-        commit('setScene', 'activeMatching');
-    },
-    async getResponses({state, commit}, id) {
-        const socket = this.$socket;
-        return new Promise(function(resolve, reject) {
-            if(state.responses.hasOwnProperty(id)){
-                resolve();
-                return;
-            }
-            socket.io.emit('getResponses', id, (data) => {
-                if(data.success) {
-                    commit('setResponses', data.responses);
-                    resolve();
-                } else {
-                    reject();
-                }
-            });
-        });
     }
 }
 

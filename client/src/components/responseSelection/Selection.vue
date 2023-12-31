@@ -20,6 +20,7 @@ import SelectionPicker from '@/components/responseSelection/SelectionPicker.vue'
 import Prompt from '@/components/gameShared/Prompt.vue';
 import AlertMp3 from '@/assets/audio/alert.mp3';
 import {AudioWrap} from '@/mixins/audiowrap';
+import socket from '@/socket/socket';
 
 const alert = new AudioWrap(AlertMp3);
 const {mapState, mapGetters} = createNamespacedHelpers('game');
@@ -53,7 +54,7 @@ export default {
   },
   watch: {
     response: function (val) {
-      this.$socket.emit('selectResponse', val);
+      socket.emit('selectResponse', val);
     }
   }
 }

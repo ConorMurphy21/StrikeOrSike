@@ -16,6 +16,7 @@ import {createNamespacedHelpers} from 'vuex';
 import ClickMp3 from '@/assets/audio/click2.mp3';
 import NotificationCount from '@/components/gameShared/NotificationCount.vue';
 import {AudioWrap} from '@/mixins/audiowrap';
+import socket from '@/socket/socket';
 
 const {mapGetters} = createNamespacedHelpers('game');
 
@@ -37,7 +38,7 @@ export default {
   methods: {
     sendVote() {
       new AudioWrap(ClickMp3).play();
-      this.$socket.emit('pollVote', 'skipPrompt');
+      socket.emit('pollVote', 'skipPrompt');
     }
   }
 }

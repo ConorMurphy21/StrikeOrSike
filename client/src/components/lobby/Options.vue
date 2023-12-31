@@ -77,6 +77,7 @@
 
 <script>
 import {createNamespacedHelpers} from 'vuex';
+import socket from '@/socket/socket';
 
 const game = createNamespacedHelpers('game')
 const room = createNamespacedHelpers('room')
@@ -143,7 +144,7 @@ export default {
       if (sanitizedVal !== this.options[label]) {
         options = options ?? {};
         options[label] = sanitizedVal;
-        this.$socket.emit('setOptions', options);
+        socket.emit('setOptions', options);
       } else {
         input.value = this.options[label];
       }
@@ -155,7 +156,7 @@ export default {
       if (!input.checked) {
         options['sikeRetries'] = 0;
       }
-      this.$socket.emit('setOptions', options);
+      socket.emit('setOptions', options);
     },
     packChange(event, label, index) {
       const input = event.currentTarget;
@@ -165,13 +166,13 @@ export default {
       const packs = {...this.options.packs};
       packs[label] = input.checked;
       const options = {packs: packs};
-      this.$socket.emit('setOptions', options);
+      socket.emit('setOptions', options);
     },
     customPromptsChange(input) {
       const prompts = input.split(/\r?\n/);
       if (!this.arraysEqual(prompts, this.options.customPrompts)) {
         const options = {customPrompts: prompts};
-        this.$socket.emit('setOptions', options);
+        socket.emit('setOptions', options);
       }
     },
   }

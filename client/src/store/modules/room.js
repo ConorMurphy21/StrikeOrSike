@@ -1,5 +1,6 @@
 // noinspection JSUnusedGlobalSymbols
 import router from '@/router';
+import socket from '@/socket/socket';
 
 const state = () => ({
     players: [],
@@ -69,7 +70,7 @@ const socketActions = {
     async SOCKET_connect({state}) {
         // automatically try to rejoin last room if a reconnect event occurs
         if(state.name && state.roomName) {
-            this.$socket.io.emit('joinRoom', state.name, state.roomName);
+            socket.io.emit('joinRoom', state.name, state.roomName);
         }
     }
 }

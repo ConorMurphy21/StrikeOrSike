@@ -14,10 +14,10 @@
   </div>
 </template>
 <script>
-import {createNamespacedHelpers} from 'vuex';
 import VueSlider from 'vue-slider-component';
+import { useSettingsStore } from '@/stores/settings.js';
+import { mapActions, mapState } from 'pinia';
 
-const {mapState, mapMutations} = createNamespacedHelpers('settings');
 export default {
   components: {
     VueSlider
@@ -29,7 +29,7 @@ export default {
     }
   },
   computed: {
-    ...mapState([
+    ...mapState(useSettingsStore, [
       'volume'
     ]),
     value: {
@@ -42,7 +42,7 @@ export default {
     },
   },
   methods: {
-    ...mapMutations([
+    ...mapActions(useSettingsStore, [
       'setVolume',
       'toggleMute'
     ]),

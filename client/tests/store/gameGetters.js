@@ -1,5 +1,5 @@
 import {assert} from 'chai';
-import {getters} from '../../src/store/modules/game.js';
+import {getters} from '@/stores/game.js';
 
 describe('game getters test', () => {
 

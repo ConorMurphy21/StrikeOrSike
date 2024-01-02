@@ -12,13 +12,13 @@
 </template>
 
 <script>
-import {createNamespacedHelpers} from 'vuex';
 import ClickMp3 from '@/assets/audio/click2.mp3';
 import NotificationCount from '@/components/gameShared/NotificationCount.vue';
 import {AudioWrap} from '@/mixins/audiowrap';
 import socket from '@/socket/socket';
+import { useGameStore } from '@/stores/game.js';
+import { mapState } from 'pinia';
 
-const {mapGetters} = createNamespacedHelpers('game');
 
 export default {
   data() {
@@ -30,7 +30,7 @@ export default {
     NotificationCount
   },
   computed: {
-    ...mapGetters([
+    ...mapState(useGameStore, [
       'skipVoteCount',
       'skipVoteNext'
     ])

@@ -6,17 +6,17 @@
   />
 </template>
 <script>
-import {createNamespacedHelpers} from 'vuex';
+import { useSettingsStore } from '@/stores/settings.js';
+import { mapState, mapActions } from 'pinia';
 
-const {mapState, mapMutations} = createNamespacedHelpers('settings');
 export default {
   computed: {
-    ...mapState([
+    ...mapState(useSettingsStore, [
       'showTooltips'
     ]),
   },
   methods: {
-    ...mapMutations([
+    ...mapActions(useSettingsStore, [
       'setShowTooltips'
     ]),
     click() {

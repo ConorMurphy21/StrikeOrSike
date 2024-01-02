@@ -30,7 +30,6 @@
 </template>
 
 <script>
-import {createNamespacedHelpers} from 'vuex';
 import Prompt from '@/components/gameShared/Prompt.vue';
 import SelectionType from '@/components/gameShared/SelectionType.vue';
 import MatchCard from '@/components/responseMatching/MatchCard.vue';
@@ -38,11 +37,11 @@ import DisputeIcon from '@/components/responseMatching/DisputeIcon.vue';
 import ClickMp3 from '@/assets/audio/click2.mp3';
 import {AudioWrap} from '@/mixins/audiowrap';
 import socket from '@/socket/socket';
+import { useRoomStore } from '@/stores/room.js';
+import { useGameStore } from '@/stores/game.js';
+import { mapState } from 'pinia';
 
 const click = new AudioWrap(ClickMp3);
-
-const game = createNamespacedHelpers('game');
-const room = createNamespacedHelpers('room');
 
 export default {
   components: {MatchCard, Prompt, SelectionType, DisputeIcon},
@@ -52,17 +51,15 @@ export default {
     }
   },
   computed: {
-    ...room.mapState([
+    ...mapState(useRoomStore, [
       'players'
     ]),
-    ...game.mapState([
+    ...mapState(useGameStore, [
       'prompt',
       'matches',
       'selectionType',
       'selectedResponse',
-      'selector'
-    ]),
-    ...game.mapGetters([
+      'selector',
       'roundPoints',
       'canEndRound',
       'isSelector',

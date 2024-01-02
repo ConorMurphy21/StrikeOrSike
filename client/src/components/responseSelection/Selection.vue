@@ -14,16 +14,16 @@
 </template>
 
 <script>
-import {createNamespacedHelpers} from 'vuex';
 import ResponseList from '@/components/gameShared/ResponseList.vue';
 import SelectionPicker from '@/components/responseSelection/SelectionPicker.vue';
 import Prompt from '@/components/gameShared/Prompt.vue';
 import AlertMp3 from '@/assets/audio/alert.mp3';
 import {AudioWrap} from '@/mixins/audiowrap';
 import socket from '@/socket/socket';
+import { useGameStore } from '@/stores/game.js';
+import { mapState } from 'pinia';
 
 const alert = new AudioWrap(AlertMp3);
-const {mapState, mapGetters} = createNamespacedHelpers('game');
 
 export default {
   data() {
@@ -42,15 +42,13 @@ export default {
     }
   },
   computed: {
-    ...mapState([
+    ...mapState(useGameStore, [
       'prompt',
       'selectionType',
       'selector',
-      'firstSelection'
-    ]),
-    ...mapGetters([
+      'firstSelection',
       'isSelector'
-    ])
+    ]),
   },
   watch: {
     response: function (val) {

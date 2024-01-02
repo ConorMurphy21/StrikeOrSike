@@ -34,7 +34,7 @@ export function registerRoomHandlers(io: TypedServer, socket: TypedSocket): void
     }
     ({ name, roomName, langs } = validateResult.data);
     const result = createRoom(socket.id, name, roomName, langs);
-    // store name in session variable
+    // stores name in session variable
     if (isErr(result)) {
       logger.log(result.wrap('(roomHandlers) Room creation failed due to %1$s'));
       socket.emit('joinRoom', { error: result.message });

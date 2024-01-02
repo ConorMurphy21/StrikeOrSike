@@ -30,12 +30,11 @@
 </template>
 
 <script>
-import {createNamespacedHelpers} from 'vuex';
 import Click1Mp3 from '@/assets/audio/click1.mp3';
 import Click2Mp3 from '@/assets/audio/click2.mp3';
 import {AudioWrap} from '@/mixins/audiowrap';
-
-const {mapState, mapGetters} = createNamespacedHelpers('room');
+import { useRoomStore } from '@/stores/room.js';
+import { mapState } from 'pinia';
 
 export default {
   data() {
@@ -45,7 +44,7 @@ export default {
     }
   },
   computed: {
-    ...mapState([
+    ...mapState(useRoomStore, [
       'players'
     ]),
     value: {

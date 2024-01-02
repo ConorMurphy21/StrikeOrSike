@@ -7,17 +7,16 @@
 </template>
 
 <script>
-import {createNamespacedHelpers} from 'vuex';
 import PlayerCard from '@/components/lobby/PlayerCard.vue'
-
-const {mapState} = createNamespacedHelpers('room')
+import { useRoomStore } from '@/stores/room.js';
+import { mapState } from 'pinia';
 
 export default {
   components: {
     PlayerCard
   },
   computed: {
-    ...mapState([
+    ...mapState(useRoomStore, [
       'players'
     ]),
     columns() {

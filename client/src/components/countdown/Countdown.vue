@@ -6,20 +6,19 @@
 
 <script>
 import timerMp3 from '@/assets/audio/countdown.mp3';
-import {createNamespacedHelpers} from 'vuex';
 import {AudioWrap} from '@/mixins/audiowrap';
-
-const game = createNamespacedHelpers('game');
-const settings = createNamespacedHelpers('settings');
+import { useGameStore } from '@/stores/game.js';
+import { useSettingsStore } from '@/stores/settings.js';
+import { mapState } from 'pinia';
 
 const timer = new AudioWrap(timerMp3);
 
 export default {
   computed: {
-    ...game.mapState([
+    ...mapState(useGameStore, [
       'timer'
     ]),
-    ...settings.mapState([
+    ...mapState(useSettingsStore, [
       'volume'
     ])
   },

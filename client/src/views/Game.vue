@@ -34,7 +34,9 @@ import EndRound from '@/components/endRound/EndRound.vue';
 import EndGame from '@/components/endGame/EndGame.vue';
 import VolumeControl from '@/components/gameShared/VolumeControl.vue';
 import TooltipToggle from '@/components/gameShared/TooltipToggle.vue';
-import {mapState} from 'vuex';
+import { mapState } from 'pinia';
+import { useRoomStore } from '../stores/room.js';
+import { useGameStore } from '../stores/game.js';
 
 export default {
   components: {
@@ -58,10 +60,8 @@ export default {
     }
   },
   computed: {
-    ...mapState({
-      scene: state => state.game.scene,
-      storeRoomName: state => state.room.roomName
-    }),
+    ...mapState(useGameStore, ['scene']),
+    ...mapState(useRoomStore, ['roomName']),
     helpLink() {
       const tips = {
         lobby: '#overview',

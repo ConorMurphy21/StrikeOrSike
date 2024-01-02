@@ -14,17 +14,17 @@
 </template>
 
 <script>
-import {createNamespacedHelpers} from 'vuex';
+import { mapActions, mapState } from 'pinia';
 import ClickMp3 from '@/assets/audio/click2.mp3'
 import {AudioWrap} from '@/mixins/audiowrap';
+import { useGameStore } from '@/stores/game.js';
 
 const click = new AudioWrap(ClickMp3);
 
-const {mapState, mapMutations} = createNamespacedHelpers('game')
 
 export default {
   computed: {
-    ...mapState([
+    ...mapState(useGameStore, [
       'scores'
     ]),
     rank() {
@@ -44,7 +44,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations([
+    ...mapActions(useGameStore, [
       'setScene'
     ]),
     toLobby() {

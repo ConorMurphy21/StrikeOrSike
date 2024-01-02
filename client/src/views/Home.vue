@@ -39,14 +39,12 @@
 </template>
 
 <script>
-import {createNamespacedHelpers} from 'vuex';
 import ClickMp3 from '@/assets/audio/click2.mp3'
 import {AudioWrap} from '@/mixins/audiowrap';
 import socket from '@/socket/socket';
-
+import  { mapState, mapActions } from 'pinia';
+import { useRoomStore } from '@/stores/room.js';
 const click = new AudioWrap(ClickMp3);
-
-const {mapMutations, mapState} = createNamespacedHelpers('room');
 
 export default {
   data() {
@@ -65,16 +63,16 @@ export default {
     this.$store.reset();
   },
   computed: {
-    ...mapState([
+    ...mapState(useRoomStore, [
       'error',
       'receivedError'
     ])
   },
   methods: {
-    ...mapMutations([
+    ...mapActions(useRoomStore,[
       'setName',
       'setRoomName',
-      'setError',
+      'setError'
     ]),
     onSubmit(joinGame) {
       click.play();

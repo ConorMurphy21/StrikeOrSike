@@ -22,7 +22,7 @@ import ClickMp3 from '@/assets/audio/click2.mp3';
 import {AudioWrap} from '@/mixins/audiowrap';
 import { useRoomStore } from '@/stores/room.js';
 import { useGameStore } from '@/stores/game.js';
-import { mapState } from 'pinia';
+import { mapState, mapActions } from 'pinia';
 
 const click = new AudioWrap(ClickMp3);
 

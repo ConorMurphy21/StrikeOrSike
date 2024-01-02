@@ -4,7 +4,7 @@
     <player-list/>
 
     <div class="w-100 d-flex flex-column justify-content-start align-items-center gap-3">
-      <options :disabled="!self || !self.leader"/>
+      <options :disabled="!leader"/>
       <span class="d-inline-block w-50 w-lg-25" v-tooltip.left="canStart ? '' : $t('tooltip.startDisabled')">
       <button class="btn btn-blue fs-4 w-100"
               :class="{'d-none': !leader, 'disabled': !canStart}"

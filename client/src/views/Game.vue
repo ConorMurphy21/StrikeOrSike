@@ -61,7 +61,7 @@ export default {
   },
   computed: {
     ...mapState(useGameStore, ['scene']),
-    ...mapState(useRoomStore, ['roomName']),
+    ...mapState(useRoomStore, {storeRoomName: 'roomName'}),
     helpLink() {
       const tips = {
         lobby: '#overview',

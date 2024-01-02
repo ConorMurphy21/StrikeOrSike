@@ -44,6 +44,7 @@ import {AudioWrap} from '@/mixins/audiowrap';
 import socket from '@/socket/socket';
 import  { mapState, mapActions } from 'pinia';
 import { useRoomStore } from '@/stores/room.js';
+import { useGameStore } from '@/stores/game.js';
 const click = new AudioWrap(ClickMp3);
 
 export default {
@@ -60,7 +61,7 @@ export default {
       this.setError(this.$route.query.error);
     }
     this.$refs.username.focus();
-    this.$store.reset();
+    useGameStore().$reset();
   },
   computed: {
     ...mapState(useRoomStore, [

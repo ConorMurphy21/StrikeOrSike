@@ -1,14 +1,15 @@
 // won't adjust audio while playing, but will be fine for short audio clips
+import { useSettingsStore } from '@/stores/settings.js';
+
 export const AudioWrap = class {
     constructor(file) {
         this.audio = new Audio(file);
 
     }
-    static store = null;
-
     play() {
-        this.audio.volume = AudioWrap.store?.state.settings.volume;
-        this.audio.play();
+        const settings = useSettingsStore();
+        this.audio.volume = settings.volume;
+        this.audio.play().then(() => {});
     }
     pause() {
         this.audio.pause();

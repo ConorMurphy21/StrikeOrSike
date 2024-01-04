@@ -10,12 +10,11 @@
 </template>
 
 <script>
-import {createNamespacedHelpers} from 'vuex';
 import timerMp3 from '@/assets/audio/timer_full.mp3';
 import timerCompleteMp3 from '@/assets/audio/timerComplete.mp3';
 import {AudioWrap} from '@/mixins/audiowrap';
-
-const {mapState} = createNamespacedHelpers('settings');
+import { useSettingsStore } from '@/stores/settings.js';
+import { mapState } from 'pinia';
 
 const timer = new AudioWrap(timerMp3);
 const timerComplete = new AudioWrap(timerCompleteMp3);
@@ -24,7 +23,7 @@ export default {
     time: Number,
   },
   computed: {
-    ...mapState([
+    ...mapState(useSettingsStore,[
       'volume'
     ])
   },

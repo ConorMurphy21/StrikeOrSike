@@ -76,11 +76,10 @@
 </template>
 
 <script>
-import {createNamespacedHelpers} from 'vuex';
 import socket from '@/socket/socket';
-
-const game = createNamespacedHelpers('game')
-const room = createNamespacedHelpers('room')
+import { useRoomStore } from '@/stores/room.js';
+import { useGameStore } from '@/stores/game.js';
+import { mapState } from 'pinia';
 
 export default {
   data() {
@@ -93,10 +92,10 @@ export default {
     disabled: Boolean,
   },
   computed: {
-    ...game.mapState([
+    ...mapState(useGameStore, [
       'options'
     ]),
-    ...room.mapState([
+    ...mapState(useRoomStore, [
       'players'
     ]),
   },

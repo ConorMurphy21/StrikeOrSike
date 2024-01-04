@@ -4,7 +4,7 @@
     <player-list/>
 
     <div class="w-100 d-flex flex-column justify-content-start align-items-center gap-3">
-      <options :disabled="!self || !self.leader"/>
+      <options :disabled="!leader"/>
       <span class="d-inline-block w-50 w-lg-25" v-tooltip.left="canStart ? '' : $t('tooltip.startDisabled')">
       <button class="btn btn-blue fs-4 w-100"
               :class="{'d-none': !leader, 'disabled': !canStart}"
@@ -16,16 +16,15 @@
 </template>
 
 <script>
-import {createNamespacedHelpers} from 'vuex';
 import PlayerList from '@/components/lobby/PlayerList.vue';
 import Options from '@/components/lobby/Options.vue';
 import ClickMp3 from '@/assets/audio/click2.mp3';
 import {AudioWrap} from '@/mixins/audiowrap';
 import socket from '@/socket/socket';
+import { mapState } from 'pinia';
+import { useRoomStore } from '@/stores/room.js';
 
 const click = new AudioWrap(ClickMp3);
-
-const {mapGetters, mapState} = createNamespacedHelpers('room')
 
 export default {
   components: {
@@ -33,11 +32,9 @@ export default {
     Options
   },
   computed: {
-    ...mapState([
-      'players'
-    ]),
-    ...mapGetters([
-      'self',
+    ...mapState(useRoomStore,[
+      'players',
+      'self'
     ]),
     leader: function () {
       return this.self && this.self.leader;

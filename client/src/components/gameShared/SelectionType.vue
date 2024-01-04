@@ -5,12 +5,11 @@
 </template>
 
 <script>
-import {createNamespacedHelpers} from 'vuex';
-
-const {mapState, mapGetters} = createNamespacedHelpers('game');
 import StrikeImg from '@/assets/images/strike.png';
 import SikeImg from '@/assets/images/sike.png';
 import ChoiceImg from '@/assets/images/choice.png';
+import { useGameStore } from '@/stores/game.js';
+import { mapState } from 'pinia';
 
 export default {
   props: {
@@ -20,7 +19,7 @@ export default {
     }
   },
   computed: {
-    ...mapState({
+    ...mapState(useGameStore, {
       type: 'selectionType',
     }),
     typeImg() {

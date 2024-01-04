@@ -3,7 +3,8 @@ import Home from '@/views/Home.vue';
 const Game = () => import('@/views/Game.vue');
 const About = () => import('@/views/About.vue');
 const HowToPlay = () => import('@/views/HowToPlay.vue');
-import store from '@/store/index';
+import store from '@/stores/index';
+import { useRoomStore } from '@/stores/room.js';
 
 const routes = [
     {
@@ -39,7 +40,8 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    store.commit('room/setRoute', to.name);
+    const room = useRoomStore();
+    room.route = to.name;
     next();
 });
 

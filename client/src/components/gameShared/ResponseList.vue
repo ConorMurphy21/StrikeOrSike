@@ -26,12 +26,11 @@
   </div>
 </template>
 <script>
-import {createNamespacedHelpers} from 'vuex';
 import Click1Mp3 from '@/assets/audio/click1.mp3';
 import Click2Mp3 from '@/assets/audio/click2.mp3';
 import {AudioWrap} from '@/mixins/audiowrap';
-
-const {mapGetters} = createNamespacedHelpers('game');
+import { useGameStore } from '@/stores/game.js';
+import { mapState } from 'pinia';
 
 export default {
   data() {
@@ -52,7 +51,7 @@ export default {
   },
   emits: ['update:modelValue'],
   computed: {
-    ...mapGetters([
+    ...mapState(useGameStore, [
       'playerResponses'
     ]),
     responses() {

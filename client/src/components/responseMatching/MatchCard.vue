@@ -18,12 +18,11 @@
 </template>
 
 <script>
-import {createNamespacedHelpers} from 'vuex';
 import ClickMp3 from '@/assets/audio/click2.mp3';
 import {AudioWrap} from '@/mixins/audiowrap';
-
-const room = createNamespacedHelpers('room');
-const game = createNamespacedHelpers('game');
+import { useRoomStore } from '@/stores/room.js';
+import { useGameStore } from '@/stores/game.js';
+import { mapState, mapActions } from 'pinia';
 
 const click = new AudioWrap(ClickMp3);
 
@@ -38,10 +37,10 @@ export default {
     }
   },
   computed: {
-    ...room.mapState([
+    ...mapState(useRoomStore, [
       'name'
     ]),
-    ...game.mapState([
+    ...mapState(useGameStore, [
         'selectedResponse'
     ]),
     showUnmatch() {
@@ -49,7 +48,7 @@ export default {
     }
   },
   methods: {
-    ...game.mapActions([
+    ...mapActions(useGameStore, [
       'unmatch'
     ]),
     unmatchClick(){

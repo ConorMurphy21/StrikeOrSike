@@ -32,7 +32,7 @@ process.on('uncaughtException', (err) => {
 });
 
 /**
- * Get port from environment and store in Express.
+ * Get port from environment and stores in Express.
  */
 const port = normalizePort(process.env.PORT || '5000');
 app.set('port', port);

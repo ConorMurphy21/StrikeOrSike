@@ -28,7 +28,6 @@
 </template>
 
 <script>
-import {createNamespacedHelpers} from 'vuex';
 import ResponseList from '@/components/gameShared/ResponseList.vue';
 import Prompt from '@/components/gameShared/Prompt.vue';
 import ClickMp3 from '@/assets/audio/click2.mp3';
@@ -37,11 +36,11 @@ import DisputeIcon from '@/components/responseMatching/DisputeIcon.vue';
 import VoteSkip from '@/components/promptResponse/VoteSkip.vue';
 import {AudioWrap} from '@/mixins/audiowrap';
 import socket from '@/socket/socket';
+import { useGameStore } from '@/stores/game.js';
+import { mapState } from 'pinia';
 
 const click = new AudioWrap(ClickMp3);
 const alert = new AudioWrap(AlertMp3);
-
-const {mapState, mapGetters} = createNamespacedHelpers('game');
 
 export default {
   data() {
@@ -61,16 +60,14 @@ export default {
     }
   },
   computed: {
-    ...mapState([
+    ...mapState(useGameStore, [
       'prompt',
       'selectionType',
       'selectedResponse',
       'selector',
-      'unmatched'
-    ]),
-    ...mapGetters([
+      'unmatched',
       'sikeDispute'
-    ])
+    ]),
   },
   watch: {
     matchedResponse: function (val) {

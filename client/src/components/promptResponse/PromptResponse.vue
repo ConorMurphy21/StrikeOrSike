@@ -11,14 +11,14 @@
 </template>
 
 <script>
-import {createNamespacedHelpers} from 'vuex';
 import ResponseList from '@/components/gameShared/ResponseList.vue';
 import Timer from '@/components/gameShared/Timer.vue';
 import VoteSkip from '@/components/promptResponse/VoteSkip.vue';
 import Prompt from '@/components/gameShared/Prompt.vue';
 import socket from '@/socket/socket';
+import { useGameStore } from '@/stores/game.js';
+import { mapState } from 'pinia';
 
-const {mapState, mapGetters} = createNamespacedHelpers('game');
 
 export default {
   data() {
@@ -39,11 +39,9 @@ export default {
     }
   },
   computed: {
-    ...mapState([
+    ...mapState(useGameStore, [
       'timer',
       'prompt',
-    ]),
-    ...mapGetters([
       'promptSkipping'
     ])
   },

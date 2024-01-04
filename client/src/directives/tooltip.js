@@ -1,5 +1,6 @@
 import {nextTick} from 'vue';
 import {Tooltip} from 'bootstrap';
+import {useSettingsStore} from "@/stores/settings.js";
 
 const placementRE = /^(auto|top|bottom|left|right)$/i
 const delayShowRE = /^ds\d+$/i
@@ -38,8 +39,8 @@ const parseBindings = (bindings) => /* istanbul ignore next: not easy to test */
 }
 
 const applyTooltip = (el, bindings) => {
-    const store = bindings.instance.$store;
-    const enabled = store.state.settings.showTooltips;
+    const settings = useSettingsStore();
+    const enabled = settings.showTooltips;
     if (!enabled) {
         removeTooltip(el);
         return;
@@ -60,8 +61,8 @@ const removeTooltip = (el) => {
 // Export our directive
 export const CBSTooltip = {
     beforeMount(el, bindings, vnode) {
-        const store = bindings.instance.$store;
-        store.commit('settings/addTooltipUpdateFunc', bindings.instance.$forceUpdate);
+        const settings = useSettingsStore();
+        settings.addTooltipUpdateFunc(bindings.instance.$forceUpdate);
         applyTooltip(el, bindings, vnode);
     },
     updated(el, bindings, vnode) {
@@ -71,8 +72,8 @@ export const CBSTooltip = {
         })
     },
     unmounted(el, bindings) {
-        const store = bindings.instance.$store;
-        store.commit('settings/removeTooltipUpdateFunc', bindings.instance.$forceUpdate);
+        const settings = useSettingsStore();
+        settings.removeTooltipUpdateFunc(bindings.instance.$forceUpdate);
         removeTooltip(el);
     }
 }

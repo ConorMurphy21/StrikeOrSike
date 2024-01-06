@@ -10,7 +10,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import ResponseList from '@/components/gameShared/ResponseList.vue';
 import Timer from '@/components/gameShared/Timer.vue';
 import VoteSkip from '@/components/promptResponse/VoteSkip.vue';
@@ -18,9 +18,9 @@ import Prompt from '@/components/gameShared/Prompt.vue';
 import socket from '@/socket/socket';
 import { useGameStore } from '@/stores/game.js';
 import { mapState } from 'pinia';
+import { defineComponent } from "vue";
 
-
-export default {
+export default defineComponent({
   data() {
     return {
       response: ''
@@ -35,7 +35,7 @@ export default {
   mounted() {
     // only auto focus if the user is not on mobile
     if(!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-      this.$refs.resInput.focus();
+      (this.$refs.resInput as HTMLInputElement).focus();
     }
   },
   computed: {
@@ -53,7 +53,7 @@ export default {
       }
     }
   }
-}
+});
 </script>
 
 

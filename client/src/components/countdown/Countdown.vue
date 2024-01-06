@@ -4,16 +4,17 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import timerMp3 from '@/assets/audio/countdown.mp3';
-import {AudioWrap} from '@/mixins/audiowrap';
+import {AudioWrap} from '@/mixins/audiowrap.js';
 import { useGameStore } from '@/stores/game.js';
 import { useSettingsStore } from '@/stores/settings.js';
 import { mapState } from 'pinia';
+import { defineComponent } from "vue";
 
 const timer = new AudioWrap(timerMp3);
 
-export default {
+export default defineComponent({
   computed: {
     ...mapState(useGameStore, [
       'timer'
@@ -30,7 +31,7 @@ export default {
   mounted() {
     timer.play();
   },
-}
+})
 </script>
 
 <style lang="scss" scoped>

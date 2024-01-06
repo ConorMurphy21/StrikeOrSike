@@ -15,18 +15,19 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import PlayerList from '@/components/lobby/PlayerList.vue';
 import Options from '@/components/lobby/Options.vue';
 import ClickMp3 from '@/assets/audio/click2.mp3';
-import {AudioWrap} from '@/mixins/audiowrap';
-import socket from '@/socket/socket';
+import {AudioWrap} from '@/mixins/audiowrap.js';
+import socket from '@/socket/socket.js';
 import { mapState } from 'pinia';
 import { useRoomStore } from '@/stores/room.js';
+import { defineComponent } from "vue";
 
 const click = new AudioWrap(ClickMp3);
 
-export default {
+export default defineComponent({
   components: {
     PlayerList,
     Options
@@ -49,5 +50,5 @@ export default {
       socket.emit('startGame');
     },
   }
-}
+});
 </script>

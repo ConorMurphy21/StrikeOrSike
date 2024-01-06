@@ -4,7 +4,7 @@ import pinia from './stores';
 import i18n from './locales';
 import router from './router';
 import { CBSTooltip } from './directives/tooltip';
-import Portal from 'vue3-portal';
+import PortalVue from 'portal-vue';
 
 // only import bootstrap components that are used
 import {Collapse, Dropdown} from 'bootstrap';
@@ -17,7 +17,7 @@ const app = createApp(App);
 app.use(pinia);
 app.use(router);
 app.use(i18n);
-app.use(Portal);
+app.use(PortalVue);
 app.directive('tooltip', CBSTooltip);
 
 // bind socket io to pinia

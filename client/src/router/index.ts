@@ -1,9 +1,8 @@
-import { createWebHistory, createRouter } from 'vue-router';
+import { createWebHistory, createRouter, RouteLocation } from "vue-router";
 import Home from '@/views/Home.vue';
 const Game = () => import('@/views/Game.vue');
 const About = () => import('@/views/About.vue');
 const HowToPlay = () => import('@/views/HowToPlay.vue');
-import store from '@/stores/index';
 import { useRoomStore } from '@/stores/room.js';
 
 const routes = [
@@ -29,7 +28,7 @@ const routes = [
         path: '/:roomName',
         component: Game,
         name: 'game',
-        props: route => ({roomName: route.params.roomName}),
+        props: (route: RouteLocation) => ({roomName: route.params.roomName}),
         meta: { title: 'Game' }
     },
 ];
@@ -41,7 +40,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     const room = useRoomStore();
-    room.route = to.name;
+    room.route = to.name as string;
     next();
 });
 

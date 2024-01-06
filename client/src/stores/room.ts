@@ -3,8 +3,24 @@ import router from "@/router/index.js";
 import socket from "@/socket/socket.js";
 import { defineStore } from "pinia";
 
+type Player = {
+  id: string,
+  name: string,
+  leader: boolean,
+  active: boolean
+}
+
+interface State {
+  players: Player[],
+  name: string,
+  roomName: string,
+  error: string,
+  receivedError: boolean,
+  route: string
+}
+
 export const useRoomStore = defineStore("room", {
-  state: () => ({
+  state: (): State => ({
     players: [],
     name: "",
     roomName: "",
@@ -13,18 +29,18 @@ export const useRoomStore = defineStore("room", {
     route: "home"
   }),
   getters: {
-    self() {
-      return this.players.find(p => p.name === this.name);
+    self(): Player | undefined {
+      return this.players.find((p: Player) => p.name === this.name);
     }
   },
   actions: {
-    setName(name) {
+    setName(name: string) {
       this.name = name;
     },
-    setRoomName(roomName) {
+    setRoomName(roomName: string) {
       this.roomName = roomName;
     },
-    setError(error) {
+    setError(error: string) {
       this.error = error;
     },
     bindEvents() {
@@ -36,19 +52,19 @@ export const useRoomStore = defineStore("room", {
         }
       });
 
-      socket.on("updatePlayers", (data) => {
+      socket.on("updatePlayers", (data: {modifies: Player[], deletes: string[]}) => {
         data.modifies.forEach(player => {
-          const i = this.players.findIndex(p => p.name === player.name);
+          const i = this.players.findIndex((p: Player) => p.name === player.name);
           if (i < 0)
             this.players.push(player);
           else
             this.players[i] = player;
 
         });
-        this.players = this.players.filter(player => !data.deletes.includes(player.id));
+        this.players = this.players.filter((player: Player) => !data.deletes.includes(player.id));
       });
 
-      socket.on("joinRoom", async (data) => {
+      socket.on("joinRoom", async (data: {success: boolean, roomName: string, error: string}) => {
         if (data.success) {
           this.roomName = data.roomName;
           this.error = "";

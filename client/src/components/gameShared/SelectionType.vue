@@ -4,14 +4,15 @@
   <img v-else :src="typeImg" :alt="$t(type)" :class="{'sike-img': type === 'sike'}">
 </template>
 
-<script>
+<script lang="ts">
 import StrikeImg from '@/assets/images/strike.png';
 import SikeImg from '@/assets/images/sike.png';
 import ChoiceImg from '@/assets/images/choice.png';
 import { useGameStore } from '@/stores/game.js';
 import { mapState } from 'pinia';
+import { defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   props: {
     tooltip: {
       type: Boolean,
@@ -31,7 +32,7 @@ export default {
       return ChoiceImg;
     },
   }
-}
+});
 </script>
 
 <style lang="scss" scoped>

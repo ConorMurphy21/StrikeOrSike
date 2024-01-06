@@ -2,7 +2,8 @@
 import { useSettingsStore } from '@/stores/settings.js';
 
 export const AudioWrap = class {
-    constructor(file) {
+    private audio: HTMLAudioElement;
+    constructor(file: string) {
         this.audio = new Audio(file);
 
     }
@@ -14,10 +15,10 @@ export const AudioWrap = class {
     pause() {
         this.audio.pause();
     }
-    set volume(val) {
+    set volume(val: number) {
         this.audio.volume = val;
     }
-    set currentTime(val) {
+    set currentTime(val: number) {
         this.audio.currentTime = val;
     }
 }

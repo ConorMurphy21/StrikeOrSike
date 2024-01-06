@@ -13,16 +13,17 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { mapActions, mapState } from 'pinia';
 import ClickMp3 from '@/assets/audio/click2.mp3'
-import {AudioWrap} from '@/mixins/audiowrap';
+import {AudioWrap} from '@/mixins/audiowrap.js';
 import { useGameStore } from '@/stores/game.js';
+import { defineComponent } from "vue";
 
 const click = new AudioWrap(ClickMp3);
 
 
-export default {
+export default defineComponent({
   computed: {
     ...mapState(useGameStore, [
       'scores'
@@ -52,5 +53,5 @@ export default {
       this.setScene('lobby');
     }
   },
-}
+})
 </script>

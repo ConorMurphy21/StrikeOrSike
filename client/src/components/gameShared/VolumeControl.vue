@@ -13,19 +13,20 @@
             @click="click" @focusin="clearTimer" @focusout="resetTimer"/>
   </div>
 </template>
-<script>
+<script lang="ts">
 import VueSlider from 'vue-slider-component';
 import { useSettingsStore } from '@/stores/settings.js';
 import { mapActions, mapState } from 'pinia';
+import { defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   components: {
     VueSlider
   },
   data() {
     return {
       showing: false,
-      timer: null
+      timer: null as null | NodeJS.Timeout
     }
   },
   computed: {
@@ -33,7 +34,7 @@ export default {
       'volume'
     ]),
     value: {
-      set: function (val) {
+      set: function (val: number) {
         this.setVolume(val / 100);
       },
       get: function () {
@@ -63,7 +64,7 @@ export default {
       }
     }
   }
-}
+});
 </script>
 
 <style scoped lang="scss">

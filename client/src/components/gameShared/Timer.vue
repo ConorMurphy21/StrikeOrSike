@@ -9,16 +9,17 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import timerMp3 from '@/assets/audio/timer_full.mp3';
 import timerCompleteMp3 from '@/assets/audio/timerComplete.mp3';
-import {AudioWrap} from '@/mixins/audiowrap';
+import {AudioWrap} from '@/mixins/audiowrap.js';
 import { useSettingsStore } from '@/stores/settings.js';
 import { mapState } from 'pinia';
+import { defineComponent } from "vue";
 
 const timer = new AudioWrap(timerMp3);
 const timerComplete = new AudioWrap(timerCompleteMp3);
-export default {
+export default defineComponent({
   props: {
     time: Number,
   },
@@ -45,7 +46,7 @@ export default {
     timer.pause();
     timer.currentTime = 0;
   }
-}
+});
 </script>
 
 <style lang="scss" scoped>

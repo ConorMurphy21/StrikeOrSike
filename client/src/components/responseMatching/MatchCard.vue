@@ -13,23 +13,37 @@
          :class="{'hover': hovering}"
          v-if="showUnmatch"/>
     </div>
-    <h2 class="player-name fs-5">{{ player.name }}</h2>
+    <h2 class="player-name fs-5">{{ player!.name }}</h2>
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import ClickMp3 from '@/assets/audio/click2.mp3';
-import {AudioWrap} from '@/mixins/audiowrap';
+import {AudioWrap} from '@/mixins/audiowrap.js';
 import { useRoomStore } from '@/stores/room.js';
 import { useGameStore } from '@/stores/game.js';
 import { mapState, mapActions } from 'pinia';
+import { defineComponent, PropType } from "vue";
 
 const click = new AudioWrap(ClickMp3);
 
-export default {
+type Player = {
+  id: string,
+  name: string,
+  leader: boolean,
+  active: boolean
+}
+
+type Match = {
+  player: Player,
+  response: string,
+  exact: boolean
+}
+
+export default defineComponent({
   props: {
-    player: Object,
-    match: Object
+    player: Object as PropType<Player>,
+    match: Object as PropType<Match>
   },
   data() {
     return {
@@ -44,7 +58,7 @@ export default {
         'selectedResponse'
     ]),
     showUnmatch() {
-      return this.player.name === this.name && !this.match.exact;
+      return this.player?.name === this.name && !this.match?.exact;
     }
   },
   methods: {
@@ -56,7 +70,7 @@ export default {
       this.unmatch();
     }
   },
-}
+});
 </script>
 
 <style lang="scss" scoped>

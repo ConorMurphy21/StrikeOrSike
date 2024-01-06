@@ -7,7 +7,7 @@ const messages = {
     },
 }
 
-export default createI18n({
+export default createI18n<[typeof en], 'en'>({
     locale: 'en',
     fallbackLocale: 'en',
     messages

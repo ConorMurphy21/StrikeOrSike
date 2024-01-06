@@ -77,8 +77,8 @@
 
 <script>
 import socket from '@/socket/socket';
-import { useRoomStore } from '@/stores/room.js';
-import { useGameStore } from '@/stores/game.js';
+import { useRoomStore } from '@/stores/room.ts';
+import { useGameStore } from '@/stores/game.ts';
 import { mapState } from 'pinia';
 
 export default {

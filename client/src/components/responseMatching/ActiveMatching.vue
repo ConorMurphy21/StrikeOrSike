@@ -3,7 +3,7 @@
     <prompt :prompt="prompt"/>
     <i18n-t keypath="activeMatchingMessage" tag="p">
       <template v-slot:player>
-        <span class="player">{{ selector.name }}</span>
+        <span class="player">{{ selector?.name }}</span>
       </template>
       <template v-slot:response>
         <span class="responseMessage fs-4">{{ selectedResponse }}</span>
@@ -27,22 +27,23 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import ResponseList from '@/components/gameShared/ResponseList.vue';
 import Prompt from '@/components/gameShared/Prompt.vue';
 import ClickMp3 from '@/assets/audio/click2.mp3';
 import AlertMp3 from '@/assets/audio/alert.mp3';
 import DisputeIcon from '@/components/responseMatching/DisputeIcon.vue';
 import VoteSkip from '@/components/promptResponse/VoteSkip.vue';
-import {AudioWrap} from '@/mixins/audiowrap';
+import {AudioWrap} from '@/mixins/audiowrap.js';
 import socket from '@/socket/socket';
 import { useGameStore } from '@/stores/game.js';
 import { mapState } from 'pinia';
+import { defineComponent } from "vue";
 
 const click = new AudioWrap(ClickMp3);
 const alert = new AudioWrap(AlertMp3);
 
-export default {
+export default defineComponent({
   data() {
     return {
       matchedResponse: '',
@@ -80,7 +81,7 @@ export default {
       socket.emit('selectMatch', '');
     }
   }
-}
+});
 </script>
 
 <style lang="scss" scoped>

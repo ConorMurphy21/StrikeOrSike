@@ -5,11 +5,12 @@
           v-tooltip.left.ds250="$t('tooltip.showTooltips')"
   />
 </template>
-<script>
+<script lang="ts">
 import { useSettingsStore } from '@/stores/settings.js';
 import { mapState, mapActions } from 'pinia';
+import { defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   computed: {
     ...mapState(useSettingsStore, [
       'showTooltips'
@@ -24,7 +25,7 @@ export default {
       this.$forceUpdate();
     },
   }
-}
+});
 </script>
 
 <style scoped lang="scss">

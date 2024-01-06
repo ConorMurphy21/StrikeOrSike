@@ -14,20 +14,20 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import Prompt from '@/components/gameShared/Prompt.vue';
 import ResponseList from '@/components/gameShared/ResponseList.vue';
 import NotificationCount from '@/components/gameShared/NotificationCount.vue';
 import ClickMp3 from '@/assets/audio/click2.mp3';
 import PlayerChooser from '@/components/endRound/PlayerChooser.vue';
-import { AudioWrap } from '@/mixins/audiowrap';
+import { AudioWrap } from '@/mixins/audiowrap.js';
 import socket from '@/socket/socket';
 import { useGameStore } from '@/stores/game.js';
 import { useRoomStore } from '@/stores/room.js';
 import { mapState, mapActions } from 'pinia';
+import { defineComponent } from "vue";
 
-
-export default {
+export default defineComponent({
   data() {
     return {
       responsesId: '',
@@ -52,7 +52,7 @@ export default {
     ])
   },
   mounted() {
-    this.selectedId = this.self.id;
+    this.selectedId = this.self!.id;
   },
   methods: {
     sendVote() {
@@ -72,6 +72,6 @@ export default {
       }
     }
   }
-};
+});
 </script>
 

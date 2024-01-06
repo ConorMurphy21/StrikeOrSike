@@ -20,19 +20,19 @@
       <div v-if="selected !== -1" class="d-flex flex-row gap-2 w-75 justify-content-between">
         <button class="btn btn-red w-50 w-lg-25" @click="deselect" v-t="'cancel'"/>
         <button class="btn btn-blue w-50 w-lg-25" @click="confirm" v-t="'confirm'"/>
-
       </div>
     </transition>
   </div>
 </template>
-<script>
+<script lang="ts">
 import Click1Mp3 from '@/assets/audio/click1.mp3';
 import Click2Mp3 from '@/assets/audio/click2.mp3';
-import {AudioWrap} from '@/mixins/audiowrap';
+import {AudioWrap} from '@/mixins/audiowrap.js';
 import { useGameStore } from '@/stores/game.js';
 import { mapState } from 'pinia';
+import { defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   data() {
     return {
       selected: -1,
@@ -73,7 +73,7 @@ export default {
     }
   },
   methods: {
-    select(index, response) {
+    select(index: number, response: string) {
       if (this.selectable && !this.used(response)) {
         if (this.selected !== index) {
           new AudioWrap(Click1Mp3).play();
@@ -91,16 +91,16 @@ export default {
     confirm() {
       this.select(this.selected, this.responses[this.selected]);
     },
-    responseSelectable(response) {
+    responseSelectable(response: string) {
       return !this.usedResponses.includes(response) && this.selectable;
     },
-    used(response) {
+    used(response: string) {
       return response !== this.selectedStrike &&
           response !== this.selectedSike &&
           this.usedResponses.includes(response);
     },
   },
-}
+});
 </script>
 
 <style lang="scss" scoped>

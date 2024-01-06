@@ -548,6 +548,7 @@ export class GameState {
     const timeleft = this.promptTimeout ? this._getTimeLeft(this.promptTimeout) - 1 : 0;
 
     return {
+      id: id,
       stage: this.stage,
       selectionType: this.selectionType,
       responses: this._getResponses(player),

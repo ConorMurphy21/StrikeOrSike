@@ -2,7 +2,7 @@
   <div class="w-100 d-flex flex-column justify-content-start align-items-center py-3 px-4">
     <prompt :prompt="prompt"/>
     <p v-if="!isSelector" class="display-6 passiveMessage mb-0"
-       v-t="{path: 'selection.message', args: {'player': selector.name}}"/>
+       v-t="{path: 'selection.message', args: {'player': selector?.name}}"/>
     <i18n-t v-else keypath="selection.selfMessage" tag="p" class="display-6 activeMessage mb-0">
       <template v-slot:self>
         <span class="activeSelector display-6" v-t="'selection.self'"/>
@@ -13,19 +13,20 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import ResponseList from '@/components/gameShared/ResponseList.vue';
 import SelectionPicker from '@/components/responseSelection/SelectionPicker.vue';
 import Prompt from '@/components/gameShared/Prompt.vue';
 import AlertMp3 from '@/assets/audio/alert.mp3';
-import {AudioWrap} from '@/mixins/audiowrap';
+import {AudioWrap} from '@/mixins/audiowrap.js';
 import socket from '@/socket/socket';
 import { useGameStore } from '@/stores/game.js';
 import { mapState } from 'pinia';
+import { defineComponent } from "vue";
 
 const alert = new AudioWrap(AlertMp3);
 
-export default {
+export default defineComponent({
   data() {
     return {
       response: '',
@@ -55,7 +56,7 @@ export default {
       socket.emit('selectResponse', val);
     }
   }
-}
+});
 </script>
 
 <style lang="scss" scoped>

@@ -29,15 +29,16 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SelectionType from '@/components/gameShared/SelectionType.vue';
 import ClickMp3 from '@/assets/audio/click2.mp3'
-import {AudioWrap} from '@/mixins/audiowrap';
+import {AudioWrap} from '@/mixins/audiowrap.js';
 import socket from '@/socket/socket';
 import { useGameStore } from '@/stores/game.js';
 import { mapState } from 'pinia';
+import { defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   data() {
     return {
       lastPicked: false
@@ -52,7 +53,7 @@ export default {
     })
   },
   methods: {
-    selectSelectionType(strike) {
+    selectSelectionType(strike: boolean) {
       new AudioWrap(ClickMp3).play();
       if (this.type === 'choice' || this.lastPicked !== strike) {
         socket.emit('selectSelectionType', strike);
@@ -60,7 +61,7 @@ export default {
       }
     }
   }
-}
+});
 </script>
 
 <style lang="scss" scoped>

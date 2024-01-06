@@ -6,12 +6,20 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import PlayerCard from '@/components/lobby/PlayerCard.vue'
 import { useRoomStore } from '@/stores/room.js';
 import { mapState } from 'pinia';
+import { defineComponent } from "vue";
 
-export default {
+type Player = {
+  id: string,
+  name: string,
+  leader: boolean,
+  active: boolean
+}
+
+export default defineComponent({
   components: {
     PlayerCard
   },
@@ -20,14 +28,14 @@ export default {
       'players'
     ]),
     columns() {
-      const columns = [[], []]
+      const columns = [[], []] as [Player[], Player[]];
       for (let i = 0; i < this.players.length; i++) {
         columns[i % 2].push(this.players[i]);
       }
       return columns;
     }
   }
-}
+});
 </script>
 
 <style lang="scss" scoped>

@@ -38,16 +38,18 @@
   </div>
 </template>
 
-<script>
-import ClickMp3 from '@/assets/audio/click2.mp3'
+<script lang="ts">
+import { defineComponent } from 'vue';
+import ClickMp3 from '@/assets/audio/click2.mp3';
 import {AudioWrap} from '@/mixins/audiowrap';
 import socket from '@/socket/socket';
 import  { mapState, mapActions } from 'pinia';
 import { useRoomStore } from '@/stores/room.js';
 import { useGameStore } from '@/stores/game.js';
+import { Instance } from "@popperjs/core";
 const click = new AudioWrap(ClickMp3);
 
-export default {
+export default defineComponent({
   data() {
     return {
       form: {
@@ -58,9 +60,9 @@ export default {
   },
   mounted() {
     if (this.$route.query.error) {
-      this.setError(this.$route.query.error);
+      this.setError(this.$route.query.error as string);
     }
-    this.$refs.username.focus();
+    (this.$refs.username as InstanceType<typeof HTMLInputElement>).focus();
     useGameStore().$reset();
   },
   computed: {
@@ -75,14 +77,14 @@ export default {
       'setRoomName',
       'setError'
     ]),
-    onSubmit(joinGame) {
+    onSubmit(joinGame: boolean) {
       click.play();
       const event = joinGame ? 'joinRoom' : 'createRoom';
       this.setName(this.form.name);
       socket.emit(event, this.form.name, this.form.roomName, navigator.languages);
     }
   }
-}
+});
 </script>
 
 <style lang="scss" scoped>

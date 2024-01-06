@@ -30,6 +30,7 @@ export type Responses = {
 };
 
 export type MidgameConnectData = {
+  id: string;
   stage: Stage;
   selectionType: SelectionType;
   responses: Responses;

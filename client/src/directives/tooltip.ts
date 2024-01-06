@@ -1,4 +1,4 @@
-import {nextTick} from 'vue';
+import { DirectiveBinding, nextTick } from "vue";
 import {Tooltip} from 'bootstrap';
 import {useSettingsStore} from "@/stores/settings.js";
 
@@ -6,10 +6,10 @@ const placementRE = /^(auto|top|bottom|left|right)$/i
 const delayShowRE = /^ds\d+$/i
 const delayHideRE = /^dh\d+$/i
 
-const parseBindings = (bindings) => /* istanbul ignore next: not easy to test */ {
+function parseBindings(bindings: DirectiveBinding) {
     // We start out with a basic config
     let config = {
-        title: undefined,
+        title: '',
         trigger: 'hover', // Default set below if needed
         placement: 'auto',
         delay: {show: 500, hide: 100},
@@ -38,7 +38,7 @@ const parseBindings = (bindings) => /* istanbul ignore next: not easy to test */
     return config;
 }
 
-const applyTooltip = (el, bindings) => {
+function applyTooltip(el: Element, bindings: DirectiveBinding){
     const settings = useSettingsStore();
     const enabled = settings.showTooltips;
     if (!enabled) {
@@ -46,34 +46,30 @@ const applyTooltip = (el, bindings) => {
         return;
     }
     const config = parseBindings(bindings);
-    const tooltip = Tooltip.getInstance(el);
-    if (tooltip && tooltip.title !== config.title) {
-        tooltip.dispose();
-    }
-    new Tooltip(el, config);
-};
+    Tooltip.getOrCreateInstance(el, config);
+}
 
-const removeTooltip = (el) => {
+function removeTooltip(el: Element) {
     const tooltip = Tooltip.getInstance(el);
     tooltip?.dispose();
 }
 
 // Export our directive
 export const CBSTooltip = {
-    beforeMount(el, bindings, vnode) {
+    beforeMount(el: Element, bindings: DirectiveBinding) {
         const settings = useSettingsStore();
-        settings.addTooltipUpdateFunc(bindings.instance.$forceUpdate);
-        applyTooltip(el, bindings, vnode);
+        settings.addTooltipUpdateFunc(bindings.instance!.$forceUpdate);
+        applyTooltip(el, bindings);
     },
-    updated(el, bindings, vnode) {
+    updated(el: Element, bindings: DirectiveBinding) {
         // Performed in a `$nextTick()` to prevent render update loops
         nextTick(() => {
-            applyTooltip(el, bindings, vnode);
-        })
+            applyTooltip(el, bindings);
+        }).then(() => {});
     },
-    unmounted(el, bindings) {
+    unmounted(el: Element, bindings: DirectiveBinding) {
         const settings = useSettingsStore();
-        settings.removeTooltipUpdateFunc(bindings.instance.$forceUpdate);
+        settings.removeTooltipUpdateFunc(bindings.instance!.$forceUpdate);
         removeTooltip(el);
     }
 }

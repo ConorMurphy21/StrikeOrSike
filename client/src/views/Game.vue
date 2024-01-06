@@ -23,7 +23,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import Lobby from '@/components/lobby/Lobby.vue'
 import Countdown from '@/components/countdown/Countdown.vue';
 import PromptResponse from '@/components/promptResponse/PromptResponse.vue'
@@ -35,8 +35,8 @@ import EndGame from '@/components/endGame/EndGame.vue';
 import VolumeControl from '@/components/gameShared/VolumeControl.vue';
 import TooltipToggle from '@/components/gameShared/TooltipToggle.vue';
 import { mapState } from 'pinia';
-import { useRoomStore } from '../stores/room.js';
-import { useGameStore } from '../stores/game.js';
+import { useRoomStore } from "@/stores/room";
+import { useGameStore } from "@/stores/game";
 
 export default {
   components: {
@@ -80,7 +80,7 @@ export default {
     }
   },
   sockets: {
-    kickPlayer: function (data) {
+    kickPlayer: function (data: {error: string}) {
       this.$router.push({name: 'home', query: {error: data.error}});
     }
   }

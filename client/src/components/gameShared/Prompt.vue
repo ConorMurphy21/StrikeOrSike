@@ -6,8 +6,9 @@
 </template>
 <script>
 import VoteSkip from '@/components/promptResponse/VoteSkip.vue';
+import { defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   components: {
     VoteSkip
   },
@@ -29,7 +30,7 @@ export default {
       return this.prompt.substring(this.prompt.lastIndexOf('_') + 1);
     }
   }
-}
+});
 </script>
 <style lang="scss" scoped>
 h1 {

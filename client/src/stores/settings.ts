@@ -1,7 +1,14 @@
 import { defineStore } from "pinia";
 
+interface State {
+  volume: number,
+  lastVolume: number,
+  showTooltips: boolean,
+  tooltipUpdateFuncs: ( () => void )[]
+}
+
 export const useSettingsStore = defineStore("settings", {
-  state: () => ({
+  state: (): State => ({
     volume: 1,
     // used for muting and unmuting
     lastVolume: 1,
@@ -9,12 +16,12 @@ export const useSettingsStore = defineStore("settings", {
     tooltipUpdateFuncs: []
   }),
   actions: {
-    setVolume(data) {
+    setVolume(volume: number) {
       this.lastVolume = this.volume;
-      this.volume = data;
+      this.volume = volume;
     },
-    setShowTooltips(data) {
-      this.showTooltips = data;
+    setShowTooltips(showTooltips: boolean) {
+      this.showTooltips = showTooltips;
       for (const func of this.tooltipUpdateFuncs) {
         func();
       }
@@ -27,10 +34,10 @@ export const useSettingsStore = defineStore("settings", {
         this.volume = this.lastVolume;
       }
     },
-    addTooltipUpdateFunc(data) {
+    addTooltipUpdateFunc(data: () => void) {
       this.tooltipUpdateFuncs.push(data);
     },
-    removeTooltipUpdateFunc(data) {
+    removeTooltipUpdateFunc(data: () => void) {
       const index = this.tooltipUpdateFuncs.indexOf(data);
       if (index !== -1) {
         this.tooltipUpdateFuncs.splice(index, 1);

@@ -1,15 +1,21 @@
 <template>
-  <div class="w-100 p-3" :class="{'disabled': !player.active, 'bg-primary': player.active}">
-    <h1 class="fs-5 text-center my-auto">{{ player.name }}</h1>
+  <div class="w-100 p-3" :class="{'disabled': !player!.active, 'bg-primary': player!.active}">
+    <h1 class="fs-5 text-center my-auto">{{ player!.name }}</h1>
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    player: Object
-  }
+<script lang="ts">
+import { defineComponent, PropType } from "vue";
+
+type Player = {
+  active: boolean;
+  name: string;
 }
+export default defineComponent({
+  props: {
+    player: Object as PropType<Player>
+  }
+});
 </script>
 
 <style lang="scss" scoped>

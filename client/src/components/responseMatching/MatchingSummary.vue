@@ -35,10 +35,10 @@ import SelectionType from '@/components/gameShared/SelectionType.vue';
 import MatchCard from '@/components/responseMatching/MatchCard.vue';
 import DisputeIcon from '@/components/responseMatching/DisputeIcon.vue';
 import ClickMp3 from '@/assets/audio/click2.mp3';
-import {AudioWrap} from '@/mixins/audiowrap';
+import {AudioWrap} from '@/mixins/audiowrap.ts';
 import socket from '@/socket/socket';
-import { useRoomStore } from '@/stores/room.js';
-import { useGameStore } from '@/stores/game.js';
+import { useRoomStore } from '@/stores/room.ts';
+import { useGameStore } from '@/stores/game.ts';
 import { mapState } from 'pinia';
 
 const click = new AudioWrap(ClickMp3);

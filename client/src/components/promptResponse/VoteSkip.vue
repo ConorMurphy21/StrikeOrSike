@@ -11,16 +11,16 @@
   </a>
 </template>
 
-<script>
+<script lang="ts">
 import ClickMp3 from '@/assets/audio/click2.mp3';
 import NotificationCount from '@/components/gameShared/NotificationCount.vue';
-import {AudioWrap} from '@/mixins/audiowrap';
+import {AudioWrap} from '@/mixins/audiowrap.js';
 import socket from '@/socket/socket';
 import { useGameStore } from '@/stores/game.js';
 import { mapState } from 'pinia';
+import { defineComponent } from "vue";
 
-
-export default {
+export default defineComponent({
   data() {
     return {
       tooltips: []
@@ -41,5 +41,5 @@ export default {
       socket.emit('pollVote', 'skipPrompt');
     }
   }
-}
+});
 </script>

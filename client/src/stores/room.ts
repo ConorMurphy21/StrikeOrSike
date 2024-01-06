@@ -81,6 +81,10 @@ export const useRoomStore = defineStore("room", {
           }
         }
       });
+
+      socket.on('kickPlayer', async (data: {error: string}) => {
+          await router.push({name: 'home', query: {error: data.error}});
+      });
     }
   }
 });

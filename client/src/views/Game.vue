@@ -37,9 +37,11 @@ import TooltipToggle from '@/components/gameShared/TooltipToggle.vue';
 import { mapState } from 'pinia';
 import { useRoomStore } from "@/stores/room";
 import { useGameStore } from "@/stores/game";
+import { Portal } from "portal-vue";
 
 export default {
   components: {
+    Portal,
     Lobby,
     Countdown,
     PromptResponse,
@@ -77,11 +79,6 @@ export default {
     },
     isMobile() {
       return /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    }
-  },
-  sockets: {
-    kickPlayer: function (data: {error: string}) {
-      this.$router.push({name: 'home', query: {error: data.error}});
     }
   }
 }

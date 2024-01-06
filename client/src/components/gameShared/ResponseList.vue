@@ -1,3 +1,4 @@
+<!--suppress CssUnusedSymbol -->
 <template>
   <div class="outer flex-grow-1 d-flex flex-column justify-content-between align-items-center w-100">
     <div :style="cssProps" ref="box"

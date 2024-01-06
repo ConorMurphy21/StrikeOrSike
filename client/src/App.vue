@@ -12,3 +12,6 @@
 @import '@/styles/app';
 </style>
 
+<script setup lang="ts">
+import { PortalTarget } from "portal-vue";
+</script>

@@ -33,7 +33,7 @@ export default defineComponent({
     Prompt
   },
   mounted() {
-    // only auto focus if the user is not on mobile
+    // only autofocus if the user is not on mobile
     if(!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
       (this.$refs.resInput as HTMLInputElement).focus();
     }

@@ -6,6 +6,7 @@
     "node": ">=18.19.4",
     "npm": ">=10.2.3"
   },
+  "web-types": "./web-types.json",
   "scripts": {
     "test:typecheck": "npx vue-tsc",
     "dev": "vite",

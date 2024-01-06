@@ -4,7 +4,7 @@
     </h1>
     <h1 v-else class="display-5">{{ prompt }} <vote-skip class="mb-2" v-if="skippable"/> </h1>
 </template>
-<script>
+<script lang="ts">
 import VoteSkip from '@/components/promptResponse/VoteSkip.vue';
 import { defineComponent } from "vue";
 
@@ -20,14 +20,14 @@ export default defineComponent({
     }
   },
   computed: {
-    containsBlank() {
-      return this.prompt.includes('_');
+    containsBlank(): boolean {
+      return this.prompt!.includes('_');
     },
-    left() {
-      return this.prompt.substring(0, this.prompt.indexOf('_'));
+    left(): string {
+      return this.prompt!.substring(0, this.prompt!.indexOf('_'));
     },
-    right() {
-      return this.prompt.substring(this.prompt.lastIndexOf('_') + 1);
+    right(): string {
+      return this.prompt!.substring(this.prompt!.lastIndexOf('_') + 1);
     }
   }
 });

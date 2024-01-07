@@ -8,9 +8,9 @@
             <div class="row">
               <label class="form-label" v-t="'promptPacksLabel'"/>
               <div v-for="(value, label, index) in options.packs" class="col-md-auto">
-                <input v-if="index !== Object.keys(options.packs).length - 1" type="checkbox" class="form-check-input"
+                <input type="checkbox" class="form-check-input"
                        :class="{'Disabled': disabled}"
-                       :disabled="disabled" :id="'pack' + index" :ref="'pack' + index" :checked="value"
+                       :disabled="disabled" :id="'pack' + index" :checked="value"
                        @click="packChange($event, label, index)">
                 <label :for="'pack' + index" class="form-check-label ms-2">{{ $t(`packLabels.${label}`) }}</label>
               </div>
@@ -117,9 +117,8 @@ export default defineComponent({
   },
   mounted() {
     const form = document.getElementById('form') as HTMLFormElement;
+    const firstForm = (this.$refs.timerDuration as HTMLInputElement);
     form.addEventListener('shown.bs.collapse', () => {
-      if (!this.$refs.pack0) return;
-      const firstForm = (this.$refs.pack0 as HTMLInputElement);
       firstForm.focus();
     });
   },

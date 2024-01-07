@@ -6,12 +6,16 @@ const placementRE = /^(auto|top|bottom|left|right)$/i
 const delayShowRE = /^ds\d+$/i
 const delayHideRE = /^dh\d+$/i
 
+function isPlacementType(mod: string): mod is Tooltip.PopoverPlacement {
+    return placementRE.test(mod);
+}
+
 function parseBindings(bindings: DirectiveBinding) {
     // We start out with a basic config
     let config = {
         title: '',
-        trigger: 'hover', // Default set below if needed
-        placement: 'auto',
+        trigger: 'hover' as 'hover', // Default set below if needed
+        placement: 'left' as Tooltip.PopoverPlacement,
         delay: {show: 500, hide: 100},
     }
 
@@ -23,7 +27,7 @@ function parseBindings(bindings: DirectiveBinding) {
 
     // Process modifiers
     Object.keys(bindings.modifiers).forEach(mod => {
-        if (placementRE.test(mod)) {
+        if (isPlacementType(mod)) {
             // Placement of tooltip
             config.placement = mod;
         } else if (delayShowRE.test(mod)) {
@@ -39,14 +43,13 @@ function parseBindings(bindings: DirectiveBinding) {
 }
 
 function applyTooltip(el: Element, bindings: DirectiveBinding){
+    removeTooltip(el);
     const settings = useSettingsStore();
-    const enabled = settings.showTooltips;
-    if (!enabled) {
-        removeTooltip(el);
+    if(!settings.showTooltips){
         return;
     }
     const config = parseBindings(bindings);
-    Tooltip.getOrCreateInstance(el, config);
+    new Tooltip(el, config);
 }
 
 function removeTooltip(el: Element) {

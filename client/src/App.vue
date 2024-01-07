@@ -12,6 +12,12 @@
 @import '@/styles/app';
 </style>
 
-<script setup lang="ts">
+<script lang="ts">
 import { PortalTarget } from "portal-vue";
+import { defineComponent } from "vue";
+export default defineComponent({
+  components: {
+    PortalTarget
+  }
+});
 </script>

@@ -8,18 +8,18 @@
             <div class="row">
               <label class="form-label" v-t="'promptPacksLabel'"/>
               <div v-for="(value, label, index) in options.packs" class="col-md-auto">
-                <input v-if="index !== options.packs.length-1" type="checkbox" class="form-check-input"
+                <input v-if="index !== Object.keys(options.packs).length - 1" type="checkbox" class="form-check-input"
                        :class="{'Disabled': disabled}"
                        :disabled="disabled" :id="'pack' + index" :ref="'pack' + index" :checked="value"
                        @click="packChange($event, label, index)">
-                <label :for="'pack' + index" class="form-check-label ms-2">{{ $tm('packLabels')[label] }}</label>
+                <label :for="'pack' + index" class="form-check-label ms-2">{{ $t(`packLabels.${label}`) }}</label>
               </div>
             </div>
             <div class="row mt-2" :class="{'d-sm-none': disabled}">
               <div class="col-12">
                 <label for="customPrompts" class="form-label" v-t="'customPromptsLabel'"/>
                 <textarea class="form-control fs-6" :class="{'Disabled': !customSelected}" :disabled="!customSelected"
-                          id="customPrompts" ref="customPrompts" @focusout="customPromptsChange($event.currentTarget.value)"
+                          id="customPrompts" ref="customPrompts" @focusout="customPromptsChange($event)"
                           :placeholder="$t('customPromptsPlaceholder')" rows="3"/>
               </div>
             </div>
@@ -39,7 +39,7 @@
                        :value="(options.autoNumRounds) ? players.length : options.numRounds"
                        v-tooltip.right="$t('tooltip.options.rounds')"
                        @focusout="validateNumRounds($event)"
-                       @change="onNumRoundChange($event, 'numRounds')">
+                       @change="onNumRoundChange($event)">
               </div>
             </div>
             <div class="row mt-2">
@@ -49,7 +49,7 @@
                   <input type="checkbox" class="form-check-input" :class="{'Disabled': disabled}" :disabled="disabled"
                          id="sikeDispute" :checked="options.sikeDispute"
                          v-tooltip.left="$t('tooltip.options.dispute')"
-                         @click="validateSikeDispute($event, 'sikeDispute')">
+                         @click="validateSikeDispute($event)">
                 </div>
               </div>
               <div class="col-md-6">
@@ -75,16 +75,32 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import socket from '@/socket/socket';
-import { useRoomStore } from '@/stores/room.ts';
-import { useGameStore } from '@/stores/game.ts';
+import { useRoomStore } from '@/stores/room.js';
+import { useGameStore } from '@/stores/game.js';
 import { mapState } from 'pinia';
+import { defineComponent } from "vue";
 
-export default {
+type Options = {
+  promptTimer: number,
+  numRounds: number,
+  autoNumRounds: boolean,
+  promptSkipping: boolean,
+  sikeDispute: boolean,
+  sikeRetries: number,
+  packs: Record<string, boolean>,
+  customPrompts: string
+};
+
+type NumericKeyOfOptions = {
+  [K in keyof Options]: Options[K] extends number ? K : never
+}[keyof Options]
+
+export default defineComponent({
   data() {
     return {
-      customSelected: 0,
+      customSelected: false,
       tooltips: []
     }
   },
@@ -100,35 +116,35 @@ export default {
     ]),
   },
   mounted() {
-    const form = document.getElementById('form');
+    const form = document.getElementById('form') as HTMLFormElement;
     form.addEventListener('shown.bs.collapse', () => {
       if (!this.$refs.pack0) return;
-      const firstForm = this.$refs.pack0[0];
+      const firstForm = (this.$refs.pack0 as HTMLInputElement);
       firstForm.focus();
     });
   },
   methods: {
-    arraysEqual(a, b) {
+    arraysEqual(a: string[], b: string[]) {
       return Array.isArray(a) &&
           Array.isArray(b) &&
           a.length === b.length &&
           a.every((val, index) => val === b[index]);
     },
-    validateNumRounds(event) {
+    validateNumRounds(event: Event) {
       this.validateNum(event, 'numRounds', {autoNumRounds: false});
     },
-    onNumRoundChange(event) {
+    onNumRoundChange(event: Event) {
       this.onNumChange(event, 'numRounds', {autoNumRounds: false});
     },
-    onNumChange(event, label, options) {
-      const inputValue = parseInt(event.currentTarget.value);
+    onNumChange(event: Event, label: NumericKeyOfOptions, options?: Partial<Options>) {
+      const inputValue = parseInt((event.currentTarget! as HTMLInputElement).value);
       const actualValue = this.options[label];
       if (Math.abs(inputValue - actualValue) !== 0) {
         this.validateNum(event, label, options);
       }
     },
-    validateNum(event, label, options) {
-      const input = event.currentTarget;
+    validateNum(event: Event, label: NumericKeyOfOptions, options?: Partial<Options>) {
+      const input = event.currentTarget! as HTMLInputElement;
       const inputValue = parseInt(input.value);
       const max = parseInt(input.max);
       const min = parseInt(input.min);
@@ -145,20 +161,20 @@ export default {
         options[label] = sanitizedVal;
         socket.emit('setOptions', options);
       } else {
-        input.value = this.options[label];
+        input.value = String(this.options[label]);
       }
     },
-    validateSikeDispute(event, label) {
-      const input = event.currentTarget;
-      const options = {};
-      options[label] = input.checked;
+    validateSikeDispute(event: Event) {
+      const input = event.currentTarget! as HTMLInputElement;
+      const options: Partial<Options> = {};
+      options.sikeDispute = input.checked;
       if (!input.checked) {
-        options['sikeRetries'] = 0;
+        options.sikeRetries = 0;
       }
       socket.emit('setOptions', options);
     },
-    packChange(event, label, index) {
-      const input = event.currentTarget;
+    packChange(event: Event, label: string, index: number) {
+      const input = event.currentTarget! as HTMLInputElement;
       if(index === Object.keys(this.options.packs).length - 1){
         this.customSelected = input.checked;
       }
@@ -167,13 +183,13 @@ export default {
       const options = {packs: packs};
       socket.emit('setOptions', options);
     },
-    customPromptsChange(input) {
-      const prompts = input.split(/\r?\n/);
+    customPromptsChange(input: Event) {
+      const prompts = (input.currentTarget! as HTMLInputElement).value.split(/\r?\n/);
       if (!this.arraysEqual(prompts, this.options.customPrompts)) {
         const options = {customPrompts: prompts};
         socket.emit('setOptions', options);
       }
     },
   }
-}
+});
 </script>

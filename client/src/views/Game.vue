@@ -38,8 +38,9 @@ import { mapState } from 'pinia';
 import { useRoomStore } from "@/stores/room";
 import { useGameStore } from "@/stores/game";
 import { Portal } from "portal-vue";
+import { defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   components: {
     Portal,
     Lobby,
@@ -75,11 +76,11 @@ export default {
         endRound: '#overview',
         endGame: '#overview',
       }
-      return this.$router.resolve({name: 'howToPlay', hash: tips[this.scene]}).href
+      return this.$router.resolve({name: 'howToPlay', hash: tips[this.scene]}).href;
     },
     isMobile() {
       return /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     }
   }
-}
+});
 </script>

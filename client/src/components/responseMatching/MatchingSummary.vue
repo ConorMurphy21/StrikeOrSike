@@ -29,7 +29,7 @@
   </div>
 </template>
 
-<script>
+<script type="ts">
 import Prompt from '@/components/gameShared/Prompt.vue';
 import SelectionType from '@/components/gameShared/SelectionType.vue';
 import MatchCard from '@/components/responseMatching/MatchCard.vue';
@@ -40,10 +40,11 @@ import socket from '@/socket/socket';
 import { useRoomStore } from '@/stores/room.ts';
 import { useGameStore } from '@/stores/game.ts';
 import { mapState } from 'pinia';
+import { defineComponent } from "vue";
 
 const click = new AudioWrap(ClickMp3);
 
-export default {
+export default defineComponent({
   components: {MatchCard, Prompt, SelectionType, DisputeIcon},
   data() {
     return {
@@ -78,7 +79,7 @@ export default {
       return this.matches.find(match => player.id === match.player.id);
     }
   }
-}
+});
 </script>
 
 <style lang="scss" scoped>

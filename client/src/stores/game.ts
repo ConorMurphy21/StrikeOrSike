@@ -13,7 +13,7 @@ type Options = {
   sikeDispute: boolean,
   sikeRetries: number,
   packs: Record<string, boolean>,
-  customPrompts: string
+  customPrompts: string[]
 };
 type Scene = 'lobby' | 'countdown' | 'promptResponse' | 'selection' | 'activeMatching' | 'matchingSummary' | 'endRound' | 'endGame'
 
@@ -123,7 +123,7 @@ export const useGameStore = defineStore("game", {
       promptSkipping: true,
       sikeRetries: 0,
       packs: {},
-      customPrompts: ""
+      customPrompts: []
     },
     firstSelection: true,
     hasNextRound: true,

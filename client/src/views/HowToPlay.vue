@@ -6,14 +6,14 @@
       <img class="border border-4 border-burgundy rounded w-93 w-md-50 mb-4" v-if="imgs[section.key]" :src="imgs[section.key]" :alt="$rt(section.alt)">
       <div v-for="child in section.children">
         <h3 class="fw-bold display-6" :id="child.key">{{ $rt(child.header) }}</h3>
-        <p class="fw-normal">{{ child.body }}</p>
+        <p class="fw-normal">{{ $rt(child.body) }}</p>
         <img class="border border-4 border-burgundy rounded w-93 w-md-50 mb-4" v-if="imgs[child.key]" :src="imgs[child.key]" :alt="child.alt">
       </div>
     </div>
   </div>
 </template>
 
-<script>
+<script type="ts">
 import Prompt from '@/assets/images/howToPlay/prompt.png';
 import Strike from '@/assets/images/howToPlay/strike.png';
 import Sike from '@/assets/images/howToPlay/sike.png';

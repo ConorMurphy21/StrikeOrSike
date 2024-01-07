@@ -1,9 +1,3 @@
-type Section = {
-    key: string,
-    header: string,
-    body: string,
-}
-
 export default {
     strikeOrSike: 'Strike or Sike',
     strike: 'Strike',
@@ -190,19 +184,6 @@ export default {
             ]
         }
     ],
-    foo: [
-        {
-            key: '1',
-            header: '1',
-            body: '111',
-        },
-        {
-            key: '2',
-            header: '2',
-            body: '222',
-        }
-    ] as Section[],
-
     /*** ABOUT PAGE STRINGS ***/
 
     about: {

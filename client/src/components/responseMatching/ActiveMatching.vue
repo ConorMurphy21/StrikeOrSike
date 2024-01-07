@@ -2,15 +2,15 @@
   <div class="w-100 d-flex flex-column justify-content-start align-items-center py-3 px-4">
     <prompt :prompt="prompt"/>
     <i18n-t keypath="activeMatchingMessage" tag="p">
-      <template v-slot:player>
+      <template #player>
         <span class="player">{{ selector?.name }}</span>
       </template>
-      <template v-slot:response>
+      <template #response>
         <span class="responseMessage fs-4">{{ selectedResponse }}</span>
         <dispute-icon v-if="sikeDispute && selectionType === 'sike'" class="ms-2 me-1"
                       :response="selectedResponse" :placement="'top'"/>
       </template>
-      <template v-slot:type>
+      <template #type>
         <span :class="selectionType" v-t="selectionType"/>
       </template>
     </i18n-t>

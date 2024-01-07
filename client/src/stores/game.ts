@@ -142,7 +142,7 @@ export const useGameStore = defineStore("game", {
         return this.responses[id];
       };
     },
-    roundPoints() {
+    roundPoints(): number {
       if (this.selectionType === "strike") {
         let count = 0;
         this.matches.forEach((match: Match) => {
@@ -151,8 +151,7 @@ export const useGameStore = defineStore("game", {
           }
         });
         return count;
-      }
-      if (this.selectionType === "sike") {
+      } else {
         let count = 0;
         this.matches.forEach((match: Match) => {
           if (match.response === "" && match.player.active) {

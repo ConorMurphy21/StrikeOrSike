@@ -13,7 +13,7 @@
   </div>
 </template>
 
-<script type="ts">
+<script lang="js">
 import Prompt from '@/assets/images/howToPlay/prompt.png';
 import Strike from '@/assets/images/howToPlay/strike.png';
 import Sike from '@/assets/images/howToPlay/sike.png';

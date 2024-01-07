@@ -24,9 +24,9 @@
 </template>
 
 <script lang="ts">
-import Lobby from '@/components/lobby/Lobby.vue'
+import Lobby from '@/components/lobby/Lobby.vue';
 import Countdown from '@/components/countdown/Countdown.vue';
-import PromptResponse from '@/components/promptResponse/PromptResponse.vue'
+import PromptResponse from '@/components/promptResponse/PromptResponse.vue';
 import Selection from '@/components/responseSelection/Selection.vue';
 import ActiveMatching from '@/components/responseMatching/ActiveMatching.vue';
 import MatchingSummary from '@/components/responseMatching/MatchingSummary.vue';

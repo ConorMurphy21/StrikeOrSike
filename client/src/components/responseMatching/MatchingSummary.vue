@@ -7,7 +7,7 @@
         {{ $t('selfScoreMessage', {score: $n(roundPoints)}) }}
       </h3>
       <h3 v-else class="fs-3">
-        {{ $t('scoreMessage', {player: selector.name, score: $n(roundPoints)}) }}
+        {{ $t('scoreMessage', {player: selector!.name, score: $n(roundPoints)}) }}
       </h3>
       <span class="d-flex flex-row align-items-center justify-content-center gap-2">
         <span class="fs-2 fw-bolder text-red my-auto">{{ selectedResponse }}</span>
@@ -29,18 +29,26 @@
   </div>
 </template>
 
-<script type="ts">
+<script lang="ts">
 import Prompt from '@/components/gameShared/Prompt.vue';
 import SelectionType from '@/components/gameShared/SelectionType.vue';
 import MatchCard from '@/components/responseMatching/MatchCard.vue';
 import DisputeIcon from '@/components/responseMatching/DisputeIcon.vue';
 import ClickMp3 from '@/assets/audio/click2.mp3';
-import {AudioWrap} from '@/mixins/audiowrap.ts';
+import {AudioWrap} from '@/mixins/audiowrap.js';
 import socket from '@/socket/socket';
-import { useRoomStore } from '@/stores/room.ts';
-import { useGameStore } from '@/stores/game.ts';
+import { useRoomStore } from '@/stores/room.js';
+import { useGameStore } from '@/stores/game.js';
 import { mapState } from 'pinia';
 import { defineComponent } from "vue";
+
+
+type Player = {
+  id: string,
+  name: string,
+  leader: boolean,
+  active: boolean
+}
 
 const click = new AudioWrap(ClickMp3);
 
@@ -67,7 +75,7 @@ export default defineComponent({
       'sikeDisputeCount'
     ]),
     matchers: function () {
-      return this.players.filter(player => player.active && player.id !== this.selector.id);
+      return this.players.filter((player: Player) => player.active && player.id !== this.selector!.id);
     }
   },
   methods: {
@@ -75,15 +83,14 @@ export default defineComponent({
       click.play();
       socket.emit('selectionComplete');
     },
-    match(player) {
-      return this.matches.find(match => player.id === match.player.id);
+    match(player: Player) {
+      return this.matches.find((match: {player: Player}) => player.id === match.player.id);
     }
   }
 });
 </script>
 
 <style lang="scss" scoped>
-
 .matches {
   overflow-x: auto;
   flex-flow: wrap;

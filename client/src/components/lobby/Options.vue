@@ -1,73 +1,119 @@
 <template>
   <div class="accordion w-75">
     <div class="accordion-item">
-
       <div id="form" class="accordion-collapse collapse hidden" aria-labelledby="options-heading">
         <div class="accordion-body">
           <form>
             <div class="row">
-              <label class="form-label" v-t="'promptPacksLabel'"/>
-              <div v-for="(value, label, index) in options.packs" class="col-md-auto">
-                <input type="checkbox" class="form-check-input"
-                       :class="{'Disabled': disabled}"
-                       :disabled="disabled" :id="'pack' + index" :checked="value"
-                       @click="packChange($event, label, index)">
+              <label v-t="'promptPacksLabel'" class="form-label" />
+              <div v-for="(value, label, index) in options.packs" :key="label" class="col-md-auto">
+                <input
+                  :id="'pack' + index"
+                  type="checkbox"
+                  class="form-check-input"
+                  :class="{ Disabled: disabled }"
+                  :disabled="disabled"
+                  :checked="value"
+                  @click="packChange($event, label, index)"
+                />
                 <label :for="'pack' + index" class="form-check-label ms-2">{{ $t(`packLabels.${label}`) }}</label>
               </div>
             </div>
-            <div class="row mt-2" :class="{'d-sm-none': disabled}">
+            <div class="row mt-2" :class="{ 'd-sm-none': disabled }">
               <div class="col-12">
-                <label for="customPrompts" class="form-label" v-t="'customPromptsLabel'"/>
-                <textarea class="form-control fs-6" :class="{'Disabled': !customSelected}" :disabled="!customSelected"
-                          id="customPrompts" ref="customPrompts" @focusout="customPromptsChange($event)"
-                          :placeholder="$t('customPromptsPlaceholder')" rows="3"/>
+                <label v-t="'customPromptsLabel'" for="customPrompts" class="form-label" />
+                <textarea
+                  id="customPrompts"
+                  ref="customPrompts"
+                  class="form-control fs-6"
+                  :class="{ Disabled: !customSelected }"
+                  :disabled="!customSelected"
+                  :placeholder="$t('customPromptsPlaceholder')"
+                  rows="3"
+                  @focusout="customPromptsChange($event)"
+                />
               </div>
             </div>
             <div class="row mt-2">
               <div class="col-md-6">
-                <label for="timerDuration" class="form-label" v-t="'timerDurationLabel'"/>
-                <input type="number" min="15" max="60" class="form-control" :class="{'Disabled': disabled}"
-                       :disabled="disabled" id="timerDuration" ref="timerDuration" :value="options.promptTimer"
-                       v-tooltip.left="$t('tooltip.options.timer')"
-                       @focusout="validateNum($event, 'promptTimer')"
-                       @change="onNumChange($event, 'promptTimer')">
+                <label v-t="'timerDurationLabel'" for="timerDuration" class="form-label" />
+                <input
+                  id="timerDuration"
+                  ref="timerDuration"
+                  v-tooltip.left="$t('tooltip.options.timer')"
+                  type="number"
+                  min="15"
+                  max="60"
+                  class="form-control"
+                  :class="{ Disabled: disabled }"
+                  :disabled="disabled"
+                  :value="options.promptTimer"
+                  @focusout="validateNum($event, 'promptTimer')"
+                  @change="onNumChange($event, 'promptTimer')"
+                />
               </div>
               <div class="col-md-6">
-                <label for="numRounds" class="form-label" v-t="'numRoundsLabel'"/>
-                <input type="number" min="1" max="20" class="form-control" :class="{'Disabled': disabled}"
-                       :disabled="disabled" id="numRounds"
-                       :value="(options.autoNumRounds) ? players.length : options.numRounds"
-                       v-tooltip.right="$t('tooltip.options.rounds')"
-                       @focusout="validateNumRounds($event)"
-                       @change="onNumRoundChange($event)">
+                <label v-t="'numRoundsLabel'" for="numRounds" class="form-label" />
+                <input
+                  id="numRounds"
+                  v-tooltip.right="$t('tooltip.options.rounds')"
+                  type="number"
+                  min="1"
+                  max="20"
+                  class="form-control"
+                  :class="{ Disabled: disabled }"
+                  :disabled="disabled"
+                  :value="options.autoNumRounds ? players.length : options.numRounds"
+                  @focusout="validateNumRounds($event)"
+                  @change="onNumRoundChange($event)"
+                />
               </div>
             </div>
             <div class="row mt-2">
               <div class="col-md-6 d-flex justify-content-start align-items-center">
                 <div class="form-check form-switch">
-                  <label for="sikeDispute" class="form-check-label" v-t="'sikeDisputeLabel'"/>
-                  <input type="checkbox" class="form-check-input" :class="{'Disabled': disabled}" :disabled="disabled"
-                         id="sikeDispute" :checked="options.sikeDispute"
-                         v-tooltip.left="$t('tooltip.options.dispute')"
-                         @click="validateSikeDispute($event)">
+                  <label v-t="'sikeDisputeLabel'" for="sikeDispute" class="form-check-label" />
+                  <input
+                    id="sikeDispute"
+                    v-tooltip.left="$t('tooltip.options.dispute')"
+                    type="checkbox"
+                    class="form-check-input"
+                    :class="{ Disabled: disabled }"
+                    :disabled="disabled"
+                    :checked="options.sikeDispute"
+                    @click="validateSikeDispute($event)"
+                  />
                 </div>
               </div>
               <div class="col-md-6">
-                <label for="sikeRetries" class="form-label" v-t="'sikeRetriesLabel'"/>
-                <input type="number" min="0" max="2" class="form-control" id="sikeRetries" :value="options.sikeRetries"
-                       :class="{'Disabled': disabled || !options.sikeDispute}"
-                       :disabled="disabled || !options.sikeDispute"
-                       v-tooltip.right="$t('tooltip.options.retries')"
-                       @focusout="validateNum($event, 'sikeRetries')"
-                       @change="onNumChange($event, 'sikeRetries')">
+                <label v-t="'sikeRetriesLabel'" for="sikeRetries" class="form-label" />
+                <input
+                  id="sikeRetries"
+                  v-tooltip.right="$t('tooltip.options.retries')"
+                  type="number"
+                  min="0"
+                  max="2"
+                  class="form-control"
+                  :value="options.sikeRetries"
+                  :class="{ Disabled: disabled || !options.sikeDispute }"
+                  :disabled="disabled || !options.sikeDispute"
+                  @focusout="validateNum($event, 'sikeRetries')"
+                  @change="onNumChange($event, 'sikeRetries')"
+                />
               </div>
             </div>
           </form>
         </div>
       </div>
-      <h2 class="accordion-header" id="options-heading">
-        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#form"
-                aria-expanded="false" aria-controls="form">
+      <h2 id="options-heading" class="accordion-header">
+        <button
+          class="accordion-button"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#form"
+          aria-expanded="false"
+          aria-controls="form"
+        >
           Game Options
         </button>
       </h2>
@@ -76,119 +122,112 @@
 </template>
 
 <script lang="ts">
-import socket from '@/socket/socket';
-import { useRoomStore } from '@/stores/room.js';
-import { useGameStore } from '@/stores/game.js';
-import { mapState } from 'pinia';
-import { defineComponent } from "vue";
+import socket from '@/socket/socket'
+import { useRoomStore } from '@/stores/room.js'
+import { useGameStore } from '@/stores/game.js'
+import { mapState } from 'pinia'
+import { defineComponent } from 'vue'
 
 type Options = {
-  promptTimer: number,
-  numRounds: number,
-  autoNumRounds: boolean,
-  promptSkipping: boolean,
-  sikeDispute: boolean,
-  sikeRetries: number,
-  packs: Record<string, boolean>,
+  promptTimer: number
+  numRounds: number
+  autoNumRounds: boolean
+  promptSkipping: boolean
+  sikeDispute: boolean
+  sikeRetries: number
+  packs: Record<string, boolean>
   customPrompts: string
-};
+}
 
 type NumericKeyOfOptions = {
   [K in keyof Options]: Options[K] extends number ? K : never
 }[keyof Options]
 
 export default defineComponent({
+  props: {
+    disabled: Boolean
+  },
   data() {
     return {
       customSelected: false,
       tooltips: []
     }
   },
-  props: {
-    disabled: Boolean,
-  },
   computed: {
-    ...mapState(useGameStore, [
-      'options'
-    ]),
-    ...mapState(useRoomStore, [
-      'players'
-    ]),
+    ...mapState(useGameStore, ['options']),
+    ...mapState(useRoomStore, ['players'])
   },
   mounted() {
-    const form = document.getElementById('form') as HTMLFormElement;
-    const firstForm = (this.$refs.timerDuration as HTMLInputElement);
+    const form = document.getElementById('form') as HTMLFormElement
+    const firstForm = this.$refs.timerDuration as HTMLInputElement
     form.addEventListener('shown.bs.collapse', () => {
-      firstForm.focus();
-    });
+      firstForm.focus()
+    })
   },
   methods: {
     arraysEqual(a: string[], b: string[]) {
-      return Array.isArray(a) &&
-          Array.isArray(b) &&
-          a.length === b.length &&
-          a.every((val, index) => val === b[index]);
+      return Array.isArray(a) && Array.isArray(b) && a.length === b.length && a.every((val, index) => val === b[index])
     },
     validateNumRounds(event: Event) {
-      this.validateNum(event, 'numRounds', {autoNumRounds: false});
+      this.validateNum(event, 'numRounds', { autoNumRounds: false })
     },
     onNumRoundChange(event: Event) {
-      this.onNumChange(event, 'numRounds', {autoNumRounds: false});
+      this.onNumChange(event, 'numRounds', { autoNumRounds: false })
     },
     onNumChange(event: Event, label: NumericKeyOfOptions, options?: Partial<Options>) {
-      const inputValue = parseInt((event.currentTarget! as HTMLInputElement).value);
-      const actualValue = this.options[label];
+      const inputValue = parseInt((event.currentTarget! as HTMLInputElement).value)
+      const actualValue = this.options[label]
       if (Math.abs(inputValue - actualValue) !== 0) {
-        this.validateNum(event, label, options);
+        this.validateNum(event, label, options)
       }
     },
     validateNum(event: Event, label: NumericKeyOfOptions, options?: Partial<Options>) {
-      const input = event.currentTarget! as HTMLInputElement;
-      const inputValue = parseInt(input.value);
-      const max = parseInt(input.max);
-      const min = parseInt(input.min);
-      let sanitizedVal;
+      const input = event.currentTarget! as HTMLInputElement
+      const inputValue = parseInt(input.value)
+      const max = parseInt(input.max)
+      const min = parseInt(input.min)
+      let sanitizedVal
       if (inputValue > max) {
-        sanitizedVal = max;
+        sanitizedVal = max
       } else if (inputValue < min) {
-        sanitizedVal = min;
+        sanitizedVal = min
       } else {
-        sanitizedVal = inputValue;
+        sanitizedVal = inputValue
       }
       if (sanitizedVal !== this.options[label]) {
-        options = options ?? {};
-        options[label] = sanitizedVal;
-        socket.emit('setOptions', options);
+        options = options ?? {}
+        options[label] = sanitizedVal
+        socket.emit('setOptions', options)
       } else {
-        input.value = String(this.options[label]);
+        input.value = String(this.options[label])
       }
     },
     validateSikeDispute(event: Event) {
-      const input = event.currentTarget! as HTMLInputElement;
-      const options: Partial<Options> = {};
-      options.sikeDispute = input.checked;
+      const input = event.currentTarget! as HTMLInputElement
+      const options: Partial<Options> = {}
+      options.sikeDispute = input.checked
       if (!input.checked) {
-        options.sikeRetries = 0;
+        options.sikeRetries = 0
       }
-      socket.emit('setOptions', options);
+      socket.emit('setOptions', options)
     },
     packChange(event: Event, label: string, index: number) {
-      const input = event.currentTarget! as HTMLInputElement;
-      if(index === Object.keys(this.options.packs).length - 1){
-        this.customSelected = input.checked;
+      const input = event.currentTarget! as HTMLInputElement
+      if (index === Object.keys(this.options.packs).length - 1) {
+        this.customSelected = input.checked
       }
-      const packs = {...this.options.packs};
-      packs[label] = input.checked;
-      const options = {packs: packs};
-      socket.emit('setOptions', options);
+      const packs = { ...this.options.packs }
+      packs[label] = input.checked
+      const options = { packs: packs }
+      socket.emit('setOptions', options)
     },
     customPromptsChange(input: Event) {
-      const prompts = (input.currentTarget! as HTMLInputElement).value.split(/\r?\n/);
+      const prompts = (input.currentTarget! as HTMLInputElement).value.split(/\r?\n/)
       if (!this.arraysEqual(prompts, this.options.customPrompts)) {
-        const options = {customPrompts: prompts};
-        socket.emit('setOptions', options);
+        const options = { customPrompts: prompts }
+        socket.emit('setOptions', options)
       }
-    },
+    }
   }
-});
+})
 </script>

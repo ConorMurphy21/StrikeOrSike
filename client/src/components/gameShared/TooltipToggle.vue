@@ -1,35 +1,31 @@
 <template>
-  <button class="text-black"
-          :class="{'bi-lightbulb': showTooltips,'bi-lightbulb-off': !showTooltips }"
-          @click="click"
-          v-tooltip.left.ds250="$t('tooltip.showTooltips')"
+  <button
+    v-tooltip.left.ds250="$t('tooltip.showTooltips')"
+    class="text-black"
+    :class="{ 'bi-lightbulb': showTooltips, 'bi-lightbulb-off': !showTooltips }"
+    @click="click"
   />
 </template>
 <script lang="ts">
-import { useSettingsStore } from '@/stores/settings.js';
-import { mapState, mapActions } from 'pinia';
-import { defineComponent } from "vue";
+import { useSettingsStore } from '@/stores/settings.js'
+import { mapState, mapActions } from 'pinia'
+import { defineComponent } from 'vue'
 
 export default defineComponent({
   computed: {
-    ...mapState(useSettingsStore, [
-      'showTooltips'
-    ]),
+    ...mapState(useSettingsStore, ['showTooltips'])
   },
   methods: {
-    ...mapActions(useSettingsStore, [
-      'setShowTooltips'
-    ]),
+    ...mapActions(useSettingsStore, ['setShowTooltips']),
     click() {
-      this.setShowTooltips(!this.showTooltips);
-      this.$forceUpdate();
-    },
+      this.setShowTooltips(!this.showTooltips)
+      this.$forceUpdate()
+    }
   }
-});
+})
 </script>
 
 <style scoped lang="scss">
-
 button {
   font-size: 40px;
   background: none;
@@ -46,5 +42,4 @@ button:focus {
   text-shadow: 0 0 18px yellow;
   cursor: pointer;
 }
-
 </style>

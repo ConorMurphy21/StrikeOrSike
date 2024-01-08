@@ -1,24 +1,39 @@
 <!--suppress CssUnusedSymbol -->
 <template>
-  <div class="d-flex flex-column justify-content-center align-items-center"
-       @mouseenter="clearTimer" @mouseleave="resetTimer">
+  <div
+    class="d-flex flex-column justify-content-center align-items-center"
+    @mouseenter="clearTimer"
+    @mouseleave="resetTimer"
+  >
     <transition>
-      <vue-slider v-if="showing" v-model="value" direction="btt" height="80px" :duration="0.3"
-                  @focusin="clearTimer" @focusout="resetTimer"/>
+      <vue-slider
+        v-if="showing"
+        v-model="value"
+        direction="btt"
+        height="80px"
+        :duration="0.3"
+        @focusin="clearTimer"
+        @focusout="resetTimer"
+      />
     </transition>
-    <button class="text-black"
-            :class="{
-                'bi-volume-up-fill': value > 50,
-                'bi-volume-down-fill': value <= 50 && value > 0,
-                'bi-volume-mute-fill': value === 0}"
-            @click="click" @focusin="clearTimer" @focusout="resetTimer"/>
+    <button
+      class="text-black"
+      :class="{
+        'bi-volume-up-fill': value > 50,
+        'bi-volume-down-fill': value <= 50 && value > 0,
+        'bi-volume-mute-fill': value === 0
+      }"
+      @click="click"
+      @focusin="clearTimer"
+      @focusout="resetTimer"
+    />
   </div>
 </template>
 <script lang="ts">
-import VueSlider from 'vue-slider-component';
-import { useSettingsStore } from '@/stores/settings.js';
-import { mapActions, mapState } from 'pinia';
-import { defineComponent } from "vue";
+import VueSlider from 'vue-slider-component'
+import { useSettingsStore } from '@/stores/settings.js'
+import { mapActions, mapState } from 'pinia'
+import { defineComponent } from 'vue'
 
 export default defineComponent({
   components: {
@@ -31,41 +46,36 @@ export default defineComponent({
     }
   },
   computed: {
-    ...mapState(useSettingsStore, [
-      'volume'
-    ]),
+    ...mapState(useSettingsStore, ['volume']),
     value: {
       set: function (val: number) {
-        this.setVolume(val / 100);
+        this.setVolume(val / 100)
       },
       get: function () {
-        return Math.round(this.volume * 100);
+        return Math.round(this.volume * 100)
       }
-    },
+    }
   },
   methods: {
-    ...mapActions(useSettingsStore, [
-      'setVolume',
-      'toggleMute'
-    ]),
+    ...mapActions(useSettingsStore, ['setVolume', 'toggleMute']),
     click() {
-        this.toggleMute();
+      this.toggleMute()
     },
     resetTimer() {
-      this.clearTimer();
+      this.clearTimer()
       this.timer = setTimeout(() => {
-        this.timer = null;
-        this.showing = false;
-      }, 700);
+        this.timer = null
+        this.showing = false
+      }, 700)
     },
     clearTimer() {
-      this.showing = true;
-      if(this.timer){
-        clearTimeout(this.timer);
+      this.showing = true
+      if (this.timer) {
+        clearTimeout(this.timer)
       }
     }
   }
-});
+})
 </script>
 
 <style scoped lang="scss">
@@ -93,5 +103,4 @@ button:focus {
   text-shadow: 0 0 18px $red;
   cursor: pointer;
 }
-
 </style>

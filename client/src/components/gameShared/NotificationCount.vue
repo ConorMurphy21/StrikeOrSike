@@ -1,12 +1,14 @@
 <template>
-      <span :style="cssProps"
-            class="rounded-pill badge bg-burgundy d-inline-flex align-items-center justify-content-center p-0">
-         <slot/>
-      </span>
+  <span
+    :style="cssProps"
+    class="rounded-pill badge bg-burgundy d-inline-flex align-items-center justify-content-center p-0"
+  >
+    <slot />
+  </span>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent } from 'vue'
 
 export default defineComponent({
   props: {
@@ -26,8 +28,8 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
- span {
-   min-width: var(--min-width);
-   height: var(--min-width);
- }
+span {
+  min-width: var(--min-width);
+  height: var(--min-width);
+}
 </style>

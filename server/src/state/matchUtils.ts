@@ -8,13 +8,13 @@ const spellcheckers: Record<string, Spellchecker.Spellchecker> = {
   en_CA: en
 };
 
-export async function getCorrections(string: string, lang: string) {
-  if (string.includes(' ')) return [];
+export function getCorrections(string: string, lang: string): Promise<string[]> {
+  if (string.includes(' ')) return Promise.resolve([]);
   const spellchecker = spellcheckers[lang] ?? en;
   if (spellchecker.isMisspelled(string)) {
-    return spellchecker.getCorrectionsForMisspelling(string);
+    return Promise.resolve(spellchecker.getCorrectionsForMisspelling(string));
   }
-  return [];
+  return Promise.resolve([]);
 }
 
 function certainMatch(string1: string, string2: string, lang: string): boolean {

@@ -181,9 +181,11 @@ export class GameState {
       }
       playerState.responses.push(response);
       if (!this.corrections[response]) {
-        getCorrections(response, this.room.lang).then((corrections) => {
-          this.corrections[response] = corrections;
-        });
+        getCorrections(response, this.room.lang)
+          .then((corrections: string[]) => {
+            this.corrections[response] = corrections;
+          })
+          .catch(() => {});
       }
     } else {
       return Info('invalidStage');

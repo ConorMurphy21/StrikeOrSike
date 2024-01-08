@@ -1,14 +1,15 @@
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import { io as ioc, Socket } from 'socket.io-client';
+import { io as ioc } from 'socket.io-client';
 import { type AddressInfo } from 'node:net';
 import { registerHandlers } from '../../src/routes/registerHandlers';
 import { assert } from 'chai';
+import { TypedClientSocket } from '../../src/types/socketServerTypes';
 
 describe('Validation tests', () => {
   let io: Server;
-  let clientSocket1: Socket;
-  let clientSocket2: Socket;
+  let clientSocket1: TypedClientSocket;
+  let clientSocket2: TypedClientSocket;
   beforeEach((done) => {
     const httpServer = createServer();
     io = new Server(httpServer);
@@ -78,7 +79,7 @@ describe('Validation tests', () => {
 });
 
 describe('create/join tests', () => {
-  let io: Server, clientSocket1: Socket, clientSocket2: Socket, port: number;
+  let io: Server, clientSocket1: TypedClientSocket, clientSocket2: TypedClientSocket, port: number;
   beforeEach((done) => {
     const httpServer = createServer();
     io = new Server(httpServer);
@@ -213,7 +214,7 @@ describe('create/join tests', () => {
       clientSocket2.emit('joinRoom', 'name2', 'room');
     });
     clientSocket2.on('disconnect', () => {
-      const clientSocket3 = ioc(`http://localhost:${port}`);
+      const clientSocket3: TypedClientSocket = ioc(`http://localhost:${port}`);
       clientSocket3.on('connect', () => {
         clientSocket3.emit('joinRoom', 'name2', 'room');
       });
@@ -221,7 +222,7 @@ describe('create/join tests', () => {
         clientSocket3.disconnect();
       });
       clientSocket3.on('disconnect', () => {
-        const clientSocket4 = ioc(`http://localhost:${port}`);
+        const clientSocket4: TypedClientSocket = ioc(`http://localhost:${port}`);
         clientSocket4.on('connect', () => {
           clientSocket4.emit('joinRoom', 'name2', 'room');
         });

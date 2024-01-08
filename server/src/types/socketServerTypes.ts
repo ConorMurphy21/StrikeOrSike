@@ -1,4 +1,5 @@
 import { Server, Socket } from 'socket.io';
+import { Socket as ClientSocket } from 'socket.io-client';
 import { ConfigurableOptions } from '../state/options';
 import { PollName } from '../state/pollService';
 import { Match, MidgameConnectData, Responses, SelectionType } from './stateTypes';
@@ -7,7 +8,7 @@ import { Player } from '../state/rooms';
 interface ServerToClientRoomEvents {
   joinRoom(args: { error: string } | { success: boolean; roomName: string }): void;
 
-  updatePlayers(args: { modifies: Player[]; deletes: Player[] }): void;
+  updatePlayers(args: { modifies: Player[]; deletes: string[] }): void;
 }
 
 interface ClientToServerRoomEvents {
@@ -76,3 +77,4 @@ type ClientToServerEvents = ClientToServerRoomEvents & ClientToServerGameEvents;
 export class TypedServer extends Server<ClientToServerEvents, ServerToClientEvents> {}
 
 export class TypedSocket extends Socket<ClientToServerEvents, ServerToClientEvents> {}
+export class TypedClientSocket extends ClientSocket<ServerToClientEvents, ClientToServerEvents> {}

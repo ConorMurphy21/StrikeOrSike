@@ -1,10 +1,11 @@
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import { io as ioc, Socket } from 'socket.io-client';
+import { io as ioc } from 'socket.io-client';
 import { type AddressInfo } from 'node:net';
 import { registerHandlers } from '../../src/routes/registerHandlers';
 import { assert } from 'chai';
 import { Player } from '../../src/state/rooms';
+import { TypedClientSocket } from '../../src/types/socketServerTypes';
 
 const SHARED_RESPONSE = 'sharedResponse';
 const C1_RESPONSE = 'c1Response';
@@ -12,7 +13,7 @@ const C2_RESPONSE = 'c2Response';
 
 describe('responseSelection tests', () => {
   const roomName = 'room';
-  let io: Server, clientSocket1: Socket, clientSocket2: Socket, c1Id: string, c2Id: string;
+  let io: Server, clientSocket1: TypedClientSocket, clientSocket2: TypedClientSocket, c1Id: string, c2Id: string;
   beforeEach((done) => {
     const httpServer = createServer();
     io = new Server(httpServer);
@@ -23,7 +24,7 @@ describe('responseSelection tests', () => {
       clientSocket1.on('connect', () => {
         clientSocket2 = ioc(`http://localhost:${port}`);
         clientSocket2.on('connect', () => {
-          clientSocket1.on('updatePlayers', (data) => {
+          clientSocket1.on('updatePlayers', (data: { modifies: Player[]; deletes: string[] }) => {
             data.modifies.forEach((player: Player) => {
               if (player.name === 'name1') c1Id = player.id;
               else c2Id = player.id;
@@ -53,7 +54,7 @@ describe('responseSelection tests', () => {
   });
 
   it('beginSelection happy', (done) => {
-    clientSocket1.on('nextSelection', (data) => {
+    clientSocket1.on('nextSelection', (data: { selector: string; selectionType: string }) => {
       assert.isOk(data.selector);
       assert.isOk(data.selectionType);
       done();
@@ -62,8 +63,8 @@ describe('responseSelection tests', () => {
   });
 
   it('makeSelection happy', (done) => {
-    clientSocket1.on('nextSelection', (data) => {
-      let selectingClient: Socket, selectingResponse: string;
+    clientSocket1.on('nextSelection', (data: { selector: string; selectionType: string }) => {
+      let selectingClient: TypedClientSocket, selectingResponse: string;
       if (data.selector === c1Id) {
         selectingClient = clientSocket1;
         selectingResponse = C1_RESPONSE;
@@ -89,8 +90,8 @@ describe('responseSelection tests', () => {
   });
 
   it('makeSelection wrongSelector', (done) => {
-    clientSocket1.on('nextSelection', (data) => {
-      let selectingClient, selectingResponse;
+    clientSocket1.on('nextSelection', (data: { selector: string; selectionType: string }) => {
+      let selectingClient: TypedClientSocket, selectingResponse: string;
       if (data.selector === c1Id) {
         selectingClient = clientSocket2;
         selectingResponse = C2_RESPONSE;
@@ -107,7 +108,7 @@ describe('responseSelection tests', () => {
         assert.fail();
       });
       if (data.selectionType === 'choice') {
-        selectingClient.emit('selectSelectionType', 'strike');
+        selectingClient.emit('selectSelectionType', true);
       }
       selectingClient.emit('selectResponse', selectingResponse);
       setTimeout(done, 100);
@@ -116,8 +117,8 @@ describe('responseSelection tests', () => {
   });
 
   it('makeSelection invalidResponse', (done) => {
-    clientSocket1.on('nextSelection', (data) => {
-      let selectingClient, selectingResponse;
+    clientSocket1.on('nextSelection', (data: { selector: string; selectionType: string }) => {
+      let selectingClient: TypedClientSocket, selectingResponse: string;
       if (data.selector === c1Id) {
         selectingClient = clientSocket1;
         selectingResponse = C2_RESPONSE;
@@ -134,7 +135,7 @@ describe('responseSelection tests', () => {
         assert.fail();
       });
       if (data.selectionType === 'choice') {
-        selectingClient.emit('selectSelectionType', 'strike');
+        selectingClient.emit('selectSelectionType', true);
       }
       selectingClient.emit('selectResponse', selectingResponse);
       setTimeout(done, 100);

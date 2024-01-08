@@ -1,12 +1,14 @@
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import { io as ioc, Socket } from 'socket.io-client';
+import { io as ioc } from 'socket.io-client';
 import { type AddressInfo } from 'node:net';
 import { registerHandlers } from '../../src/routes/registerHandlers';
 import { assert } from 'chai';
+import { Player } from '../../src/state/rooms';
+import { TypedClientSocket } from '../../src/types/socketServerTypes';
 
 describe('lobby tests', () => {
-  let io: Server, clientSocket1: Socket, clientSocket2: Socket;
+  let io: Server, clientSocket1: TypedClientSocket, clientSocket2: TypedClientSocket;
   beforeEach((done) => {
     const httpServer = createServer();
     io = new Server(httpServer);
@@ -28,12 +30,12 @@ describe('lobby tests', () => {
   });
 
   it('create room happy updatePlayers', (done) => {
-    clientSocket1.on('updatePlayers', (arg) => {
+    clientSocket1.on('updatePlayers', (arg: { modifies: Player[]; deletes: string[] }) => {
       assert.deepEqual(arg.deletes, []);
       assert.isOk(arg.modifies);
-      const modded = arg.modifies[0];
+      const modded: Partial<Player> = arg.modifies[0];
       assert.isOk(modded);
-      delete modded['id'];
+      delete modded.id;
       assert.deepEqual(modded, { name: 'name', leader: true, active: true });
       done();
     });
@@ -41,13 +43,13 @@ describe('lobby tests', () => {
   });
 
   it('join room happy updatePlayers', (done) => {
-    clientSocket2.on('updatePlayers', (arg) => {
+    clientSocket2.on('updatePlayers', (arg: { modifies: Player[]; deletes: string[] }) => {
       assert.deepEqual(arg.deletes, []);
       assert.isOk(arg.modifies);
       assert.strictEqual(arg.modifies.length, 2);
-      const modded1 = arg.modifies[0];
+      const modded1: Partial<Player> = arg.modifies[0];
       delete modded1['id'];
-      const modded2 = arg.modifies[1];
+      const modded2: Partial<Player> = arg.modifies[1];
       delete modded2['id'];
       assert.deepEqual(modded1, { name: 'name1', leader: true, active: true });
       assert.deepEqual(modded2, { name: 'name2', leader: false, active: true });
@@ -67,10 +69,10 @@ describe('lobby tests', () => {
       clientSocket2.emit('joinRoom', 'name2', 'room');
     });
     let nupdates = 0;
-    clientSocket1.on('updatePlayers', (arg) => {
+    clientSocket1.on('updatePlayers', (arg: { modifies: Player[]; deletes: string[] }) => {
       assert.deepEqual(arg.deletes, []);
       assert.isOk(arg.modifies);
-      const modded = arg.modifies[0];
+      const modded: Partial<Player> = arg.modifies[0];
       assert.isOk(modded);
       delete modded['id'];
       if (nupdates === 0) {
@@ -102,14 +104,14 @@ describe('lobby tests', () => {
       clientSocket2.emit('joinRoom', 'name2', 'room');
     });
     let once = false;
-    clientSocket2.on('updatePlayers', (arg) => {
+    clientSocket2.on('updatePlayers', (arg: { modifies: Player[]; deletes: string[] }) => {
       if (once) {
         assert.deepEqual(arg.deletes, []);
         assert.isOk(arg.modifies);
         assert.strictEqual(arg.modifies.length, 2);
-        const modded1 = arg.modifies[0];
+        const modded1: Partial<Player> = arg.modifies[0];
         delete modded1['id'];
-        const modded2 = arg.modifies[1];
+        const modded2: Partial<Player> = arg.modifies[1];
         delete modded2['id'];
         assert.deepEqual(modded1, {
           name: 'name1',

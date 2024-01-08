@@ -80,89 +80,107 @@ describe('Automatch tests', () => {
   it('misspelled matcher', (done) => {
     const selectorResponse = 'response';
     const matcherResponse = 'rsponse';
-    acceptPrompts([selectorResponse], [matcherResponse]).then(() => {
-      gameState.acceptResponseSelection(selectorId, selectorResponse);
-      assert.isTrue(gameState.players[matcherIndex].matchingComplete);
-      assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
-      done();
-    });
+    acceptPrompts([selectorResponse], [matcherResponse])
+      .then(() => {
+        gameState.acceptResponseSelection(selectorId, selectorResponse);
+        assert.isTrue(gameState.players[matcherIndex].matchingComplete);
+        assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
+        done();
+      })
+      .catch(() => {
+        assert.fail();
+      });
   });
 
   it('misspelled selector', (done) => {
     const selectorResponse = 'rsponse';
     const matcherResponse = 'response';
-    acceptPrompts([selectorResponse], [matcherResponse]).then(() => {
-      gameState.acceptResponseSelection(selectorId, selectorResponse);
-      assert.isTrue(gameState.players[matcherIndex].matchingComplete);
-      assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
-      done();
-    });
+    acceptPrompts([selectorResponse], [matcherResponse])
+      .then(() => {
+        gameState.acceptResponseSelection(selectorId, selectorResponse);
+        assert.isTrue(gameState.players[matcherIndex].matchingComplete);
+        assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
+        done();
+      })
+      .catch(() => assert.fail());
   });
 
   it('misspelled both', (done) => {
     const selectorResponse = 'rsponse';
     const matcherResponse = 'respanse';
-    acceptPrompts([selectorResponse], [matcherResponse]).then(() => {
-      gameState.acceptResponseSelection(selectorId, selectorResponse);
-      assert.isTrue(gameState.players[matcherIndex].matchingComplete);
-      assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
-      done();
-    });
+    acceptPrompts([selectorResponse], [matcherResponse])
+      .then(() => {
+        gameState.acceptResponseSelection(selectorId, selectorResponse);
+        assert.isTrue(gameState.players[matcherIndex].matchingComplete);
+        assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
+        done();
+      })
+      .catch(() => assert.fail());
   });
 
   it('misspelled false positive', (done) => {
     const selectorResponse = 'clothes';
     const matcherResponse = 'weedwacker';
-    acceptPrompts([selectorResponse], [matcherResponse]).then(() => {
-      gameState.acceptResponseSelection(selectorId, selectorResponse);
-      assert.isFalse(gameState.players[matcherIndex].matchingComplete);
-      assert.strictEqual(gameState.players[matcherIndex].match, '');
-      done();
-    });
+    acceptPrompts([selectorResponse], [matcherResponse])
+      .then(() => {
+        gameState.acceptResponseSelection(selectorId, selectorResponse);
+        assert.isFalse(gameState.players[matcherIndex].matchingComplete);
+        assert.strictEqual(gameState.players[matcherIndex].match, '');
+        done();
+      })
+      .catch(() => assert.fail());
   });
 
   it('misspelled both + capitalization', (done) => {
     const selectorResponse = 'rsponse';
     const matcherResponse = 'Respanse';
-    acceptPrompts([selectorResponse], [matcherResponse]).then(() => {
-      gameState.acceptResponseSelection(selectorId, selectorResponse);
-      assert.isTrue(gameState.players[matcherIndex].matchingComplete);
-      assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
-      done();
-    });
+    acceptPrompts([selectorResponse], [matcherResponse])
+      .then(() => {
+        gameState.acceptResponseSelection(selectorId, selectorResponse);
+        assert.isTrue(gameState.players[matcherIndex].matchingComplete);
+        assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
+        done();
+      })
+      .catch(() => assert.fail());
   });
 
   it('misspelled selector + capitalization', (done) => {
     const selectorResponse = 'rsponse';
     const matcherResponse = 'Response';
-    acceptPrompts([selectorResponse], [matcherResponse]).then(() => {
-      gameState.acceptResponseSelection(selectorId, selectorResponse);
-      assert.isTrue(gameState.players[matcherIndex].matchingComplete);
-      assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
-      done();
-    });
+    acceptPrompts([selectorResponse], [matcherResponse])
+      .then(() => {
+        gameState.acceptResponseSelection(selectorId, selectorResponse);
+        assert.isTrue(gameState.players[matcherIndex].matchingComplete);
+        assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
+        done();
+      })
+      .catch(() => assert.fail());
   });
 
   it('pluralization', (done) => {
     const selectorResponse = 'knife';
     const matcherResponse = 'knives';
-    acceptPrompts([selectorResponse], [matcherResponse]).then(() => {
-      gameState.acceptResponseSelection(selectorId, selectorResponse);
-      assert.isTrue(gameState.players[matcherIndex].matchingComplete);
-      assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
-      done();
-    });
+    acceptPrompts([selectorResponse], [matcherResponse])
+      .then(() => {
+        gameState.acceptResponseSelection(selectorId, selectorResponse);
+        assert.isTrue(gameState.players[matcherIndex].matchingComplete);
+        assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
+        done();
+      })
+      .catch(() => assert.fail());
   });
 
   it('pluralization + capitalization', (done) => {
     const selectorResponse = 'PeoPle!';
     const matcherResponse = 'person';
-    acceptPrompts([selectorResponse], [matcherResponse]).then(() => {
-      gameState.acceptResponseSelection(selectorId, selectorResponse);
-      assert.isTrue(gameState.players[matcherIndex].matchingComplete);
-      assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
-      done();
-    });
+    acceptPrompts([selectorResponse], [matcherResponse])
+      .then(() => {
+        gameState.acceptResponseSelection(selectorId, selectorResponse);
+        assert.isTrue(gameState.players[matcherIndex].matchingComplete);
+        assert.strictEqual(gameState.players[matcherIndex].match, matcherResponse);
+        done();
+      })
+      .catch(() => assert.fail());
   });
 
   async function acceptPrompts(selectorResponses: string[], matcherResponses: string[]) {

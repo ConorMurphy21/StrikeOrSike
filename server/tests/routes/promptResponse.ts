@@ -1,13 +1,14 @@
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import { io as ioc, Socket } from 'socket.io-client';
+import { io as ioc } from 'socket.io-client';
 import { type AddressInfo } from 'node:net';
 import { registerHandlers } from '../../src/routes/registerHandlers';
 import { assert } from 'chai';
+import { TypedClientSocket } from '../../src/types/socketServerTypes';
 
 describe('promptResponse tests', () => {
   const roomName = 'room';
-  let io: Server, clientSocket1: Socket, clientSocket2: Socket;
+  let io: Server, clientSocket1: TypedClientSocket, clientSocket2: TypedClientSocket;
   beforeEach((done) => {
     const httpServer = createServer();
     io = new Server(httpServer);

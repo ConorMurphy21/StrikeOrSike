@@ -11,8 +11,7 @@
           v-model="form.name"
           type="text"
           class="form-control"
-          :placeholder="$t('usernamePlaceholder')"
-        />
+          :placeholder="$t('usernamePlaceholder')" />
       </div>
 
       <div class="mb-3">
@@ -22,8 +21,7 @@
           v-model="form.roomName"
           type="text"
           class="form-control"
-          :placeholder="$t('roomNamePlaceholder')"
-        />
+          :placeholder="$t('roomNamePlaceholder')" />
       </div>
 
       <div class="d-flex flex-column flex-lg-row justify-content-around align-items-center mt-5 mb-3 gap-3">

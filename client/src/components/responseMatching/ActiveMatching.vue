@@ -11,8 +11,7 @@
           v-if="sikeDispute && selectionType === 'sike'"
           class="ms-2 me-1"
           :response="selectedResponse"
-          :placement="'top'"
-        />
+          :placement="'top'" />
       </template>
       <template #type>
         <span v-t="selectionType" :class="selectionType" />
@@ -22,8 +21,7 @@
     <button
       v-tooltip.left.ds900="$t('tooltip.noMatch', { response: selectedResponse })"
       class="btn btn-primary w-50 fs-4 d-flex justify-content-center align-items-center"
-      @click="noMatch"
-    >
+      @click="noMatch">
       <div class="d-flex justify-content-center align-items-center w-75">
         <img class="my-auto w-75 w-sm-50 w-lg-25" src="@/assets/images/sike.png" :alt="$t('sike')" />
       </div>

@@ -3,8 +3,7 @@
     v-tooltip.left.ds250="$t('tooltip.showTooltips')"
     class="text-black"
     :class="{ 'bi-lightbulb': showTooltips, 'bi-lightbulb-off': !showTooltips }"
-    @click="click"
-  />
+    @click="click" />
 </template>
 <script lang="ts">
 import { useSettingsStore } from '@/stores/settings.js'

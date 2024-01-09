@@ -11,8 +11,7 @@
         class="form-control w-75"
         autocomplete="off"
         enterkeyhint="send"
-        @keyup.enter="sendResponse"
-      />
+        @keyup.enter="sendResponse" />
       <timer :time="timer"></timer>
     </div>
   </div>

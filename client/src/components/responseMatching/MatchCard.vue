@@ -14,8 +14,7 @@
         :class="{ hover: hovering }"
         @click="unmatchClick"
         @mouseenter="hovering = true"
-        @mouseleave="hovering = false"
-      />
+        @mouseleave="hovering = false" />
     </div>
     <h2 class="player-name fs-5">{{ player!.name }}</h2>
   </div>

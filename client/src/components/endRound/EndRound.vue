@@ -6,8 +6,7 @@
     <button
       class="btn btn-orange w-75 w-lg-50 w-xl-25 fs-4 mb-3 position-relative"
       :class="{ 'btn-blue': !startNextRoundNext }"
-      @click="sendVote"
-    >
+      @click="sendVote">
       {{ hasNextRound ? $t('startNextRound') : $t('viewResults') }}
       <notification-count v-if="startNextRoundCount" class="position-absolute top-0 start-100 translate-middle fs-6">
         {{ $n(startNextRoundCount) }}

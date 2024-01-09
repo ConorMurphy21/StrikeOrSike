@@ -4,8 +4,7 @@
     v-tooltip.left.ds750="$t('tooltip.' + type)"
     :src="typeImg"
     :alt="$t(type)"
-    :class="{ 'sike-img': type === 'sike' }"
-  />
+    :class="{ 'sike-img': type === 'sike' }" />
   <img v-else :src="typeImg" :alt="$t(type)" :class="{ 'sike-img': type === 'sike' }" />
 </template>
 

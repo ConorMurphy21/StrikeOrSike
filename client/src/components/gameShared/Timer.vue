@@ -6,8 +6,7 @@
       :class="{
         'bounce bold-black': time > 10,
         'bounce-fast bolder-red': time <= 10
-      }"
-    >
+      }">
       {{ $n(time) }}
     </h1>
     <h1 v-else class="display-5 bolder-red shake-rotate">

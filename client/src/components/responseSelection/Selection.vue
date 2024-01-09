@@ -4,8 +4,7 @@
     <p
       v-if="!isSelector"
       v-t="{ path: 'selection.message', args: { player: selector?.name } }"
-      class="display-6 passiveMessage mb-0"
-    />
+      class="display-6 passiveMessage mb-0" />
     <i18n-t v-else keypath="selection.selfMessage" tag="p" class="display-6 activeMessage mb-0">
       <template #self>
         <span v-t="'selection.self'" class="activeSelector display-6" />

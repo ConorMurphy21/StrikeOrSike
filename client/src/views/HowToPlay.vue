@@ -9,8 +9,7 @@
         v-if="imgs[section.key]"
         class="border border-4 border-burgundy rounded w-93 w-md-50 mb-4"
         :src="imgs[section.key]"
-        :alt="$rt(section.alt)"
-      />
+        :alt="$rt(section.alt)" />
       <div v-for="child in section.children" :key="child.key">
         <h3 :id="child.key" class="fw-bold display-6">
           {{ $rt(child.header) }}
@@ -20,8 +19,7 @@
           v-if="imgs[child.key]"
           class="border border-4 border-burgundy rounded w-93 w-md-50 mb-4"
           :src="imgs[child.key]"
-          :alt="child.alt"
-        />
+          :alt="child.alt" />
       </div>
     </div>
   </div>

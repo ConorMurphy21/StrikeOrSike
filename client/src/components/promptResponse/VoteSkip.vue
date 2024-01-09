@@ -3,15 +3,13 @@
     v-tooltip.right="$t('tooltip.voteSkip')"
     class="btn btn-sm btn-orange text-white ratio-1x1 position-relative d-inline-flex justify-content-center align-items-center"
     :class="{ 'btn-blue': !skipVoteNext }"
-    @click="sendVote"
-  >
+    @click="sendVote">
     <i class="bi-hand-thumbs-down fs-3 p-0 lh-sm" />
 
     <notification-count
       v-if="skipVoteCount"
       :width="22"
-      class="position-absolute top-0 start-100 translate-middle fs-6"
-    >
+      class="position-absolute top-0 start-100 translate-middle fs-6">
       {{ $n(skipVoteCount) }}
     </notification-count>
   </a>

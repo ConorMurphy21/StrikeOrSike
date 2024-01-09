@@ -5,8 +5,7 @@
       :class="{ hover: hoverLeft, 'text-dark': !hoverLeft }"
       @mouseenter="hoverLeft = true"
       @mouseleave="hoverLeft = false"
-      @click="nextPlayer(false)"
-    />
+      @click="nextPlayer(false)" />
     <div class="dropdown flex-grow-1">
       <button
         id="playerChooser"
@@ -14,8 +13,7 @@
         type="button"
         data-bs-toggle="dropdown"
         aria-expanded="false"
-        @click="clickDropdown()"
-      >
+        @click="clickDropdown()">
         {{ selectedName }}
       </button>
       <ul class="dropdown-menu w-100" aria-labelledby="playerChooser">
@@ -31,8 +29,7 @@
       :class="{ hover: hoverRight, 'text-dark': !hoverRight }"
       @mouseenter="hoverRight = true"
       @mouseleave="hoverRight = false"
-      @click="nextPlayer(true)"
-    />
+      @click="nextPlayer(true)" />
   </div>
 </template>
 

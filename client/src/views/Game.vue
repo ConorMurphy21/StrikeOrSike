@@ -3,8 +3,7 @@
     <a
       class="btn btn-burgundy position-absolute top-0 end-0 mt-2 me-2 bi-question py-0 px-1 fs-6"
       target="_blank"
-      :href="helpLink"
-    />
+      :href="helpLink" />
     <component :is="scene" />
 
     <portal to="banner">
@@ -12,8 +11,7 @@
         v-if="scene === 'lobby' || scene === 'endGame'"
         href="https://www.buymeacoffee.com/ConorMurphy/"
         target="_blank"
-        class="link-yellow fs-6 text-center"
-      >
+        class="link-yellow fs-6 text-center">
         <div class="d-flex align-items-center justify-content-center gap-1">
           <span v-t="'coffeeBannerLink'" />
           <img :alt="$t('coffeeAlt')" src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" height="25" />

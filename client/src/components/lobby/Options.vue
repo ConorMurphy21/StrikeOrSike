@@ -14,8 +14,7 @@
                   :class="{ Disabled: disabled }"
                   :disabled="disabled"
                   :checked="value"
-                  @click="packChange($event, label, index)"
-                />
+                  @click="packChange($event, label, index)" />
                 <label :for="'pack' + index" class="form-check-label ms-2">{{ $t(`packLabels.${label}`) }}</label>
               </div>
             </div>
@@ -30,8 +29,7 @@
                   :disabled="!customSelected"
                   :placeholder="$t('customPromptsPlaceholder')"
                   rows="3"
-                  @focusout="customPromptsChange($event)"
-                />
+                  @focusout="customPromptsChange($event)" />
               </div>
             </div>
             <div class="row mt-2">
@@ -49,8 +47,7 @@
                   :disabled="disabled"
                   :value="options.promptTimer"
                   @focusout="validateNum($event, 'promptTimer')"
-                  @change="onNumChange($event, 'promptTimer')"
-                />
+                  @change="onNumChange($event, 'promptTimer')" />
               </div>
               <div class="col-md-6">
                 <label v-t="'numRoundsLabel'" for="numRounds" class="form-label" />
@@ -65,8 +62,7 @@
                   :disabled="disabled"
                   :value="options.autoNumRounds ? players.length : options.numRounds"
                   @focusout="validateNumRounds($event)"
-                  @change="onNumRoundChange($event)"
-                />
+                  @change="onNumRoundChange($event)" />
               </div>
             </div>
             <div class="row mt-2">
@@ -81,8 +77,7 @@
                     :class="{ Disabled: disabled }"
                     :disabled="disabled"
                     :checked="options.sikeDispute"
-                    @click="validateSikeDispute($event)"
-                  />
+                    @click="validateSikeDispute($event)" />
                 </div>
               </div>
               <div class="col-md-6">
@@ -98,8 +93,7 @@
                   :class="{ Disabled: disabled || !options.sikeDispute }"
                   :disabled="disabled || !options.sikeDispute"
                   @focusout="validateNum($event, 'sikeRetries')"
-                  @change="onNumChange($event, 'sikeRetries')"
-                />
+                  @change="onNumChange($event, 'sikeRetries')" />
               </div>
             </div>
           </form>
@@ -112,8 +106,7 @@
           data-bs-toggle="collapse"
           data-bs-target="#form"
           aria-expanded="false"
-          aria-controls="form"
-        >
+          aria-controls="form">
           Game Options
         </button>
       </h2>

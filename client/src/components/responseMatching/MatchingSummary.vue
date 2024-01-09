@@ -14,8 +14,7 @@
           v-if="sikeDisputeCount"
           :disabled="isSelector"
           :response="selectedResponse"
-          :placement="'right'"
-        />
+          :placement="'right'" />
       </span>
       <div class="w-75 d-flex justify-content-center align-items-center">
         <selection-type />
@@ -30,8 +29,7 @@
       v-t="'cont'"
       class="btn btn-blue w-50 fs-4 mb-3"
       :class="{ invisible: !canEndRound }"
-      @click="endRound"
-    ></button>
+      @click="endRound"></button>
   </div>
 </template>
 

@@ -2,23 +2,20 @@
   <!-- desktop view -->
   <div
     class="d-md-flex d-none flex-row align-items-center justify-content-center w-75"
-    :class="{ 'justify-content-between': choice && isSelector }"
-  >
+    :class="{ 'justify-content-between': choice && isSelector }">
     <button
       v-if="choice && isSelector"
       v-tooltip.left.ds750="$t('tooltip.strike')"
       v-t="'strike'"
       class="btn btn-orange w-25"
-      @click="selectSelectionType(true)"
-    />
+      @click="selectSelectionType(true)" />
     <selection-type :tooltip="!(isSelector && choice)" />
     <button
       v-if="choice && isSelector"
       v-tooltip.right.ds750="$t('tooltip.sike')"
       v-t="'sike'"
       class="btn btn-blue w-25"
-      @click="selectSelectionType(false)"
-    />
+      @click="selectSelectionType(false)" />
   </div>
   <!-- mobile view -->
   <div class="d-md-none d-flex flex-column align-items-center w-75">
@@ -28,15 +25,13 @@
         v-tooltip.left.ds750="$t('tooltip.strike')"
         v-t="'strike'"
         class="btn btn-orange w-50"
-        @click="selectSelectionType(true)"
-      />
+        @click="selectSelectionType(true)" />
       <h3>or</h3>
       <button
         v-tooltip.right.ds750="$t('tooltip.sike')"
         v-t="'sike'"
         class="btn btn-blue w-50"
-        @click="selectSelectionType(false)"
-      />
+        @click="selectSelectionType(false)" />
     </div>
   </div>
 </template>

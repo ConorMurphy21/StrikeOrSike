@@ -4,8 +4,7 @@
     class="btn btn-sm btn-orange text-white ratio-1x1 position-relative d-inline-flex justify-content-center align-items-center"
     :class="{ 'btn-blue': !sikeDisputeNext }"
     :disabled="disabled"
-    @click="sendVote"
-  >
+    @click="sendVote">
     <i class="bi-hand-thumbs-down fs-5 lh-sm" />
 
     <notification-count v-if="sikeDisputeCount" :width="21" class="position-absolute top-0 start-100 translate-middle">

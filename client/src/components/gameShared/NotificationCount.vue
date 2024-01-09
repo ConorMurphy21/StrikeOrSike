@@ -1,8 +1,7 @@
 <template>
   <span
     :style="cssProps"
-    class="rounded-pill badge bg-burgundy d-inline-flex align-items-center justify-content-center p-0"
-  >
+    class="rounded-pill badge bg-burgundy d-inline-flex align-items-center justify-content-center p-0">
     <slot />
   </span>
 </template>

@@ -4,8 +4,7 @@
     <div
       ref="box"
       :style="cssProps"
-      class="box d-flex flex-column justify-content-center align-items-center w-75 m-2 overflow-auto"
-    >
+      class="box d-flex flex-column justify-content-center align-items-center w-75 m-2 overflow-auto">
       <div class="list-group w-100 h-100">
         <button
           v-for="(response, index) in responses"
@@ -19,8 +18,7 @@
             'list-group-item-blue': response === selectedSike,
             'list-group-item-red': used(response)
           }"
-          @click="select(index, response)"
-        >
+          @click="select(index, response)">
           {{ response }}
         </button>
       </div>

@@ -11,8 +11,7 @@
           class="btn btn-blue fs-4 w-100"
           :class="{ 'd-none': !leader, disabled: !canStart }"
           :disabled="!canStart"
-          @click="startGame"
-        />
+          @click="startGame" />
       </span>
     </div>
   </div>

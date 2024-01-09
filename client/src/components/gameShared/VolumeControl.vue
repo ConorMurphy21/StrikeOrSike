@@ -3,8 +3,7 @@
   <div
     class="d-flex flex-column justify-content-center align-items-center"
     @mouseenter="clearTimer"
-    @mouseleave="resetTimer"
-  >
+    @mouseleave="resetTimer">
     <transition>
       <vue-slider
         v-if="showing"
@@ -13,8 +12,7 @@
         height="80px"
         :duration="0.3"
         @focusin="clearTimer"
-        @focusout="resetTimer"
-      />
+        @focusout="resetTimer" />
     </transition>
     <button
       class="text-black"
@@ -25,8 +23,7 @@
       }"
       @click="click"
       @focusin="clearTimer"
-      @focusout="resetTimer"
-    />
+      @focusout="resetTimer" />
   </div>
 </template>
 <script lang="ts">

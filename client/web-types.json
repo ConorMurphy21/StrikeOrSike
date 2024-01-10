@@ -5,9 +5,7 @@
   "description-markup": "markdown",
   "framework-config": {
     "enable-when": {
-      "file-extensions": [
-        "vue"
-      ]
+      "file-extensions": ["vue"]
     }
   },
   "contributions": {
@@ -35,10 +33,7 @@
               "default": "0",
               "value": {
                 "kind": "expression",
-                "type": [
-                  "string",
-                  "number"
-                ]
+                "type": ["string", "number"]
               }
             },
             {
@@ -94,9 +89,7 @@
           "name": "<name>",
           "pattern": {
             "items": "argument",
-            "template": [
-              "#item:argument"
-            ]
+            "template": ["#item:argument"]
           },
           "argument": {
             "name": "Argument",

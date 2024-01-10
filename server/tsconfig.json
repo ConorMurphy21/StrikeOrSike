@@ -1,20 +1,20 @@
 {
   "compilerOptions": {
     /* Language and Environment */
-    "target": "ES2022",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
-    "sourceMap": true,
+    "target": "ES2022",
+    "noEmit": true,
+    "composite": true,
     /* Modules */
-    "module": "commonJS",                                  /* Specify what module code is generated. */
+    "module": "commonJS",
     "lib": ["ESNext", "DOM"],
-    "rootDir": "./",                                     /* Specify the root folder within your source files. */
-    "allowJs": false,                                    /* Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files. */
-    "outDir": "./dist",                                  /* Specify an output folder for all emitted files. */
+    "rootDir": "./",
+    "allowJs": false,
     "pretty": false,
-    "esModuleInterop": true,                             /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
-    "forceConsistentCasingInFileNames": true,            /* Ensure that casing is correct in imports. */
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
     /* Type Checking */
-    "strict": true,                                      /* Enable all strict type-checking options. */
+    "strict": true,
     /* Completeness */
-    "skipLibCheck": false                                 /* Skip type checking all .d.ts files. */
+    "skipLibCheck": false
   }
 }

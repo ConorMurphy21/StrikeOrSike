@@ -6,36 +6,20 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
-      - npm --version
-      - echo Installing server node modules...
-      - cd server
       - npm install
-      - echo Installing client node modules...
-      - cd ../client
-      - npm install
-      - cd ..
   build:
     commands:
       - echo Build started on `date`
-      - echo Compiling the server...
+      - npm run build
       - cd server
-      - npm run build
       - npm install --omit=dev
-      - echo Compiling the client...
-      - cd client
-      - npm run build
-      - cd ..
-      - echo Make file structure match static Express.js app
-      - mv .ebextensions server
-      - mkdir server/public
-      - mv client/dist/* server/public/
   post_build:
     commands:
       - echo Build completed on `date`
 
 artifacts:
   files:
-    - '**/*'
+    - "**/*"
   base-directory: server
   exclude-paths:
     - tests

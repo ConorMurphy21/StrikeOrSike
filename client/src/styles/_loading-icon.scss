@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@import "variables";
+@import 'variables';
 /**
  *
  * three-dots.css v0.1.0
@@ -36,7 +36,8 @@ $dot-typing-length: 1.25s;
   animation-delay: $dot-pulse-delay;
 }
 
-.dot-pulse::before, .dot-pulse::after {
+.dot-pulse::before,
+.dot-pulse::after {
   content: '';
   display: inline-block;
   position: absolute;
@@ -57,7 +58,7 @@ $dot-typing-length: 1.25s;
 .dot-pulse::after {
   box-shadow: 10014px 0 0 -5px $dot-colour;
   animation: dotPulseAfter $dot-pulse-length infinite linear;
-  animation-delay: 2*$dot-pulse-delay;
+  animation-delay: 2 * $dot-pulse-delay;
 }
 
 @keyframes dotPulseBefore {
@@ -98,6 +99,5 @@ $dot-typing-length: 1.25s;
     box-shadow: 10014px 0 0 -5px $dot-colour;
   }
 }
-
 
 /*# sourceMappingURL=three-dots.css.map */

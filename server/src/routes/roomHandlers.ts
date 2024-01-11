@@ -41,7 +41,7 @@ export function registerRoomHandlers(io: TypedServer, socket: TypedSocket): void
     } else {
       logger.info('(roomHandlers) Room created');
       const room = result.room;
-      socket.join(room.name);
+      void socket.join(room.name);
       socket.emit('joinRoom', { success: true, roomName: room.name });
       socket.emit('updatePlayers', { modifies: room.players, deletes: [] });
       socket.emit('setOptions', room.state!.getOptions());
@@ -63,7 +63,7 @@ export function registerRoomHandlers(io: TypedServer, socket: TypedSocket): void
     } else {
       logger.info('(roomHandlers) Player joined room');
       const room = result.room;
-      socket.join(room.name);
+      void socket.join(room.name);
       socket.emit('joinRoom', { success: true, roomName: room.name });
       socket.emit('updatePlayers', { modifies: room.players, deletes: [] });
       socket.to(room.name).emit('updatePlayers', {
@@ -87,7 +87,7 @@ function disconnect(socket: TypedSocket): void {
   disconnectPlayer(socket.id);
   // remove socket from room
   if (roomName) {
-    socket.leave(roomName);
+    void socket.leave(roomName);
     logger.info('(roomHandlers) player disconnected from room');
   }
 

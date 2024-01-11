@@ -1,17 +1,22 @@
 <template>
-  <img v-if="tooltip" :src="typeImg" :alt="$t(type)" :class="{'sike-img': type === 'sike'}"
-       v-tooltip.left.ds750="$t('tooltip.' + type)">
-  <img v-else :src="typeImg" :alt="$t(type)" :class="{'sike-img': type === 'sike'}">
+  <img
+    v-if="tooltip"
+    v-tooltip.left.ds750="$t('tooltip.' + type)"
+    :src="typeImg"
+    :alt="$t(type)"
+    :class="{ 'sike-img': type === 'sike' }" />
+  <img v-else :src="typeImg" :alt="$t(type)" :class="{ 'sike-img': type === 'sike' }" />
 </template>
 
-<script>
-import StrikeImg from '@/assets/images/strike.png';
-import SikeImg from '@/assets/images/sike.png';
-import ChoiceImg from '@/assets/images/choice.png';
-import { useGameStore } from '@/stores/game.js';
-import { mapState } from 'pinia';
+<script lang="ts">
+import StrikeImg from '@/assets/images/strike.png'
+import SikeImg from '@/assets/images/sike.png'
+import ChoiceImg from '@/assets/images/choice.png'
+import { useGameStore } from '@/stores/game.js'
+import { mapState } from 'pinia'
+import { defineComponent } from 'vue'
 
-export default {
+export default defineComponent({
   props: {
     tooltip: {
       type: Boolean,
@@ -20,18 +25,18 @@ export default {
   },
   computed: {
     ...mapState(useGameStore, {
-      type: 'selectionType',
+      type: 'selectionType'
     }),
     typeImg() {
       if (this.type === 'strike') {
-        return StrikeImg;
+        return StrikeImg
       } else if (this.type === 'sike') {
-        return SikeImg;
+        return SikeImg
       }
-      return ChoiceImg;
-    },
+      return ChoiceImg
+    }
   }
-}
+})
 </script>
 
 <style lang="scss" scoped>
@@ -51,4 +56,3 @@ img {
   text-align: center;
 }
 </style>
-

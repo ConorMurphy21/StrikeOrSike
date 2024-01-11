@@ -4,33 +4,30 @@
   </div>
 </template>
 
-<script>
-import timerMp3 from '@/assets/audio/countdown.mp3';
-import {AudioWrap} from '@/mixins/audiowrap';
-import { useGameStore } from '@/stores/game.js';
-import { useSettingsStore } from '@/stores/settings.js';
-import { mapState } from 'pinia';
+<script lang="ts">
+import timerMp3 from '@/assets/audio/countdown.mp3'
+import { AudioWrap } from '@/mixins/audiowrap.js'
+import { useGameStore } from '@/stores/game.js'
+import { useSettingsStore } from '@/stores/settings.js'
+import { mapState } from 'pinia'
+import { defineComponent } from 'vue'
 
-const timer = new AudioWrap(timerMp3);
+const timer = new AudioWrap(timerMp3)
 
-export default {
+export default defineComponent({
   computed: {
-    ...mapState(useGameStore, [
-      'timer'
-    ]),
-    ...mapState(useSettingsStore, [
-      'volume'
-    ])
+    ...mapState(useGameStore, ['timer']),
+    ...mapState(useSettingsStore, ['volume'])
   },
   watch: {
-    volume(val){
-      timer.volume = val;
+    volume(val: number) {
+      timer.volume = val
     }
   },
   mounted() {
-    timer.play();
-  },
-}
+    timer.play()
+  }
+})
 </script>
 
 <style lang="scss" scoped>
@@ -44,18 +41,18 @@ h1 {
 }
 
 .bounce {
-  animation: bounce 1s cubic-bezier(.33,.47,.28,.93) infinite;
+  animation: bounce 1s cubic-bezier(0.33, 0.47, 0.28, 0.93) infinite;
 }
 
 .flip {
-  animation: flip 1s cubic-bezier(.81,.06,.89,.25) infinite;
+  animation: flip 1s cubic-bezier(0.81, 0.06, 0.89, 0.25) infinite;
 }
 
 @keyframes flip {
-  0%{
+  0% {
     transform: rotate(0deg);
   }
-  100%{
+  100% {
     transform: rotate(360deg);
   }
 }

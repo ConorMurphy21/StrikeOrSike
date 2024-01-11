@@ -1,43 +1,45 @@
-@import "min-bootstrap";
-@import "variables";
-@import "loading-icon";
-@import "animations";
-@import "slider-component";
+@import 'min-bootstrap';
+@import 'variables';
+@import 'loading-icon';
+@import 'animations';
+@import 'slider-component';
 
 $utilities: map-merge(
-                $utilities,
-                (
-                        "translate-40": (
-                                property: transform,
-                                class: translate-40,
-                                values: (
-                                        null: translate(-65%, -35%),
-                                        x: translateX(-65%),
-                                        y: translateY(-35%),
-                                )
-                        ),
-
-                )
+  $utilities,
+  (
+    'translate-40': (
+      property: transform,
+      class: translate-40,
+      values: (
+        null: translate(-65%, -35%),
+        x: translateX(-65%),
+        y: translateY(-35%)
+      )
+    )
+  )
 );
-@import "bootstrap/scss/utilities/api";
+@import 'bootstrap/scss/utilities/api';
 
 @font-face {
-  font-family: "Pacifico";
-  src: local("Pacifico"), url(@/assets/fonts/Pacifico/Pacifico-Regular.ttf) format("truetype");
+  font-family: 'Pacifico';
+  src:
+    local('Pacifico'),
+    url(@/assets/fonts/Pacifico/Pacifico-Regular.ttf) format('truetype');
 }
 
-
 @font-face {
-  font-family: "Quicksand";
-  src: local("Quicksand"), url(@/assets/fonts/Quicksand/Quicksand-VariableFont_wght.ttf) format("truetype");
+  font-family: 'Quicksand';
+  src:
+    local('Quicksand'),
+    url(@/assets/fonts/Quicksand/Quicksand-VariableFont_wght.ttf) format('truetype');
 }
 
 $sizes: (
-        25: 25%,
-        50: 50%,
-        75: 75%,
-        93: 93%,
-        100: 100%
+  25: 25%,
+  50: 50%,
+  75: 75%,
+  93: 93%,
+  100: 100%
 );
 @each $breakpoint in map-keys($grid-breakpoints) {
   @each $size, $length in $sizes {
@@ -80,12 +82,17 @@ body {
   font-weight: normal;
 }
 
-.form-control, .btn {
+.form-control,
+.btn {
   border-radius: $border-radius;
   font: inherit;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font: inherit;
 }
-

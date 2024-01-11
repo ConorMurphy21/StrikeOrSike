@@ -1,45 +1,46 @@
 <template>
-  <a class="btn btn-sm btn-orange text-white ratio-1x1 position-relative d-inline-flex justify-content-center align-items-center"
-          :class="{'btn-blue': !skipVoteNext}"
-          v-tooltip.right="$t('tooltip.voteSkip')"
-          @click="sendVote">
-    <i class="bi-hand-thumbs-down fs-3 p-0 lh-sm"/>
+  <a
+    v-tooltip.right="$t('tooltip.voteSkip')"
+    class="btn btn-sm btn-orange text-white ratio-1x1 position-relative d-inline-flex justify-content-center align-items-center"
+    :class="{ 'btn-blue': !skipVoteNext }"
+    @click="sendVote">
+    <i class="bi-hand-thumbs-down fs-3 p-0 lh-sm" />
 
-    <notification-count :width="22" v-if='skipVoteCount' class="position-absolute top-0 start-100 translate-middle fs-6">
+    <notification-count
+      v-if="skipVoteCount"
+      :width="22"
+      class="position-absolute top-0 start-100 translate-middle fs-6">
       {{ $n(skipVoteCount) }}
     </notification-count>
   </a>
 </template>
 
-<script>
-import ClickMp3 from '@/assets/audio/click2.mp3';
-import NotificationCount from '@/components/gameShared/NotificationCount.vue';
-import {AudioWrap} from '@/mixins/audiowrap';
-import socket from '@/socket/socket';
-import { useGameStore } from '@/stores/game.js';
-import { mapState } from 'pinia';
+<script lang="ts">
+import ClickMp3 from '@/assets/audio/click2.mp3'
+import NotificationCount from '@/components/gameShared/NotificationCount.vue'
+import { AudioWrap } from '@/mixins/audiowrap.js'
+import socket from '@/socket/socket'
+import { useGameStore } from '@/stores/game.js'
+import { mapState } from 'pinia'
+import { defineComponent } from 'vue'
 
-
-export default {
+export default defineComponent({
+  components: {
+    NotificationCount
+  },
   data() {
     return {
       tooltips: []
     }
   },
-  components: {
-    NotificationCount
-  },
   computed: {
-    ...mapState(useGameStore, [
-      'skipVoteCount',
-      'skipVoteNext'
-    ])
+    ...mapState(useGameStore, ['skipVoteCount', 'skipVoteNext'])
   },
   methods: {
     sendVote() {
-      new AudioWrap(ClickMp3).play();
-      socket.emit('pollVote', 'skipPrompt');
+      new AudioWrap(ClickMp3).play()
+      socket.emit('pollVote', 'skipPrompt')
     }
   }
-}
+})
 </script>

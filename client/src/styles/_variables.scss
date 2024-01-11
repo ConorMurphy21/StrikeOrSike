@@ -1,6 +1,5 @@
-
 // 1. Include functions first (so you can manipulate colors, SVGs, calc, etc)
-@import "~bootstrap/scss/functions";
+@import '~bootstrap/scss/functions';
 
 // 2. Include any default variable overrides here
 $orange: #ff6415;
@@ -12,28 +11,26 @@ $primary: $orange;
 $secondary: #f6f3f0;
 $dark: #212529;
 
-$main-font: Quicksand, "Lucida Handwriting", cursive;
-$header-font: Pacifico, "Brush Script MT", cursive;
+$main-font: Quicksand, 'Lucida Handwriting', cursive;
+$header-font: Pacifico, 'Brush Script MT', cursive;
 
 $border-radius: 0.7rem;
 
 $theme-colors: (
-        "primary":    $primary,
-        "secondary":  $secondary,
-        "orange":     $orange,
-        "yellow":     $yellow,
-        "blue":       $blue,
-        "red":        $red,
-        "burgundy":   $burgundy,
-        "dark":       $dark
+  'primary': $primary,
+  'secondary': $secondary,
+  'orange': $orange,
+  'yellow': $yellow,
+  'blue': $blue,
+  'red': $red,
+  'burgundy': $burgundy,
+  'dark': $dark
 );
 
-
-
 // 3. Include remainder of required Bootstrap stylesheets
-@import "~bootstrap/scss/variables";
+@import '~bootstrap/scss/variables';
 
 $tooltip-bg: $gray-600;
 $tooltip-arrow-color: $tooltip-bg;
 
-@import "~bootstrap/scss/mixins";
+@import '~bootstrap/scss/mixins';

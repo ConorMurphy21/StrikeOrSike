@@ -89,7 +89,7 @@ export class PollService {
   _cbIfComplete(poll: Poll, pollName: PollName): boolean {
     if (this._complete(poll, pollName)) {
       this.clearPoll(pollName);
-      poll!.completeCb();
+      poll.completeCb();
       return true;
     }
     return false;

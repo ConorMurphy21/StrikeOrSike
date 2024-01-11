@@ -181,9 +181,11 @@ export class GameState {
       }
       playerState.responses.push(response);
       if (!this.corrections[response]) {
-        getCorrections(response, this.room.lang).then((corrections) => {
-          this.corrections[response] = corrections;
-        });
+        getCorrections(response, this.room.lang)
+          .then((corrections: string[]) => {
+            this.corrections[response] = corrections;
+          })
+          .catch(() => {});
       }
     } else {
       return Info('invalidStage');
@@ -548,6 +550,7 @@ export class GameState {
     const timeleft = this.promptTimeout ? this._getTimeLeft(this.promptTimeout) - 1 : 0;
 
     return {
+      id: id,
       stage: this.stage,
       selectionType: this.selectionType,
       responses: this._getResponses(player),

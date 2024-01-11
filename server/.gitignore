@@ -1,4 +1,1 @@
-# Project exclude paths
-/node_modules/
-/public/*
-/dist/*
+public

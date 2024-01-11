@@ -23,7 +23,7 @@ describe('PollVote tests', () => {
   it('in favor odd', () => {
     const n = 7;
     const [, pollService] = initPollService(n);
-    pollService.registerPoll(PollName.SkipPrompt, () => {}, Stage.Lobby, null, 0.501);
+    pollService.registerPoll(PollName.SkipPrompt, () => {}, Stage.Lobby, undefined, 0.501);
     let i: number;
     for (i = 0; i < n - i - 3; i++) {
       const result = pollService.acceptVote(PollName.SkipPrompt, i.toString(), Stage.Lobby);
@@ -40,7 +40,7 @@ describe('PollVote tests', () => {
   it('in favor even', () => {
     const n = 8;
     const [, pollService] = initPollService(n);
-    pollService.registerPoll(PollName.SkipPrompt, () => {}, Stage.Lobby, null, 0.501);
+    pollService.registerPoll(PollName.SkipPrompt, () => {}, Stage.Lobby, undefined, 0.501);
     let i: number;
     for (i = 0; i < n - i - 3; i++) {
       const result = pollService.acceptVote(PollName.SkipPrompt, i.toString(), Stage.Lobby);
@@ -66,7 +66,7 @@ describe('PollVote tests', () => {
         done();
       },
       Stage.Lobby,
-      null,
+      undefined,
       0.501
     );
     let i: number;

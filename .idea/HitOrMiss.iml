@@ -9,6 +9,10 @@
       <excludeFolder url="file://$MODULE_DIR$/tmp" />
       <excludeFolder url="file://$MODULE_DIR$/client/dist" />
       <excludeFolder url="file://$MODULE_DIR$/server/public/assets" />
+      <excludeFolder url="file://$MODULE_DIR$/server/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/server/dist/src" />
+      <excludeFolder url="file://$MODULE_DIR$/server/dist/tests" />
+      <excludeFolder url="file://$MODULE_DIR$/server/public" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

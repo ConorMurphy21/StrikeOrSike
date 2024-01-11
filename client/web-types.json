@@ -1,0 +1,107 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "framework": "vue",
+  "js-types-syntax": "typescript",
+  "description-markup": "markdown",
+  "framework-config": {
+    "enable-when": {
+      "file-extensions": ["vue"]
+    }
+  },
+  "contributions": {
+    "html": {
+      "vue-directives": [
+        {
+          "name": "t",
+          "description": "translate string code",
+          "doc-url": "",
+          "attribute-value": {
+            "type": "string",
+            "required": false
+          }
+        }
+      ],
+      "tags": [
+        {
+          "name": "I18nT",
+          "description": "built-in component from vue-i18n",
+          "doc-url": "https://vue-i18n.intlify.dev/",
+          "attributes": [
+            {
+              "name": "plural",
+              "description": "Determines if use count 0, 1 or many",
+              "default": "0",
+              "value": {
+                "kind": "expression",
+                "type": ["string", "number"]
+              }
+            },
+            {
+              "name": "keypath",
+              "description": "The ident of the lang to be used",
+              "default": "'santi'",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "tag",
+              "description": "The tag into which to render the result",
+              "default": "span",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "locale",
+              "description": "The locale to use",
+              "default": "en",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "scope",
+              "description": "The component scope",
+              "default": "parent",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "i18n",
+              "description": "The i18n instance",
+              "default": "null",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            }
+          ]
+        }
+      ],
+      "slots": [
+        {
+          "name": "<name>",
+          "pattern": {
+            "items": "argument",
+            "template": ["#item:argument"]
+          },
+          "argument": {
+            "name": "Argument",
+            "pattern": {
+              "regex": ".+"
+            },
+            "doc-hide-pattern": true
+          },
+          "description": "Slot to provide a named value",
+          "doc-url": "https://vue-i18n.intlify.dev/guide/advanced/component.html#slots-syntax-usage"
+        }
+      ]
+    }
+  }
+}

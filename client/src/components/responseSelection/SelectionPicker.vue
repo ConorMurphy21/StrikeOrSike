@@ -20,7 +20,9 @@
   <!-- mobile view -->
   <div class="d-md-none d-flex flex-column align-items-center w-75">
     <selection-type />
-    <div v-if="choice && isSelector" class="d-flex flex-row align-items-center justify-content-around gap-3 w-100">
+    <div
+      v-if="choice && isSelector"
+      class="d-flex flex-row align-items-center justify-content-around gap-3 w-100">
       <button
         v-tooltip.left.ds750="$t('tooltip.strike')"
         v-t="'strike'"
@@ -37,38 +39,38 @@
 </template>
 
 <script lang="ts">
-import SelectionType from '@/components/gameShared/SelectionType.vue'
-import ClickMp3 from '@/assets/audio/click2.mp3'
-import { AudioWrap } from '@/mixins/audiowrap.js'
-import socket from '@/socket/socket'
-import { useGameStore } from '@/stores/game.js'
-import { mapState } from 'pinia'
-import { defineComponent } from 'vue'
+import SelectionType from "@/components/gameShared/SelectionType.vue";
+import ClickMp3 from "@/assets/audio/click2.mp3";
+import { AudioWrap } from "@/mixins/audiowrap.js";
+import socket from "@/socket/socket";
+import { useGameStore } from "@/stores/game.js";
+import { mapState } from "pinia";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   components: { SelectionType },
   data() {
     return {
-      lastPicked: false
-    }
+      lastPicked: false,
+    };
   },
   computed: {
     ...mapState(useGameStore, {
-      type: 'selectionType',
-      choice: 'selectionTypeChoice',
-      isSelector: 'isSelector'
-    })
+      type: "selectionType",
+      choice: "selectionTypeChoice",
+      isSelector: "isSelector",
+    }),
   },
   methods: {
     selectSelectionType(strike: boolean) {
-      new AudioWrap(ClickMp3).play()
-      if (this.type === 'choice' || this.lastPicked !== strike) {
-        socket.emit('selectSelectionType', strike)
-        this.lastPicked = strike
+      new AudioWrap(ClickMp3).play();
+      if (this.type === "choice" || this.lastPicked !== strike) {
+        socket.emit("selectSelectionType", strike);
+        this.lastPicked = strike;
       }
-    }
-  }
-})
+    },
+  },
+});
 </script>
 
 <style lang="scss" scoped>

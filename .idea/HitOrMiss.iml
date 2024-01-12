@@ -13,6 +13,9 @@
       <excludeFolder url="file://$MODULE_DIR$/server/dist/src" />
       <excludeFolder url="file://$MODULE_DIR$/server/dist/tests" />
       <excludeFolder url="file://$MODULE_DIR$/server/public" />
+      <excludeFolder url="file://$MODULE_DIR$/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/dist/public" />
+      <excludeFolder url="file://$MODULE_DIR$/dist/src" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

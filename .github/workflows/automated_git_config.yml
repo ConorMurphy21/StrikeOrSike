@@ -21,8 +21,8 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "npm"
-          cache-dependency-path: "package-lock.json"
+          cache: 'npm'
+          cache-dependency-path: 'package-lock.json'
       - run: npm install
         working-directory: ./
       - run: npm run test:typecheck

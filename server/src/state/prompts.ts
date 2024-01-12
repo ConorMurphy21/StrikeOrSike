@@ -67,7 +67,7 @@ export function retrieveIntersections(metas: Meta[]): Intersections {
   return intersections;
 }
 
-const promptsRoot = './resources/prompts/';
+const promptsRoot = path.join(__dirname, '../../resources/prompts');
 
 type Pack = {
   id: string;

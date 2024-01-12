@@ -15,10 +15,10 @@ const app: Express = express();
 app.use(cors());
 app.use(express.json());
 
-app.use('/assets', express.static(path.join(__dirname, 'public/assets')));
+app.use('/assets', express.static(path.join(__dirname, '../public/assets')));
 
 app.get('/*', (req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, 'public/index.html'));
+  res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 import Debug from 'debug';

@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@import 'variables';
+@import "variables";
 /**
  *
  * three-dots.css v0.1.0
@@ -38,7 +38,7 @@ $dot-typing-length: 1.25s;
 
 .dot-pulse::before,
 .dot-pulse::after {
-  content: '';
+  content: "";
   display: inline-block;
   position: absolute;
   top: 0;

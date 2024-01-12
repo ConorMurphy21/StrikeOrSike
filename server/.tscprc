@@ -1,0 +1,4 @@
+{
+  "ignored_files": ['./*', 'tests/**'],
+  "use_ts_exclude": true,
+}

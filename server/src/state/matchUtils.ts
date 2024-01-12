@@ -1,9 +1,10 @@
 import Spellchecker from 'spellchecker';
 import pluralize from 'pluralize';
+import path from 'path';
 
 const en = new Spellchecker.Spellchecker();
 en.setSpellcheckerType(Spellchecker.ALWAYS_USE_HUNSPELL);
-en.setDictionary('en_CA', './resources/dictionaries');
+en.setDictionary('en_CA', path.join(__dirname, '../../resources/dictionaries'));
 const spellcheckers: Record<string, Spellchecker.Spellchecker> = {
   en_CA: en
 };

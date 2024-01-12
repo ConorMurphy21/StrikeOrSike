@@ -11,16 +11,15 @@ phases:
     commands:
       - echo Build started on `date`
       - npm run build
-      - cd server
-      - npm install --omit=dev
+      - npm prune --omit=dev
   post_build:
     commands:
       - echo Build completed on `date`
 
 artifacts:
   files:
-    - "**/*"
-  base-directory: server
-  exclude-paths:
-    - tests
-    - src
+    - '.ebextensions/**/*'
+    - 'dist/**/*'
+    - 'node_modules/**/*'
+    - 'package.json'
+    - 'package-lock.json'

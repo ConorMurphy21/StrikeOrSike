@@ -1,8 +1,8 @@
 // noinspection JSUnusedGlobalSymbols
 
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-import { resolve } from 'path'
+import { defineConfig } from "vite";
+import vue from "@vitejs/plugin-vue";
+import { resolve } from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -10,22 +10,22 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: `@import '@/styles/variables';`
-      }
-    }
+        additionalData: `@import '@/styles/variables';`,
+      },
+    },
   },
   resolve: {
     alias: {
-      '@': resolve(__dirname, 'src'),
-      '~bootstrap': 'bootstrap',
-      '~bootstrap-icons': 'bootstrap-icons',
-      '~vue-slider-component': 'vue-slider-component'
-    }
+      "@": resolve(__dirname, "src"),
+      "~bootstrap": "bootstrap",
+      "~bootstrap-icons": "bootstrap-icons",
+      "~vue-slider-component": "vue-slider-component",
+    },
   },
   server: {
     port: 8080,
     proxy: {
-      '/api': 'http://localhost:3000'
-    }
-  }
-})
+      "/api": "http://localhost:3000",
+    },
+  },
+});

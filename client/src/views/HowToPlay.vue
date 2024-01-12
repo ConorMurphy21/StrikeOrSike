@@ -26,12 +26,12 @@
 </template>
 
 <script lang="js">
-import Prompt from '@/assets/images/howToPlay/prompt.png'
-import Strike from '@/assets/images/howToPlay/strike.png'
-import Sike from '@/assets/images/howToPlay/sike.png'
-import Choice from '@/assets/images/howToPlay/choice.png'
-import Matching from '@/assets/images/howToPlay/matching.png'
-import { defineComponent } from 'vue'
+import Prompt from "@/assets/images/howToPlay/prompt.png";
+import Strike from "@/assets/images/howToPlay/strike.png";
+import Sike from "@/assets/images/howToPlay/sike.png";
+import Choice from "@/assets/images/howToPlay/choice.png";
+import Matching from "@/assets/images/howToPlay/matching.png";
+import { defineComponent } from "vue";
 export default defineComponent({
   data() {
     return {
@@ -40,9 +40,9 @@ export default defineComponent({
         strike: Strike,
         sike: Sike,
         choice: Choice,
-        matching: Matching
-      }
-    }
-  }
-})
+        matching: Matching,
+      },
+    };
+  },
+});
 </script>

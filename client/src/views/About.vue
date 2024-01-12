@@ -4,10 +4,14 @@
     <p v-t="'about.project'" />
     <i18n-t keypath="about.openSource" tag="p">
       <template #github>
-        <a v-t="'about.github'" href="https://github.com/ConorMurphy21/StrikeOrSike" />
+        <a
+          v-t="'about.github'"
+          href="https://github.com/ConorMurphy21/StrikeOrSike" />
       </template>
       <template #issues>
-        <a v-t="'about.issues'" href="https://github.com/ConorMurphy21/StrikeOrSike/issues/new" />
+        <a
+          v-t="'about.issues'"
+          href="https://github.com/ConorMurphy21/StrikeOrSike/issues/new" />
       </template>
       <template #gmail>
         <a href="mailto:strikeorsike@gmail.com">strikeorsike@gmail.com</a>
@@ -15,10 +19,14 @@
     </i18n-t>
     <i18n-t keypath="about.me" tag="p">
       <template #profile>
-        <a v-t="'about.profile'" href="https://www.linkedin.com/in/conormurphy21/" />
+        <a
+          v-t="'about.profile'"
+          href="https://www.linkedin.com/in/conormurphy21/" />
       </template>
       <template #coffee>
-        <a v-t="'about.coffee'" href="https://www.buymeacoffee.com/ConorMurphy/" />
+        <a
+          v-t="'about.coffee'"
+          href="https://www.buymeacoffee.com/ConorMurphy/" />
       </template>
     </i18n-t>
   </div>

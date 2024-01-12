@@ -5,7 +5,7 @@
     "composite": false,
     "incremental": true,
     "declaration": false,
-    "outDir": "./dist"
+    "outDir": "../dist"
   },
   "include": ["src"]
 }

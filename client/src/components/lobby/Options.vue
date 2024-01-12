@@ -1,18 +1,12 @@
 <template>
   <div class="accordion w-75">
     <div class="accordion-item">
-      <div
-        id="form"
-        class="accordion-collapse collapse hidden"
-        aria-labelledby="options-heading">
+      <div id="form" class="accordion-collapse collapse hidden" aria-labelledby="options-heading">
         <div class="accordion-body">
           <form>
             <div class="row">
               <label v-t="'promptPacksLabel'" class="form-label" />
-              <div
-                v-for="(value, label, index) in options.packs"
-                :key="label"
-                class="col-md-auto">
+              <div v-for="(value, label, index) in options.packs" :key="label" class="col-md-auto">
                 <input
                   :id="'pack' + index"
                   type="checkbox"
@@ -21,17 +15,12 @@
                   :disabled="disabled"
                   :checked="value"
                   @click="packChange($event, label, index)" />
-                <label :for="'pack' + index" class="form-check-label ms-2">{{
-                  $t(`packLabels.${label}`)
-                }}</label>
+                <label :for="'pack' + index" class="form-check-label ms-2">{{ $t(`packLabels.${label}`) }}</label>
               </div>
             </div>
             <div class="row mt-2" :class="{ 'd-sm-none': disabled }">
               <div class="col-12">
-                <label
-                  v-t="'customPromptsLabel'"
-                  for="customPrompts"
-                  class="form-label" />
+                <label v-t="'customPromptsLabel'" for="customPrompts" class="form-label" />
                 <textarea
                   id="customPrompts"
                   ref="customPrompts"
@@ -45,10 +34,7 @@
             </div>
             <div class="row mt-2">
               <div class="col-md-6">
-                <label
-                  v-t="'timerDurationLabel'"
-                  for="timerDuration"
-                  class="form-label" />
+                <label v-t="'timerDurationLabel'" for="timerDuration" class="form-label" />
                 <input
                   id="timerDuration"
                   ref="timerDuration"
@@ -64,10 +50,7 @@
                   @change="onNumChange($event, 'promptTimer')" />
               </div>
               <div class="col-md-6">
-                <label
-                  v-t="'numRoundsLabel'"
-                  for="numRounds"
-                  class="form-label" />
+                <label v-t="'numRoundsLabel'" for="numRounds" class="form-label" />
                 <input
                   id="numRounds"
                   v-tooltip.right="$t('tooltip.options.rounds')"
@@ -77,21 +60,15 @@
                   class="form-control"
                   :class="{ Disabled: disabled }"
                   :disabled="disabled"
-                  :value="
-                    options.autoNumRounds ? players.length : options.numRounds
-                  "
+                  :value="options.autoNumRounds ? players.length : options.numRounds"
                   @focusout="validateNumRounds($event)"
                   @change="onNumRoundChange($event)" />
               </div>
             </div>
             <div class="row mt-2">
-              <div
-                class="col-md-6 d-flex justify-content-start align-items-center">
+              <div class="col-md-6 d-flex justify-content-start align-items-center">
                 <div class="form-check form-switch">
-                  <label
-                    v-t="'sikeDisputeLabel'"
-                    for="sikeDispute"
-                    class="form-check-label" />
+                  <label v-t="'sikeDisputeLabel'" for="sikeDispute" class="form-check-label" />
                   <input
                     id="sikeDispute"
                     v-tooltip.left="$t('tooltip.options.dispute')"
@@ -104,10 +81,7 @@
                 </div>
               </div>
               <div class="col-md-6">
-                <label
-                  v-t="'sikeRetriesLabel'"
-                  for="sikeRetries"
-                  class="form-label" />
+                <label v-t="'sikeRetriesLabel'" for="sikeRetries" class="form-label" />
                 <input
                   id="sikeRetries"
                   v-tooltip.right="$t('tooltip.options.retries')"
@@ -141,11 +115,11 @@
 </template>
 
 <script lang="ts">
-import socket from "@/socket/socket";
-import { useRoomStore } from "@/stores/room.js";
-import { useGameStore } from "@/stores/game.js";
-import { mapState } from "pinia";
-import { defineComponent } from "vue";
+import socket from '@/socket/socket';
+import { useRoomStore } from '@/stores/room.js';
+import { useGameStore } from '@/stores/game.js';
+import { mapState } from 'pinia';
+import { defineComponent } from 'vue';
 
 type Options = {
   promptTimer: number;
@@ -164,58 +138,43 @@ type NumericKeyOfOptions = {
 
 export default defineComponent({
   props: {
-    disabled: Boolean,
+    disabled: Boolean
   },
   data() {
     return {
       customSelected: false,
-      tooltips: [],
+      tooltips: []
     };
   },
   computed: {
-    ...mapState(useGameStore, ["options"]),
-    ...mapState(useRoomStore, ["players"]),
+    ...mapState(useGameStore, ['options']),
+    ...mapState(useRoomStore, ['players'])
   },
   mounted() {
-    const form = document.getElementById("form") as HTMLFormElement;
+    const form = document.getElementById('form') as HTMLFormElement;
     const firstForm = this.$refs.timerDuration as HTMLInputElement;
-    form.addEventListener("shown.bs.collapse", () => {
+    form.addEventListener('shown.bs.collapse', () => {
       firstForm.focus();
     });
   },
   methods: {
     arraysEqual(a: string[], b: string[]) {
-      return (
-        Array.isArray(a) &&
-        Array.isArray(b) &&
-        a.length === b.length &&
-        a.every((val, index) => val === b[index])
-      );
+      return Array.isArray(a) && Array.isArray(b) && a.length === b.length && a.every((val, index) => val === b[index]);
     },
     validateNumRounds(event: Event) {
-      this.validateNum(event, "numRounds", { autoNumRounds: false });
+      this.validateNum(event, 'numRounds', { autoNumRounds: false });
     },
     onNumRoundChange(event: Event) {
-      this.onNumChange(event, "numRounds", { autoNumRounds: false });
+      this.onNumChange(event, 'numRounds', { autoNumRounds: false });
     },
-    onNumChange(
-      event: Event,
-      label: NumericKeyOfOptions,
-      options?: Partial<Options>,
-    ) {
-      const inputValue = parseInt(
-        (event.currentTarget! as HTMLInputElement).value,
-      );
+    onNumChange(event: Event, label: NumericKeyOfOptions, options?: Partial<Options>) {
+      const inputValue = parseInt((event.currentTarget! as HTMLInputElement).value);
       const actualValue = this.options[label];
       if (Math.abs(inputValue - actualValue) !== 0) {
         this.validateNum(event, label, options);
       }
     },
-    validateNum(
-      event: Event,
-      label: NumericKeyOfOptions,
-      options?: Partial<Options>,
-    ) {
+    validateNum(event: Event, label: NumericKeyOfOptions, options?: Partial<Options>) {
       const input = event.currentTarget! as HTMLInputElement;
       const inputValue = parseInt(input.value);
       const max = parseInt(input.max);
@@ -231,7 +190,7 @@ export default defineComponent({
       if (sanitizedVal !== this.options[label]) {
         options = options ?? {};
         options[label] = sanitizedVal;
-        socket.emit("setOptions", options);
+        socket.emit('setOptions', options);
       } else {
         input.value = String(this.options[label]);
       }
@@ -243,7 +202,7 @@ export default defineComponent({
       if (!input.checked) {
         options.sikeRetries = 0;
       }
-      socket.emit("setOptions", options);
+      socket.emit('setOptions', options);
     },
     packChange(event: Event, label: string, index: number) {
       const input = event.currentTarget! as HTMLInputElement;
@@ -253,17 +212,15 @@ export default defineComponent({
       const packs = { ...this.options.packs };
       packs[label] = input.checked;
       const options = { packs: packs };
-      socket.emit("setOptions", options);
+      socket.emit('setOptions', options);
     },
     customPromptsChange(input: Event) {
-      const prompts = (input.currentTarget! as HTMLInputElement).value.split(
-        /\r?\n/,
-      );
+      const prompts = (input.currentTarget! as HTMLInputElement).value.split(/\r?\n/);
       if (!this.arraysEqual(prompts, this.options.customPrompts)) {
         const options = { customPrompts: prompts };
-        socket.emit("setOptions", options);
+        socket.emit('setOptions', options);
       }
-    },
-  },
+    }
+  }
 });
 </script>

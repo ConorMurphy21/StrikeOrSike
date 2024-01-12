@@ -5,7 +5,7 @@
       class="display-5"
       :class="{
         'bounce bold-black': time > 10,
-        'bounce-fast bolder-red': time <= 10,
+        'bounce-fast bolder-red': time <= 10
       }">
       {{ $n(time) }}
     </h1>
@@ -16,12 +16,12 @@
 </template>
 
 <script lang="ts">
-import timerMp3 from "@/assets/audio/timer_full.mp3";
-import timerCompleteMp3 from "@/assets/audio/timerComplete.mp3";
-import { AudioWrap } from "@/mixins/audiowrap.js";
-import { useSettingsStore } from "@/stores/settings.js";
-import { mapState } from "pinia";
-import { defineComponent } from "vue";
+import timerMp3 from '@/assets/audio/timer_full.mp3';
+import timerCompleteMp3 from '@/assets/audio/timerComplete.mp3';
+import { AudioWrap } from '@/mixins/audiowrap.js';
+import { useSettingsStore } from '@/stores/settings.js';
+import { mapState } from 'pinia';
+import { defineComponent } from 'vue';
 
 const timer = new AudioWrap(timerMp3);
 const timerComplete = new AudioWrap(timerCompleteMp3);
@@ -29,11 +29,11 @@ export default defineComponent({
   props: {
     time: {
       type: Number,
-      required: true,
-    },
+      required: true
+    }
   },
   computed: {
-    ...mapState(useSettingsStore, ["volume"]),
+    ...mapState(useSettingsStore, ['volume'])
   },
   watch: {
     volume(val: number) {
@@ -47,12 +47,12 @@ export default defineComponent({
         timer.currentTime = 0;
         timerComplete.play();
       }
-    },
+    }
   },
   unmounted() {
     timer.pause();
     timer.currentTime = 0;
-  },
+  }
 });
 </script>
 

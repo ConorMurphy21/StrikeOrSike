@@ -1,22 +1,15 @@
 <template>
-  <div
-    class="w-100 d-flex flex-column align-items-center justify-content-between gap-2 py-3 px-4">
-    <div
-      class="w-100 d-flex flex-column align-items-center justify-content-start">
+  <div class="w-100 d-flex flex-column align-items-center justify-content-between gap-2 py-3 px-4">
+    <div class="w-100 d-flex flex-column align-items-center justify-content-start">
       <prompt :prompt="prompt" />
       <h3 v-if="isSelector" class="fs-3">
-        {{ $t("selfScoreMessage", { score: $n(roundPoints) }) }}
+        {{ $t('selfScoreMessage', { score: $n(roundPoints) }) }}
       </h3>
       <h3 v-else class="fs-3">
-        {{
-          $t("scoreMessage", { player: selector!.name, score: $n(roundPoints) })
-        }}
+        {{ $t('scoreMessage', { player: selector!.name, score: $n(roundPoints) }) }}
       </h3>
-      <span
-        class="d-flex flex-row align-items-center justify-content-center gap-2">
-        <span class="fs-2 fw-bolder text-red my-auto">{{
-          selectedResponse
-        }}</span>
+      <span class="d-flex flex-row align-items-center justify-content-center gap-2">
+        <span class="fs-2 fw-bolder text-red my-auto">{{ selectedResponse }}</span>
         <dispute-icon
           v-if="sikeDisputeCount"
           :disabled="isSelector"
@@ -28,13 +21,8 @@
       </div>
     </div>
 
-    <div
-      class="matches d-flex flex-row w-75 gap-2 justify-content-around align-items-center">
-      <match-card
-        v-for="player in matchers"
-        :key="player.id"
-        :player="player"
-        :match="match(player)" />
+    <div class="matches d-flex flex-row w-75 gap-2 justify-content-around align-items-center">
+      <match-card v-for="player in matchers" :key="player.id" :player="player" :match="match(player)" />
     </div>
 
     <button
@@ -46,17 +34,17 @@
 </template>
 
 <script lang="ts">
-import Prompt from "@/components/gameShared/Prompt.vue";
-import SelectionType from "@/components/gameShared/SelectionType.vue";
-import MatchCard from "@/components/responseMatching/MatchCard.vue";
-import DisputeIcon from "@/components/responseMatching/DisputeIcon.vue";
-import ClickMp3 from "@/assets/audio/click2.mp3";
-import { AudioWrap } from "@/mixins/audiowrap.js";
-import socket from "@/socket/socket";
-import { useRoomStore } from "@/stores/room.js";
-import { useGameStore } from "@/stores/game.js";
-import { mapState } from "pinia";
-import { defineComponent } from "vue";
+import Prompt from '@/components/gameShared/Prompt.vue';
+import SelectionType from '@/components/gameShared/SelectionType.vue';
+import MatchCard from '@/components/responseMatching/MatchCard.vue';
+import DisputeIcon from '@/components/responseMatching/DisputeIcon.vue';
+import ClickMp3 from '@/assets/audio/click2.mp3';
+import { AudioWrap } from '@/mixins/audiowrap.js';
+import socket from '@/socket/socket';
+import { useRoomStore } from '@/stores/room.js';
+import { useGameStore } from '@/stores/game.js';
+import { mapState } from 'pinia';
+import { defineComponent } from 'vue';
 
 type Player = {
   id: string;
@@ -71,39 +59,35 @@ export default defineComponent({
   components: { MatchCard, Prompt, SelectionType, DisputeIcon },
   data() {
     return {
-      matchedResponse: "",
+      matchedResponse: ''
     };
   },
   computed: {
-    ...mapState(useRoomStore, ["players"]),
+    ...mapState(useRoomStore, ['players']),
     ...mapState(useGameStore, [
-      "prompt",
-      "matches",
-      "selectionType",
-      "selectedResponse",
-      "selector",
-      "roundPoints",
-      "canEndRound",
-      "isSelector",
-      "sikeDisputeCount",
+      'prompt',
+      'matches',
+      'selectionType',
+      'selectedResponse',
+      'selector',
+      'roundPoints',
+      'canEndRound',
+      'isSelector',
+      'sikeDisputeCount'
     ]),
     matchers: function () {
-      return this.players.filter(
-        (player: Player) => player.active && player.id !== this.selector!.id,
-      );
-    },
+      return this.players.filter((player: Player) => player.active && player.id !== this.selector!.id);
+    }
   },
   methods: {
     endRound: function () {
       click.play();
-      socket.emit("selectionComplete");
+      socket.emit('selectionComplete');
     },
     match(player: Player) {
-      return this.matches.find(
-        (match: { player: Player }) => player.id === match.player.id,
-      )!;
-    },
-  },
+      return this.matches.find((match: { player: Player }) => player.id === match.player.id)!;
+    }
+  }
 });
 </script>
 

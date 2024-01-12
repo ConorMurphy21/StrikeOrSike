@@ -1,6 +1,6 @@
-import { DirectiveBinding, nextTick } from "vue";
-import { Tooltip } from "bootstrap";
-import { useSettingsStore } from "@/stores/settings.js";
+import { DirectiveBinding, nextTick } from 'vue';
+import { Tooltip } from 'bootstrap';
+import { useSettingsStore } from '@/stores/settings.js';
 
 const placementRE = /^(auto|top|bottom|left|right)$/i;
 const delayShowRE = /^ds\d+$/i;
@@ -13,13 +13,13 @@ function isPlacementType(mod: string): mod is Tooltip.PopoverPlacement {
 function parseBindings(bindings: DirectiveBinding) {
   // We start out with a basic config
   let config = {
-    title: "",
-    trigger: "hover" as const, // Default set below if needed
-    placement: "left" as Tooltip.PopoverPlacement,
-    delay: { show: 500, hide: 100 },
+    title: '',
+    trigger: 'hover' as const, // Default set below if needed
+    placement: 'left' as Tooltip.PopoverPlacement,
+    delay: { show: 500, hide: 100 }
   };
 
-  if (typeof bindings.value === "string") {
+  if (typeof bindings.value === 'string') {
     config.title = bindings.value;
   } else {
     config = { ...config, ...bindings.value };
@@ -74,5 +74,5 @@ export const CBSTooltip = {
     const settings = useSettingsStore();
     settings.removeTooltipUpdateFunc(bindings.instance!.$forceUpdate);
     removeTooltip(el);
-  },
+  }
 };

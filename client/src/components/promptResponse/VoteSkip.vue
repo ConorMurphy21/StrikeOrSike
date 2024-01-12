@@ -16,31 +16,31 @@
 </template>
 
 <script lang="ts">
-import ClickMp3 from "@/assets/audio/click2.mp3";
-import NotificationCount from "@/components/gameShared/NotificationCount.vue";
-import { AudioWrap } from "@/mixins/audiowrap.js";
-import socket from "@/socket/socket";
-import { useGameStore } from "@/stores/game.js";
-import { mapState } from "pinia";
-import { defineComponent } from "vue";
+import ClickMp3 from '@/assets/audio/click2.mp3';
+import NotificationCount from '@/components/gameShared/NotificationCount.vue';
+import { AudioWrap } from '@/mixins/audiowrap.js';
+import socket from '@/socket/socket';
+import { useGameStore } from '@/stores/game.js';
+import { mapState } from 'pinia';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   components: {
-    NotificationCount,
+    NotificationCount
   },
   data() {
     return {
-      tooltips: [],
+      tooltips: []
     };
   },
   computed: {
-    ...mapState(useGameStore, ["skipVoteCount", "skipVoteNext"]),
+    ...mapState(useGameStore, ['skipVoteCount', 'skipVoteNext'])
   },
   methods: {
     sendVote() {
       new AudioWrap(ClickMp3).play();
-      socket.emit("pollVote", "skipPrompt");
-    },
-  },
+      socket.emit('pollVote', 'skipPrompt');
+    }
+  }
 });
 </script>

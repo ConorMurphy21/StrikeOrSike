@@ -6,21 +6,21 @@
     @click="click" />
 </template>
 <script lang="ts">
-import { useSettingsStore } from "@/stores/settings.js";
-import { mapState, mapActions } from "pinia";
-import { defineComponent } from "vue";
+import { useSettingsStore } from '@/stores/settings.js';
+import { mapState, mapActions } from 'pinia';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   computed: {
-    ...mapState(useSettingsStore, ["showTooltips"]),
+    ...mapState(useSettingsStore, ['showTooltips'])
   },
   methods: {
-    ...mapActions(useSettingsStore, ["setShowTooltips"]),
+    ...mapActions(useSettingsStore, ['setShowTooltips']),
     click() {
       this.setShowTooltips(!this.showTooltips);
       this.$forceUpdate();
-    },
-  },
+    }
+  }
 });
 </script>
 

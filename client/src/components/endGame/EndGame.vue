@@ -1,39 +1,30 @@
 <template>
-  <div
-    class="w-100 d-flex flex-column justify-content-start align-items-center gap-3 py-3 px-4">
-    <h1
-      v-t="'playerScores'"
-      class="mt-2 text-center display-1 text-red font-fancy" />
+  <div class="w-100 d-flex flex-column justify-content-start align-items-center gap-3 py-3 px-4">
+    <h1 v-t="'playerScores'" class="mt-2 text-center display-1 text-red font-fancy" />
 
     <div class="list-group w-75 w-xl-50">
-      <div
-        v-for="(score, index) in scores"
-        :key="score.player.id"
-        class="list-group-item">
+      <div v-for="(score, index) in scores" :key="score.player.id" class="list-group-item">
         {{ rank[index] }}. {{ score.player.name }}: {{ $n(score.points) }}
       </div>
     </div>
 
     <div class="flex-grow-1" />
-    <button
-      v-t="'toLobby'"
-      class="btn btn-blue w-75 w-lg-50 fs-4 mb-4"
-      @click="toLobby" />
+    <button v-t="'toLobby'" class="btn btn-blue w-75 w-lg-50 fs-4 mb-4" @click="toLobby" />
   </div>
 </template>
 
 <script lang="ts">
-import { mapActions, mapState } from "pinia";
-import ClickMp3 from "@/assets/audio/click2.mp3";
-import { AudioWrap } from "@/mixins/audiowrap.js";
-import { useGameStore } from "@/stores/game.js";
-import { defineComponent } from "vue";
+import { mapActions, mapState } from 'pinia';
+import ClickMp3 from '@/assets/audio/click2.mp3';
+import { AudioWrap } from '@/mixins/audiowrap.js';
+import { useGameStore } from '@/stores/game.js';
+import { defineComponent } from 'vue';
 
 const click = new AudioWrap(ClickMp3);
 
 export default defineComponent({
   computed: {
-    ...mapState(useGameStore, ["scores"]),
+    ...mapState(useGameStore, ['scores']),
     rank() {
       let result = [];
       let lastScore = -1;
@@ -48,14 +39,14 @@ export default defineComponent({
         lastScore = score.points;
       }
       return result;
-    },
+    }
   },
   methods: {
-    ...mapActions(useGameStore, ["setScene"]),
+    ...mapActions(useGameStore, ['setScene']),
     toLobby() {
       click.play();
-      this.setScene("lobby");
-    },
-  },
+      this.setScene('lobby');
+    }
+  }
 });
 </script>

@@ -1,7 +1,6 @@
 <!--suppress CssUnusedSymbol -->
 <template>
-  <div
-    class="outer flex-grow-1 d-flex flex-column justify-content-between align-items-center w-100">
+  <div class="outer flex-grow-1 d-flex flex-column justify-content-between align-items-center w-100">
     <div
       ref="box"
       :style="cssProps"
@@ -17,7 +16,7 @@
             active: selected === index,
             'list-group-item-orange': response === selectedStrike, // will override used
             'list-group-item-blue': response === selectedSike,
-            'list-group-item-red': used(response),
+            'list-group-item-red': used(response)
           }"
           @click="select(index, response)">
           {{ response }}
@@ -25,49 +24,41 @@
       </div>
     </div>
     <transition name="confirm">
-      <div
-        v-if="selected !== -1"
-        class="d-flex flex-row gap-2 w-75 justify-content-between">
-        <button
-          v-t="'cancel'"
-          class="btn btn-red w-50 w-lg-25"
-          @click="deselect" />
-        <button
-          v-t="'confirm'"
-          class="btn btn-blue w-50 w-lg-25"
-          @click="confirm" />
+      <div v-if="selected !== -1" class="d-flex flex-row gap-2 w-75 justify-content-between">
+        <button v-t="'cancel'" class="btn btn-red w-50 w-lg-25" @click="deselect" />
+        <button v-t="'confirm'" class="btn btn-blue w-50 w-lg-25" @click="confirm" />
       </div>
     </transition>
   </div>
 </template>
 <script lang="ts">
-import Click1Mp3 from "@/assets/audio/click1.mp3";
-import Click2Mp3 from "@/assets/audio/click2.mp3";
-import { AudioWrap } from "@/mixins/audiowrap.js";
-import { useGameStore } from "@/stores/game.js";
-import { mapState } from "pinia";
-import { defineComponent } from "vue";
+import Click1Mp3 from '@/assets/audio/click1.mp3';
+import Click2Mp3 from '@/assets/audio/click2.mp3';
+import { AudioWrap } from '@/mixins/audiowrap.js';
+import { useGameStore } from '@/stores/game.js';
+import { mapState } from 'pinia';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   props: {
     selectable: Boolean,
     height: {
       type: Number,
-      default: 30,
+      default: 30
     },
     playerId: {
       type: String,
-      default: "",
-    },
+      default: ''
+    }
   },
-  emits: ["update:modelValue"],
+  emits: ['update:modelValue'],
   data() {
     return {
-      selected: -1,
+      selected: -1
     };
   },
   computed: {
-    ...mapState(useGameStore, ["playerResponses"]),
+    ...mapState(useGameStore, ['playerResponses']),
     responses() {
       return this.playerResponses(this.playerId).all;
     },
@@ -82,9 +73,9 @@ export default defineComponent({
     },
     cssProps() {
       return {
-        "--max-height": this.height + "vh",
+        '--max-height': this.height + 'vh'
       };
-    },
+    }
   },
   methods: {
     select(index: number, response: string) {
@@ -94,7 +85,7 @@ export default defineComponent({
           this.selected = index;
         } else {
           new AudioWrap(Click2Mp3).play();
-          this.$emit("update:modelValue", response);
+          this.$emit('update:modelValue', response);
         }
       }
     },
@@ -110,12 +101,10 @@ export default defineComponent({
     },
     used(response: string) {
       return (
-        response !== this.selectedStrike &&
-        response !== this.selectedSike &&
-        this.usedResponses.includes(response)
+        response !== this.selectedStrike && response !== this.selectedSike && this.usedResponses.includes(response)
       );
-    },
-  },
+    }
+  }
 });
 </script>
 

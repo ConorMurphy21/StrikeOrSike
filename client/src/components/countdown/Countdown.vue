@@ -5,28 +5,28 @@
 </template>
 
 <script lang="ts">
-import timerMp3 from "@/assets/audio/countdown.mp3";
-import { AudioWrap } from "@/mixins/audiowrap.js";
-import { useGameStore } from "@/stores/game.js";
-import { useSettingsStore } from "@/stores/settings.js";
-import { mapState } from "pinia";
-import { defineComponent } from "vue";
+import timerMp3 from '@/assets/audio/countdown.mp3';
+import { AudioWrap } from '@/mixins/audiowrap.js';
+import { useGameStore } from '@/stores/game.js';
+import { useSettingsStore } from '@/stores/settings.js';
+import { mapState } from 'pinia';
+import { defineComponent } from 'vue';
 
 const timer = new AudioWrap(timerMp3);
 
 export default defineComponent({
   computed: {
-    ...mapState(useGameStore, ["timer"]),
-    ...mapState(useSettingsStore, ["volume"]),
+    ...mapState(useGameStore, ['timer']),
+    ...mapState(useSettingsStore, ['volume'])
   },
   watch: {
     volume(val: number) {
       timer.volume = val;
-    },
+    }
   },
   mounted() {
     timer.play();
-  },
+  }
 });
 </script>
 

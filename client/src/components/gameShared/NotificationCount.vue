@@ -7,22 +7,22 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   props: {
     width: {
       type: Number,
-      default: 24,
-    },
+      default: 24
+    }
   },
   computed: {
     cssProps() {
       return {
-        "--min-width": this.width + "px",
+        '--min-width': this.width + 'px'
       };
-    },
-  },
+    }
+  }
 });
 </script>
 

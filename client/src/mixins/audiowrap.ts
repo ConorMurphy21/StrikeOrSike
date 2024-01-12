@@ -1,5 +1,5 @@
 // won't adjust audio while playing, but will be fine for short audio clips
-import { useSettingsStore } from "@/stores/settings.js";
+import { useSettingsStore } from '@/stores/settings.js';
 
 export const AudioWrap = class {
   private audio: HTMLAudioElement;

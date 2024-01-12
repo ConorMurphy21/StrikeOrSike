@@ -1,41 +1,41 @@
-import { createWebHistory, createRouter, RouteLocation } from "vue-router";
-import Home from "@/views/Home.vue";
-const Game = () => import("@/views/Game.vue");
-const About = () => import("@/views/About.vue");
-const HowToPlay = () => import("@/views/HowToPlay.vue");
-import { useRoomStore } from "@/stores/room.js";
+import { createWebHistory, createRouter, RouteLocation } from 'vue-router';
+import Home from '@/views/Home.vue';
+const Game = () => import('@/views/Game.vue');
+const About = () => import('@/views/About.vue');
+const HowToPlay = () => import('@/views/HowToPlay.vue');
+import { useRoomStore } from '@/stores/room.js';
 
 const routes = [
   {
-    path: "/",
+    path: '/',
     component: Home,
-    name: "home",
-    meta: { title: "Home" },
+    name: 'home',
+    meta: { title: 'Home' }
   },
   {
-    path: "/how-to-play",
+    path: '/how-to-play',
     component: HowToPlay,
-    name: "howToPlay",
-    meta: { title: "How To Play" },
+    name: 'howToPlay',
+    meta: { title: 'How To Play' }
   },
   {
-    path: "/about",
+    path: '/about',
     component: About,
-    name: "about",
-    meta: { title: "About" },
+    name: 'about',
+    meta: { title: 'About' }
   },
   {
-    path: "/:roomName",
+    path: '/:roomName',
     component: Game,
-    name: "game",
+    name: 'game',
     props: (route: RouteLocation) => ({ roomName: route.params.roomName }),
-    meta: { title: "Game" },
-  },
+    meta: { title: 'Game' }
+  }
 ];
 
 const router = createRouter({
   history: createWebHistory(),
-  routes,
+  routes
 });
 
 router.beforeEach((to, from, next) => {

@@ -7,56 +7,53 @@
     @click="sendVote">
     <i class="bi-hand-thumbs-down fs-5 lh-sm" />
 
-    <notification-count
-      v-if="sikeDisputeCount"
-      :width="21"
-      class="position-absolute top-0 start-100 translate-middle">
+    <notification-count v-if="sikeDisputeCount" :width="21" class="position-absolute top-0 start-100 translate-middle">
       {{ $n(sikeDisputeCount) }}
     </notification-count>
   </button>
 </template>
 
 <script lang="ts">
-import NotificationCount from "@/components/gameShared/NotificationCount.vue";
-import ClickMp3 from "@/assets/audio/click2.mp3";
-import { AudioWrap } from "@/mixins/audiowrap.js";
-import socket from "@/socket/socket";
-import { useGameStore } from "@/stores/game.js";
-import { mapState } from "pinia";
-import { defineComponent } from "vue";
+import NotificationCount from '@/components/gameShared/NotificationCount.vue';
+import ClickMp3 from '@/assets/audio/click2.mp3';
+import { AudioWrap } from '@/mixins/audiowrap.js';
+import socket from '@/socket/socket';
+import { useGameStore } from '@/stores/game.js';
+import { mapState } from 'pinia';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   components: {
-    NotificationCount,
+    NotificationCount
   },
   props: {
     disabled: {
       type: Boolean,
-      default: false,
+      default: false
     },
     response: {
       type: String,
-      required: true,
+      required: true
     },
     placement: {
       type: String,
-      required: true,
-    },
+      required: true
+    }
   },
   data() {
     return {
-      tooltips: [],
+      tooltips: []
     };
   },
   computed: {
-    ...mapState(useGameStore, ["sikeDisputeCount", "sikeDisputeNext"]),
+    ...mapState(useGameStore, ['sikeDisputeCount', 'sikeDisputeNext'])
   },
   methods: {
     sendVote() {
       new AudioWrap(ClickMp3).play();
-      socket.emit("pollVote", "sikeDispute");
-    },
-  },
+      socket.emit('pollVote', 'sikeDispute');
+    }
+  }
 });
 </script>
 

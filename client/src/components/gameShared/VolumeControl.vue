@@ -19,7 +19,7 @@
       :class="{
         'bi-volume-up-fill': value > 50,
         'bi-volume-down-fill': value <= 50 && value > 0,
-        'bi-volume-mute-fill': value === 0,
+        'bi-volume-mute-fill': value === 0
       }"
       @click="click"
       @focusin="clearTimer"
@@ -27,34 +27,34 @@
   </div>
 </template>
 <script lang="ts">
-import VueSlider from "vue-slider-component";
-import { useSettingsStore } from "@/stores/settings.js";
-import { mapActions, mapState } from "pinia";
-import { defineComponent } from "vue";
+import VueSlider from 'vue-slider-component';
+import { useSettingsStore } from '@/stores/settings.js';
+import { mapActions, mapState } from 'pinia';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   components: {
-    VueSlider,
+    VueSlider
   },
   data() {
     return {
       showing: false,
-      timer: null as null | NodeJS.Timeout,
+      timer: null as null | NodeJS.Timeout
     };
   },
   computed: {
-    ...mapState(useSettingsStore, ["volume"]),
+    ...mapState(useSettingsStore, ['volume']),
     value: {
       set: function (val: number) {
         this.setVolume(val / 100);
       },
       get: function () {
         return Math.round(this.volume * 100);
-      },
-    },
+      }
+    }
   },
   methods: {
-    ...mapActions(useSettingsStore, ["setVolume", "toggleMute"]),
+    ...mapActions(useSettingsStore, ['setVolume', 'toggleMute']),
     click() {
       this.toggleMute();
     },
@@ -70,8 +70,8 @@ export default defineComponent({
       if (this.timer) {
         clearTimeout(this.timer);
       }
-    },
-  },
+    }
+  }
 });
 </script>
 

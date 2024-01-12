@@ -1,4 +1,4 @@
-import { defineStore } from "pinia";
+import { defineStore } from 'pinia';
 
 interface State {
   volume: number;
@@ -7,13 +7,13 @@ interface State {
   tooltipUpdateFuncs: (() => void)[];
 }
 
-export const useSettingsStore = defineStore("settings", {
+export const useSettingsStore = defineStore('settings', {
   state: (): State => ({
     volume: 1,
     // used for muting and unmuting
     lastVolume: 1,
     showTooltips: true,
-    tooltipUpdateFuncs: [],
+    tooltipUpdateFuncs: []
   }),
   actions: {
     setVolume(volume: number) {
@@ -42,6 +42,6 @@ export const useSettingsStore = defineStore("settings", {
       if (index !== -1) {
         this.tooltipUpdateFuncs.splice(index, 1);
       }
-    },
-  },
+    }
+  }
 });

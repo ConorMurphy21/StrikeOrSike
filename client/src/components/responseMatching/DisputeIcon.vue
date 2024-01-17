@@ -6,8 +6,11 @@
     :disabled="disabled"
     @click="sendVote">
     <i class="bi-hand-thumbs-down fs-5 lh-sm" />
-
-    <notification-count v-if="sikeDisputeCount" :width="21" class="position-absolute top-0 start-100 translate-middle">
+    <notification-count
+      v-if="sikeDisputeCount"
+      :width="22"
+      class="position-absolute top-0 start-100 translate-middle"
+      :next-majority="sikeDisputeNext">
       {{ $n(sikeDisputeCount) }}
     </notification-count>
   </button>

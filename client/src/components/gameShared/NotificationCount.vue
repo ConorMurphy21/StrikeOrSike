@@ -1,8 +1,10 @@
 <template>
   <span
     :style="cssProps"
-    class="rounded-pill badge bg-burgundy d-inline-flex align-items-center justify-content-center p-0">
+    class="rounded-pill badge bg-orange d-inline-flex align-items-center justify-content-center p-0"
+    :class="{ 'bg-blue': !nextMajority }">
     <slot />
+    {{ nextMajority }}
   </span>
 </template>
 
@@ -14,6 +16,10 @@ export default defineComponent({
     width: {
       type: Number,
       default: 24
+    },
+    nextMajority: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {

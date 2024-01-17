@@ -9,7 +9,8 @@
     <notification-count
       v-if="skipVoteCount"
       :width="22"
-      class="position-absolute top-0 start-100 translate-middle fs-6">
+      class="position-absolute top-0 start-100 translate-middle fs-6"
+      :next-majority="skipVoteNext">
       {{ $n(skipVoteCount) }}
     </notification-count>
   </a>

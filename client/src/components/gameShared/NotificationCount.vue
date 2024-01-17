@@ -1,10 +1,9 @@
 <template>
   <span
     :style="cssProps"
-    class="rounded-pill badge bg-orange d-inline-flex align-items-center justify-content-center p-0"
-    :class="{ 'bg-blue': !nextMajority }">
+    class="rounded-pill badge d-inline-flex align-items-center justify-content-center p-0"
+    :class="{ 'bg-blue': !nextMajority, 'bg-orange': nextMajority }">
     <slot />
-    {{ nextMajority }}
   </span>
 </template>
 

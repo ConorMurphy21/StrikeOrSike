@@ -212,9 +212,9 @@ function registerCallbacks(io: TypedServer, room: Room) {
     skipPrompt(io, room);
   });
 
-  state.registerSelectionUnsuccessfulCb(() => {
-    continueSelection(io, room);
-  });
+  //state.registerSelectionUnsuccessfulCb(() => {
+  //continueSelection(io, room);
+  //});
 
   state.registerDisputeCompleteCb((action) => {
     applyDisputeAction(io, room, action);

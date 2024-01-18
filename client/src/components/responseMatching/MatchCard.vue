@@ -26,7 +26,7 @@ import { AudioWrap } from '@/mixins/audiowrap.js';
 import { useRoomStore } from '@/stores/room.js';
 import { useGameStore } from '@/stores/game.js';
 import { mapState, mapActions } from 'pinia';
-import { defineComponent, PropType } from 'vue';
+import { defineComponent, type PropType } from 'vue';
 
 const click = new AudioWrap(ClickMp3);
 

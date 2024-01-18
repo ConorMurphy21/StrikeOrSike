@@ -61,7 +61,7 @@ describe('Complete callback tests', () => {
     });
 
     it.skip('Selector Disconnects while selecting', (done) => {
-      gameState.registerSelectionUnsuccessfulCb(done);
+      //gameState.registerSelectionUnsuccessfulCb(done);
       gameState.disconnect(selectorId);
     });
 
@@ -89,7 +89,7 @@ describe('Complete callback tests', () => {
         assert.isFalse(selectorActive);
         done();
       });
-      gameState.registerSelectionUnsuccessfulCb(() => assert.fail());
+      //gameState.registerSelectionUnsuccessfulCb(() => assert.fail());
       gameState.acceptResponseSelection(selectorId, firstResponse);
       players[selectorIndex].active = false;
       gameState.disconnect(matcherId);
@@ -100,7 +100,7 @@ describe('Complete callback tests', () => {
         assert.isFalse(selectorActive);
         done();
       });
-      gameState.registerSelectionUnsuccessfulCb(() => assert.fail());
+      //gameState.registerSelectionUnsuccessfulCb(() => assert.fail());
       gameState.acceptResponseSelection(selectorId, firstResponse);
       players[selectorIndex].active = false;
       gameState.acceptMatch(matcherId, '');

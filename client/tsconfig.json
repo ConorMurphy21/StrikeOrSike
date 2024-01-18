@@ -1,25 +1,20 @@
 {
-  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "extends": "../tsconfig.options.json",
   "include": ["src/**/*", "src/**/*.vue"],
-  "exclude": ["src/**/__tests__/*"],
+  "exclude": ["src/**/__tests__/*", "**/node_modules/**/*"],
   "compilerOptions": {
-    "target": "esnext",
     "module": "esnext",
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
     },
-    "composite": true,
     "types": ["vite/client", "@types/bootstrap", "@types/node"],
     "allowJs": true,
     "moduleResolution": "node",
-    "verbatimModuleSyntax": false,
     "importHelpers": true,
-    "isolatedModules": true,
+    "emitDeclarationOnly": false,
     "noEmit": true,
-    "pretty": false,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "skipLibCheck": true
+    "noUnusedLocals": false,
+    "noImplicitReturns": false
   }
 }

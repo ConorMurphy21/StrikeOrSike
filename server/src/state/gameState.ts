@@ -35,7 +35,7 @@ export class GameState {
 
   private _startNextPromptCb: null | (() => void);
   private _promptSkippedCb: null | (() => void);
-  private _selectionUnsuccessfulCb: null | (() => void);
+  //private _selectionUnsuccessfulCb: null | (() => void);
   private _disputeCompleteCb: null | ((action: string) => void);
   private _matchingCompleteCb: null | ((selectorActive: boolean) => void);
   private corrections: Record<string, string[]>;
@@ -67,7 +67,7 @@ export class GameState {
 
     this._startNextPromptCb = null;
     this._promptSkippedCb = null;
-    this._selectionUnsuccessfulCb = null;
+    //this._selectionUnsuccessfulCb = null;
     this._disputeCompleteCb = null;
     this._matchingCompleteCb = null;
 
@@ -99,9 +99,9 @@ export class GameState {
     this._promptSkippedCb = cb;
   }
 
-  registerSelectionUnsuccessfulCb(cb: () => void): void {
-    this._selectionUnsuccessfulCb = cb;
-  }
+  //registerSelectionUnsuccessfulCb(cb: () => void): void {
+  //this._selectionUnsuccessfulCb = cb;
+  //}
 
   registerDisputeCompleteCb(cb: (action: string) => void): void {
     this._disputeCompleteCb = cb;

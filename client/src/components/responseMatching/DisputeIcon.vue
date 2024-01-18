@@ -2,7 +2,7 @@
   <button
     v-tooltip="{ title: $t('tooltip.dispute', { response }), placement }"
     class="btn btn-sm btn-orange text-white ratio-1x1 position-relative d-inline-flex justify-content-center align-items-center"
-    :class="{ 'btn-blue': !sikeDisputeNext }"
+    :class="{ 'btn-blue': !pressedVote }"
     :disabled="disabled"
     @click="sendVote">
     <i class="bi-hand-thumbs-down fs-5 lh-sm" />
@@ -45,7 +45,8 @@ export default defineComponent({
   },
   data() {
     return {
-      tooltips: []
+      tooltips: [],
+      pressedVote: false
     };
   },
   computed: {

@@ -1,8 +1,8 @@
 <template>
   <a
     v-tooltip.right="$t('tooltip.voteSkip')"
-    class="btn btn-sm btn-orange text-white ratio-1x1 position-relative d-inline-flex justify-content-center align-items-center"
-    :class="{ 'btn-blue': !skipVoteNext }"
+    class="btn btn-sm btn-orange text-white ratio-1x1 position-relative d-inline-flex justify-content-center align-items-center active"
+    :class="{ 'btn-blue': !pressedVote }"
     @click="sendVote">
     <i class="bi-hand-thumbs-down fs-3 p-0 lh-sm" />
 
@@ -31,7 +31,8 @@ export default defineComponent({
   },
   data() {
     return {
-      tooltips: []
+      tooltips: [],
+      pressedVote: false
     };
   },
   computed: {
@@ -39,6 +40,7 @@ export default defineComponent({
   },
   methods: {
     sendVote() {
+      this.pressedVote = !this.pressedVote;
       new AudioWrap(ClickMp3).play();
       socket.emit('pollVote', 'skipPrompt');
     }

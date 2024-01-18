@@ -5,7 +5,7 @@
     <player-chooser v-model="selectedId" class="w-50 w-lg-25 fs-4 mb-3" />
     <button
       class="btn btn-orange w-75 w-lg-50 w-xl-25 fs-4 mb-3 position-relative"
-      :class="{ 'btn-blue': !startNextRoundNext }"
+      :class="{ 'btn-blue': !pressedVote }"
       @click="sendVote">
       {{ hasNextRound ? $t('startNextRound') : $t('viewResults') }}
       <notification-count
@@ -41,7 +41,8 @@ export default defineComponent({
   data() {
     return {
       responsesId: '',
-      selectedId: ''
+      selectedId: '',
+      pressedVote: false
     };
   },
   computed: {

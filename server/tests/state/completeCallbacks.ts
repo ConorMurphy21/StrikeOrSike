@@ -1,8 +1,7 @@
 import { GameState } from '../../src/state/gameState';
 import { assert } from 'chai';
-import { Player, Room } from '../../src/state/rooms';
-import { PollName } from '../../src/state/pollService';
-import { SelectionType } from '../../src/types/stateTypes';
+import { Room } from '../../src/state/rooms';
+import { Player, PollName, SelectionType } from ':common/stateTypes';
 
 describe('Complete callback tests', () => {
   let players: Player[];
@@ -60,7 +59,7 @@ describe('Complete callback tests', () => {
       gameState.selectionType = SelectionType.Strike;
     });
 
-    it.skip('Selector Disconnects while selecting', (done) => {
+    it.skip('Selector Disconnects while selecting', () => {
       //gameState.registerSelectionUnsuccessfulCb(done);
       gameState.disconnect(selectorId);
     });

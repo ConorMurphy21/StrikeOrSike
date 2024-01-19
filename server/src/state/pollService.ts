@@ -1,13 +1,7 @@
 import { GameState } from './gameState';
-import { Err, Ok, Result, Warn } from '../types/result';
-import { Stage } from '../types/stateTypes';
+import { Err, Ok, Result, Warn } from ':common/result';
+import { PollName, Stage } from ':common/stateTypes';
 import logger from '../logger/logger';
-
-export enum PollName {
-  SkipPrompt = 'skipPrompt',
-  StartNextRound = 'startNextRound',
-  SikeDispute = 'sikeDispute'
-}
 
 type Poll = {
   stage: Stage;
@@ -19,7 +13,7 @@ type Poll = {
 
 export class PollService {
   private gameState: GameState;
-  private polls: Map<PollName, Poll>;
+  private readonly polls: Map<PollName, Poll>;
 
   constructor(gameState: GameState) {
     this.gameState = gameState;

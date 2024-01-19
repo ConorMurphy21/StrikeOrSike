@@ -46,7 +46,7 @@ const server = http.createServer(app);
  * Create socket server
  */
 
-import { TypedServer, TypedSocket } from './types/socketServerTypes';
+import { TypedServer, TypedSocket } from ':common/socketioTypes';
 const io = new TypedServer(server, {
   cors: {
     origin: ['http://localhost:8080', 'http://localhost:5001'],

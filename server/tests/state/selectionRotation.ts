@@ -1,6 +1,7 @@
-import { Player, Room } from '../../src/state/rooms';
+import { Room } from '../../src/state/rooms';
 import { GameState } from '../../src/state/gameState';
 import { assert } from 'chai';
+import { Player } from ':common/stateTypes';
 
 describe('Selection Rotation tests', () => {
   let players: Player[];

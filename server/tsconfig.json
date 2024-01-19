@@ -1,10 +1,18 @@
 {
   "extends": "../tsconfig.options.json",
   "compilerOptions": {
+    "baseUrl": "./",
     "noEmit": true,
     "emitDeclarationOnly": false,
     "module": "commonJS",
-    "rootDir": "./"
+    "rootDir": "./",
+    "paths": {
+      ":common/*": ["../common/src/*"]
+    }
   },
-  "references": []
+  "references": [
+    {
+      "path": "../common"
+    }
+  ]
 }

@@ -4,11 +4,11 @@ import { z } from 'zod';
 import logger from '../logger/logger';
 
 /*** handler validation schemas ***/
-import { isErr, isOk, isSuccess } from '../types/result';
-import { ConfigurableOptions, getConfigurableOptionsSchema } from '../state/options';
-import { PollName } from '../state/pollService';
-import { TypedServer, TypedSocket } from '../types/socketServerTypes';
-import { Responses, Stage } from '../types/stateTypes';
+import { isErr, isOk, isSuccess } from ':common/result';
+import { ConfigurableOptions, getConfigurableOptionsSchema } from ':common/options';
+import { PollName } from ':common/stateTypes';
+import { TypedServer, TypedSocket } from ':common/socketioTypes';
+import { Responses, Stage } from ':common/stateTypes';
 
 const registerGameHandlers = (io: TypedServer, socket: TypedSocket) => {
   /*** GAME STATE ENDPOINTS ***/

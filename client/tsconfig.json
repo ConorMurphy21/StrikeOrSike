@@ -6,7 +6,8 @@
     "module": "esnext",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      ":common/*": ["../common/src/*"]
     },
     "types": ["vite/client", "@types/bootstrap", "@types/node"],
     "allowJs": true,
@@ -16,5 +17,10 @@
     "noEmit": true,
     "noUnusedLocals": false,
     "noImplicitReturns": false
-  }
+  },
+  "references": [
+    {
+      "path": "../common"
+    }
+  ]
 }

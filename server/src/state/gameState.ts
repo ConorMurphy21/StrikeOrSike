@@ -1,11 +1,19 @@
 import { Prompts } from './prompts';
 import { getCorrections, stringMatch } from './matchUtils';
-import { PollName, PollService } from './pollService';
+import { PollService } from './pollService';
 import logger from '../logger/logger';
-import { Player as RoomPlayer, Room } from './rooms';
-import { Err, Info, Ok, Result, Success, VoidResult, Warn } from '../types/result';
-import { ConfigurableOptions, defaultOptions, getConfigurableOptionsSchema, Options } from './options';
-import { Match, MidgameConnectData, Responses, SelectionType, Stage } from '../types/stateTypes';
+import { Room } from './rooms';
+import { Err, Info, Ok, Result, Success, VoidResult, Warn } from ':common/result';
+import { ConfigurableOptions, defaultOptions, getConfigurableOptionsSchema, Options } from ':common/options';
+import {
+  Match,
+  MidgameConnectData,
+  PollName,
+  Responses,
+  SelectionType,
+  Stage,
+  Player as RoomPlayer
+} from ':common/stateTypes';
 
 type Player = {
   id: string;
@@ -47,7 +55,8 @@ export class GameState {
     if (options) {
       this.options = options;
     } else {
-      this.options = defaultOptions(room.lang);
+      this.options = defaultOptions;
+      this.options.packs = Prompts.packOptions(room.lang);
     }
     this.prompts = new Prompts(this.options.packs, this.options.customPrompts, room.lang, oldPrompts);
     this.room = room;

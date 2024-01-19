@@ -1,5 +1,11 @@
-import { ConfigurableOptions } from '../state/options';
-import { PollName } from '../state/pollService';
+import { ConfigurableOptions } from './options';
+
+export type Player = {
+  id: string;
+  name: string;
+  leader: boolean;
+  active: boolean;
+};
 
 export enum Stage {
   Lobby = 'lobby',
@@ -28,6 +34,12 @@ export type Responses = {
   selectedStrike: string;
   selectedSike: string;
 };
+
+export enum PollName {
+  SkipPrompt = 'skipPrompt',
+  StartNextRound = 'startNextRound',
+  SikeDispute = 'sikeDispute'
+}
 
 export type MidgameConnectData = {
   id: string;

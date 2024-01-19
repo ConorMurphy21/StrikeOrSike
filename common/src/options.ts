@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { Prompts } from './prompts';
 
 const options = z.object({
   promptTimer: z.number().int().min(15).max(60),
@@ -49,17 +48,15 @@ export function getConfigurableOptionsSchema(): ConfigurableOptionsSchema {
   }
 }
 
-export function defaultOptions(lang: string): Options {
-  return {
-    promptTimer: 35,
-    autoNumRounds: true, // set numRounds to num players when game starts
-    numRounds: 3,
-    sikeDispute: true,
-    sikeRetries: 0,
-    promptSkipping: true,
-    minPlayers: 3,
-    maxPlayers: 12,
-    packs: Prompts.packOptions(lang),
-    customPrompts: []
-  };
-}
+export const defaultOptions: Options = {
+  promptTimer: 35,
+  autoNumRounds: true, // set numRounds to num players when game starts
+  numRounds: 3,
+  sikeDispute: true,
+  sikeRetries: 0,
+  promptSkipping: true,
+  minPlayers: 3,
+  maxPlayers: 12,
+  packs: {},
+  customPrompts: []
+};

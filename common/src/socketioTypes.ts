@@ -1,9 +1,7 @@
 import { Server, Socket } from 'socket.io';
 import { Socket as ClientSocket } from 'socket.io-client';
-import { ConfigurableOptions } from '../state/options';
-import { PollName } from '../state/pollService';
-import { Match, MidgameConnectData, Responses, SelectionType } from './stateTypes';
-import { Player } from '../state/rooms';
+import { ConfigurableOptions } from './options';
+import { Player, PollName, Match, MidgameConnectData, Responses, SelectionType } from './stateTypes';
 
 interface ServerToClientRoomEvents {
   joinRoom(args: { error: string } | { success: boolean; roomName: string }): void;

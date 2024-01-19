@@ -1,7 +1,7 @@
 import { assert } from 'chai';
 import { GameState } from '../../src/state/gameState';
-import { Player, Room } from '../../src/state/rooms';
-import { SelectionType } from '../../src/types/stateTypes';
+import { Room } from '../../src/state/rooms';
+import { Player, SelectionType } from ':common/stateTypes';
 
 describe('Automatch tests', () => {
   const selectorId = 'selector';

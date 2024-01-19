@@ -2,7 +2,8 @@
   "name": "strikeorsike",
   "workspaces": [
     "client",
-    "server"
+    "server",
+    "common"
   ],
   "version": "1.0.0",
   "engines": {

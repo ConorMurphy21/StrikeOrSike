@@ -1,10 +1,10 @@
 import { createRoom, disconnectPlayer, getRoomById, getRoomByName, joinRoom } from '../state/rooms';
 import logger from '../logger/logger';
 import { midgameJoin } from './gameHandlers';
-import { isErr } from '../types/result';
+import { isErr } from ':common/result';
 import { z } from 'zod';
-import { TypedServer, TypedSocket } from '../types/socketServerTypes';
-import { Stage } from '../types/stateTypes';
+import { TypedServer, TypedSocket } from ':common/socketioTypes';
+import { Stage } from ':common/stateTypes';
 
 /*** handler validation schemas ***/
 const roomSchema = z.object({

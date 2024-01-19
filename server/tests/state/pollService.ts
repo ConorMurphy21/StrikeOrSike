@@ -1,9 +1,9 @@
-import { PollName, PollService } from '../../src/state/pollService';
-import { Player, Room } from '../../src/state/rooms';
+import { PollService } from '../../src/state/pollService';
+import { Room } from '../../src/state/rooms';
 import { GameState } from '../../src/state/gameState';
 import { assert } from 'chai';
-import { isErr, Result } from '../../src/types/result';
-import { Stage } from '../../src/types/stateTypes';
+import { isErr, Result } from ':common/result';
+import { PollName, Player, Stage } from ':common/stateTypes';
 
 describe('PollVote tests', () => {
   it('unregistered poll', () => {

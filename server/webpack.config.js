@@ -7,12 +7,17 @@ module.exports = {
   node: {
     __dirname: false
   },
-  mode: 'development',
+  mode: 'production',
   entry: './src/index.ts',
   output: {
     path: path.resolve(__dirname, '../dist/js/src'),
     filename: 'server-bundle.js'
   },
+  plugins: [
+    new CopyPlugin({
+      patterns: [{ from: 'resources', to: '../../resources' }]
+    })
+  ],
   resolve: {
     extensions: ['.ts', '.js', '.tsx', '.jsx'],
     plugins: [new TsconfigPathsPlugin()]
@@ -29,10 +34,6 @@ module.exports = {
             noEmit: false
           }
         }
-      },
-      {
-        test: /\.(txt|aff|dic)$/i,
-        type: 'resources'
       },
       {
         test: /\.node$/,

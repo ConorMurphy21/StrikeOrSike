@@ -25,20 +25,6 @@ cd StrikeOrSike
 npm install
 ```
 
-2. Install Node modules in the client directory
-
-```
-cd client
-npm install
-```
-
-3. Install Node modules in the server directory
-
-```
-cd ../server
-npm install
-```
-
 ## Running the client/sever
 
 1. Start the server

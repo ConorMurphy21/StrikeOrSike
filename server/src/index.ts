@@ -15,21 +15,23 @@ const app: Express = express();
 app.use(cors());
 app.use(express.json());
 
-app.use('/assets', express.static(path.join(__dirname, '../public/assets')));
+app.use('/assets', express.static(path.join(__dirname, '../../public/assets')));
 
 app.get('/*', (req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, '../public/index.html'));
+  res.sendFile(path.join(__dirname, '../../public/index.html'));
 });
 
 import Debug from 'debug';
 const debug = Debug('strikeorsike:server');
 import http from 'http';
 
-process.on('uncaughtException', (err) => {
-  logger.error(`(www) crash report: ${err.stack}`, () => {
-    process.exit(1);
+if (process.env.NODE_ENV === 'production') {
+  process.on('uncaughtException', (err) => {
+    logger.error(`(www) crash report: ${err.stack}`, () => {
+      process.exit(1);
+    });
   });
-});
+}
 
 /**
  * Get port from environment and stores in Express.

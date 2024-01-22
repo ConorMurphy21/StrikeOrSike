@@ -4,12 +4,12 @@
       <h1 :id="section.key" class="font-fancy text-burgundy display-2 mb-3">
         {{ $rt(section.header) }}
       </h1>
-      <p class="fw-normal">{{ section.body }}</p>
+      <p class="fw-normal">{{ $rt(section.body) }}</p>
       <img
         v-if="imgs[section.key]"
         class="border border-4 border-burgundy rounded w-93 w-md-50 mb-4"
         :src="imgs[section.key]"
-        :alt="$rt(section.alt)" />
+        :alt="section.alt" />
       <div v-for="child in section.children" :key="child.key">
         <h3 :id="child.key" class="fw-bold display-6">
           {{ $rt(child.header) }}

@@ -22,6 +22,9 @@
           :alt="child.alt" />
       </div>
     </div>
+    <router-link to="/">
+      <button v-t="'homeButton'" type="button" class="btn btn-orange w-10" />
+    </router-link>
   </div>
 </template>
 

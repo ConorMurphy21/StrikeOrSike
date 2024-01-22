@@ -21,5 +21,8 @@
         <a v-t="'about.coffee'" href="https://www.buymeacoffee.com/ConorMurphy/" />
       </template>
     </i18n-t>
+    <router-link to="/">
+      <button v-t="'homeButton'" type="button" class="btn btn-orange w-10" />
+    </router-link>
   </div>
 </template>

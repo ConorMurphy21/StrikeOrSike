@@ -1,50 +1,59 @@
 import { z } from 'zod';
 
-const options = z.object({
+// static unchanging flags
+// good for hiding beta features, can be moved to exposed options schema if we want clients to be able to control it
+type ConfigFlags = {
+  maxPlayers: number;
+  minPlayers: number;
+  promptSkipping: boolean;
+};
+
+// config options that are client configurable
+const settableOptionsSchema = z.object({
   promptTimer: z.number().int().min(15).max(60),
   numRounds: z.number().int().min(1).max(20),
   autoNumRounds: z.boolean(),
-  promptSkipping: z.boolean(),
-  minPlayers: z.number().int().min(3).max(12),
-  maxPlayers: z.number().int().min(3).max(12),
   sikeDispute: z.boolean(),
   sikeRetries: z.number().int().min(0).max(2),
   packs: z.record(z.string().min(3).max(20), z.boolean()),
   customPrompts: z.array(z.string().min(1).max(200)).max(400)
 });
 
-/*** handler validation schemas ***/
-
-const configurableOptionsSchema = options
-  .omit({
-    minPlayers: true,
-    maxPlayers: true,
-    promptSkipping: true
-  })
-  .partial();
-
 // be a little more permissive with options so unit tests can run
-const configurableOptionsSchemaDev = options
-  .omit({ promptTimer: true })
-  .extend({
-    promptTimer: z.number().int().min(0).max(60),
-    minPlayers: z.number().int()
-  })
-  .partial();
+const settableOptionsSchemaDev = settableOptionsSchema.omit({ promptTimer: true }).extend({
+  promptTimer: z.number().int().min(0).max(60),
+  minPlayers: z.number().int()
+});
 
-export type Options = z.infer<typeof options>;
+// config options that are visible to client
+// (customPrompts can be set, but shouldn't be propagated to clients)
+export type SettableOptions = z.infer<typeof settableOptionsSchemaDev>;
 
-export type ConfigurableOptions =
-  | z.infer<typeof configurableOptionsSchema>
-  | z.infer<typeof configurableOptionsSchemaDev>;
+// both exposed config options and static config options
+export type Options = SettableOptions & ConfigFlags;
 
-type ConfigurableOptionsSchema = typeof configurableOptionsSchema | typeof configurableOptionsSchemaDev;
+type SettableOptionsSchema = typeof settableOptionsSchemaDev | typeof settableOptionsSchema;
 
-export function getConfigurableOptionsSchema(): ConfigurableOptionsSchema {
+export function getSettableOptionsSchema(): SettableOptionsSchema {
   if (process.env.NODE_ENV !== 'production') {
-    return configurableOptionsSchemaDev;
+    return settableOptionsSchemaDev;
   } else {
-    return configurableOptionsSchema;
+    return settableOptionsSchema;
+  }
+}
+
+const visibleOptionsSchema = settableOptionsSchema.omit({ customPrompts: true });
+const visibleOptionsSchemaDev = settableOptionsSchemaDev.omit({ customPrompts: true });
+
+export type VisibleOptions = z.infer<typeof visibleOptionsSchema>;
+
+type VisibleOptionsSchema = typeof visibleOptionsSchemaDev | typeof visibleOptionsSchema;
+
+export function getVisibleOptionsSchema(): VisibleOptionsSchema {
+  if (process.env.NODE_ENV !== 'production') {
+    return visibleOptionsSchemaDev;
+  } else {
+    return visibleOptionsSchema;
   }
 }
 

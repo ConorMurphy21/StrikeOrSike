@@ -5,21 +5,21 @@ import logger from '../logger/logger';
 
 /*** handler validation schemas ***/
 import { isErr, isOk, isSuccess } from ':common/result';
-import { ConfigurableOptions, getConfigurableOptionsSchema } from ':common/options';
+import { SettableOptions, getSettableOptionsSchema, getVisibleOptionsSchema } from ':common/options';
 import { PollName, zPollName } from ':common/stateTypes';
 import { TypedServer, TypedSocket } from ':common/socketioTypes';
 import { Responses } from ':common/stateTypes';
 
 const registerGameHandlers = (io: TypedServer, socket: TypedSocket) => {
   /*** GAME STATE ENDPOINTS ***/
-  socket.on('setOptions', (options: ConfigurableOptions, callback?: (p: { success: boolean }) => void) => {
+  socket.on('setOptions', (options: Partial<SettableOptions>, callback?: (p: { success: boolean }) => void) => {
     const room = roomIfLeader(socket.id);
     if (!room) {
       logger.error('(gameHandlers) Set options attempted with no room');
       return;
     }
     const validationResult = z
-      .object({ options: getConfigurableOptionsSchema(), callback: z.function().optional() })
+      .object({ options: getSettableOptionsSchema().partial(), callback: z.function().optional() })
       .safeParse({ options, callback });
     if (!validationResult.success) {
       logger.error('(gameHandlers) Invalid options schema used');
@@ -27,7 +27,8 @@ const registerGameHandlers = (io: TypedServer, socket: TypedSocket) => {
     }
     ({ options, callback } = validationResult.data);
     room.state!.options = { ...room.state!.options, ...options };
-    io.to(room.name).emit('setOptions', room.state!.getOptions());
+    const strippedResult = getVisibleOptionsSchema().partial().parse(options);
+    io.to(room.name).emit('setOptions', strippedResult);
 
     if (callback) callback({ success: true });
   });

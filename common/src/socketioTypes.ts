@@ -1,6 +1,6 @@
 import { Server, Socket } from 'socket.io';
 import { Socket as ClientSocket } from 'socket.io-client';
-import { ConfigurableOptions } from './options';
+import { SettableOptions, VisibleOptions } from './options';
 import { Player, PollName, Match, MidgameConnectData, Responses, SelectionType, VoteCount, Score } from './stateTypes';
 
 interface ServerToClientRoomEvents {
@@ -16,7 +16,7 @@ interface ClientToServerRoomEvents {
 }
 
 interface ServerToClientGameEvents {
-  setOptions(options: ConfigurableOptions): void;
+  setOptions(options: Partial<VisibleOptions>): void;
 
   beginPrompt(prompt: string): void;
 
@@ -40,7 +40,7 @@ interface ServerToClientGameEvents {
 }
 
 interface ClientToServerGameEvents {
-  setOptions(options: ConfigurableOptions, callback?: (p: { success: boolean }) => void): void;
+  setOptions(options: Partial<SettableOptions>, callback?: (p: { success: boolean }) => void): void;
 
   startGame(): void;
 

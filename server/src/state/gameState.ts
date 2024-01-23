@@ -4,7 +4,7 @@ import { PollService } from './pollService';
 import logger from '../logger/logger';
 import { Room } from './rooms';
 import { Err, Info, Ok, Result, Success, VoidResult, Warn } from ':common/result';
-import { ConfigurableOptions, defaultOptions, getConfigurableOptionsSchema, Options } from ':common/options';
+import { defaultOptions, getVisibleOptionsSchema, Options, VisibleOptions } from ':common/options';
 import {
   Match,
   MidgameConnectData,
@@ -569,10 +569,8 @@ export class GameState {
     };
   }
 
-  getOptions(): ConfigurableOptions {
-    const result = getConfigurableOptionsSchema().parse(this.options);
-    delete result.customPrompts; // too big and not worth the other clients seeing
-    return result;
+  getOptions(): VisibleOptions {
+    return getVisibleOptionsSchema().parse(this.options);
   }
 
   disconnect(id: string): void {

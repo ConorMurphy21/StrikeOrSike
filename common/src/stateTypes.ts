@@ -1,4 +1,4 @@
-import { ConfigurableOptions } from './options';
+import { VisibleOptions } from './options';
 import { z } from 'zod';
 
 export type Player = {
@@ -47,7 +47,7 @@ export type MidgameConnectData = {
   selector: string;
   selectedResponse: string;
   prompt: string;
-  options: ConfigurableOptions;
+  options: VisibleOptions;
   timer: number;
   matches: Match[];
   voteCounts: Record<PollName, { count: number; next: boolean }>;

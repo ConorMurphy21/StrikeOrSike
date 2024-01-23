@@ -19,7 +19,8 @@ export default defineConfig({
       '@': resolve(__dirname, 'src'),
       '~bootstrap': 'bootstrap',
       '~bootstrap-icons': 'bootstrap-icons',
-      '~vue-slider-component': 'vue-slider-component'
+      '~vue-slider-component': 'vue-slider-component',
+      ':common': resolve(__dirname, '../common/src')
     }
   },
   server: {

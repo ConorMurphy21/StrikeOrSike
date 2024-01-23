@@ -3,18 +3,16 @@
 import socket from '@/socket/socket.js';
 import { useRoomStore } from '@/stores/room.js';
 import { defineStore } from 'pinia';
-import { Player, Match as ServerMatch, PollName, VoteCount, Score as ServerScore, Responses } from ':common/stateTypes';
-
-type Options = {
-  promptTimer: number;
-  numRounds: number;
-  autoNumRounds: boolean;
-  promptSkipping: boolean;
-  sikeDispute: boolean;
-  sikeRetries: number;
-  packs: Record<string, boolean>;
-  customPrompts: string[];
-};
+import {
+  Player,
+  Match as ServerMatch,
+  PollName,
+  VoteCount,
+  Score as ServerScore,
+  Responses,
+  MidgameConnectData
+} from ':common/stateTypes';
+import { defaultOptions, Options, VisibleOptions } from ':common/options';
 
 type Scene =
   | 'lobby'
@@ -25,20 +23,6 @@ type Scene =
   | 'matchingSummary'
   | 'endRound'
   | 'endGame';
-
-type MidgameConnectData = {
-  id: string;
-  stage: string;
-  selectionType: string;
-  responses: Responses;
-  selector: string;
-  selectedResponse: string;
-  prompt: string;
-  options: Options;
-  timer: number;
-  matches: ServerMatch[];
-  voteCounts: Record<PollName, { count: number; next: boolean }>;
-};
 
 export type Match = Omit<ServerMatch, 'player'> & { player: Player };
 
@@ -91,16 +75,7 @@ export const useGameStore = defineStore('game', {
       startNextRound: { count: 0, next: false },
       sikeDispute: { count: 0, next: false }
     },
-    options: {
-      promptTimer: 35,
-      numRounds: 0,
-      autoNumRounds: true,
-      sikeDispute: true,
-      promptSkipping: true,
-      sikeRetries: 0,
-      packs: {},
-      customPrompts: []
-    },
+    options: defaultOptions,
     firstSelection: true,
     hasNextRound: true,
     unmatched: false
@@ -258,8 +233,8 @@ export const useGameStore = defineStore('game', {
       });
     },
     bindEvents() {
-      socket.on('setOptions', (options: Options) => {
-        this.options = options;
+      socket.on('setOptions', (options: Partial<VisibleOptions>) => {
+        this.options = { ...this.options, ...options };
       });
 
       socket.on('selectionTypeChosen', (selectionType: string) => {
@@ -348,7 +323,7 @@ export const useGameStore = defineStore('game', {
         if (data.selectionType === 'choice') {
           this.selectionTypeChoice = true;
         }
-        this.options = data.options;
+        this.options = { ...this.options, ...data.options };
         this.responses[data.id] = data.responses;
         this.selector = room.players.find((player) => player.id === data.selector);
         this.selectedResponse = data.selectedResponse;

@@ -1,4 +1,5 @@
 import { ConfigurableOptions } from './options';
+import { z } from 'zod';
 
 export type Player = {
   id: string;
@@ -7,19 +8,9 @@ export type Player = {
   active: boolean;
 };
 
-export enum Stage {
-  Lobby = 'lobby',
-  Response = 'response',
-  Selection = 'selection',
-  Matching = 'matching',
-  EndRound = 'endRound'
-}
+export type Stage = 'lobby' | 'response' | 'selection' | 'matching' | 'endRound';
 
-export enum SelectionType {
-  Strike = 'strike',
-  Sike = 'sike',
-  Choice = 'choice'
-}
+export type SelectionType = 'strike' | 'sike' | 'choice';
 
 export type Match = {
   player: string;
@@ -35,11 +26,8 @@ export type Responses = {
   selectedSike: string;
 };
 
-export enum PollName {
-  SkipPrompt = 'skipPrompt',
-  StartNextRound = 'startNextRound',
-  SikeDispute = 'sikeDispute'
-}
+export const zPollName = z.enum(['skipPrompt', 'startNextRound', 'sikeDispute']);
+export type PollName = z.infer<typeof zPollName>;
 
 export type MidgameConnectData = {
   id: string;

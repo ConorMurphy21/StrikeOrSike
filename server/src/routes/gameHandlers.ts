@@ -6,9 +6,9 @@ import logger from '../logger/logger';
 /*** handler validation schemas ***/
 import { isErr, isOk, isSuccess } from ':common/result';
 import { ConfigurableOptions, getConfigurableOptionsSchema } from ':common/options';
-import { PollName } from ':common/stateTypes';
+import { PollName, zPollName } from ':common/stateTypes';
 import { TypedServer, TypedSocket } from ':common/socketioTypes';
-import { Responses, Stage } from ':common/stateTypes';
+import { Responses } from ':common/stateTypes';
 
 const registerGameHandlers = (io: TypedServer, socket: TypedSocket) => {
   /*** GAME STATE ENDPOINTS ***/
@@ -71,7 +71,7 @@ const registerGameHandlers = (io: TypedServer, socket: TypedSocket) => {
 
   // true to vote to skip, false to unvote to skip
   socket.on('pollVote', (pollName: PollName) => {
-    const validationResult = z.nativeEnum(PollName).safeParse(pollName);
+    const validationResult = zPollName.safeParse(pollName);
     if (!validationResult.success) {
       logger.error('(gameHandlers) PollVote invalid format');
       return;
@@ -311,7 +311,7 @@ function roomIfLeader(id: string): Room | undefined {
 
 function midgameJoin(socket: TypedSocket, room: Room, oldId?: string) {
   socket.emit('midgameConnect', room.state!.midgameConnect(socket.id, oldId));
-  if (room.state!.stage === Stage.Matching) {
+  if (room.state!.stage === 'matching') {
     const match = room.state!.getMatch(socket.id);
     if (match) {
       // exact only matters if it's the original user

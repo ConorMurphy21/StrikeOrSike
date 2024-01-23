@@ -67,9 +67,9 @@ export class PollService {
   // TODO: change this to Map<Pollname, ...>, (needs to be changed on client side too)
   getVoteCounts(): Record<PollName, { count: number; next: boolean }> {
     const ret: Record<PollName, { count: number; next: boolean }> = {
-      [PollName.SkipPrompt]: { count: 0, next: false },
-      [PollName.SikeDispute]: { count: 0, next: false },
-      [PollName.StartNextRound]: { count: 0, next: false }
+      skipPrompt: { count: 0, next: false },
+      sikeDispute: { count: 0, next: false },
+      startNextRound: { count: 0, next: false }
     };
     for (const [pollName, poll] of this.polls) {
       ret[pollName] = {

@@ -4,7 +4,6 @@ import { midgameJoin } from './gameHandlers';
 import { isErr } from ':common/result';
 import { z } from 'zod';
 import { TypedServer, TypedSocket } from ':common/socketioTypes';
-import { Stage } from ':common/stateTypes';
 
 /*** handler validation schemas ***/
 const roomSchema = z.object({
@@ -71,7 +70,7 @@ export function registerRoomHandlers(io: TypedServer, socket: TypedSocket): void
         deletes: []
       });
       socket.emit('setOptions', room.state!.getOptions());
-      if (room.state!.stage !== Stage.Lobby) {
+      if (room.state!.stage !== 'lobby') {
         midgameJoin(socket, room, result.oldId);
       }
     }

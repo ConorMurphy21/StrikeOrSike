@@ -1,7 +1,7 @@
 import { GameState } from '../../src/state/gameState';
 import { assert } from 'chai';
 import { Room } from '../../src/state/rooms';
-import { Player, PollName, SelectionType } from ':common/stateTypes';
+import { Player } from ':common/stateTypes';
 
 describe('Complete callback tests', () => {
   let players: Player[];
@@ -44,8 +44,8 @@ describe('Complete callback tests', () => {
       });
       gameState.registerPromptSkippedCb(done);
       gameState.beginNewPrompt();
-      gameState.pollVote(selectorId, PollName.SkipPrompt);
-      gameState.pollVote(matcherId, PollName.SkipPrompt);
+      gameState.pollVote(selectorId, 'skipPrompt');
+      gameState.pollVote(matcherId, 'skipPrompt');
       players[matcher2Index].active = false;
       gameState.disconnect(matcherId);
     });
@@ -56,7 +56,7 @@ describe('Complete callback tests', () => {
       gameState.players[selectorIndex].responses.push(firstResponse);
       gameState.players[matcherIndex].responses.push(differentResponse);
       gameState.beginSelection();
-      gameState.selectionType = SelectionType.Strike;
+      gameState.selectionType = 'strike';
     });
 
     it.skip('Selector Disconnects while selecting', () => {
@@ -112,7 +112,7 @@ describe('Complete callback tests', () => {
       gameState.players[matcherIndex].responses.push(differentResponse);
       gameState.options.sikeDispute = true;
       gameState.beginSelection();
-      gameState.selectionType = SelectionType.Sike;
+      gameState.selectionType = 'sike';
       gameState.acceptResponseSelection(selectorId, firstResponse);
     });
 
@@ -121,7 +121,7 @@ describe('Complete callback tests', () => {
         assert.strictEqual(action, 'nextSelection');
         done();
       });
-      gameState.pollVote(matcherId, PollName.SikeDispute);
+      gameState.pollVote(matcherId, 'sikeDispute');
       players[matcher2Index].active = false;
       gameState.disconnect(matcher2Id);
     });

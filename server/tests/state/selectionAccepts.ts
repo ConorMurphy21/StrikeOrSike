@@ -2,7 +2,7 @@ import { assert } from 'chai';
 import { GameState } from '../../src/state/gameState';
 import { Room } from '../../src/state/rooms';
 import { isErr, isSuccess } from ':common/result';
-import { Player, SelectionType } from ':common/stateTypes';
+import { Player } from ':common/stateTypes';
 
 describe('Selection Accepting tests', () => {
   const selectorId = 'selector';
@@ -31,7 +31,7 @@ describe('Selection Accepting tests', () => {
 
   describe('Strike selectionType', () => {
     beforeEach(() => {
-      gameState.selectionType = SelectionType.Strike;
+      gameState.selectionType = 'strike';
       gameState.selectionTypeChoice = false;
     });
 
@@ -93,7 +93,7 @@ describe('Selection Accepting tests', () => {
 
   describe('choice selectionType', () => {
     beforeEach(() => {
-      gameState.selectionType = SelectionType.Choice;
+      gameState.selectionType = 'choice';
       gameState.selectionTypeChoice = true;
     });
 
@@ -114,13 +114,13 @@ describe('Selection Accepting tests', () => {
     it('Accept double choice', () => {
       let result = gameState.acceptSelectionType(selectorId, false);
       assert.isOk(isSuccess(result));
-      assert.strictEqual(gameState.selectionType, SelectionType.Sike);
+      assert.strictEqual(gameState.selectionType, 'sike');
       result = gameState.acceptSelectionType(selectorId, true);
       assert.isOk(isSuccess(result));
-      assert.strictEqual(gameState.selectionType, SelectionType.Strike);
+      assert.strictEqual(gameState.selectionType, 'strike');
       result = gameState.acceptResponseSelection(selectorId, firstResponse);
       assert.isOk(isSuccess(result));
-      assert.strictEqual(gameState.selectionType, SelectionType.Strike);
+      assert.strictEqual(gameState.selectionType, 'strike');
     });
 
     it('Not selecting', () => {
@@ -130,7 +130,7 @@ describe('Selection Accepting tests', () => {
 
     it('Not choosing acceptSelectionType', () => {
       gameState.selectionTypeChoice = false;
-      gameState.selectionType = SelectionType.Strike;
+      gameState.selectionType = 'strike';
       const result = gameState.acceptSelectionType(selectorId, true);
       assert.isOk(isErr(result));
     });

@@ -1,7 +1,7 @@
 import { Server, Socket } from 'socket.io';
 import { Socket as ClientSocket } from 'socket.io-client';
 import { ConfigurableOptions } from './options';
-import { Player, PollName, Match, MidgameConnectData, Responses, SelectionType } from './stateTypes';
+import { Player, PollName, Match, MidgameConnectData, Responses, SelectionType, VoteCount, Score } from './stateTypes';
 
 interface ServerToClientRoomEvents {
   joinRoom(args: { error: string } | { success: boolean; roomName: string }): void;
@@ -24,7 +24,7 @@ interface ServerToClientGameEvents {
 
   nextSelection(args: { selector: string; selectionType: SelectionType }): void;
 
-  setVoteCount(args: { pollName: PollName; count: number; next: boolean }): void;
+  setVoteCount(args: { pollName: PollName } & VoteCount): void;
 
   selectionTypeChosen(selectionType: SelectionType): void;
 
@@ -34,7 +34,7 @@ interface ServerToClientGameEvents {
 
   endRound(args: { hasNextRound: boolean }): void;
 
-  gameOver(results: { player: string; points: number }[]): void;
+  gameOver(results: Score[]): void;
 
   midgameConnect(reconnect: MidgameConnectData): void;
 }

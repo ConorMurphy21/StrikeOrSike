@@ -24,24 +24,12 @@
 import ClickMp3 from '@/assets/audio/click2.mp3';
 import { AudioWrap } from '@/mixins/audiowrap.js';
 import { useRoomStore } from '@/stores/room.js';
-import { useGameStore } from '@/stores/game.js';
+import { useGameStore, type Match } from '@/stores/game.js';
 import { mapState, mapActions } from 'pinia';
 import { defineComponent, type PropType } from 'vue';
+import { type Player } from ':common/stateTypes';
 
 const click = new AudioWrap(ClickMp3);
-
-type Player = {
-  id: string;
-  name: string;
-  leader: boolean;
-  active: boolean;
-};
-
-type Match = {
-  player: Player;
-  response: string;
-  exact: boolean;
-};
 
 export default defineComponent({
   props: {

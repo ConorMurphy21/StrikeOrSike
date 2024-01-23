@@ -6,11 +6,8 @@
 
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue';
+import { Player } from ':common/stateTypes';
 
-type Player = {
-  active: boolean;
-  name: string;
-};
 export default defineComponent({
   props: {
     player: {

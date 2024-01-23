@@ -12,7 +12,8 @@ import {
   Responses,
   SelectionType,
   Stage,
-  Player as RoomPlayer
+  Player as RoomPlayer,
+  Score
 } from ':common/stateTypes';
 
 type Player = {
@@ -488,7 +489,7 @@ export class GameState {
   }
 
   /*** GAMEOVER state changes ***/
-  gameOver(): { player: string; points: number }[] {
+  gameOver(): Score[] {
     this.stage = 'lobby';
     return this.players
       .map((player) => {

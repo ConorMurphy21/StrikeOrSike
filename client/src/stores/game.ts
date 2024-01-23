@@ -3,6 +3,7 @@
 import socket from '@/socket/socket.js';
 import { useRoomStore } from '@/stores/room.js';
 import { defineStore } from 'pinia';
+import { Player, Match as ServerMatch, PollName, VoteCount, Score as ServerScore, Responses } from ':common/stateTypes';
 
 type Options = {
   promptTimer: number;
@@ -14,6 +15,7 @@ type Options = {
   packs: Record<string, boolean>;
   customPrompts: string[];
 };
+
 type Scene =
   | 'lobby'
   | 'countdown'
@@ -23,14 +25,6 @@ type Scene =
   | 'matchingSummary'
   | 'endRound'
   | 'endGame';
-
-type PollName = 'skipPrompt' | 'sikeDispute' | 'startNextRound';
-
-type ServerMatch = {
-  player: string;
-  response: string;
-  exact: boolean;
-};
 
 type MidgameConnectData = {
   id: string;
@@ -46,34 +40,9 @@ type MidgameConnectData = {
   voteCounts: Record<PollName, { count: number; next: boolean }>;
 };
 
-type Player = {
-  id: string;
-  name: string;
-  leader: boolean;
-  active: boolean;
-};
-type Responses = {
-  all: string[];
-  used: string[];
-  selectedStrike: string;
-  selectedSike: string;
-};
+export type Match = Omit<ServerMatch, 'player'> & { player: Player };
 
-type Match = {
-  player: Player;
-  response: string;
-  exact: boolean;
-};
-
-type Score = {
-  player: Player;
-  points: number;
-};
-
-type VoteCount = {
-  count: number;
-  next: boolean;
-};
+type Score = Omit<ServerScore, 'player'> & { player: Player };
 
 interface State {
   scene: Scene;
@@ -201,6 +170,7 @@ export const useGameStore = defineStore('game', {
       const selfId = room.self!.id;
       this.responses = {};
       this.responses[selfId] = {
+        id: selfId,
         all: [],
         used: [],
         selectedStrike: '',

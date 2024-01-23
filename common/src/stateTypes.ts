@@ -26,6 +26,16 @@ export type Responses = {
   selectedSike: string;
 };
 
+export type Score = {
+  player: string;
+  points: number;
+};
+
+export type VoteCount = {
+  count: number;
+  next: boolean;
+};
+
 export const zPollName = z.enum(['skipPrompt', 'startNextRound', 'sikeDispute']);
 export type PollName = z.infer<typeof zPollName>;
 

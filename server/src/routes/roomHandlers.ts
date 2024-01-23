@@ -22,7 +22,7 @@ export function registerRoomHandlers(io: TypedServer, socket: TypedSocket): void
   });
 
   /*** CONNECTION AND ROOM CREATION ***/
-  socket.on('createRoom', (name: string, roomName: string, langs?: string[]) => {
+  socket.on('createRoom', (name: string, roomName: string, langs?: readonly string[]) => {
     // disconnect for cleanup
     disconnect(socket);
 

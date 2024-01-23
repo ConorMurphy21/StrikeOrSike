@@ -13,6 +13,7 @@ import {
   MidgameConnectData
 } from ':common/stateTypes';
 import { defaultOptions, Options, VisibleOptions } from ':common/options';
+import { isOk, isSuccess, Result } from ':common/result';
 
 type Scene =
   | 'lobby'
@@ -222,9 +223,9 @@ export const useGameStore = defineStore('game', {
           resolve();
           return;
         }
-        socket.emit('getResponses', id, (data: { success: boolean; responses: Responses }) => {
-          if (data.success) {
-            this.responses[id] = data.responses;
+        socket.emit('getResponses', id, (data: Result<Responses>) => {
+          if (isOk(data)) {
+            this.responses[id] = data;
             resolve();
           } else {
             reject();

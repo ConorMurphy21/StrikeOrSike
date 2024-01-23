@@ -61,7 +61,7 @@ export default defineComponent({
     ...mapState(useGameStore, ['prompt', 'selectionType', 'selectedResponse', 'selector', 'unmatched', 'sikeDispute'])
   },
   watch: {
-    matchedResponse: function (val) {
+    matchedResponse: function (val: string) {
       socket.emit('selectMatch', val);
     }
   },

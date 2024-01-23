@@ -15,12 +15,6 @@ export type ResultSuccess = {
   __kind: ResultKind.Success;
 };
 
-type ApiResultErr = {
-  message: string;
-  level: string;
-  __kind: ResultKind.Err;
-};
-
 // Fits a LogEntry Type
 class ResultErr {
   public message: string;
@@ -60,7 +54,6 @@ export function Success(): ResultSuccess {
 }
 
 export type Result<T> = ResultOk<T> | ResultErr;
-export type ApiResult<T> = (ResultOk<T> | ApiResultErr) & { success: boolean };
 // For results that don't return any data on success
 export type VoidResult = ResultSuccess | ResultErr;
 

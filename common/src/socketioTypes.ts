@@ -2,15 +2,18 @@ import { Server, Socket } from 'socket.io';
 import { Socket as ClientSocket } from 'socket.io-client';
 import { SettableOptions, VisibleOptions } from './options';
 import { Player, PollName, Match, MidgameConnectData, Responses, SelectionType, VoteCount, Score } from './stateTypes';
+import { Result } from './result';
 
 interface ServerToClientRoomEvents {
   joinRoom(args: { error: string } | { success: boolean; roomName: string }): void;
 
   updatePlayers(args: { modifies: Player[]; deletes: string[] }): void;
+
+  kickPlayer(data: { error: string }): void;
 }
 
 interface ClientToServerRoomEvents {
-  createRoom(name: string, roomName: string, langs?: string[]): void;
+  createRoom(name: string, roomName: string, langs?: readonly string[]): void;
 
   joinRoom(name: string, roomName: string): void;
 }
@@ -56,17 +59,7 @@ interface ClientToServerGameEvents {
 
   selectionComplete(): void;
 
-  getResponses(
-    id: string,
-    callback: (
-      result:
-        | { error: string }
-        | {
-            success: boolean;
-            responses: Responses;
-          }
-    ) => void
-  ): void;
+  getResponses(id: string, callback: (data: Result<Responses>) => void): void;
 }
 
 type ServerToClientEvents = ServerToClientRoomEvents & ServerToClientGameEvents;

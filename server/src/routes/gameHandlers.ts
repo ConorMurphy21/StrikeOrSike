@@ -4,7 +4,7 @@ import { z } from 'zod';
 import logger from '../logger/logger';
 
 /*** handler validation schemas ***/
-import { isErr, isOk, isSuccess } from ':common/result';
+import { isErr, isOk, isSuccess, Result } from ':common/result';
 import { SettableOptions, getSettableOptionsSchema, getVisibleOptionsSchema } from ':common/options';
 import { PollName, zPollName } from ':common/stateTypes';
 import { TypedServer, TypedSocket } from ':common/socketioTypes';
@@ -176,30 +176,25 @@ const registerGameHandlers = (io: TypedServer, socket: TypedSocket) => {
   });
 
   // todo: change client side to accept Result type instead of this dumb ApiResult
-  socket.on(
-    'getResponses',
-    (id: string, callback: (result: { error: string } | { success: boolean; responses: Responses }) => void) => {
-      const validationResult = z.object({ id: z.string(), callback: z.function() }).safeParse({ id, callback });
-      if (!validationResult.success) {
-        logger.error('(gameHandlers) getResponses attempted with invalid arguments');
-        return;
-      }
-      ({ id, callback } = validationResult.data);
-      const room = getRoomById(socket.id);
-      if (!room) {
-        logger.error('(gameHandlers) getResponses attempted with no room');
-        return;
-      }
-      const state = room.state!;
-      const result = state.getResponses(id);
-      if (isErr(result)) {
-        logger.log(result.wrap('(gameHandlers) getResponses failed due to %1$s'));
-        callback({ error: result.message });
-      } else {
-        callback({ success: true, responses: result });
-      }
+  socket.on('getResponses', (id: string, callback: (result: Result<Responses>) => void) => {
+    const validationResult = z.object({ id: z.string(), callback: z.function() }).safeParse({ id, callback });
+    if (!validationResult.success) {
+      logger.error('(gameHandlers) getResponses attempted with invalid arguments');
+      return;
     }
-  );
+    ({ id, callback } = validationResult.data);
+    const room = getRoomById(socket.id);
+    if (!room) {
+      logger.error('(gameHandlers) getResponses attempted with no room');
+      return;
+    }
+    const state = room.state!;
+    const result = state.getResponses(id);
+    if (isErr(result)) {
+      logger.log(result.wrap('(gameHandlers) getResponses failed due to %1$s'));
+    }
+    callback(result);
+  });
 };
 
 function registerCallbacks(io: TypedServer, room: Room) {

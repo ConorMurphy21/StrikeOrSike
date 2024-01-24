@@ -22,6 +22,9 @@
           :alt="child.alt" />
       </div>
     </div>
+    <router-link to="/" @click="onClick()">
+      <button v-t="'homeButton'" type="button" class="btn btn-burgundy mt-5 w-25" />
+    </router-link>
   </div>
 </template>
 
@@ -31,7 +34,11 @@ import Strike from '@/assets/images/howToPlay/strike.png';
 import Sike from '@/assets/images/howToPlay/sike.png';
 import Choice from '@/assets/images/howToPlay/choice.png';
 import Matching from '@/assets/images/howToPlay/matching.png';
+import ClickMp3 from '@/assets/audio/click1.mp3';
+import { AudioWrap } from '@/mixins/audiowrap';
 import { defineComponent } from 'vue';
+const click = new AudioWrap(ClickMp3);
+
 export default defineComponent({
   data() {
     return {
@@ -43,6 +50,11 @@ export default defineComponent({
         matching: Matching
       }
     };
+  },
+  methods: {
+    onClick() {
+      click.play();
+    }
   }
 });
 </script>

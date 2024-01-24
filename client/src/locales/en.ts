@@ -15,6 +15,7 @@ export default {
   roomNamePlaceholder: 'room name',
   joinGame: 'Join Game',
   createGame: 'Create Game',
+  homeButton: 'Home',
   coffeeLink: 'Buy me a tea',
   coffeeAlt: 'Buy me a coffee',
 

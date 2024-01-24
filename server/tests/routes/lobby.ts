@@ -4,8 +4,8 @@ import { io as ioc } from 'socket.io-client';
 import { type AddressInfo } from 'node:net';
 import { registerHandlers } from '../../src/routes/registerHandlers';
 import { assert } from 'chai';
-import { Player } from ':common/stateTypes';
-import { TypedClientSocket } from ':common/socketioTypes';
+import type { Player } from ':common/stateTypes';
+import type { TypedClientSocket } from ':common/socketioTypes';
 
 describe('lobby tests', () => {
   let io: Server, clientSocket1: TypedClientSocket, clientSocket2: TypedClientSocket;

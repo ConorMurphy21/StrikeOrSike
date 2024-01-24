@@ -3,7 +3,7 @@ import logger from '../logger/logger';
 import { midgameJoin } from './gameHandlers';
 import { isErr } from ':common/result';
 import { z } from 'zod';
-import { TypedServer, TypedSocket } from ':common/socketioTypes';
+import type { TypedServer, TypedSocket } from ':common/socketioTypes';
 
 /*** handler validation schemas ***/
 const roomSchema = z.object({

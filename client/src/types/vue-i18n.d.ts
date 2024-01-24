@@ -2,7 +2,7 @@
  * you need to import the some interfaces
  */
 import { DefineLocaleMessage, DefineDateTimeFormat, DefineNumberFormat } from 'vue-i18n';
-import en from '@/locales/en';
+import type en from '@/locales/en';
 
 type LocaleMessage = typeof en;
 

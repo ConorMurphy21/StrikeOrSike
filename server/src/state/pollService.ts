@@ -1,6 +1,7 @@
-import { GameState } from './gameState';
-import { Err, Ok, Result, Warn } from ':common/result';
-import { PollName, Stage } from ':common/stateTypes';
+import type { GameState } from './gameState';
+import type { Result } from ':common/result';
+import { Err, Ok, Warn } from ':common/result';
+import type { PollName, Stage } from ':common/stateTypes';
 import logger from '../logger/logger';
 
 type Poll = {

@@ -1,7 +1,7 @@
 import { GameState } from '../../src/state/gameState';
 import { assert } from 'chai';
-import { Room } from '../../src/state/rooms';
-import { Player } from ':common/stateTypes';
+import type { Room } from '../../src/state/rooms';
+import type { Player } from ':common/stateTypes';
 
 describe('Complete callback tests', () => {
   let players: Player[];

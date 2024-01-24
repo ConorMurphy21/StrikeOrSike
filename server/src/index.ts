@@ -3,7 +3,8 @@
 /**
  * Module dependencies.
  */
-import express, { Express, Request, Response } from 'express';
+import type { Express, Request, Response } from 'express';
+import express from 'express';
 
 import cors from 'cors';
 import path from 'path';
@@ -48,7 +49,8 @@ const server = http.createServer(app);
  * Create socket server
  */
 
-import { TypedServer, TypedSocket } from ':common/socketioTypes';
+import type { TypedSocket } from ':common/socketioTypes';
+import { TypedServer } from ':common/socketioTypes';
 const io = new TypedServer(server, {
   cors: {
     origin: ['http://localhost:8080', 'http://localhost:5001'],

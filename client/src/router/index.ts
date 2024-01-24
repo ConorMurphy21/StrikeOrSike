@@ -1,4 +1,5 @@
-import { createWebHistory, createRouter, RouteLocation } from 'vue-router';
+import type { RouteLocation } from 'vue-router';
+import { createWebHistory, createRouter } from 'vue-router';
 import Home from '@/views/Home.vue';
 const Game = () => import('@/views/Game.vue');
 const About = () => import('@/views/About.vue');

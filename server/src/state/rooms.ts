@@ -1,8 +1,9 @@
 import { GameState } from './gameState';
 import parameterize from 'parameterize';
 import locale from 'locale';
-import { Info, isErr, Ok, Result, Success, VoidResult, Warn } from ':common/result';
-import { Player } from ':common/stateTypes';
+import type { Result, VoidResult } from ':common/result';
+import { Info, isErr, Ok, Success, Warn } from ':common/result';
+import type { Player } from ':common/stateTypes';
 
 export type Room = {
   name: string;

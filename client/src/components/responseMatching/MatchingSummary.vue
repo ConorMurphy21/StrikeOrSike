@@ -45,7 +45,7 @@ import { useRoomStore } from '@/stores/room.js';
 import { useGameStore } from '@/stores/game.js';
 import { mapState } from 'pinia';
 import { defineComponent } from 'vue';
-import { Player } from ':common/stateTypes';
+import type { Player } from ':common/stateTypes';
 
 const click = new AudioWrap(ClickMp3);
 

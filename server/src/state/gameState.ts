@@ -2,10 +2,12 @@ import { Prompts } from './prompts';
 import { getCorrections, stringMatch } from './matchUtils';
 import { PollService } from './pollService';
 import logger from '../logger/logger';
-import { Room } from './rooms';
-import { Err, Info, Ok, Result, Success, VoidResult, Warn } from ':common/result';
-import { defaultOptions, getVisibleOptionsSchema, Options, VisibleOptions } from ':common/options';
-import {
+import type { Room } from './rooms';
+import type { Result, VoidResult } from ':common/result';
+import { Err, Info, Ok, Success, Warn } from ':common/result';
+import type { Options, VisibleOptions } from ':common/options';
+import { defaultOptions, getVisibleOptionsSchema } from ':common/options';
+import type {
   Match,
   MidgameConnectData,
   PollName,

@@ -14,7 +14,7 @@ import PlayerCard from '@/components/lobby/PlayerCard.vue';
 import { useRoomStore } from '@/stores/room.js';
 import { mapState } from 'pinia';
 import { defineComponent } from 'vue';
-import { Player } from ':common/stateTypes';
+import type { Player } from ':common/stateTypes';
 
 export default defineComponent({
   components: {

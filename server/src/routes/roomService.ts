@@ -1,6 +1,6 @@
 import { roomService } from '../state/rooms';
 import logger from '../logger/logger';
-import { TypedServer } from ':common/socketioTypes';
+import type { TypedServer } from ':common/socketioTypes';
 // 1 minute
 const TIMEOUT = 60 * 1000;
 // 1 second

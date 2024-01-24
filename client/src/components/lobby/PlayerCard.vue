@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue';
-import { Player } from ':common/stateTypes';
+import type { Player } from ':common/stateTypes';
 
 export default defineComponent({
   props: {

@@ -2,7 +2,7 @@
 import router from '@/router/index.js';
 import socket from '@/socket/socket.js';
 import { defineStore } from 'pinia';
-import { Player } from ':common/stateTypes';
+import type { Player } from ':common/stateTypes';
 
 interface State {
   players: Player[];

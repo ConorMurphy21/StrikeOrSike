@@ -3,7 +3,7 @@
 import socket from '@/socket/socket.js';
 import { useRoomStore } from '@/stores/room.js';
 import { defineStore } from 'pinia';
-import {
+import type {
   Player,
   Match as ServerMatch,
   PollName,
@@ -12,8 +12,10 @@ import {
   Responses,
   MidgameConnectData
 } from ':common/stateTypes';
-import { defaultOptions, Options, VisibleOptions } from ':common/options';
-import { isOk, isSuccess, Result } from ':common/result';
+import type { Options, VisibleOptions } from ':common/options';
+import { defaultOptions } from ':common/options';
+import type { Result } from ':common/result';
+import { isOk } from ':common/result';
 
 type Scene =
   | 'lobby'

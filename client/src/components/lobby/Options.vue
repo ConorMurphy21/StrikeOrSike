@@ -121,7 +121,7 @@ import { useGameStore } from '@/stores/game.js';
 import { mapState } from 'pinia';
 import { defineComponent } from 'vue';
 
-import { SettableOptions } from ':common/options';
+import type { SettableOptions } from ':common/options';
 
 type NumericKeyOfOptions = {
   [K in keyof SettableOptions]: SettableOptions[K] extends number ? K : never;

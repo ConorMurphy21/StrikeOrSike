@@ -1,4 +1,5 @@
-import { DirectiveBinding, nextTick } from 'vue';
+import type { DirectiveBinding } from 'vue';
+import { nextTick } from 'vue';
 import { Tooltip } from 'bootstrap';
 import { useSettingsStore } from '@/stores/settings.js';
 

@@ -1,5 +1,5 @@
 import io from 'socket.io-client';
-import { TypedClientSocket } from ':common/socketioTypes';
+import type { TypedClientSocket } from ':common/socketioTypes';
 
 let socket: TypedClientSocket;
 if (process.env.NODE_ENV !== 'production') {

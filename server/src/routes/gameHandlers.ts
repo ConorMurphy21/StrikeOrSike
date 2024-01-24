@@ -1,14 +1,18 @@
-import { getRoomById, Room } from '../state/rooms';
+import type { Room } from '../state/rooms';
+import { getRoomById } from '../state/rooms';
 import { GameState } from '../state/gameState';
 import { z } from 'zod';
 import logger from '../logger/logger';
 
 /*** handler validation schemas ***/
-import { isErr, isOk, isSuccess, Result } from ':common/result';
-import { SettableOptions, getSettableOptionsSchema, getVisibleOptionsSchema } from ':common/options';
-import { PollName, zPollName } from ':common/stateTypes';
-import { TypedServer, TypedSocket } from ':common/socketioTypes';
-import { Responses } from ':common/stateTypes';
+import type { Result } from ':common/result';
+import { isErr, isOk, isSuccess } from ':common/result';
+import type { SettableOptions } from ':common/options';
+import { getSettableOptionsSchema, getVisibleOptionsSchema } from ':common/options';
+import type { PollName } from ':common/stateTypes';
+import { zPollName } from ':common/stateTypes';
+import type { TypedServer, TypedSocket } from ':common/socketioTypes';
+import type { Responses } from ':common/stateTypes';
 
 const registerGameHandlers = (io: TypedServer, socket: TypedSocket) => {
   /*** GAME STATE ENDPOINTS ***/

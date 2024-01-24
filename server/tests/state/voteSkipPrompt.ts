@@ -1,8 +1,9 @@
 import { GameState } from '../../src/state/gameState';
 import { assert } from 'chai';
-import { Room } from '../../src/state/rooms';
-import { isOk, Result } from ':common/result';
-import { Player } from ':common/stateTypes';
+import type { Room } from '../../src/state/rooms';
+import type { Result } from ':common/result';
+import { isOk } from ':common/result';
+import type { Player } from ':common/stateTypes';
 
 describe('voteSkipPrompt tests', () => {
   // must be even

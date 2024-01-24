@@ -12,9 +12,7 @@
     "forceConsistentCasingInFileNames": true,
     "incremental": true,
     "isolatedModules": true,
-    "lib": [
-      "esnext", "DOM", "DOM.Iterable"
-    ],
+    "lib": ["esnext", "DOM", "DOM.Iterable"],
     "module": "esnext",
     "moduleResolution": "node",
     "noEmitOnError": false,
@@ -30,5 +28,5 @@
     "strict": true,
     "target": "esnext",
     "verbatimModuleSyntax": false
-  },
+  }
 }

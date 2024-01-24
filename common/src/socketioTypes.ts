@@ -1,24 +1,25 @@
 import { Server, Socket } from 'socket.io';
 import { Socket as ClientSocket } from 'socket.io-client';
-import { ConfigurableOptions } from '../state/options';
-import { PollName } from '../state/pollService';
-import { Match, MidgameConnectData, Responses, SelectionType } from './stateTypes';
-import { Player } from '../state/rooms';
+import { SettableOptions, VisibleOptions } from './options';
+import { Player, PollName, Match, MidgameConnectData, Responses, SelectionType, VoteCount, Score } from './stateTypes';
+import { Result } from './result';
 
 interface ServerToClientRoomEvents {
   joinRoom(args: { error: string } | { success: boolean; roomName: string }): void;
 
   updatePlayers(args: { modifies: Player[]; deletes: string[] }): void;
+
+  kickPlayer(data: { error: string }): void;
 }
 
 interface ClientToServerRoomEvents {
-  createRoom(name: string, roomName: string, langs?: string[]): void;
+  createRoom(name: string, roomName: string, langs?: readonly string[]): void;
 
   joinRoom(name: string, roomName: string): void;
 }
 
 interface ServerToClientGameEvents {
-  setOptions(options: ConfigurableOptions): void;
+  setOptions(options: Partial<VisibleOptions>): void;
 
   beginPrompt(prompt: string): void;
 
@@ -26,7 +27,7 @@ interface ServerToClientGameEvents {
 
   nextSelection(args: { selector: string; selectionType: SelectionType }): void;
 
-  setVoteCount(args: { pollName: PollName; count: number; next: boolean }): void;
+  setVoteCount(args: { pollName: PollName } & VoteCount): void;
 
   selectionTypeChosen(selectionType: SelectionType): void;
 
@@ -36,13 +37,13 @@ interface ServerToClientGameEvents {
 
   endRound(args: { hasNextRound: boolean }): void;
 
-  gameOver(results: { player: string; points: number }[]): void;
+  gameOver(results: Score[]): void;
 
   midgameConnect(reconnect: MidgameConnectData): void;
 }
 
 interface ClientToServerGameEvents {
-  setOptions(options: ConfigurableOptions, callback?: (p: { success: boolean }) => void): void;
+  setOptions(options: Partial<SettableOptions>, callback?: (p: { success: boolean }) => void): void;
 
   startGame(): void;
 
@@ -58,17 +59,7 @@ interface ClientToServerGameEvents {
 
   selectionComplete(): void;
 
-  getResponses(
-    id: string,
-    callback: (
-      result:
-        | { error: string }
-        | {
-            success: boolean;
-            responses: Responses;
-          }
-    ) => void
-  ): void;
+  getResponses(id: string, callback: (data: Result<Responses>) => void): void;
 }
 
 type ServerToClientEvents = ServerToClientRoomEvents & ServerToClientGameEvents;

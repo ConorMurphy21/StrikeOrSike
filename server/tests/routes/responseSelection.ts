@@ -4,8 +4,8 @@ import { io as ioc } from 'socket.io-client';
 import { type AddressInfo } from 'node:net';
 import { registerHandlers } from '../../src/routes/registerHandlers';
 import { assert } from 'chai';
-import { Player } from '../../src/state/rooms';
-import { TypedClientSocket } from '../../src/types/socketServerTypes';
+import type { Player } from ':common/stateTypes';
+import type { TypedClientSocket } from ':common/socketioTypes';
 
 const SHARED_RESPONSE = 'sharedResponse';
 const C1_RESPONSE = 'c1Response';

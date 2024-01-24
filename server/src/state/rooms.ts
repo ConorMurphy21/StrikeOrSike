@@ -1,14 +1,9 @@
 import { GameState } from './gameState';
 import parameterize from 'parameterize';
 import locale from 'locale';
-import { Info, isErr, Ok, Result, Success, VoidResult, Warn } from '../types/result';
-
-export type Player = {
-  id: string;
-  name: string;
-  leader: boolean;
-  active: boolean;
-};
+import type { Result, VoidResult } from ':common/result';
+import { Info, isErr, Ok, Success, Warn } from ':common/result';
+import type { Player } from ':common/stateTypes';
 
 export type Room = {
   name: string;
@@ -39,8 +34,13 @@ function isValidRoomName(name: string): VoidResult {
   return Success();
 }
 
-export function createRoom(id: string, name: string, roomName: string, langs?: string[]): Result<{ room: Room }> {
-  let result = isValidName(name);
+export function createRoom(
+  playerId: string,
+  playerName: string,
+  roomName: string,
+  langs?: readonly string[]
+): Result<{ room: Room }> {
+  let result = isValidName(playerName);
   if (isErr(result)) return result;
   roomName = parameterize(roomName);
   result = isValidRoomName(roomName);
@@ -55,8 +55,8 @@ export function createRoom(id: string, name: string, roomName: string, langs?: s
     lang: locales.best(supportedLocales).code,
     players: [
       {
-        id,
-        name,
+        id: playerId,
+        name: playerName,
         leader: true,
         active: true
       }
@@ -65,12 +65,16 @@ export function createRoom(id: string, name: string, roomName: string, langs?: s
   };
   room.state = new GameState(room);
   rooms[roomName] = room;
-  playerRoom[id] = room;
+  playerRoom[playerId] = room;
   return Ok({ room });
 }
 
-export function joinRoom(id: string, name: string, roomName: string): Result<{ room: Room; oldId?: string }> {
-  const result = isValidName(name);
+export function joinRoom(
+  playerId: string,
+  playerName: string,
+  roomName: string
+): Result<{ room: Room; oldId?: string }> {
+  const result = isValidName(playerName);
   if (isErr(result)) return result;
   const room = rooms[parameterize(roomName)];
   if (!room) return Info('noRoom');
@@ -80,26 +84,26 @@ export function joinRoom(id: string, name: string, roomName: string): Result<{ r
     return Info('noSpace');
   }
 
-  const existingPlayer = room.players.find((player) => player.name === name);
+  const existingPlayer = room.players.find((player) => player.name === playerName);
   if (existingPlayer && existingPlayer.active) {
     return Info('nameTaken');
   } else if (existingPlayer) {
     // if player disconnected, let them join back in as who they were previously
     const oldId = existingPlayer.id;
-    playerRoom[id] = room;
+    playerRoom[playerId] = room;
     existingPlayer.active = true;
-    existingPlayer.id = id;
+    existingPlayer.id = playerId;
     return Ok({ room, oldId });
   }
 
   room.players.push({
-    id,
-    name,
+    id: playerId,
+    name: playerName,
     leader: false,
     active: true
   });
 
-  playerRoom[id] = room;
+  playerRoom[playerId] = room;
   return Ok({ room });
 }
 

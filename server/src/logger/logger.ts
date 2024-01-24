@@ -1,4 +1,5 @@
-import winston, { LogEntry } from 'winston';
+import type { LogEntry } from 'winston';
+import winston from 'winston';
 import WinstonCloudWatch from 'winston-cloudwatch';
 
 const logger = winston.createLogger({

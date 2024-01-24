@@ -1,25 +1,29 @@
-import { getRoomById, Room } from '../state/rooms';
+import type { Room } from '../state/rooms';
+import { getRoomById } from '../state/rooms';
 import { GameState } from '../state/gameState';
 import { z } from 'zod';
 import logger from '../logger/logger';
 
 /*** handler validation schemas ***/
-import { isErr, isOk, isSuccess } from '../types/result';
-import { ConfigurableOptions, getConfigurableOptionsSchema } from '../state/options';
-import { PollName } from '../state/pollService';
-import { TypedServer, TypedSocket } from '../types/socketServerTypes';
-import { Responses, Stage } from '../types/stateTypes';
+import type { Result } from ':common/result';
+import { isErr, isOk, isSuccess } from ':common/result';
+import type { SettableOptions } from ':common/options';
+import { getSettableOptionsSchema, getVisibleOptionsSchema } from ':common/options';
+import type { PollName } from ':common/stateTypes';
+import { zPollName } from ':common/stateTypes';
+import type { TypedServer, TypedSocket } from ':common/socketioTypes';
+import type { Responses } from ':common/stateTypes';
 
 const registerGameHandlers = (io: TypedServer, socket: TypedSocket) => {
   /*** GAME STATE ENDPOINTS ***/
-  socket.on('setOptions', (options: ConfigurableOptions, callback?: (p: { success: boolean }) => void) => {
+  socket.on('setOptions', (options: Partial<SettableOptions>, callback?: (p: { success: boolean }) => void) => {
     const room = roomIfLeader(socket.id);
     if (!room) {
       logger.error('(gameHandlers) Set options attempted with no room');
       return;
     }
     const validationResult = z
-      .object({ options: getConfigurableOptionsSchema(), callback: z.function().optional() })
+      .object({ options: getSettableOptionsSchema().partial(), callback: z.function().optional() })
       .safeParse({ options, callback });
     if (!validationResult.success) {
       logger.error('(gameHandlers) Invalid options schema used');
@@ -27,7 +31,8 @@ const registerGameHandlers = (io: TypedServer, socket: TypedSocket) => {
     }
     ({ options, callback } = validationResult.data);
     room.state!.options = { ...room.state!.options, ...options };
-    io.to(room.name).emit('setOptions', room.state!.getOptions());
+    const strippedResult = getVisibleOptionsSchema().partial().parse(options);
+    io.to(room.name).emit('setOptions', strippedResult);
 
     if (callback) callback({ success: true });
   });
@@ -71,7 +76,7 @@ const registerGameHandlers = (io: TypedServer, socket: TypedSocket) => {
 
   // true to vote to skip, false to unvote to skip
   socket.on('pollVote', (pollName: PollName) => {
-    const validationResult = z.nativeEnum(PollName).safeParse(pollName);
+    const validationResult = zPollName.safeParse(pollName);
     if (!validationResult.success) {
       logger.error('(gameHandlers) PollVote invalid format');
       return;
@@ -175,30 +180,25 @@ const registerGameHandlers = (io: TypedServer, socket: TypedSocket) => {
   });
 
   // todo: change client side to accept Result type instead of this dumb ApiResult
-  socket.on(
-    'getResponses',
-    (id: string, callback: (result: { error: string } | { success: boolean; responses: Responses }) => void) => {
-      const validationResult = z.object({ id: z.string(), callback: z.function() }).safeParse({ id, callback });
-      if (!validationResult.success) {
-        logger.error('(gameHandlers) getResponses attempted with invalid arguments');
-        return;
-      }
-      ({ id, callback } = validationResult.data);
-      const room = getRoomById(socket.id);
-      if (!room) {
-        logger.error('(gameHandlers) getResponses attempted with no room');
-        return;
-      }
-      const state = room.state!;
-      const result = state.getResponses(id);
-      if (isErr(result)) {
-        logger.log(result.wrap('(gameHandlers) getResponses failed due to %1$s'));
-        callback({ error: result.message });
-      } else {
-        callback({ success: true, responses: result });
-      }
+  socket.on('getResponses', (id: string, callback: (result: Result<Responses>) => void) => {
+    const validationResult = z.object({ id: z.string(), callback: z.function() }).safeParse({ id, callback });
+    if (!validationResult.success) {
+      logger.error('(gameHandlers) getResponses attempted with invalid arguments');
+      return;
     }
-  );
+    ({ id, callback } = validationResult.data);
+    const room = getRoomById(socket.id);
+    if (!room) {
+      logger.error('(gameHandlers) getResponses attempted with no room');
+      return;
+    }
+    const state = room.state!;
+    const result = state.getResponses(id);
+    if (isErr(result)) {
+      logger.log(result.wrap('(gameHandlers) getResponses failed due to %1$s'));
+    }
+    callback(result);
+  });
 };
 
 function registerCallbacks(io: TypedServer, room: Room) {
@@ -212,9 +212,9 @@ function registerCallbacks(io: TypedServer, room: Room) {
     skipPrompt(io, room);
   });
 
-  state.registerSelectionUnsuccessfulCb(() => {
-    continueSelection(io, room);
-  });
+  //state.registerSelectionUnsuccessfulCb(() => {
+  //continueSelection(io, room);
+  //});
 
   state.registerDisputeCompleteCb((action) => {
     applyDisputeAction(io, room, action);
@@ -311,7 +311,7 @@ function roomIfLeader(id: string): Room | undefined {
 
 function midgameJoin(socket: TypedSocket, room: Room, oldId?: string) {
   socket.emit('midgameConnect', room.state!.midgameConnect(socket.id, oldId));
-  if (room.state!.stage === Stage.Matching) {
+  if (room.state!.stage === 'matching') {
     const match = room.state!.getMatch(socket.id);
     if (match) {
       // exact only matters if it's the original user

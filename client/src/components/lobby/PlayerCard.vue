@@ -5,12 +5,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
+import { defineComponent, type PropType } from 'vue';
+import type { Player } from ':common/stateTypes';
 
-type Player = {
-  active: boolean;
-  name: string;
-};
 export default defineComponent({
   props: {
     player: {

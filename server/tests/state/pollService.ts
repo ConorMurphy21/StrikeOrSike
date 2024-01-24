@@ -1,56 +1,57 @@
-import { PollName, PollService } from '../../src/state/pollService';
-import { Player, Room } from '../../src/state/rooms';
+import { PollService } from '../../src/state/pollService';
+import type { Room } from '../../src/state/rooms';
 import { GameState } from '../../src/state/gameState';
 import { assert } from 'chai';
-import { isErr, Result } from '../../src/types/result';
-import { Stage } from '../../src/types/stateTypes';
+import type { Result } from ':common/result';
+import { isErr } from ':common/result';
+import type { Player } from ':common/stateTypes';
 
 describe('PollVote tests', () => {
   it('unregistered poll', () => {
     const [, pollService] = initPollService(5);
-    const result = pollService.acceptVote(PollName.SkipPrompt, '0', Stage.Lobby);
+    const result = pollService.acceptVote('skipPrompt', '0', 'lobby');
     assert.isTrue(isErr(result));
   });
 
   it('unregistered poll', () => {
     const [, pollService] = initPollService(5);
-    pollService.registerPoll(PollName.SkipPrompt, () => {}, Stage.Lobby);
-    pollService.clearPoll(PollName.SkipPrompt);
-    const result = pollService.acceptVote(PollName.SkipPrompt, '0', Stage.Lobby);
+    pollService.registerPoll('skipPrompt', () => {}, 'lobby');
+    pollService.clearPoll('skipPrompt');
+    const result = pollService.acceptVote('skipPrompt', '0', 'lobby');
     assert.isTrue(isErr(result));
   });
 
   it('in favor odd', () => {
     const n = 7;
     const [, pollService] = initPollService(n);
-    pollService.registerPoll(PollName.SkipPrompt, () => {}, Stage.Lobby, undefined, 0.501);
+    pollService.registerPoll('skipPrompt', () => {}, 'lobby', undefined, 0.501);
     let i: number;
     for (i = 0; i < n - i - 3; i++) {
-      const result = pollService.acceptVote(PollName.SkipPrompt, i.toString(), Stage.Lobby);
+      const result = pollService.acceptVote('skipPrompt', i.toString(), 'lobby');
       assertMatches(result, i + 1, false);
     }
-    let result = pollService.acceptVote(PollName.SkipPrompt, i.toString(), Stage.Lobby);
+    let result = pollService.acceptVote('skipPrompt', i.toString(), 'lobby');
     assertMatches(result, i + 1, true);
-    result = pollService.acceptVote(PollName.SkipPrompt, (i + 1).toString(), Stage.Lobby);
+    result = pollService.acceptVote('skipPrompt', (i + 1).toString(), 'lobby');
     assertMatches(result, 0, false);
-    result = pollService.acceptVote(PollName.SkipPrompt, (i + 2).toString(), Stage.Lobby);
+    result = pollService.acceptVote('skipPrompt', (i + 2).toString(), 'lobby');
     assert.isTrue(isErr(result));
   });
 
   it('in favor even', () => {
     const n = 8;
     const [, pollService] = initPollService(n);
-    pollService.registerPoll(PollName.SkipPrompt, () => {}, Stage.Lobby, undefined, 0.501);
+    pollService.registerPoll('skipPrompt', () => {}, 'lobby', undefined, 0.501);
     let i: number;
     for (i = 0; i < n - i - 3; i++) {
-      const result = pollService.acceptVote(PollName.SkipPrompt, i.toString(), Stage.Lobby);
+      const result = pollService.acceptVote('skipPrompt', i.toString(), 'lobby');
       assertMatches(result, i + 1, false);
     }
-    let result = pollService.acceptVote(PollName.SkipPrompt, i.toString(), Stage.Lobby);
+    let result = pollService.acceptVote('skipPrompt', i.toString(), 'lobby');
     assertMatches(result, i + 1, true);
-    result = pollService.acceptVote(PollName.SkipPrompt, (i + 1).toString(), Stage.Lobby);
+    result = pollService.acceptVote('skipPrompt', (i + 1).toString(), 'lobby');
     assertMatches(result, 0, false);
-    result = pollService.acceptVote(PollName.SkipPrompt, (i + 2).toString(), Stage.Lobby);
+    result = pollService.acceptVote('skipPrompt', (i + 2).toString(), 'lobby');
     assert.isTrue(isErr(result));
   });
 
@@ -61,20 +62,20 @@ describe('PollVote tests', () => {
     const n = 8;
     const [players, pollService] = initPollService(n);
     pollService.registerPoll(
-      PollName.SkipPrompt,
+      'skipPrompt',
       () => {
         done();
       },
-      Stage.Lobby,
+      'lobby',
       undefined,
       0.501
     );
     let i: number;
     for (i = 0; i < n - i - 3; i++) {
-      const result = pollService.acceptVote(PollName.SkipPrompt, i.toString(), Stage.Lobby);
+      const result = pollService.acceptVote('skipPrompt', i.toString(), 'lobby');
       assertMatches(result, i + 1, false);
     }
-    const result = pollService.acceptVote(PollName.SkipPrompt, i.toString(), Stage.Lobby);
+    const result = pollService.acceptVote('skipPrompt', i.toString(), 'lobby');
     assertMatches(result, i + 1, true);
     players[n - 1].active = false;
     pollService.disconnect((n - 1).toString());
@@ -82,17 +83,17 @@ describe('PollVote tests', () => {
 
   it('double vote', () => {
     const [, pollService] = initPollService(5);
-    pollService.registerPoll(PollName.SkipPrompt, () => {}, Stage.Lobby);
-    let result = pollService.acceptVote(PollName.SkipPrompt, '0', Stage.Lobby);
+    pollService.registerPoll('skipPrompt', () => {}, 'lobby');
+    let result = pollService.acceptVote('skipPrompt', '0', 'lobby');
     assertMatches(result, 1, false);
-    result = pollService.acceptVote(PollName.SkipPrompt, '0', Stage.Lobby);
+    result = pollService.acceptVote('skipPrompt', '0', 'lobby');
     assertMatches(result, 0, false);
   });
 
   it('BadRequest Self Vote', () => {
     const [, pollService] = initPollService(5);
-    pollService.registerPoll(PollName.SkipPrompt, () => {}, Stage.Lobby, '0');
-    const result = pollService.acceptVote(PollName.SkipPrompt, '0', Stage.Lobby);
+    pollService.registerPoll('skipPrompt', () => {}, 'lobby', '0');
+    const result = pollService.acceptVote('skipPrompt', '0', 'lobby');
     assert.isTrue(isErr(result));
   });
 });

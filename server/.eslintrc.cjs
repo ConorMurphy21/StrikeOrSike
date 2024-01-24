@@ -15,6 +15,7 @@ module.exports = {
   },
   plugins: ['@typescript-eslint', 'prettier'],
   rules: {
+    '@typescript-eslint/consistent-type-imports': ['error'],
     'prettier/prettier': 2
   },
   ignorePatterns: ['/*', '!/src', '!/tests']

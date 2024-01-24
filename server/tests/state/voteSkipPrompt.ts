@@ -1,8 +1,9 @@
 import { GameState } from '../../src/state/gameState';
 import { assert } from 'chai';
-import { Player, Room } from '../../src/state/rooms';
-import { isOk, Result } from '../../src/types/result';
-import { PollName } from '../../src/state/pollService';
+import type { Room } from '../../src/state/rooms';
+import type { Result } from ':common/result';
+import { isOk } from ':common/result';
+import type { Player } from ':common/stateTypes';
 
 describe('voteSkipPrompt tests', () => {
   // must be even
@@ -37,7 +38,7 @@ describe('voteSkipPrompt tests', () => {
     gameState.registerPromptSkippedCb(done);
     gameState.beginNewPrompt();
     for (i = 0; i < Math.ceil(evenLen / 2); i++) {
-      result = gameState.pollVote(i.toString(), PollName.SkipPrompt);
+      result = gameState.pollVote(i.toString(), 'skipPrompt');
 
       if (isOk(result)) {
         assert.strictEqual(result.count, i + 1);
@@ -45,7 +46,7 @@ describe('voteSkipPrompt tests', () => {
         assert.fail();
       }
     }
-    result = gameState.pollVote(i.toString(), PollName.SkipPrompt);
+    result = gameState.pollVote(i.toString(), 'skipPrompt');
     if (isOk(result)) {
       assert.strictEqual(result.count, i + 1);
     } else {
@@ -59,20 +60,20 @@ describe('voteSkipPrompt tests', () => {
     gameState.registerPromptSkippedCb(done);
     gameState.beginNewPrompt();
     for (i = 0; i < Math.ceil(evenLen / 2); i++) {
-      result = gameState.pollVote(i.toString(), PollName.SkipPrompt);
+      result = gameState.pollVote(i.toString(), 'skipPrompt');
       if (isOk(result)) {
         assert.strictEqual(result.count, i + 1);
       } else {
         assert.fail();
       }
     }
-    result = gameState.pollVote(i.toString(), PollName.SkipPrompt);
+    result = gameState.pollVote(i.toString(), 'skipPrompt');
     if (isOk(result)) {
       assert.strictEqual(result.count, i - 1);
     } else {
       assert.fail();
     }
-    result = gameState.pollVote(i.toString(), PollName.SkipPrompt);
+    result = gameState.pollVote(i.toString(), 'skipPrompt');
     if (isOk(result)) {
       assert.strictEqual(result.count, i);
     } else {

@@ -4,7 +4,7 @@ import { io as ioc } from 'socket.io-client';
 import { type AddressInfo } from 'node:net';
 import { registerHandlers } from '../../src/routes/registerHandlers';
 import { assert } from 'chai';
-import { TypedClientSocket } from '../../src/types/socketServerTypes';
+import type { TypedClientSocket } from ':common/socketioTypes';
 
 describe('promptResponse tests', () => {
   const roomName = 'room';

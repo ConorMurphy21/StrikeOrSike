@@ -43,7 +43,7 @@ export default defineComponent({
     ...mapState(useGameStore, ['prompt', 'selectionType', 'selector', 'firstSelection', 'isSelector'])
   },
   watch: {
-    response: function (val) {
+    response: function (val: string) {
       socket.emit('selectResponse', val);
     }
   },

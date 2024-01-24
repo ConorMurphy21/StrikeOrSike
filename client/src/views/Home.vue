@@ -60,7 +60,7 @@ export default defineComponent({
     return {
       form: {
         name: '',
-        roomName: this.$route.query.name ?? ''
+        roomName: (this.$route.query.name as string) ?? ''
       }
     };
   },

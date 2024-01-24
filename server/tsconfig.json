@@ -1,20 +1,18 @@
 {
+  "extends": "../tsconfig.options.json",
   "compilerOptions": {
-    /* Language and Environment */
-    "target": "ES2022",
+    "baseUrl": "./",
     "noEmit": true,
-    "composite": true,
-    /* Modules */
+    "emitDeclarationOnly": false,
     "module": "commonJS",
-    "lib": ["ESNext", "DOM"],
     "rootDir": "./",
-    "allowJs": false,
-    "pretty": false,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    /* Type Checking */
-    "strict": true,
-    /* Completeness */
-    "skipLibCheck": false
-  }
+    "paths": {
+      ":common/*": ["../common/src/*"]
+    }
+  },
+  "references": [
+    {
+      "path": "../common"
+    }
+  ]
 }

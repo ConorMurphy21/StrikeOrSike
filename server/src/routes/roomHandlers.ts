@@ -1,10 +1,9 @@
 import { createRoom, disconnectPlayer, getRoomById, getRoomByName, joinRoom } from '../state/rooms';
 import logger from '../logger/logger';
 import { midgameJoin } from './gameHandlers';
-import { isErr } from '../types/result';
+import { isErr } from ':common/result';
 import { z } from 'zod';
-import { TypedServer, TypedSocket } from '../types/socketServerTypes';
-import { Stage } from '../types/stateTypes';
+import type { TypedServer, TypedSocket } from ':common/socketioTypes';
 
 /*** handler validation schemas ***/
 const roomSchema = z.object({
@@ -23,7 +22,7 @@ export function registerRoomHandlers(io: TypedServer, socket: TypedSocket): void
   });
 
   /*** CONNECTION AND ROOM CREATION ***/
-  socket.on('createRoom', (name: string, roomName: string, langs?: string[]) => {
+  socket.on('createRoom', (name: string, roomName: string, langs?: readonly string[]) => {
     // disconnect for cleanup
     disconnect(socket);
 
@@ -71,7 +70,7 @@ export function registerRoomHandlers(io: TypedServer, socket: TypedSocket): void
         deletes: []
       });
       socket.emit('setOptions', room.state!.getOptions());
-      if (room.state!.stage !== Stage.Lobby) {
+      if (room.state!.stage !== 'lobby') {
         midgameJoin(socket, room, result.oldId);
       }
     }

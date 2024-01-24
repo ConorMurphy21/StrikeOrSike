@@ -3,17 +3,20 @@
 import socket from '@/socket/socket.js';
 import { useRoomStore } from '@/stores/room.js';
 import { defineStore } from 'pinia';
+import type {
+  Player,
+  Match as ServerMatch,
+  PollName,
+  VoteCount,
+  Score as ServerScore,
+  Responses,
+  MidgameConnectData
+} from ':common/stateTypes';
+import type { Options, VisibleOptions } from ':common/options';
+import { defaultOptions } from ':common/options';
+import type { Result } from ':common/result';
+import { isOk } from ':common/result';
 
-type Options = {
-  promptTimer: number;
-  numRounds: number;
-  autoNumRounds: boolean;
-  promptSkipping: boolean;
-  sikeDispute: boolean;
-  sikeRetries: number;
-  packs: Record<string, boolean>;
-  customPrompts: string[];
-};
 type Scene =
   | 'lobby'
   | 'countdown'
@@ -24,56 +27,9 @@ type Scene =
   | 'endRound'
   | 'endGame';
 
-type PollName = 'skipPrompt' | 'sikeDispute' | 'startNextRound';
+export type Match = Omit<ServerMatch, 'player'> & { player: Player };
 
-type ServerMatch = {
-  player: string;
-  response: string;
-  exact: boolean;
-};
-
-type MidgameConnectData = {
-  id: string;
-  stage: string;
-  selectionType: string;
-  responses: Responses;
-  selector: string;
-  selectedResponse: string;
-  prompt: string;
-  options: Options;
-  timer: number;
-  matches: ServerMatch[];
-  voteCounts: Record<PollName, { count: number; next: boolean }>;
-};
-
-type Player = {
-  id: string;
-  name: string;
-  leader: boolean;
-  active: boolean;
-};
-type Responses = {
-  all: string[];
-  used: string[];
-  selectedStrike: string;
-  selectedSike: string;
-};
-
-type Match = {
-  player: Player;
-  response: string;
-  exact: boolean;
-};
-
-type Score = {
-  player: Player;
-  points: number;
-};
-
-type VoteCount = {
-  count: number;
-  next: boolean;
-};
+type Score = Omit<ServerScore, 'player'> & { player: Player };
 
 interface State {
   scene: Scene;
@@ -122,16 +78,7 @@ export const useGameStore = defineStore('game', {
       startNextRound: { count: 0, next: false },
       sikeDispute: { count: 0, next: false }
     },
-    options: {
-      promptTimer: 35,
-      numRounds: 0,
-      autoNumRounds: true,
-      sikeDispute: true,
-      promptSkipping: true,
-      sikeRetries: 0,
-      packs: {},
-      customPrompts: []
-    },
+    options: defaultOptions,
     firstSelection: true,
     hasNextRound: true,
     unmatched: false
@@ -201,6 +148,7 @@ export const useGameStore = defineStore('game', {
       const selfId = room.self!.id;
       this.responses = {};
       this.responses[selfId] = {
+        id: selfId,
         all: [],
         used: [],
         selectedStrike: '',
@@ -277,9 +225,9 @@ export const useGameStore = defineStore('game', {
           resolve();
           return;
         }
-        socket.emit('getResponses', id, (data: { success: boolean; responses: Responses }) => {
-          if (data.success) {
-            this.responses[id] = data.responses;
+        socket.emit('getResponses', id, (data: Result<Responses>) => {
+          if (isOk(data)) {
+            this.responses[id] = data;
             resolve();
           } else {
             reject();
@@ -288,8 +236,8 @@ export const useGameStore = defineStore('game', {
       });
     },
     bindEvents() {
-      socket.on('setOptions', (options: Options) => {
-        this.options = options;
+      socket.on('setOptions', (options: Partial<VisibleOptions>) => {
+        this.options = { ...this.options, ...options };
       });
 
       socket.on('selectionTypeChosen', (selectionType: string) => {
@@ -378,7 +326,7 @@ export const useGameStore = defineStore('game', {
         if (data.selectionType === 'choice') {
           this.selectionTypeChoice = true;
         }
-        this.options = data.options;
+        this.options = { ...this.options, ...data.options };
         this.responses[data.id] = data.responses;
         this.selector = room.players.find((player) => player.id === data.selector);
         this.selectedResponse = data.selectedResponse;

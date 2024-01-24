@@ -1,13 +1,8 @@
-import { GameState } from './gameState';
-import { Err, Ok, Result, Warn } from '../types/result';
-import { Stage } from '../types/stateTypes';
+import type { GameState } from './gameState';
+import type { Result } from ':common/result';
+import { Err, Ok, Warn } from ':common/result';
+import type { PollName, Stage } from ':common/stateTypes';
 import logger from '../logger/logger';
-
-export enum PollName {
-  SkipPrompt = 'skipPrompt',
-  StartNextRound = 'startNextRound',
-  SikeDispute = 'sikeDispute'
-}
 
 type Poll = {
   stage: Stage;
@@ -19,7 +14,7 @@ type Poll = {
 
 export class PollService {
   private gameState: GameState;
-  private polls: Map<PollName, Poll>;
+  private readonly polls: Map<PollName, Poll>;
 
   constructor(gameState: GameState) {
     this.gameState = gameState;
@@ -73,9 +68,9 @@ export class PollService {
   // TODO: change this to Map<Pollname, ...>, (needs to be changed on client side too)
   getVoteCounts(): Record<PollName, { count: number; next: boolean }> {
     const ret: Record<PollName, { count: number; next: boolean }> = {
-      [PollName.SkipPrompt]: { count: 0, next: false },
-      [PollName.SikeDispute]: { count: 0, next: false },
-      [PollName.StartNextRound]: { count: 0, next: false }
+      skipPrompt: { count: 0, next: false },
+      sikeDispute: { count: 0, next: false },
+      startNextRound: { count: 0, next: false }
     };
     for (const [pollName, poll] of this.polls) {
       ret[pollName] = {

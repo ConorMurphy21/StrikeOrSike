@@ -121,20 +121,11 @@ import { useGameStore } from '@/stores/game.js';
 import { mapState } from 'pinia';
 import { defineComponent } from 'vue';
 
-type Options = {
-  promptTimer: number;
-  numRounds: number;
-  autoNumRounds: boolean;
-  promptSkipping: boolean;
-  sikeDispute: boolean;
-  sikeRetries: number;
-  packs: Record<string, boolean>;
-  customPrompts: string;
-};
+import type { SettableOptions } from ':common/options';
 
 type NumericKeyOfOptions = {
-  [K in keyof Options]: Options[K] extends number ? K : never;
-}[keyof Options];
+  [K in keyof SettableOptions]: SettableOptions[K] extends number ? K : never;
+}[keyof SettableOptions];
 
 export default defineComponent({
   props: {
@@ -167,14 +158,14 @@ export default defineComponent({
     onNumRoundChange(event: Event) {
       this.onNumChange(event, 'numRounds', { autoNumRounds: false });
     },
-    onNumChange(event: Event, label: NumericKeyOfOptions, options?: Partial<Options>) {
+    onNumChange(event: Event, label: NumericKeyOfOptions, options?: Partial<SettableOptions>) {
       const inputValue = parseInt((event.currentTarget! as HTMLInputElement).value);
       const actualValue = this.options[label];
       if (Math.abs(inputValue - actualValue) !== 0) {
         this.validateNum(event, label, options);
       }
     },
-    validateNum(event: Event, label: NumericKeyOfOptions, options?: Partial<Options>) {
+    validateNum(event: Event, label: NumericKeyOfOptions, options?: Partial<SettableOptions>) {
       const input = event.currentTarget! as HTMLInputElement;
       const inputValue = parseInt(input.value);
       const max = parseInt(input.max);
@@ -197,7 +188,7 @@ export default defineComponent({
     },
     validateSikeDispute(event: Event) {
       const input = event.currentTarget! as HTMLInputElement;
-      const options: Partial<Options> = {};
+      const options: Partial<SettableOptions> = {};
       options.sikeDispute = input.checked;
       if (!input.checked) {
         options.sikeRetries = 0;

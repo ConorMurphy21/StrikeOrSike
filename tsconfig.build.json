@@ -3,13 +3,10 @@
   "files": [],
   "references": [
     {
-      "path": "./common"
+      "path": "./common/tsconfig.build.json"
     },
     {
-      "path": "./client"
-    },
-    {
-      "path": "./server"
+      "path": "./server/tsconfig.build.json"
     }
   ]
 }

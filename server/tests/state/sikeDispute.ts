@@ -1,8 +1,7 @@
 import { GameState } from '../../src/state/gameState';
 import { assert } from 'chai';
-import { Player } from '../../src/state/rooms';
-import { isErr, isSuccess } from '../../src/types/result';
-import { SelectionType } from '../../src/types/stateTypes';
+import { isErr, isSuccess } from ':common/result';
+import type { Player } from ':common/stateTypes';
 
 describe('Sike Dispute tests', () => {
   const selectorId = '0';
@@ -42,7 +41,7 @@ describe('Sike Dispute tests', () => {
   describe('Strike selectionType', () => {
     beforeEach(() => {
       gameState.beginSelection();
-      gameState.selectionType = SelectionType.Strike;
+      gameState.selectionType = 'strike';
     });
 
     it('PromptSelection Accept Happy', () => {
@@ -67,7 +66,7 @@ describe('Sike Dispute tests', () => {
     beforeEach(() => {
       gameState.options.sikeRetries = 0;
       gameState.beginSelection();
-      gameState.selectionType = SelectionType.Sike;
+      gameState.selectionType = 'sike';
     });
 
     it('PromptSelection Accept Happy', () => {

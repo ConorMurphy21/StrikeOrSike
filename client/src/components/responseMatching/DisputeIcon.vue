@@ -57,7 +57,7 @@ export default defineComponent({
   },
   methods: {
     sendVote() {
-      this.pressedVote = !this.pressedVote
+      this.pressedVote = !this.pressedVote;
 
       new AudioWrap(ClickMp3).play();
       socket.emit('pollVote', 'sikeDispute');

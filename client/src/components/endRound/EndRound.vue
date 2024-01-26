@@ -4,8 +4,11 @@
     <response-list :selectable="false" :height="45" :player-id="responsesId" />
     <player-chooser v-model="selectedId" class="w-50 w-lg-25 fs-4 mb-3" />
     <button
-      class="btn btn-orange w-75 w-lg-50 w-xl-25 fs-4 mb-3 position-relative"
-      :class="{ 'btn-blue': !pressedVote }"
+      class="btn btn-blue w-75 w-lg-50 w-xl-25 fs-4 mb-3 position-relative"
+      :class="{
+        'text-white shadow': !pressedVote,
+        'text-white-50 shadow-none': pressedVote
+      }"
       @click="sendVote">
       {{ hasNextRound ? $t('startNextRound') : $t('viewResults') }}
       <notification-count
@@ -63,6 +66,8 @@ export default defineComponent({
   },
   methods: {
     sendVote() {
+      this.pressedVote = !this.pressedVote;
+
       new AudioWrap(ClickMp3).play();
       socket.emit('pollVote', 'startNextRound');
     },

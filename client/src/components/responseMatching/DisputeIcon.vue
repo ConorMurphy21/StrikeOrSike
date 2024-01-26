@@ -1,8 +1,11 @@
 <template>
   <button
     v-tooltip="{ title: $t('tooltip.dispute', { response }), placement }"
-    class="btn btn-sm btn-orange text-white ratio-1x1 position-relative d-inline-flex justify-content-center align-items-center"
-    :class="{ 'btn-blue': !pressedVote }"
+    class="btn btn-sm btn-blue ratio-1x1 position-relative d-inline-flex justify-content-center align-items-center"
+    :class="{
+      'text-white shadow': !pressedVote,
+      'text-white-50 shadow-none': pressedVote
+    }"
     :disabled="disabled"
     @click="sendVote">
     <i class="bi-hand-thumbs-down fs-5 lh-sm" />
@@ -54,6 +57,8 @@ export default defineComponent({
   },
   methods: {
     sendVote() {
+      this.pressedVote = !this.pressedVote
+
       new AudioWrap(ClickMp3).play();
       socket.emit('pollVote', 'sikeDispute');
     }

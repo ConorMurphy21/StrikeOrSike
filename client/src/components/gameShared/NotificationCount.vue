@@ -1,3 +1,24 @@
+<script setup lang="ts">
+import { computed } from 'vue';
+
+const props = defineProps({
+  width: {
+    type: Number,
+    default: 24
+  },
+  nextMajority: {
+    type: Boolean,
+    default: false
+  }
+});
+
+const cssProps = computed((): Record<string, string> => {
+  return {
+    '--min-width': props.width + 'px'
+  };
+});
+</script>
+
 <template>
   <span
     :style="cssProps"
@@ -6,30 +27,6 @@
     <slot />
   </span>
 </template>
-
-<script lang="ts">
-import { defineComponent } from 'vue';
-
-export default defineComponent({
-  props: {
-    width: {
-      type: Number,
-      default: 24
-    },
-    nextMajority: {
-      type: Boolean,
-      default: false
-    }
-  },
-  computed: {
-    cssProps() {
-      return {
-        '--min-width': this.width + 'px'
-      };
-    }
-  }
-});
-</script>
 
 <style scoped lang="scss">
 span {

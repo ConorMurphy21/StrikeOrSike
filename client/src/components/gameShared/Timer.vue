@@ -1,3 +1,50 @@
+<script setup lang="ts">
+import { onUnmounted, watch } from 'vue';
+import { useGameStore } from '@/stores/game.js';
+import { AudioWrap } from '@/mixins/audiowrap.js';
+import timerMp3 from '@/assets/audio/timer_full.mp3';
+import timerCompleteMp3 from '@/assets/audio/timerComplete.mp3';
+import { useI18n } from 'vue-i18n';
+
+const timer = new AudioWrap(timerMp3);
+const timerComplete = new AudioWrap(timerCompleteMp3);
+const gameStore = useGameStore();
+const settingsStore = useGameStore();
+
+defineProps({
+  time: {
+    type: Number,
+    required: true
+  }
+});
+
+watch(
+  () => settingsStore.timer,
+  (val: number) => {
+    timer.volume = val;
+  }
+);
+watch(
+  () => gameStore.timer,
+  (val: number) => {
+    if (val === 10) {
+      timer.play();
+    } else if (val <= 0) {
+      timer.pause();
+      timer.currentTime = 0;
+      timerComplete.play();
+    }
+  }
+);
+
+onUnmounted(() => {
+  timer.pause();
+  timer.currentTime = 0;
+});
+
+const { n } = useI18n();
+</script>
+
 <template>
   <div>
     <h1
@@ -7,54 +54,13 @@
         'bounce bold-black': time > 10,
         'bounce-fast bolder-red': time <= 10
       }">
-      {{ $n(time) }}
+      {{ n(time) }}
     </h1>
     <h1 v-else class="display-5 bolder-red shake-rotate">
       <i class="bi-alarm" />
     </h1>
   </div>
 </template>
-
-<script lang="ts">
-import timerMp3 from '@/assets/audio/timer_full.mp3';
-import timerCompleteMp3 from '@/assets/audio/timerComplete.mp3';
-import { AudioWrap } from '@/mixins/audiowrap.js';
-import { useSettingsStore } from '@/stores/settings.js';
-import { mapState } from 'pinia';
-import { defineComponent } from 'vue';
-
-const timer = new AudioWrap(timerMp3);
-const timerComplete = new AudioWrap(timerCompleteMp3);
-export default defineComponent({
-  props: {
-    time: {
-      type: Number,
-      required: true
-    }
-  },
-  computed: {
-    ...mapState(useSettingsStore, ['volume'])
-  },
-  watch: {
-    volume(val: number) {
-      timer.volume = val;
-    },
-    time(val: number) {
-      if (val === 10) {
-        timer.play();
-      } else if (val <= 0) {
-        timer.pause();
-        timer.currentTime = 0;
-        timerComplete.play();
-      }
-    }
-  },
-  unmounted() {
-    timer.pause();
-    timer.currentTime = 0;
-  }
-});
-</script>
 
 <style lang="scss" scoped>
 h1 {

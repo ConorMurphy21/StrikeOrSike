@@ -1,40 +1,35 @@
+<script setup lang="ts">
+import { computed } from 'vue';
+
+const props = defineProps({
+  prompt: {
+    type: String,
+    required: true
+  },
+  skippable: {
+    type: Boolean,
+    default: false
+  }
+});
+
+const containsBlank = computed((): boolean => {
+  return props.prompt.includes('_');
+});
+const left = computed((): string => {
+  return props.prompt.substring(0, props.prompt.indexOf('_'));
+});
+const right = computed((): string => {
+  return props.prompt.substring(props.prompt.lastIndexOf('_') + 1);
+});
+</script>
+
 <template>
   <h1 v-if="containsBlank" class="display-5">
     {{ left }} <span class="blank" /> {{ right }} <vote-skip v-if="skippable" />
   </h1>
   <h1 v-else class="display-5">{{ prompt }} <vote-skip v-if="skippable" class="mb-2" /></h1>
 </template>
-<script lang="ts">
-import VoteSkip from '@/components/promptResponse/VoteSkip.vue';
-import { defineComponent } from 'vue';
 
-export default defineComponent({
-  components: {
-    VoteSkip
-  },
-  props: {
-    prompt: {
-      type: String,
-      required: true
-    },
-    skippable: {
-      type: Boolean,
-      default: false
-    }
-  },
-  computed: {
-    containsBlank(): boolean {
-      return this.prompt.includes('_');
-    },
-    left(): string {
-      return this.prompt.substring(0, this.prompt.indexOf('_'));
-    },
-    right(): string {
-      return this.prompt.substring(this.prompt.lastIndexOf('_') + 1);
-    }
-  }
-});
-</script>
 <style lang="scss" scoped>
 h1 {
   font-weight: 650;

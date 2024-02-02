@@ -1,43 +1,45 @@
-<template>
-  <img
-    v-if="tooltip"
-    v-tooltip.left.ds750="$t('tooltip.' + type)"
-    :src="typeImg"
-    :alt="$t(type)"
-    :class="{ 'sike-img': type === 'sike' }" />
-  <img v-else :src="typeImg" :alt="$t(type)" :class="{ 'sike-img': type === 'sike' }" />
-</template>
-
-<script lang="ts">
+<script setup lang="ts">
+import { computed } from 'vue';
 import StrikeImg from '@/assets/images/strike.png';
 import SikeImg from '@/assets/images/sike.png';
 import ChoiceImg from '@/assets/images/choice.png';
-import { useGameStore } from '@/stores/game.js';
-import { mapState } from 'pinia';
-import { defineComponent } from 'vue';
+import { useGameStore } from '@/stores/game';
+import { useI18n } from 'vue-i18n';
 
-export default defineComponent({
-  props: {
-    tooltip: {
-      type: Boolean,
-      default: true
-    }
-  },
-  computed: {
-    ...mapState(useGameStore, {
-      type: 'selectionType'
-    }),
-    typeImg() {
-      if (this.type === 'strike') {
-        return StrikeImg;
-      } else if (this.type === 'sike') {
-        return SikeImg;
-      }
-      return ChoiceImg;
-    }
+const gameStore = useGameStore();
+
+defineProps({
+  tooltip: {
+    type: Boolean,
+    default: true
   }
 });
+
+const typeImg = computed(() => {
+  if (gameStore.selectionType === 'strike') {
+    return StrikeImg;
+  } else if (gameStore.selectionType === 'sike') {
+    return SikeImg;
+  }
+  return ChoiceImg;
+});
+
+const { t } = useI18n();
 </script>
+
+<template>
+  <img
+    v-if="tooltip"
+    v-tooltip.left.ds750="$t('tooltip.' + gameStore.selectionType)"
+    :src="typeImg"
+    :alt="t(gameStore.selectionType)"
+    :class="{ 'sike-img': gameStore.selectionType === 'sike' }" />
+  <img
+    v-else
+    :src="typeImg"
+    :alt="t(gameStore.selectionType)"
+    :class="{ 'sike-img': gameStore.selectionType === 'sike' }" />
+</template>
 
 <style lang="scss" scoped>
 img.sike-img {

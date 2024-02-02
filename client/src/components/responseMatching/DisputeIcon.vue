@@ -1,13 +1,19 @@
 <template>
   <button
     v-tooltip="{ title: $t('tooltip.dispute', { response }), placement }"
-    class="btn btn-sm btn-orange text-white ratio-1x1 position-relative d-inline-flex justify-content-center align-items-center"
-    :class="{ 'btn-blue': !sikeDisputeNext }"
+    class="btn btn-sm btn-blue ratio-1x1 position-relative d-inline-flex justify-content-center align-items-center"
+    :class="{
+      'text-white shadow': !pressedVote,
+      'text-white-50 shadow-none': pressedVote
+    }"
     :disabled="disabled"
     @click="sendVote">
     <i class="bi-hand-thumbs-down fs-5 lh-sm" />
-
-    <notification-count v-if="sikeDisputeCount" :width="21" class="position-absolute top-0 start-100 translate-middle">
+    <notification-count
+      v-if="sikeDisputeCount"
+      :width="22"
+      class="position-absolute top-0 start-100 translate-middle"
+      :next-majority="sikeDisputeNext">
       {{ $n(sikeDisputeCount) }}
     </notification-count>
   </button>
@@ -42,7 +48,8 @@ export default defineComponent({
   },
   data() {
     return {
-      tooltips: []
+      tooltips: [],
+      pressedVote: false
     };
   },
   computed: {
@@ -50,6 +57,8 @@ export default defineComponent({
   },
   methods: {
     sendVote() {
+      this.pressedVote = !this.pressedVote;
+
       new AudioWrap(ClickMp3).play();
       socket.emit('pollVote', 'sikeDispute');
     }

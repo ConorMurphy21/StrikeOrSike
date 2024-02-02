@@ -1,3 +1,7 @@
+<script setup lang="ts">
+import { PortalTarget } from 'portal-vue';
+</script>
+
 <template>
   <div class="container min-vh-100">
     <div class="d-flex min-vh-100 flex-column justify-content-evenly align-items-center">
@@ -7,16 +11,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { PortalTarget } from 'portal-vue';
-import { defineComponent } from 'vue';
-export default defineComponent({
-  components: {
-    PortalTarget
-  }
-});
-</script>
 
 <style lang="scss">
 @import '@/styles/app';

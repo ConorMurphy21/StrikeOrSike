@@ -21,6 +21,7 @@ module.exports = {
   },
   rules: {
     '@typescript-eslint/consistent-type-imports': ['error'],
+    '@typescript-eslint/unbound-method': ['off'],
     '@typescript-eslint/no-unused-vars': ['off'],
     '@typescript-eslint/no-unsafe-assignment': ['off'],
     'vue/multi-word-component-names': ['off'],

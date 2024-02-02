@@ -1,3 +1,9 @@
+<script setup lang="ts">
+import ClickMp3 from '@/assets/audio/click1.mp3';
+import { AudioWrap } from '@/mixins/audiowrap';
+const click = new AudioWrap(ClickMp3);
+</script>
+
 <template>
   <div class="main-content w-75 p-3 p-lg-5 text-center">
     <h1 v-t="'about.header'" class="display-3 font-fancy text-burgundy" />
@@ -21,24 +27,8 @@
         <a v-t="'about.coffee'" href="https://www.buymeacoffee.com/ConorMurphy/" />
       </template>
     </i18n-t>
-    <router-link to="/" @click="onClick">
+    <router-link to="/" @click="click.play()">
       <button v-t="'homeButton'" type="button" class="btn btn-burgundy mt-3 w-25" />
     </router-link>
   </div>
 </template>
-
-<script lang="ts">
-import ClickMp3 from '@/assets/audio/click1.mp3';
-import { AudioWrap } from '@/mixins/audiowrap';
-import { defineComponent } from 'vue';
-
-const click = new AudioWrap(ClickMp3);
-
-export default defineComponent({
-  methods: {
-    onClick() {
-      click.play();
-    }
-  }
-});
-</script>

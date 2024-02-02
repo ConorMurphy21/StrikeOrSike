@@ -10,5 +10,6 @@ const messages = {
 export default createI18n<[typeof en], 'en'>({
   locale: 'en',
   fallbackLocale: 'en',
+  legacy: false,
   messages
 });

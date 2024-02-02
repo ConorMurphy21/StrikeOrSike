@@ -1,13 +1,49 @@
+<script setup lang="ts">
+import { Instance } from '@popperjs/core';
+import { onMounted, reactive, type Ref, ref } from 'vue';
+import ClickMp3 from '@/assets/audio/click2.mp3';
+import { AudioWrap } from '@/mixins/audiowrap';
+import { useGameStore } from '@/stores/game.js';
+import { useRoomStore } from '@/stores/room.js';
+import { useRoute } from 'vue-router';
+import socket from '@/socket/socket';
+const click = new AudioWrap(ClickMp3);
+
+const route = useRoute();
+const form = reactive({ name: '', roomName: (route.query.name as string) ?? '' });
+
+const usernameInput: Ref<InstanceType<typeof HTMLInputElement> | null> = ref(null);
+
+const roomStore = useRoomStore();
+
+onMounted(() => {
+  if (route.query.error) {
+    roomStore.setError(route.query.error as string);
+  }
+  if (usernameInput.value) {
+    usernameInput.value.focus();
+  }
+  useGameStore().$reset();
+});
+
+function onSubmit(joinGame: boolean) {
+  click.play();
+  const event = joinGame ? 'joinRoom' : 'createRoom';
+  roomStore.setName(form.name);
+  socket.emit(event, form.name, form.roomName, navigator.languages);
+}
+</script>
+
 <template>
-  <div class="main-content w-93 w-lg-50 px-3 px-lg-5 py-3 py-lg-4" :class="{ shake: receivedError }">
+  <div class="main-content w-93 w-lg-50 px-3 px-lg-5 py-3 py-lg-4" :class="{ shake: roomStore.receivedError }">
     <form class="form" @submit.prevent="onSubmit(true)">
-      <h4 v-if="error" v-t="error" class="mb-1 text-center text-red fs-4" />
+      <h4 v-if="roomStore.error" v-t="roomStore.error" class="mb-1 text-center text-red fs-4" />
 
       <div class="mb-3">
         <label v-t="'usernameLabel'" for="username" class="form-label" />
         <input
           id="username"
-          ref="username"
+          ref="usernameInput"
           v-model="form.name"
           type="text"
           class="form-control"
@@ -43,48 +79,6 @@
     </form>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent } from 'vue';
-import ClickMp3 from '@/assets/audio/click2.mp3';
-import { AudioWrap } from '@/mixins/audiowrap';
-import socket from '@/socket/socket';
-import { mapState, mapActions } from 'pinia';
-import { useRoomStore } from '@/stores/room.js';
-import { useGameStore } from '@/stores/game.js';
-import { Instance } from '@popperjs/core';
-const click = new AudioWrap(ClickMp3);
-
-export default defineComponent({
-  data() {
-    return {
-      form: {
-        name: '',
-        roomName: (this.$route.query.name as string) ?? ''
-      }
-    };
-  },
-  computed: {
-    ...mapState(useRoomStore, ['error', 'receivedError'])
-  },
-  mounted() {
-    if (this.$route.query.error) {
-      this.setError(this.$route.query.error as string);
-    }
-    (this.$refs.username as InstanceType<typeof HTMLInputElement>).focus();
-    useGameStore().$reset();
-  },
-  methods: {
-    ...mapActions(useRoomStore, ['setName', 'setRoomName', 'setError']),
-    onSubmit(joinGame: boolean) {
-      click.play();
-      const event = joinGame ? 'joinRoom' : 'createRoom';
-      this.setName(this.form.name);
-      socket.emit(event, this.form.name, this.form.roomName, navigator.languages);
-    }
-  }
-});
-</script>
 
 <style lang="scss" scoped>
 input {

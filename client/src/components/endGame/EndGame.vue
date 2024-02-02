@@ -45,7 +45,7 @@ export default defineComponent({
     ...mapActions(useGameStore, ['setScene']),
     toLobby() {
       click.play();
-      this.setScene('lobby');
+      this.setScene('Lobby');
     }
   }
 });

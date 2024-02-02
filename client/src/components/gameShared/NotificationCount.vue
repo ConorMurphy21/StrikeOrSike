@@ -2,7 +2,7 @@
   <span
     :style="cssProps"
     class="rounded-pill badge d-inline-flex align-items-center justify-content-center p-0"
-    :class="{ 'bg-blue': !nextMajority, 'bg-orange': nextMajority }">
+    :class="{ 'bg-burgundy': !nextMajority, 'bg-orange': nextMajority }">
     <slot />
   </span>
 </template>

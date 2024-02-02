@@ -17,7 +17,7 @@ const props = defineProps({
   },
   playerId: {
     type: String,
-    required: true
+    default: ''
   },
   height: {
     type: Number,

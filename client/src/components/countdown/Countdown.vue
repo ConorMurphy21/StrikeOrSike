@@ -1,34 +1,34 @@
-<template>
-  <div class="w-100 d-flex justify-content-center bounce">
-    <h1 class="flip">{{ $n(timer) }}</h1>
-  </div>
-</template>
-
-<script lang="ts">
+<script setup lang="ts">
 import timerMp3 from '@/assets/audio/countdown.mp3';
 import { AudioWrap } from '@/mixins/audiowrap.js';
-import { useGameStore } from '@/stores/game.js';
+import { onMounted, watch } from 'vue';
 import { useSettingsStore } from '@/stores/settings.js';
-import { mapState } from 'pinia';
-import { defineComponent } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useGameStore } from '@/stores/game.js';
+const timerAudio = new AudioWrap(timerMp3);
 
-const timer = new AudioWrap(timerMp3);
+const gameStore = useGameStore();
+const settingsStore = useSettingsStore();
 
-export default defineComponent({
-  computed: {
-    ...mapState(useGameStore, ['timer']),
-    ...mapState(useSettingsStore, ['volume'])
-  },
-  watch: {
-    volume(val: number) {
-      timer.volume = val;
-    }
-  },
-  mounted() {
-    timer.play();
-  }
+onMounted(() => {
+  timerAudio.play();
 });
+
+watch(
+  () => settingsStore.volume,
+  (val: number) => {
+    timerAudio.volume = val;
+  }
+);
+
+const { n } = useI18n();
 </script>
+
+<template>
+  <div class="w-100 d-flex justify-content-center bounce">
+    <h1 class="flip">{{ n(gameStore.timer) }}</h1>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 h1 {

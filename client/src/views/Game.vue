@@ -46,7 +46,7 @@ onMounted(() => {
   }
 });
 
-const helpLink = computed(() => {
+const helpLink = computed((): string => {
   const tips = {
     Lobby: '#overview',
     Countdown: '#prompt',
@@ -60,7 +60,7 @@ const helpLink = computed(() => {
   return router.resolve({ name: 'howToPlay', hash: tips[gameStore.scene] }).href;
 });
 
-const isMobile = computed(() => {
+const isMobile = computed((): boolean => {
   return /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 });
 </script>

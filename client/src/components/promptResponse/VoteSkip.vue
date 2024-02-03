@@ -1,3 +1,23 @@
+<script setup lang="ts">
+import { ref } from 'vue';
+import { AudioWrap } from '@/mixins/audiowrap.js';
+import ClickMp3 from '@/assets/audio/click2.mp3';
+import socket from '@/socket/socket.js';
+import { useI18n } from 'vue-i18n';
+import { useGameStore } from '@/stores/game';
+
+const pressedVote = ref(false);
+
+const gameStore = useGameStore();
+function sendVote() {
+  pressedVote.value = !pressedVote.value;
+  new AudioWrap(ClickMp3).play();
+  socket.emit('pollVote', 'skipPrompt');
+}
+
+const { n } = useI18n();
+</script>
+
 <template>
   <a
     v-tooltip.right="$t('tooltip.voteSkip')"
@@ -9,43 +29,11 @@
     @click="sendVote">
     <i class="bi-hand-thumbs-down fs-3 p-0 lh-sm" />
     <notification-count
-      v-if="skipVoteCount"
+      v-if="gameStore.skipVoteCount"
       :width="22"
       class="position-absolute top-0 start-100 translate-middle fs-6"
-      :next-majority="skipVoteNext">
-      {{ $n(skipVoteCount) }}
+      :next-majority="gameStore.skipVoteNext">
+      {{ n(gameStore.skipVoteCount) }}
     </notification-count>
   </a>
 </template>
-
-<script lang="ts">
-import ClickMp3 from '@/assets/audio/click2.mp3';
-import NotificationCount from '@/components/gameShared/NotificationCount.vue';
-import { AudioWrap } from '@/mixins/audiowrap.js';
-import socket from '@/socket/socket';
-import { useGameStore } from '@/stores/game.js';
-import { mapState } from 'pinia';
-import { defineComponent } from 'vue';
-
-export default defineComponent({
-  components: {
-    NotificationCount
-  },
-  data() {
-    return {
-      tooltips: [],
-      pressedVote: false
-    };
-  },
-  computed: {
-    ...mapState(useGameStore, ['skipVoteCount', 'skipVoteNext'])
-  },
-  methods: {
-    sendVote() {
-      this.pressedVote = !this.pressedVote;
-      new AudioWrap(ClickMp3).play();
-      socket.emit('pollVote', 'skipPrompt');
-    }
-  }
-});
-</script>

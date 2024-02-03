@@ -1,3 +1,107 @@
+<script setup lang="ts">
+import { onMounted, type Ref, ref } from 'vue';
+import type { SettableOptions } from ':common/options';
+import socket from '@/socket/socket';
+import { useGameStore } from '@/stores/game';
+import { useI18n } from 'vue-i18n';
+import { useRoomStore } from '@/stores/room';
+
+defineProps({
+  disabled: {
+    type: Boolean,
+    required: true
+  }
+});
+
+const customSelected = ref(false);
+const timerDuration: Ref<null | HTMLFormElement> = ref(null);
+
+const gameStore = useGameStore();
+const roomStore = useRoomStore();
+
+onMounted(() => {
+  const form = document.getElementById('form') as HTMLFormElement;
+  const firstForm = timerDuration.value;
+  form.addEventListener('shown.bs.collapse', () => {
+    firstForm?.focus();
+  });
+});
+
+type NumericKeyOfOptions = {
+  [K in keyof SettableOptions]: SettableOptions[K] extends number ? K : never;
+}[keyof SettableOptions];
+
+function arraysEqual(a: string[], b: string[]) {
+  return Array.isArray(a) && Array.isArray(b) && a.length === b.length && a.every((val, index) => val === b[index]);
+}
+
+function validateNumRounds(event: Event) {
+  validateNum(event, 'numRounds', { autoNumRounds: false });
+}
+function onNumRoundChange(event: Event) {
+  onNumChange(event, 'numRounds', { autoNumRounds: false });
+}
+function onNumChange(event: Event, label: NumericKeyOfOptions, options?: Partial<SettableOptions>) {
+  const inputValue = parseInt((event.currentTarget! as HTMLInputElement).value);
+  const actualValue = gameStore.options[label];
+  if (Math.abs(inputValue - actualValue) !== 0) {
+    validateNum(event, label, options);
+  }
+}
+
+function validateNum(event: Event, label: NumericKeyOfOptions, options?: Partial<SettableOptions>) {
+  const input = event.currentTarget! as HTMLInputElement;
+  const inputValue = parseInt(input.value);
+  const max = parseInt(input.max);
+  const min = parseInt(input.min);
+  let sanitizedVal;
+  if (inputValue > max) {
+    sanitizedVal = max;
+  } else if (inputValue < min) {
+    sanitizedVal = min;
+  } else {
+    sanitizedVal = inputValue;
+  }
+  if (sanitizedVal !== gameStore.options[label]) {
+    options = options ?? {};
+    options[label] = sanitizedVal;
+    socket.emit('setOptions', options);
+  } else {
+    input.value = String(gameStore.options[label]);
+  }
+}
+function validateSikeDispute(event: Event) {
+  const input = event.currentTarget! as HTMLInputElement;
+  const options: Partial<SettableOptions> = {};
+  options.sikeDispute = input.checked;
+  if (!input.checked) {
+    options.sikeRetries = 0;
+  }
+  socket.emit('setOptions', options);
+}
+
+function packChange(event: Event, label: string, index: number) {
+  const input = event.currentTarget! as HTMLInputElement;
+  if (index === Object.keys(gameStore.options.packs).length - 1) {
+    customSelected.value = input.checked;
+  }
+  const packs = { ...gameStore.options.packs };
+  packs[label] = input.checked;
+  const options = { packs: packs };
+  socket.emit('setOptions', options);
+}
+
+function customPromptsChange(input: Event) {
+  const prompts = (input.currentTarget! as HTMLInputElement).value.split(/\r?\n/);
+  if (!arraysEqual(prompts, gameStore.options.customPrompts)) {
+    const options = { customPrompts: prompts };
+    socket.emit('setOptions', options);
+  }
+}
+
+const { t } = useI18n();
+</script>
+
 <template>
   <div class="accordion w-75">
     <div class="accordion-item">
@@ -6,7 +110,7 @@
           <form>
             <div class="row">
               <label v-t="'promptPacksLabel'" class="form-label" />
-              <div v-for="(value, label, index) in options.packs" :key="label" class="col-md-auto">
+              <div v-for="(value, label, index) in gameStore.options.packs" :key="label" class="col-md-auto">
                 <input
                   :id="'pack' + index"
                   type="checkbox"
@@ -15,7 +119,7 @@
                   :disabled="disabled"
                   :checked="value"
                   @click="packChange($event, label, index)" />
-                <label :for="'pack' + index" class="form-check-label ms-2">{{ $t(`packLabels.${label}`) }}</label>
+                <label :for="'pack' + index" class="form-check-label ms-2">{{ t(`packLabels.${label}`) }}</label>
               </div>
             </div>
             <div class="row mt-2" :class="{ 'd-sm-none': disabled }">
@@ -45,7 +149,7 @@
                   class="form-control"
                   :class="{ Disabled: disabled }"
                   :disabled="disabled"
-                  :value="options.promptTimer"
+                  :value="gameStore.options.promptTimer"
                   @focusout="validateNum($event, 'promptTimer')"
                   @change="onNumChange($event, 'promptTimer')" />
               </div>
@@ -60,7 +164,7 @@
                   class="form-control"
                   :class="{ Disabled: disabled }"
                   :disabled="disabled"
-                  :value="options.autoNumRounds ? players.length : options.numRounds"
+                  :value="gameStore.options.autoNumRounds ? roomStore.players.length : gameStore.options.numRounds"
                   @focusout="validateNumRounds($event)"
                   @change="onNumRoundChange($event)" />
               </div>
@@ -76,7 +180,7 @@
                     class="form-check-input"
                     :class="{ Disabled: disabled }"
                     :disabled="disabled"
-                    :checked="options.sikeDispute"
+                    :checked="gameStore.options.sikeDispute"
                     @click="validateSikeDispute($event)" />
                 </div>
               </div>
@@ -89,9 +193,9 @@
                   min="0"
                   max="2"
                   class="form-control"
-                  :value="options.sikeRetries"
-                  :class="{ Disabled: disabled || !options.sikeDispute }"
-                  :disabled="disabled || !options.sikeDispute"
+                  :value="gameStore.options.sikeRetries"
+                  :class="{ Disabled: disabled || !gameStore.options.sikeDispute }"
+                  :disabled="disabled || !gameStore.options.sikeDispute"
                   @focusout="validateNum($event, 'sikeRetries')"
                   @change="onNumChange($event, 'sikeRetries')" />
               </div>
@@ -113,105 +217,3 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import socket from '@/socket/socket';
-import { useRoomStore } from '@/stores/room.js';
-import { useGameStore } from '@/stores/game.js';
-import { mapState } from 'pinia';
-import { defineComponent } from 'vue';
-
-import type { SettableOptions } from ':common/options';
-
-type NumericKeyOfOptions = {
-  [K in keyof SettableOptions]: SettableOptions[K] extends number ? K : never;
-}[keyof SettableOptions];
-
-export default defineComponent({
-  props: {
-    disabled: Boolean
-  },
-  data() {
-    return {
-      customSelected: false,
-      tooltips: []
-    };
-  },
-  computed: {
-    ...mapState(useGameStore, ['options']),
-    ...mapState(useRoomStore, ['players'])
-  },
-  mounted() {
-    const form = document.getElementById('form') as HTMLFormElement;
-    const firstForm = this.$refs.timerDuration as HTMLInputElement;
-    form.addEventListener('shown.bs.collapse', () => {
-      firstForm.focus();
-    });
-  },
-  methods: {
-    arraysEqual(a: string[], b: string[]) {
-      return Array.isArray(a) && Array.isArray(b) && a.length === b.length && a.every((val, index) => val === b[index]);
-    },
-    validateNumRounds(event: Event) {
-      this.validateNum(event, 'numRounds', { autoNumRounds: false });
-    },
-    onNumRoundChange(event: Event) {
-      this.onNumChange(event, 'numRounds', { autoNumRounds: false });
-    },
-    onNumChange(event: Event, label: NumericKeyOfOptions, options?: Partial<SettableOptions>) {
-      const inputValue = parseInt((event.currentTarget! as HTMLInputElement).value);
-      const actualValue = this.options[label];
-      if (Math.abs(inputValue - actualValue) !== 0) {
-        this.validateNum(event, label, options);
-      }
-    },
-    validateNum(event: Event, label: NumericKeyOfOptions, options?: Partial<SettableOptions>) {
-      const input = event.currentTarget! as HTMLInputElement;
-      const inputValue = parseInt(input.value);
-      const max = parseInt(input.max);
-      const min = parseInt(input.min);
-      let sanitizedVal;
-      if (inputValue > max) {
-        sanitizedVal = max;
-      } else if (inputValue < min) {
-        sanitizedVal = min;
-      } else {
-        sanitizedVal = inputValue;
-      }
-      if (sanitizedVal !== this.options[label]) {
-        options = options ?? {};
-        options[label] = sanitizedVal;
-        socket.emit('setOptions', options);
-      } else {
-        input.value = String(this.options[label]);
-      }
-    },
-    validateSikeDispute(event: Event) {
-      const input = event.currentTarget! as HTMLInputElement;
-      const options: Partial<SettableOptions> = {};
-      options.sikeDispute = input.checked;
-      if (!input.checked) {
-        options.sikeRetries = 0;
-      }
-      socket.emit('setOptions', options);
-    },
-    packChange(event: Event, label: string, index: number) {
-      const input = event.currentTarget! as HTMLInputElement;
-      if (index === Object.keys(this.options.packs).length - 1) {
-        this.customSelected = input.checked;
-      }
-      const packs = { ...this.options.packs };
-      packs[label] = input.checked;
-      const options = { packs: packs };
-      socket.emit('setOptions', options);
-    },
-    customPromptsChange(input: Event) {
-      const prompts = (input.currentTarget! as HTMLInputElement).value.split(/\r?\n/);
-      if (!this.arraysEqual(prompts, this.options.customPrompts)) {
-        const options = { customPrompts: prompts };
-        socket.emit('setOptions', options);
-      }
-    }
-  }
-});
-</script>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import NotificationCount from '@/components/gameShared/NotificationCount.vue';
 import { ref } from 'vue';
 import { AudioWrap } from '@/mixins/audiowrap.js';
 import ClickMp3 from '@/assets/audio/click2.mp3';
@@ -15,12 +16,12 @@ function sendVote() {
   socket.emit('pollVote', 'skipPrompt');
 }
 
-const { n } = useI18n();
+const { t, n } = useI18n();
 </script>
 
 <template>
   <a
-    v-tooltip.right="$t('tooltip.voteSkip')"
+    v-tooltip.right="t('tooltip.voteSkip')"
     class="btn btn-sm btn-blue ratio-1x1 position-relative d-inline-flex justify-content-center align-items-center"
     :class="{
       'text-white shadow': !pressedVote,

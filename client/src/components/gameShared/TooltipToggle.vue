@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { getCurrentInstance } from 'vue';
 import { useSettingsStore } from '@/stores/settings.js';
+import { useI18n } from 'vue-i18n';
 
 const settingsStore = useSettingsStore();
 const instance = getCurrentInstance();
@@ -8,11 +9,13 @@ function click() {
   settingsStore.setShowTooltips(!settingsStore.showTooltips);
   instance?.proxy?.$forceUpdate();
 }
+
+const { t } = useI18n();
 </script>
 
 <template>
   <button
-    v-tooltip.left.ds250="$t('tooltip.showTooltips')"
+    v-tooltip.left.ds250="t('tooltip.showTooltips')"
     class="text-black"
     :class="{ 'bi-lightbulb': settingsStore.showTooltips, 'bi-lightbulb-off': !settingsStore.showTooltips }"
     @click="click" />

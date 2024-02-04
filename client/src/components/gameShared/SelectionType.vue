@@ -30,7 +30,7 @@ const { t } = useI18n();
 <template>
   <img
     v-if="tooltip"
-    v-tooltip.left.ds750="$t('tooltip.' + gameStore.selectionType)"
+    v-tooltip.left.ds750="t('tooltip.' + gameStore.selectionType)"
     :src="typeImg"
     :alt="t(gameStore.selectionType)"
     :class="{ 'sike-img': gameStore.selectionType === 'sike' }" />

@@ -131,7 +131,7 @@ const { t } = useI18n();
                   class="form-control fs-6"
                   :class="{ Disabled: !customSelected }"
                   :disabled="!customSelected"
-                  :placeholder="$t('customPromptsPlaceholder')"
+                  :placeholder="t('customPromptsPlaceholder')"
                   rows="3"
                   @focusout="customPromptsChange($event)" />
               </div>
@@ -142,7 +142,7 @@ const { t } = useI18n();
                 <input
                   id="timerDuration"
                   ref="timerDuration"
-                  v-tooltip.left="$t('tooltip.options.timer')"
+                  v-tooltip.left="t('tooltip.options.timer')"
                   type="number"
                   min="15"
                   max="60"
@@ -157,7 +157,7 @@ const { t } = useI18n();
                 <label v-t="'numRoundsLabel'" for="numRounds" class="form-label" />
                 <input
                   id="numRounds"
-                  v-tooltip.right="$t('tooltip.options.rounds')"
+                  v-tooltip.right="t('tooltip.options.rounds')"
                   type="number"
                   min="1"
                   max="20"
@@ -175,7 +175,7 @@ const { t } = useI18n();
                   <label v-t="'sikeDisputeLabel'" for="sikeDispute" class="form-check-label" />
                   <input
                     id="sikeDispute"
-                    v-tooltip.left="$t('tooltip.options.dispute')"
+                    v-tooltip.left="t('tooltip.options.dispute')"
                     type="checkbox"
                     class="form-check-input"
                     :class="{ Disabled: disabled }"
@@ -188,7 +188,7 @@ const { t } = useI18n();
                 <label v-t="'sikeRetriesLabel'" for="sikeRetries" class="form-label" />
                 <input
                   id="sikeRetries"
-                  v-tooltip.right="$t('tooltip.options.retries')"
+                  v-tooltip.right="t('tooltip.options.retries')"
                   type="number"
                   min="0"
                   max="2"

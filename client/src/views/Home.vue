@@ -7,6 +7,7 @@ import { useGameStore } from '@/stores/game.js';
 import { useRoomStore } from '@/stores/room.js';
 import { useRoute } from 'vue-router';
 import socket from '@/socket/socket';
+import { useI18n } from 'vue-i18n';
 const click = new AudioWrap(ClickMp3);
 
 const route = useRoute();
@@ -32,6 +33,8 @@ function onSubmit(joinGame: boolean) {
   roomStore.setName(form.name);
   socket.emit(event, form.name, form.roomName, navigator.languages);
 }
+
+const { t } = useI18n();
 </script>
 
 <template>
@@ -47,7 +50,7 @@ function onSubmit(joinGame: boolean) {
           v-model="form.name"
           type="text"
           class="form-control"
-          :placeholder="$t('usernamePlaceholder')" />
+          :placeholder="t('usernamePlaceholder')" />
       </div>
 
       <div class="mb-3">
@@ -57,7 +60,7 @@ function onSubmit(joinGame: boolean) {
           v-model="form.roomName"
           type="text"
           class="form-control"
-          :placeholder="$t('roomNamePlaceholder')" />
+          :placeholder="t('roomNamePlaceholder')" />
       </div>
 
       <div class="d-flex flex-column flex-lg-row justify-content-around align-items-center mt-5 mb-3 gap-3">
@@ -70,9 +73,9 @@ function onSubmit(joinGame: boolean) {
         <router-link v-t="'howToPlayLink'" class="row text-center link-blue fs-5" to="/how-to-play" />
         <a href="https://www.buymeacoffee.com/ConorMurphy/" class="row text-center fs-4 link-dark font-fancy">
           <div class="d-flex align-items-center justify-content-center gap-1">
-            <img :alt="$t('coffeeAlt')" src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" height="25" />
+            <img :alt="t('coffeeAlt')" src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" height="25" />
             <span v-t="'coffeeLink'" />
-            <img :alt="$t('coffeeAlt')" src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" height="25" />
+            <img :alt="t('coffeeAlt')" src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" height="25" />
           </div>
         </a>
       </div>

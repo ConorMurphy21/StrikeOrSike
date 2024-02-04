@@ -56,7 +56,7 @@ const { t } = useI18n();
     </i18n-t>
 
     <button
-      v-tooltip.left.ds900="$t('tooltip.noMatch', { response: gameStore.selectedResponse })"
+      v-tooltip.left.ds900="t('tooltip.noMatch', { response: gameStore.selectedResponse })"
       class="btn btn-primary w-50 fs-4 d-flex justify-content-center align-items-center"
       @click="noMatch">
       <div class="d-flex justify-content-center align-items-center w-75">

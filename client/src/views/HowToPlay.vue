@@ -5,7 +5,7 @@ import Sike from '@/assets/images/howToPlay/sike.png';
 import Choice from '@/assets/images/howToPlay/choice.png';
 import Matching from '@/assets/images/howToPlay/matching.png';
 import ClickMp3 from '@/assets/audio/click1.mp3';
-import { AudioWrap } from '@/mixins/audiowrap';
+import { AudioWrap } from '@/mixins/audiowrap.js';
 import { useI18n } from 'vue-i18n';
 const click = new AudioWrap(ClickMp3);
 

@@ -6,10 +6,6 @@ import Click1Mp3 from '@/assets/audio/click1.mp3';
 import Click2Mp3 from '@/assets/audio/click2.mp3';
 import { useGameStore } from '@/stores/game.js';
 
-const gameStore = useGameStore();
-
-const model = defineModel({ type: String });
-
 const props = defineProps({
   selectable: {
     type: Boolean,
@@ -24,6 +20,10 @@ const props = defineProps({
     default: 30
   }
 });
+
+const gameStore = useGameStore();
+
+const model = defineModel({ type: String });
 
 const selected = ref(-1);
 

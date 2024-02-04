@@ -3,8 +3,8 @@ import { computed, ref } from 'vue';
 import { AudioWrap } from '@/mixins/audiowrap.js';
 import Click2Mp3 from '@/assets/audio/click2.mp3';
 import Click1Mp3 from '@/assets/audio/click1.mp3';
-import { useRoomStore } from '@/stores/room';
-import { type Player } from ':common/stateTypes';
+import { useRoomStore } from '@/stores/room.js';
+import { type Player } from ':common/stateTypes.js';
 
 const roomStore = useRoomStore();
 const hoverLeft = ref(false);

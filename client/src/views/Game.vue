@@ -9,18 +9,12 @@ import EndRound from '@/components/endRound/EndRound.vue';
 import EndGame from '@/components/endGame/EndGame.vue';
 import VolumeControl from '@/components/gameShared/VolumeControl.vue';
 import TooltipToggle from '@/components/gameShared/TooltipToggle.vue';
-import { useRoomStore } from '@/stores/room';
-import { useGameStore } from '@/stores/game';
+import { useRoomStore } from '@/stores/room.js';
+import { useGameStore } from '@/stores/game.js';
 import { Portal } from 'portal-vue';
 import { computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-
-const gameStore = useGameStore();
-const roomStore = useRoomStore();
-const router = useRouter();
-
-const { t } = useI18n();
 
 const props = defineProps({
   roomName: {
@@ -28,6 +22,11 @@ const props = defineProps({
     required: true
   }
 });
+const gameStore = useGameStore();
+const roomStore = useRoomStore();
+const router = useRouter();
+
+const { t } = useI18n();
 
 const gameScenes = {
   Lobby,

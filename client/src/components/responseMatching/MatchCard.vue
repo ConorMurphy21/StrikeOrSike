@@ -4,10 +4,8 @@ import { AudioWrap } from '@/mixins/audiowrap.js';
 import { type PropType, computed, ref } from 'vue';
 import type { Player } from ':common/stateTypes.js';
 import { type Match, useGameStore } from '@/stores/game.js';
-import { useRoomStore } from '@/stores/room';
+import { useRoomStore } from '@/stores/room.js';
 import { useI18n } from 'vue-i18n';
-const click = new AudioWrap(ClickMp3);
-
 const props = defineProps({
   player: {
     type: Object as PropType<Player>,
@@ -18,6 +16,8 @@ const props = defineProps({
     required: true
   }
 });
+
+const click = new AudioWrap(ClickMp3);
 
 const hovering = ref(false);
 

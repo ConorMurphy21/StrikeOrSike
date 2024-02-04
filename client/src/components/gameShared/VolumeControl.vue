@@ -1,7 +1,7 @@
 <!--suppress CssUnusedSymbol -->
 <script setup lang="ts">
 import { computed, type Ref, ref } from 'vue';
-import { useSettingsStore } from '@/stores/settings';
+import { useSettingsStore } from '@/stores/settings.js';
 import VueSlider from 'vue-slider-component';
 const settingsStore = useSettingsStore();
 

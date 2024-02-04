@@ -2,10 +2,10 @@
 import PlayerList from '@/components/lobby/PlayerList.vue';
 import Options from '@/components/lobby/Options.vue';
 import { computed } from 'vue';
-import socket from '@/socket/socket';
-import { AudioWrap } from '@/mixins/audiowrap';
+import socket from '@/socket/socket.js';
+import { AudioWrap } from '@/mixins/audiowrap.js';
 import ClickMp3 from '@/assets/audio/click2.mp3';
-import { useRoomStore } from '@/stores/room';
+import { useRoomStore } from '@/stores/room.js';
 import { useI18n } from 'vue-i18n';
 const click = new AudioWrap(ClickMp3);
 const roomStore = useRoomStore();

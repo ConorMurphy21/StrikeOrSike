@@ -1,14 +1,14 @@
 <script setup lang="ts">
+import NotificationCount from '@/components/gameShared/NotificationCount.vue';
+import PlayerChooser from '@/components/endRound/PlayerChooser.vue';
+import ResponseList from '@/components/gameShared/ResponseList.vue';
+import Prompt from '@/components/gameShared/Prompt.vue';
 import { onMounted, ref, watch } from 'vue';
 import { AudioWrap } from '@/mixins/audiowrap.js';
 import ClickMp3 from '@/assets/audio/click2.mp3';
 import socket from '@/socket/socket.js';
 import { useRoomStore } from '@/stores/room.js';
 import { useGameStore } from '@/stores/game.js';
-import NotificationCount from '@/components/gameShared/NotificationCount.vue';
-import PlayerChooser from '@/components/endRound/PlayerChooser.vue';
-import ResponseList from '@/components/gameShared/ResponseList.vue';
-import Prompt from '@/components/gameShared/Prompt.vue';
 import { useI18n } from 'vue-i18n';
 
 const roomStore = useRoomStore();

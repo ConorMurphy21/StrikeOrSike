@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import type { Player } from ':common/stateTypes';
 import PlayerCard from '@/components/lobby/PlayerCard.vue';
-import { useRoomStore } from '@/stores/room';
+import { computed } from 'vue';
+import type { Player } from ':common/stateTypes.js';
+import { useRoomStore } from '@/stores/room.js';
 
 const roomStore = useRoomStore();
 

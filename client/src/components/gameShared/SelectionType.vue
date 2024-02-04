@@ -3,10 +3,8 @@ import { computed } from 'vue';
 import StrikeImg from '@/assets/images/strike.png';
 import SikeImg from '@/assets/images/sike.png';
 import ChoiceImg from '@/assets/images/choice.png';
-import { useGameStore } from '@/stores/game';
+import { useGameStore } from '@/stores/game.js';
 import { useI18n } from 'vue-i18n';
-
-const gameStore = useGameStore();
 
 defineProps({
   tooltip: {
@@ -14,6 +12,8 @@ defineProps({
     default: true
   }
 });
+
+const gameStore = useGameStore();
 
 const typeImg = computed(() => {
   if (gameStore.selectionType === 'strike') {

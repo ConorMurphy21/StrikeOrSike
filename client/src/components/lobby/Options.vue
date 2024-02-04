@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { onMounted, type Ref, ref } from 'vue';
-import type { SettableOptions } from ':common/options';
-import socket from '@/socket/socket';
-import { useGameStore } from '@/stores/game';
+import type { SettableOptions } from ':common/options.js';
+import socket from '@/socket/socket.js';
+import { useGameStore } from '@/stores/game.js';
 import { useI18n } from 'vue-i18n';
-import { useRoomStore } from '@/stores/room';
+import { useRoomStore } from '@/stores/room.js';
 
 defineProps({
   disabled: {
@@ -127,7 +127,6 @@ const { t } = useI18n();
                 <label v-t="'customPromptsLabel'" for="customPrompts" class="form-label" />
                 <textarea
                   id="customPrompts"
-                  ref="customPrompts"
                   class="form-control fs-6"
                   :class="{ Disabled: !customSelected }"
                   :disabled="!customSelected"

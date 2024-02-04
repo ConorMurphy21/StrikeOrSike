@@ -3,8 +3,8 @@ import Timer from '@/components/gameShared/Timer.vue';
 import ResponseList from '@/components/gameShared/ResponseList.vue';
 import Prompt from '@/components/gameShared/Prompt.vue';
 import { onMounted, type Ref, ref } from 'vue';
-import socket from '@/socket/socket';
-import { useGameStore } from '@/stores/game';
+import socket from '@/socket/socket.js';
+import { useGameStore } from '@/stores/game.js';
 
 const response = ref('');
 const resInput: Ref<null | HTMLInputElement> = ref(null);

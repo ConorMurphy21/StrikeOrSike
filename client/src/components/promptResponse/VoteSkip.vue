@@ -5,7 +5,7 @@ import { AudioWrap } from '@/mixins/audiowrap.js';
 import ClickMp3 from '@/assets/audio/click2.mp3';
 import socket from '@/socket/socket.js';
 import { useI18n } from 'vue-i18n';
-import { useGameStore } from '@/stores/game';
+import { useGameStore } from '@/stores/game.js';
 
 const pressedVote = ref(false);
 

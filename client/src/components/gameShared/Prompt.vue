@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import VoteSkip from '@/components/promptResponse/VoteSkip.vue';
 import { computed } from 'vue';
 
 const props = defineProps({

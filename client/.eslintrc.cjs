@@ -20,6 +20,7 @@ module.exports = {
   },
   rules: {
     '@typescript-eslint/consistent-type-imports': 2,
+    '@typescript-eslint/prefer-for-of': 2,
     '@typescript-eslint/unbound-method': 0,
     '@typescript-eslint/no-unused-vars': 0,
     '@typescript-eslint/no-unsafe-assignment': 0,

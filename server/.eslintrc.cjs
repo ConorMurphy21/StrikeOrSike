@@ -15,7 +15,8 @@ module.exports = {
   },
   plugins: ['@typescript-eslint', 'prettier'],
   rules: {
-    '@typescript-eslint/consistent-type-imports': ['error'],
+    '@typescript-eslint/prefer-for-of': 2,
+    '@typescript-eslint/consistent-type-imports': 2,
     'prettier/prettier': 2
   },
   ignorePatterns: ['/*', '!/src', '!/tests']

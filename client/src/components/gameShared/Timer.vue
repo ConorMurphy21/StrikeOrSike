@@ -1,28 +1,27 @@
 <script setup lang="ts">
 import { onUnmounted, watch } from 'vue';
-import { useGameStore } from '@/stores/game.js';
 import { AudioWrap } from '@/mixins/audiowrap.js';
 import timerMp3 from '@/assets/audio/timer_full.mp3';
 import timerCompleteMp3 from '@/assets/audio/timerComplete.mp3';
 import { useI18n } from 'vue-i18n';
+import { useSettingsStore } from '@/stores/settings';
 
-defineProps<{
+const props = defineProps<{
   time: number;
 }>();
 
 const timer = new AudioWrap(timerMp3);
 const timerComplete = new AudioWrap(timerCompleteMp3);
-const gameStore = useGameStore();
-const settingsStore = useGameStore();
+const settingsStore = useSettingsStore();
 
 watch(
-  () => settingsStore.timer,
+  () => settingsStore.volume,
   (val: number) => {
     timer.volume = val;
   }
 );
 watch(
-  () => gameStore.timer,
+  () => props.time,
   (val: number) => {
     if (val === 10) {
       timer.play();
@@ -45,7 +44,7 @@ const { n } = useI18n();
 <template>
   <div>
     <h1
-      v-if="time"
+      v-if="time > 0"
       class="display-5"
       :class="{
         'bounce bold-black': time > 10,

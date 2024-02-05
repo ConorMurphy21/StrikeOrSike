@@ -42,7 +42,7 @@ const { n } = useI18n();
         <span
           v-t="{
             path: 'scoreFormat',
-            args: { rank: rank[index], player: score.player.name, points: n(score.points) }
+            args: { rank: rank[index], player: score.player.name, score: n(score.points) }
           }" />
       </div>
     </div>

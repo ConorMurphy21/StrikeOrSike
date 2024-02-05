@@ -1,21 +1,15 @@
 <script setup lang="ts">
 import ClickMp3 from '@/assets/audio/click2.mp3';
 import { AudioWrap } from '@/mixins/audiowrap.js';
-import { type PropType, computed, ref } from 'vue';
+import { computed, ref } from 'vue';
 import type { Player } from ':common/stateTypes.js';
 import { type Match, useGameStore } from '@/stores/game.js';
 import { useRoomStore } from '@/stores/room.js';
 import { useI18n } from 'vue-i18n';
-const props = defineProps({
-  player: {
-    type: Object as PropType<Player>,
-    required: true
-  },
-  match: {
-    type: Object as PropType<Match>,
-    required: true
-  }
-});
+const props = defineProps<{
+  player: Player;
+  match: Match;
+}>();
 
 const click = new AudioWrap(ClickMp3);
 
@@ -24,7 +18,7 @@ const hovering = ref(false);
 const gameStore = useGameStore();
 const roomStore = useRoomStore();
 
-const showUnmatch = computed((): boolean => {
+const showUnmatch = computed<boolean>(() => {
   return props.player?.name === roomStore.name && !props.match?.exact;
 });
 

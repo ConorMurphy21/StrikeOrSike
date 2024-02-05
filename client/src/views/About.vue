@@ -16,7 +16,7 @@ const click = new AudioWrap(ClickMp3);
         <a v-t="'about.issues'" href="https://github.com/ConorMurphy21/StrikeOrSike/issues/new" />
       </template>
       <template #gmail>
-        <a href="mailto:strikeorsike@gmail.com">strikeorsike@gmail.com</a>
+        <a v-t="'about.email'" href="mailto:strikeorsike@gmail.com" />
       </template>
     </i18n-t>
     <i18n-t keypath="about.me" tag="p">

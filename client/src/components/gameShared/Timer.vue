@@ -6,12 +6,10 @@ import timerMp3 from '@/assets/audio/timer_full.mp3';
 import timerCompleteMp3 from '@/assets/audio/timerComplete.mp3';
 import { useI18n } from 'vue-i18n';
 
-defineProps({
-  time: {
-    type: Number,
-    required: true
-  }
-});
+defineProps<{
+  time: number;
+}>();
+
 const timer = new AudioWrap(timerMp3);
 const timerComplete = new AudioWrap(timerCompleteMp3);
 const gameStore = useGameStore();

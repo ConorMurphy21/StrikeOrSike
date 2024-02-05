@@ -1,18 +1,16 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-const props = defineProps({
-  width: {
-    type: Number,
-    default: 24
-  },
-  nextMajority: {
-    type: Boolean,
-    default: false
-  }
+interface Props {
+  width?: number;
+  nextMajority?: boolean;
+}
+const props = withDefaults(defineProps<Props>(), {
+  width: 24,
+  nextMajority: false
 });
 
-const cssProps = computed((): Record<string, string> => {
+const cssProps = computed<Record<string, string>>(() => {
   return {
     '--min-width': props.width + 'px'
   };

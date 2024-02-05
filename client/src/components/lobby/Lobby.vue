@@ -10,10 +10,10 @@ import { useI18n } from 'vue-i18n';
 const click = new AudioWrap(ClickMp3);
 const roomStore = useRoomStore();
 
-const leader = computed((): boolean => {
+const leader = computed<boolean>(() => {
   return !!roomStore.self && roomStore.self.leader;
 });
-const canStart = computed((): boolean => {
+const canStart = computed<boolean>(() => {
   return leader.value && roomStore.players.length >= 3;
 });
 

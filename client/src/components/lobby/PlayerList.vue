@@ -6,7 +6,7 @@ import { useRoomStore } from '@/stores/room.js';
 
 const roomStore = useRoomStore();
 
-const columns = computed((): [Player[], Player[]] => {
+const columns = computed<[Player[], Player[]]>(() => {
   const columns = [[], []] as [Player[], Player[]];
   for (let i = 0; i < roomStore.players.length; i++) {
     columns[i % 2].push(roomStore.players[i]);

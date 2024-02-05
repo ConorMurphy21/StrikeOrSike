@@ -6,16 +6,16 @@ import ChoiceImg from '@/assets/images/choice.png';
 import { useGameStore } from '@/stores/game.js';
 import { useI18n } from 'vue-i18n';
 
-defineProps({
-  tooltip: {
-    type: Boolean,
-    default: true
-  }
+interface Props {
+  tooltip?: boolean;
+}
+withDefaults(defineProps<Props>(), {
+  tooltip: true
 });
 
 const gameStore = useGameStore();
 
-const typeImg = computed(() => {
+const typeImg = computed<string>(() => {
   if (gameStore.selectionType === 'strike') {
     return StrikeImg;
   } else if (gameStore.selectionType === 'sike') {

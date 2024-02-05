@@ -6,19 +6,14 @@ import Click1Mp3 from '@/assets/audio/click1.mp3';
 import Click2Mp3 from '@/assets/audio/click2.mp3';
 import { useGameStore } from '@/stores/game.js';
 
-const props = defineProps({
-  selectable: {
-    type: Boolean,
-    required: true
-  },
-  playerId: {
-    type: String,
-    default: ''
-  },
-  height: {
-    type: Number,
-    default: 30
-  }
+interface Props {
+  selectable: boolean;
+  playerId?: string;
+  height?: number;
+}
+const props = withDefaults(defineProps<Props>(), {
+  playerId: '',
+  height: 30
 });
 
 const gameStore = useGameStore();
@@ -27,19 +22,19 @@ const model = defineModel({ type: String });
 
 const selected = ref(-1);
 
-const responses = computed((): string[] => {
+const responses = computed<string[]>(() => {
   return gameStore.playerResponses(props.playerId).all;
 });
-const usedResponses = computed((): string[] => {
+const usedResponses = computed<string[]>(() => {
   return gameStore.playerResponses(props.playerId).used;
 });
-const selectedStrike = computed((): string => {
+const selectedStrike = computed<string>(() => {
   return gameStore.playerResponses(props.playerId).selectedStrike;
 });
-const selectedSike = computed((): string => {
+const selectedSike = computed<string>(() => {
   return gameStore.playerResponses(props.playerId).selectedSike;
 });
-const cssProps = computed((): Record<string, string> => {
+const cssProps = computed<Record<string, string>>(() => {
   return {
     '--max-height': props.height + 'vh'
   };

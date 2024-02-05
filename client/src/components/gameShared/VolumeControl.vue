@@ -7,7 +7,7 @@ const settingsStore = useSettingsStore();
 
 const showing = ref(false);
 const timer: Ref<null | NodeJS.Timeout> = ref(null);
-const value = computed({
+const value = computed<number>({
   get(): number {
     return Math.round(settingsStore.volume * 100);
   },

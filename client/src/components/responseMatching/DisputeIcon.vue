@@ -7,19 +7,13 @@ import socket from '@/socket/socket.js';
 import { useI18n } from 'vue-i18n';
 import { useGameStore } from '@/stores/game.js';
 
-defineProps({
-  disabled: {
-    type: Boolean,
-    default: false
-  },
-  response: {
-    type: String,
-    required: true
-  },
-  placement: {
-    type: String,
-    required: true
-  }
+interface Props {
+  disabled?: boolean;
+  response: string;
+  placement: string;
+}
+withDefaults(defineProps<Props>(), {
+  disabled: false
 });
 
 const pressedVote = ref(false);

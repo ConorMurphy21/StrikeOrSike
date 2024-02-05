@@ -11,7 +11,7 @@ const hoverLeft = ref(false);
 const hoverRight = ref(false);
 const model = defineModel({ type: String, required: true });
 
-const selectedName = computed((): string => {
+const selectedName = computed<string>(() => {
   if (!model.value) return '';
   const name = roomStore.players.find((player: Player) => player.id === model.value)?.name;
   return name === undefined ? '' : name;

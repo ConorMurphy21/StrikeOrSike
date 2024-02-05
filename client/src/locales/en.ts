@@ -7,6 +7,7 @@ export default {
   pending: 'Pending',
   confirm: 'Confirm',
   cancel: 'Cancel',
+  or: 'or',
 
   /*** HOME STRINGS ***/
   usernameLabel: 'Name',
@@ -38,6 +39,7 @@ export default {
   players: 'Players',
   startGame: 'Start',
   coffeeBannerLink: "I'd love a tea",
+  optionsLabel: 'Game Options',
 
   /*** OPTIONS STRINGS ***/
   timerDurationLabel: 'Timer',
@@ -71,6 +73,7 @@ export default {
   /*** END GAME STRINGS ***/
   playerScores: 'Player Scores',
   toLobby: 'Back to Lobby',
+  scoreFormat: '{rank}. {player}: {score}',
   activeMatchingMessage: '{player} is trying to {type} with {response} Do you have a match?',
   passiveDisputeMessage: 'Your friends are deciding if {response} fits the category',
   activeDisputeMessage: 'Does {response} fit the category?',
@@ -186,7 +189,6 @@ export default {
     }
   ],
   /*** ABOUT PAGE STRINGS ***/
-
   about: {
     link: 'About',
     header: 'About',
@@ -197,6 +199,7 @@ export default {
     me: 'This project was designed by Conor Murphy. You can learn more about me and my projects {profile}. A big thank you to Jen Gu, who designed all of the art assets and helped with UI/UX design. If you have enjoyed playing this game and want to support the website, you can buy us a {coffee}.',
     github: 'GitHub',
     issues: 'issue',
+    email: 'strikeorsike@gmail.com',
     profile: 'here',
     coffee: 'tea'
   }

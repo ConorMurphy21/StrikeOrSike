@@ -17,7 +17,7 @@ const click = new AudioWrap(ClickMp3);
 const gameStore = useGameStore();
 const roomStore = useRoomStore();
 
-const matchers = computed((): Player[] => {
+const matchers = computed<Player[]>(() => {
   return roomStore.players.filter((player: Player) => player.active && player.id !== gameStore.selector!.id);
 });
 

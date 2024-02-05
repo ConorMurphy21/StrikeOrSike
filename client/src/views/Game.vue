@@ -16,12 +16,10 @@ import { computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 
-const props = defineProps({
-  roomName: {
-    type: String,
-    required: true
-  }
-});
+const props = defineProps<{
+  roomName: string;
+}>();
+
 const gameStore = useGameStore();
 const roomStore = useRoomStore();
 const router = useRouter();
@@ -45,7 +43,7 @@ onMounted(() => {
   }
 });
 
-const helpLink = computed((): string => {
+const helpLink = computed<string>(() => {
   const tips = {
     Lobby: '#overview',
     Countdown: '#prompt',
@@ -59,7 +57,7 @@ const helpLink = computed((): string => {
   return router.resolve({ name: 'howToPlay', hash: tips[gameStore.scene] }).href;
 });
 
-const isMobile = computed((): boolean => {
+const isMobile = computed<boolean>(() => {
   return /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 });
 </script>

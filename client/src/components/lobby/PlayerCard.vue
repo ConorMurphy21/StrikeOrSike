@@ -1,12 +1,8 @@
 <script setup lang="ts">
-import { type PropType } from 'vue';
 import type { Player } from ':common/stateTypes.js';
-defineProps({
-  player: {
-    type: Object as PropType<Player>,
-    required: true
-  }
-});
+defineProps<{
+  player: Player;
+}>();
 </script>
 
 <template>

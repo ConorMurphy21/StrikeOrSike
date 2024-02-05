@@ -2,24 +2,21 @@
 import VoteSkip from '@/components/promptResponse/VoteSkip.vue';
 import { computed } from 'vue';
 
-const props = defineProps({
-  prompt: {
-    type: String,
-    required: true
-  },
-  skippable: {
-    type: Boolean,
-    default: false
-  }
+interface Props {
+  prompt: string;
+  skippable?: boolean;
+}
+const props = withDefaults(defineProps<Props>(), {
+  skippable: false
 });
 
-const containsBlank = computed((): boolean => {
+const containsBlank = computed<boolean>(() => {
   return props.prompt.includes('_');
 });
-const left = computed((): string => {
+const left = computed<string>(() => {
   return props.prompt.substring(0, props.prompt.indexOf('_'));
 });
-const right = computed((): string => {
+const right = computed<string>(() => {
   return props.prompt.substring(props.prompt.lastIndexOf('_') + 1);
 });
 </script>

@@ -3,10 +3,9 @@ require('@rushstack/eslint-patch/modern-module-resolution');
 
 module.exports = {
   extends: [
-    'plugin:vue/vue3-essential',
-    'plugin:vue/vue3-strongly-recommended',
     'plugin:vue/vue3-recommended',
     'eslint:recommended',
+    'plugin:@intlify/vue-i18n/recommended',
     'plugin:@typescript-eslint/recommended-type-checked',
     '@vue/eslint-config-typescript',
     '@vue/eslint-config-prettier/skip-formatting',
@@ -29,13 +28,23 @@ module.exports = {
     'vue/component-api-style': [2, ['script-setup']],
     'vue/block-lang': [2, { script: { lang: 'ts' } }],
     'vue/define-macros-order': 2,
-    // 'vue/define-props-declaration': 2,
+    'vue/define-props-declaration': 2,
     'vue/no-ref-object-reactivity-loss': 2,
     'vue/no-undef-properties': 2,
     'vue/no-unused-components': [2, { ignoreWhenBindingPresent: true }],
     'vue/no-unused-properties': 2,
     'vue/no-unused-refs': 2,
+    '@intlify/vue-i18n/valid-message-syntax': 2,
+    '@intlify/vue-i18n/key-format-style': [2, 'camelCase', {allowArray: true}],
+    '@intlify/vue-i18n/no-duplicate-keys-in-locale': 2,
+    '@intlify/vue-i18n/no-missing-keys-in-other-locales': 2,
     'prettier/prettier': 2
   },
-  ignorePatterns: ['/*', '!/src']
+  ignorePatterns: ['/*', '!/src'],
+  settings: {
+    'vue-i18n': {
+      localeDir: './src/locales/*.{ts}', // extension is glob formatting!
+      messageSyntaxVersion: '^9.9.1'
+    }
+  }
 };

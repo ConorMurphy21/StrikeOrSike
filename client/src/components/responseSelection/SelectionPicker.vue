@@ -11,7 +11,7 @@ const lastPicked = ref(false);
 
 const gameStore = useGameStore();
 
-const isSelectingChoice = computed((): boolean => {
+const isSelectingChoice = computed<boolean>(() => {
   return gameStore.selectionTypeChoice && gameStore.isSelector;
 });
 
@@ -53,7 +53,7 @@ const { t } = useI18n();
         v-t="'strike'"
         class="btn btn-orange w-50"
         @click="selectSelectionType(true)" />
-      <h3>or</h3>
+      <h3 v-t="'or'" />
       <button
         v-tooltip.right.ds750="t('tooltip.sike')"
         v-t="'sike'"

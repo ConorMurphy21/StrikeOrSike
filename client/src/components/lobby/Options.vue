@@ -6,12 +6,9 @@ import { useGameStore } from '@/stores/game.js';
 import { useI18n } from 'vue-i18n';
 import { useRoomStore } from '@/stores/room.js';
 
-defineProps({
-  disabled: {
-    type: Boolean,
-    required: true
-  }
-});
+defineProps<{
+  disabled: boolean;
+}>();
 
 const customSelected = ref(false);
 const timerDuration: Ref<null | HTMLFormElement> = ref(null);
@@ -204,14 +201,13 @@ const { t } = useI18n();
       </div>
       <h2 id="options-heading" class="accordion-header">
         <button
+          v-t="'optionsLabel'"
           class="accordion-button"
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#form"
           aria-expanded="false"
-          aria-controls="form">
-          Game Options
-        </button>
+          aria-controls="form" />
       </h2>
     </div>
   </div>

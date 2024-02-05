@@ -9,7 +9,7 @@ const click = new AudioWrap(ClickMp3);
 
 const gameStore = useGameStore();
 
-const rank = computed((): number[] => {
+const rank = computed<number[]>(() => {
   let result = [];
   let lastScore = -1;
   let lastRank = 1;
@@ -39,7 +39,11 @@ const { n } = useI18n();
 
     <div class="list-group w-75 w-xl-50">
       <div v-for="(score, index) in gameStore.scores" :key="score.player.id" class="list-group-item">
-        {{ rank[index] }}. {{ score.player.name }}: {{ n(score.points) }}
+        <span
+          v-t="{
+            path: 'scoreFormat',
+            args: { rank: rank[index], player: score.player.name, points: n(score.points) }
+          }" />
       </div>
     </div>
 

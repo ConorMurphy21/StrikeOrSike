@@ -63,7 +63,7 @@ const { t } = useI18n();
         <img class="my-auto w-75 w-sm-50 w-lg-25" src="@/assets/images/sike.png" :alt="t('sike')" />
       </div>
     </button>
-    or
+    <span v-t="'or'" />
     <response-list v-model="matchedResponse" :selectable="true" :height="40" />
   </div>
 </template>

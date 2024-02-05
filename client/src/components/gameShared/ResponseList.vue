@@ -1,8 +1,74 @@
 <!--suppress CssUnusedSymbol -->
+<script setup lang="ts">
+import { computed, ref } from 'vue';
+import { AudioWrap } from '@/mixins/audiowrap.js';
+import Click1Mp3 from '@/assets/audio/click1.mp3';
+import Click2Mp3 from '@/assets/audio/click2.mp3';
+import { useGameStore } from '@/stores/game.js';
+
+interface Props {
+  selectable: boolean;
+  playerId?: string;
+  height?: number;
+}
+const props = withDefaults(defineProps<Props>(), {
+  playerId: '',
+  height: 30
+});
+
+const gameStore = useGameStore();
+
+const model = defineModel({ type: String });
+
+const selected = ref(-1);
+
+const responses = computed<string[]>(() => {
+  return gameStore.playerResponses(props.playerId).all;
+});
+const usedResponses = computed<string[]>(() => {
+  return gameStore.playerResponses(props.playerId).used;
+});
+const selectedStrike = computed<string>(() => {
+  return gameStore.playerResponses(props.playerId).selectedStrike;
+});
+const selectedSike = computed<string>(() => {
+  return gameStore.playerResponses(props.playerId).selectedSike;
+});
+const cssProps = computed<Record<string, string>>(() => {
+  return {
+    '--max-height': props.height + 'vh'
+  };
+});
+
+function select(index: number, response: string) {
+  if (props.selectable && !used(response)) {
+    if (selected.value !== index) {
+      new AudioWrap(Click1Mp3).play();
+      selected.value = index;
+    } else {
+      new AudioWrap(Click2Mp3).play();
+      model.value = response;
+    }
+  }
+}
+function deselect() {
+  new AudioWrap(Click2Mp3).play();
+  selected.value = -1;
+}
+function confirm() {
+  select(selected.value, responses.value[selected.value]);
+}
+function responseSelectable(response: string) {
+  return !usedResponses.value.includes(response) && props.selectable;
+}
+function used(response: string) {
+  return response !== selectedStrike.value && response !== selectedSike.value && usedResponses.value.includes(response);
+}
+</script>
+
 <template>
   <div class="outer flex-grow-1 d-flex flex-column justify-content-between align-items-center w-100">
     <div
-      ref="box"
       :style="cssProps"
       class="box d-flex flex-column justify-content-center align-items-center w-75 m-2 overflow-auto">
       <div class="list-group w-100 h-100">
@@ -31,82 +97,6 @@
     </transition>
   </div>
 </template>
-<script lang="ts">
-import Click1Mp3 from '@/assets/audio/click1.mp3';
-import Click2Mp3 from '@/assets/audio/click2.mp3';
-import { AudioWrap } from '@/mixins/audiowrap.js';
-import { useGameStore } from '@/stores/game.js';
-import { mapState } from 'pinia';
-import { defineComponent } from 'vue';
-
-export default defineComponent({
-  props: {
-    selectable: Boolean,
-    height: {
-      type: Number,
-      default: 30
-    },
-    playerId: {
-      type: String,
-      default: ''
-    }
-  },
-  emits: ['update:modelValue'],
-  data() {
-    return {
-      selected: -1
-    };
-  },
-  computed: {
-    ...mapState(useGameStore, ['playerResponses']),
-    responses() {
-      return this.playerResponses(this.playerId).all;
-    },
-    usedResponses() {
-      return this.playerResponses(this.playerId).used;
-    },
-    selectedStrike() {
-      return this.playerResponses(this.playerId).selectedStrike;
-    },
-    selectedSike() {
-      return this.playerResponses(this.playerId).selectedSike;
-    },
-    cssProps() {
-      return {
-        '--max-height': this.height + 'vh'
-      };
-    }
-  },
-  methods: {
-    select(index: number, response: string) {
-      if (this.selectable && !this.used(response)) {
-        if (this.selected !== index) {
-          new AudioWrap(Click1Mp3).play();
-          this.selected = index;
-        } else {
-          new AudioWrap(Click2Mp3).play();
-          this.$emit('update:modelValue', response);
-        }
-      }
-    },
-    deselect() {
-      new AudioWrap(Click2Mp3).play();
-      this.selected = -1;
-    },
-    confirm() {
-      this.select(this.selected, this.responses[this.selected]);
-    },
-    responseSelectable(response: string) {
-      return !this.usedResponses.includes(response) && this.selectable;
-    },
-    used(response: string) {
-      return (
-        response !== this.selectedStrike && response !== this.selectedSike && this.usedResponses.includes(response)
-      );
-    }
-  }
-});
-</script>
 
 <style lang="scss" scoped>
 .outer {

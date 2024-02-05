@@ -18,14 +18,14 @@ import type { Result } from ':common/result';
 import { isOk } from ':common/result';
 
 type Scene =
-  | 'lobby'
-  | 'countdown'
-  | 'promptResponse'
-  | 'selection'
-  | 'activeMatching'
-  | 'matchingSummary'
-  | 'endRound'
-  | 'endGame';
+  | 'Lobby'
+  | 'Countdown'
+  | 'PromptResponse'
+  | 'Selection'
+  | 'ActiveMatching'
+  | 'MatchingSummary'
+  | 'EndRound'
+  | 'EndGame';
 
 export type Match = Omit<ServerMatch, 'player'> & { player: Player };
 
@@ -59,7 +59,7 @@ interface State {
 
 export const useGameStore = defineStore('game', {
   state: (): State => ({
-    scene: 'lobby',
+    scene: 'Lobby',
     prompt: '',
     timer: 0,
     // for cancelling the timer
@@ -207,7 +207,7 @@ export const useGameStore = defineStore('game', {
         }
         if (match.player === room.self!.id) {
           this.useResponse(match.response);
-          this.scene = 'matchingSummary';
+          this.scene = 'MatchingSummary';
         }
       }
     },
@@ -217,7 +217,7 @@ export const useGameStore = defineStore('game', {
       const usedResponse = this.matches.find((match: Match) => match.player.id === selfId)!.response;
       this.unuseResponse(usedResponse);
       this.unmatched = true;
-      this.scene = 'activeMatching';
+      this.scene = 'ActiveMatching';
     },
     async getResponses(id: string): Promise<void> {
       return new Promise((resolve, reject) => {
@@ -253,12 +253,12 @@ export const useGameStore = defineStore('game', {
         this.resetResponses();
         this.matches = [];
         this.voteCounts['skipPrompt'] = { count: 0, next: false };
-        this.scene = 'countdown';
+        this.scene = 'Countdown';
         this.firstSelection = true;
         void this.startTimer().then(() => {
           this.timer = this.options.promptTimer;
           void this.startTimer();
-          this.scene = 'promptResponse';
+          this.scene = 'PromptResponse';
         });
       });
 
@@ -282,7 +282,7 @@ export const useGameStore = defineStore('game', {
         this.selectionType = data.selectionType;
         this.voteCounts['sikeDispute'] = { count: 0, next: false };
         this.selectionTypeChoice = data.selectionType === 'choice';
-        this.scene = 'selection';
+        this.scene = 'Selection';
       });
 
       socket.on('beginMatching', (response: string) => {
@@ -291,9 +291,9 @@ export const useGameStore = defineStore('game', {
         this.selectedResponse = response;
         if (this.isSelector) {
           this.useSelectorResponse(response);
-          this.scene = 'matchingSummary';
+          this.scene = 'MatchingSummary';
         } else {
-          this.scene = 'activeMatching';
+          this.scene = 'ActiveMatching';
         }
       });
 
@@ -302,14 +302,14 @@ export const useGameStore = defineStore('game', {
       });
 
       socket.on('endRound', (data: { hasNextRound: boolean }) => {
-        this.scene = 'endRound';
+        this.scene = 'EndRound';
         this.hasNextRound = data.hasNextRound;
         this.voteCounts['startNextRound'] = { count: 0, next: false };
       });
 
       socket.on('gameOver', (data: { player: string; points: number }[]) => {
         const room = useRoomStore();
-        this.scene = 'endGame';
+        this.scene = 'EndGame';
         const scores = [];
         for (const score of data) {
           scores.push({
@@ -338,23 +338,23 @@ export const useGameStore = defineStore('game', {
           void this.startTimer();
         }
         const isSelector = this.selector?.id === room.self!.id;
-        let scene: Scene = 'lobby';
+        let scene: Scene = 'Lobby';
         //'lobby', 'response', 'selection', 'matching'
         switch (data.stage) {
           case 'lobby':
-            scene = 'lobby';
+            scene = 'Lobby';
             break;
           case 'response':
-            scene = 'promptResponse';
+            scene = 'PromptResponse';
             break;
           case 'selection':
-            scene = 'selection';
+            scene = 'Selection';
             break;
           case 'matching':
-            scene = isSelector ? 'matchingSummary' : 'activeMatching';
+            scene = isSelector ? 'MatchingSummary' : 'ActiveMatching';
             break;
           case 'endRound':
-            scene = 'endRound';
+            scene = 'EndRound';
             break;
         }
         this.scene = scene;

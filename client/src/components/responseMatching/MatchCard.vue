@@ -1,10 +1,42 @@
+<script setup lang="ts">
+import ClickMp3 from '@/assets/audio/click2.mp3';
+import { AudioWrap } from '@/mixins/audiowrap.js';
+import { computed, ref } from 'vue';
+import type { Player } from ':common/stateTypes.js';
+import { type Match, useGameStore } from '@/stores/game.js';
+import { useRoomStore } from '@/stores/room.js';
+import { useI18n } from 'vue-i18n';
+const props = defineProps<{
+  player: Player;
+  match: Match;
+}>();
+
+const click = new AudioWrap(ClickMp3);
+
+const hovering = ref(false);
+
+const gameStore = useGameStore();
+const roomStore = useRoomStore();
+
+const showUnmatch = computed<boolean>(() => {
+  return props.player?.name === roomStore.name && !props.match?.exact;
+});
+
+function unmatchClick() {
+  click.play();
+  gameStore.unmatch();
+}
+
+const { t } = useI18n();
+</script>
+
 <template>
   <div class="root d-flex flex-column gap-0">
     <div class="d-flex flex-row w-100 gap-1 justify-content-center align-items-center">
       <h2 v-if="match && match.response" class="match-content fs-3">
         {{ match.response }}
       </h2>
-      <img v-else-if="match" class="fs-3" src="@/assets/images/sike.png" :alt="$t('sike')" />
+      <img v-else-if="match" class="fs-3" src="@/assets/images/sike.png" :alt="t('sike')" />
       <div v-else class="p-3 d-flex justify-content-center align-items-center position-relative">
         <div class="dot-pulse" />
       </div>
@@ -19,50 +51,6 @@
     <h2 class="player-name fs-5">{{ player!.name }}</h2>
   </div>
 </template>
-
-<script lang="ts">
-import ClickMp3 from '@/assets/audio/click2.mp3';
-import { AudioWrap } from '@/mixins/audiowrap.js';
-import { useRoomStore } from '@/stores/room.js';
-import { useGameStore, type Match } from '@/stores/game.js';
-import { mapState, mapActions } from 'pinia';
-import { defineComponent, type PropType } from 'vue';
-import { type Player } from ':common/stateTypes';
-
-const click = new AudioWrap(ClickMp3);
-
-export default defineComponent({
-  props: {
-    player: {
-      type: Object as PropType<Player>,
-      required: true
-    },
-    match: {
-      type: Object as PropType<Match>,
-      required: true
-    }
-  },
-  data() {
-    return {
-      hovering: false
-    };
-  },
-  computed: {
-    ...mapState(useRoomStore, ['name']),
-    ...mapState(useGameStore, ['selectedResponse']),
-    showUnmatch() {
-      return this.player?.name === this.name && !this.match?.exact;
-    }
-  },
-  methods: {
-    ...mapActions(useGameStore, ['unmatch']),
-    unmatchClick() {
-      click.play();
-      this.unmatch();
-    }
-  }
-});
-</script>
 
 <style lang="scss" scoped>
 .root {

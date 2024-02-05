@@ -1,4 +1,41 @@
 <!--suppress CssUnusedSymbol -->
+<script setup lang="ts">
+import { computed, type Ref, ref } from 'vue';
+import { useSettingsStore } from '@/stores/settings.js';
+import VueSlider from 'vue-slider-component';
+const settingsStore = useSettingsStore();
+
+const showing = ref(false);
+const timer: Ref<null | NodeJS.Timeout> = ref(null);
+const value = computed<number>({
+  get(): number {
+    return Math.round(settingsStore.volume * 100);
+  },
+  set(value: number): void {
+    settingsStore.setVolume(value / 100);
+  }
+});
+
+function click() {
+  settingsStore.toggleMute();
+}
+
+function resetTimer() {
+  clearTimer();
+  timer.value = setTimeout(() => {
+    timer.value = null;
+    showing.value = false;
+  }, 700);
+}
+
+function clearTimer() {
+  showing.value = true;
+  if (timer.value) {
+    clearTimeout(timer.value);
+  }
+}
+</script>
+
 <template>
   <div
     class="d-flex flex-column justify-content-center align-items-center"
@@ -26,54 +63,6 @@
       @focusout="resetTimer" />
   </div>
 </template>
-<script lang="ts">
-import VueSlider from 'vue-slider-component';
-import { useSettingsStore } from '@/stores/settings.js';
-import { mapActions, mapState } from 'pinia';
-import { defineComponent } from 'vue';
-
-export default defineComponent({
-  components: {
-    VueSlider
-  },
-  data() {
-    return {
-      showing: false,
-      timer: null as null | NodeJS.Timeout
-    };
-  },
-  computed: {
-    ...mapState(useSettingsStore, ['volume']),
-    value: {
-      set: function (val: number) {
-        this.setVolume(val / 100);
-      },
-      get: function () {
-        return Math.round(this.volume * 100);
-      }
-    }
-  },
-  methods: {
-    ...mapActions(useSettingsStore, ['setVolume', 'toggleMute']),
-    click() {
-      this.toggleMute();
-    },
-    resetTimer() {
-      this.clearTimer();
-      this.timer = setTimeout(() => {
-        this.timer = null;
-        this.showing = false;
-      }, 700);
-    },
-    clearTimer() {
-      this.showing = true;
-      if (this.timer) {
-        clearTimeout(this.timer);
-      }
-    }
-  }
-});
-</script>
 
 <style scoped lang="scss">
 .v-enter-active,

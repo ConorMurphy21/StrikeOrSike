@@ -1,6 +1,33 @@
+<script setup lang="ts">
+import Timer from '@/components/gameShared/Timer.vue';
+import ResponseList from '@/components/gameShared/ResponseList.vue';
+import Prompt from '@/components/gameShared/Prompt.vue';
+import { onMounted, type Ref, ref } from 'vue';
+import socket from '@/socket/socket.js';
+import { useGameStore } from '@/stores/game.js';
+
+const response = ref('');
+const resInput: Ref<null | HTMLInputElement> = ref(null);
+
+const gameStore = useGameStore();
+
+onMounted(() => {
+  if (!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+    resInput.value?.focus();
+  }
+});
+
+function sendResponse() {
+  if (response.value !== '') {
+    socket.emit('promptResponse', response.value);
+    response.value = '';
+  }
+}
+</script>
+
 <template>
   <div class="w-100 d-flex flex-column justify-content-between align-items-center py-3 px-4">
-    <prompt :prompt="prompt" :skippable="true" />
+    <prompt :prompt="gameStore.prompt" :skippable="true" />
     <response-list :selectable="false" :height="45" />
     <div class="d-flex flex-column align-items-center w-100 gap-2">
       <input
@@ -12,47 +39,7 @@
         autocomplete="off"
         enterkeyhint="send"
         @keyup.enter="sendResponse" />
-      <timer :time="timer"></timer>
+      <timer :time="gameStore.timer" />
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import ResponseList from '@/components/gameShared/ResponseList.vue';
-import Timer from '@/components/gameShared/Timer.vue';
-import Prompt from '@/components/gameShared/Prompt.vue';
-import socket from '@/socket/socket';
-import { useGameStore } from '@/stores/game.js';
-import { mapState } from 'pinia';
-import { defineComponent } from 'vue';
-
-export default defineComponent({
-  components: {
-    ResponseList,
-    Timer,
-    Prompt
-  },
-  data() {
-    return {
-      response: ''
-    };
-  },
-  computed: {
-    ...mapState(useGameStore, ['timer', 'prompt', 'promptSkipping'])
-  },
-  mounted() {
-    // only autofocus if the user is not on mobile
-    if (!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-      (this.$refs.resInput as HTMLInputElement).focus();
-    }
-  },
-  methods: {
-    sendResponse() {
-      if (this.response !== '') {
-        socket.emit('promptResponse', this.response);
-        this.response = '';
-      }
-    }
-  }
-});
-</script>

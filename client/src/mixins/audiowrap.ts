@@ -1,7 +1,7 @@
 // won't adjust audio while playing, but will be fine for short audio clips
 import { useSettingsStore } from '@/stores/settings.js';
 
-export const AudioWrap = class {
+export class AudioWrap {
   private audio: HTMLAudioElement;
   constructor(file: string) {
     this.audio = new Audio(file);
@@ -20,4 +20,4 @@ export const AudioWrap = class {
   set currentTime(val: number) {
     this.audio.currentTime = val;
   }
-};
+}

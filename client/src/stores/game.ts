@@ -2,7 +2,7 @@
 
 import socket from '@/socket/socket.js';
 import { useRoomStore } from '@/stores/room.js';
-import { defineStore } from 'pinia';
+import { acceptHMRUpdate, defineStore } from 'pinia';
 import type {
   Player,
   Match as ServerMatch,
@@ -363,3 +363,13 @@ export const useGameStore = defineStore('game', {
     }
   }
 });
+
+// allow hot-module reloading of the game store
+if (import.meta.hot) {
+  import.meta.hot.accept((newModule) => {
+    acceptHMRUpdate(useGameStore, import.meta.hot)(newModule);
+    socket.off();
+    useRoomStore().bindEvents();
+    useGameStore().bindEvents();
+  });
+}

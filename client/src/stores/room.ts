@@ -1,8 +1,8 @@
 // noinspection JSUnusedGlobalSymbols
-import router from '@/router/index.js';
+import { type Router, useRouter } from 'vue-router';
 import socket from '@/socket/socket.js';
-import { defineStore } from 'pinia';
-import type { Player } from ':common/stateTypes';
+import { acceptHMRUpdate, defineStore } from 'pinia';
+import type { Player } from ':common/stateTypes.js';
 
 interface State {
   players: Player[];
@@ -11,6 +11,7 @@ interface State {
   error: string;
   receivedError: boolean;
   route: string;
+  router: Router;
 }
 
 export const useRoomStore = defineStore('room', {
@@ -20,7 +21,8 @@ export const useRoomStore = defineStore('room', {
     roomName: '',
     error: '',
     receivedError: false,
-    route: 'home'
+    route: 'home',
+    router: useRouter()
   }),
   getters: {
     self(): Player | undefined {
@@ -30,9 +32,6 @@ export const useRoomStore = defineStore('room', {
   actions: {
     setName(name: string) {
       this.name = name;
-    },
-    setRoomName(roomName: string) {
-      this.roomName = roomName;
     },
     setError(error: string) {
       this.error = error;
@@ -58,13 +57,13 @@ export const useRoomStore = defineStore('room', {
         if (data.success) {
           this.roomName = data.roomName;
           this.error = '';
-          await router.push({
+          await this.router.push({
             name: 'game',
             params: { roomName: data.roomName }
           });
         } else {
           if (this.route !== 'home') {
-            await router.push({
+            await this.router.push({
               name: 'home',
               params: { error: data.error }
             });
@@ -79,8 +78,23 @@ export const useRoomStore = defineStore('room', {
       });
 
       socket.on('kickPlayer', async (data: { error: string }) => {
-        await router.push({ name: 'home', query: { error: data.error } });
+        await this.router.push({ name: 'home', query: { error: data.error } });
       });
     }
   }
 });
+
+// allow hot module reloading of the room store
+if (import.meta.hot) {
+  import.meta.hot.accept((newModule) => {
+    acceptHMRUpdate(useRoomStore, import.meta.hot)(newModule);
+    // unfortunately can't unbind all listeners because game would be effected
+    // and can't rebind game because of circular dependancy
+    // so each socket listener has to be offed manually
+    socket.off('connect');
+    socket.off('updatePlayers');
+    socket.off('joinRoom');
+    socket.off('kickPlayer');
+    useRoomStore().bindEvents();
+  });
+}

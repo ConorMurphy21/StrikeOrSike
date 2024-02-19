@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ClickMp3 from '@/assets/audio/click1.mp3';
+import ClickMp3 from '@/assets/audio/click2.mp3';
 import { AudioWrap } from '@/mixins/audiowrap.js';
 const click = new AudioWrap(ClickMp3);
 </script>

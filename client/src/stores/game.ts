@@ -6,11 +6,11 @@ import { acceptHMRUpdate, defineStore } from 'pinia';
 import type {
   Player,
   Match as ServerMatch,
-  PollName,
   VoteCount,
   Score as ServerScore,
   Responses,
-  MidgameConnectData
+  MidgameConnectData,
+  PollVoteCount
 } from ':common/stateTypes';
 import type { Options, VisibleOptions } from ':common/options';
 import { defaultOptions } from ':common/options';
@@ -244,7 +244,7 @@ export const useGameStore = defineStore('game', {
         this.selectionType = selectionType;
       });
 
-      socket.on('setVoteCount', (data: { pollName: PollName } & VoteCount) => {
+      socket.on('setVoteCount', (data: PollVoteCount) => {
         this.voteCounts[data.pollName] = { count: data.count, next: data.next };
       });
       socket.on('beginPrompt', (prompt: string) => {

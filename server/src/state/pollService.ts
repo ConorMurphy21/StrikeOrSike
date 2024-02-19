@@ -1,7 +1,7 @@
 import type { GameState } from './gameState';
 import type { Result } from ':common/result';
 import { Err, Ok, Warn } from ':common/result';
-import type { PollName, Stage } from ':common/stateTypes';
+import type { PollName, PollVoteCount, Stage } from ':common/stateTypes';
 import logger from '../logger/logger';
 
 type Poll = {
@@ -15,10 +15,14 @@ type Poll = {
 export class PollService {
   private gameState: GameState;
   private readonly polls: Map<PollName, Poll>;
-
+  private _pollVoteUpdateCb: null | ((pollVoteCounts: PollVoteCount) => void) = null;
   constructor(gameState: GameState) {
     this.gameState = gameState;
     this.polls = new Map<PollName, Poll>();
+  }
+
+  registerPollVoteUpdateCb(cb: (pollVoteCounts: PollVoteCount) => void): void {
+    this._pollVoteUpdateCb = cb;
   }
 
   registerPoll(
@@ -115,10 +119,13 @@ export class PollService {
   }
 
   disconnect(id: string): void {
-    for (const poll of this.polls.values()) {
+    for (const [pollName, poll] of this.polls.entries()) {
       const index = poll.inFavor.indexOf(id);
       if (index >= 0) {
         poll.inFavor.splice(index, 1);
+        if (this._pollVoteUpdateCb) {
+          this._pollVoteUpdateCb({ pollName, count: this._countVotes(poll), next: this._nextComplete(poll) });
+        }
       }
     }
   }

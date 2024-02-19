@@ -36,7 +36,7 @@ module.exports = {
     'vue/no-unused-properties': 2,
     'vue/no-unused-refs': 2,
     '@intlify/vue-i18n/valid-message-syntax': 2,
-    '@intlify/vue-i18n/key-format-style': [2, 'camelCase', {allowArray: true}],
+    '@intlify/vue-i18n/key-format-style': [2, 'camelCase', { allowArray: true }],
     '@intlify/vue-i18n/no-duplicate-keys-in-locale': 2,
     '@intlify/vue-i18n/no-missing-keys-in-other-locales': 2,
     'prettier/prettier': 2

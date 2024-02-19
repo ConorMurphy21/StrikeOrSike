@@ -1,7 +1,16 @@
 import { Server, Socket } from 'socket.io';
 import { Socket as ClientSocket } from 'socket.io-client';
 import { SettableOptions, VisibleOptions } from './options';
-import { Player, PollName, Match, MidgameConnectData, Responses, SelectionType, VoteCount, Score } from './stateTypes';
+import {
+  Player,
+  PollName,
+  Match,
+  MidgameConnectData,
+  Responses,
+  SelectionType,
+  Score,
+  PollVoteCount
+} from './stateTypes';
 import { Result } from './result';
 
 interface ServerToClientRoomEvents {
@@ -27,7 +36,7 @@ interface ServerToClientGameEvents {
 
   nextSelection(args: { selector: string; selectionType: SelectionType }): void;
 
-  setVoteCount(args: { pollName: PollName } & VoteCount): void;
+  setVoteCount(args: PollVoteCount): void;
 
   selectionTypeChosen(selectionType: SelectionType): void;
 

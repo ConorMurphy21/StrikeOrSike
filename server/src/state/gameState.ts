@@ -15,7 +15,8 @@ import type {
   SelectionType,
   Stage,
   Player as RoomPlayer,
-  Score
+  Score,
+  PollVoteCount
 } from ':common/stateTypes';
 
 type Player = {
@@ -121,6 +122,10 @@ export class GameState {
 
   registerMatchingCompleteCb(cb: (selectorActive: boolean) => void): void {
     this._matchingCompleteCb = cb;
+  }
+
+  registerPollVoteUpdateCb(cb: (pollVoteCounts: PollVoteCount) => void): void {
+    this.pollService.registerPollVoteUpdateCb(cb);
   }
 
   /*** PROMPT RESPONSE state changes ***/

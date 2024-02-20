@@ -2,15 +2,15 @@
 
 import socket from '@/socket/socket.js';
 import { useRoomStore } from '@/stores/room.js';
-import { defineStore } from 'pinia';
+import { acceptHMRUpdate, defineStore } from 'pinia';
 import type {
   Player,
   Match as ServerMatch,
-  PollName,
   VoteCount,
   Score as ServerScore,
   Responses,
-  MidgameConnectData
+  MidgameConnectData,
+  PollVoteCount
 } from ':common/stateTypes';
 import type { Options, VisibleOptions } from ':common/options';
 import { defaultOptions } from ':common/options';
@@ -244,7 +244,7 @@ export const useGameStore = defineStore('game', {
         this.selectionType = selectionType;
       });
 
-      socket.on('setVoteCount', (data: { pollName: PollName } & VoteCount) => {
+      socket.on('setVoteCount', (data: PollVoteCount) => {
         this.voteCounts[data.pollName] = { count: data.count, next: data.next };
       });
       socket.on('beginPrompt', (prompt: string) => {
@@ -363,3 +363,13 @@ export const useGameStore = defineStore('game', {
     }
   }
 });
+
+// allow hot-module reloading of the game store
+if (import.meta.hot) {
+  import.meta.hot.accept((newModule) => {
+    acceptHMRUpdate(useGameStore, import.meta.hot)(newModule);
+    socket.off();
+    useRoomStore().bindEvents();
+    useGameStore().bindEvents();
+  });
+}

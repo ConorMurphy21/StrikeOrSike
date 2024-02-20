@@ -36,6 +36,8 @@ export type VoteCount = {
   next: boolean;
 };
 
+export type PollVoteCount = { pollName: PollName } & VoteCount;
+
 export const zPollName = z.enum(['skipPrompt', 'startNextRound', 'sikeDispute']);
 export type PollName = z.infer<typeof zPollName>;
 

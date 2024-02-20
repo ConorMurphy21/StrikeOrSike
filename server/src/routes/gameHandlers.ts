@@ -9,7 +9,7 @@ import type { Result } from ':common/result';
 import { isErr, isOk, isSuccess } from ':common/result';
 import type { SettableOptions } from ':common/options';
 import { getSettableOptionsSchema, getVisibleOptionsSchema } from ':common/options';
-import type { PollName } from ':common/stateTypes';
+import type { PollName, PollVoteCount } from ':common/stateTypes';
 import { zPollName } from ':common/stateTypes';
 import type { TypedServer, TypedSocket } from ':common/socketioTypes';
 import type { Responses } from ':common/stateTypes';
@@ -216,17 +216,21 @@ function registerCallbacks(io: TypedServer, room: Room) {
   //continueSelection(io, room);
   //});
 
-  state.registerDisputeCompleteCb((action) => {
+  state.registerDisputeCompleteCb((action: string) => {
     applyDisputeAction(io, room, action);
   });
 
-  state.registerMatchingCompleteCb((selectorActive) => {
+  state.registerMatchingCompleteCb((selectorActive: boolean) => {
     // give a little time to show score before moving on to next selection
     if (!selectorActive) {
       state.promptTimeout = setTimeout(() => {
         continueSelection(io, room);
       }, 5000);
     }
+  });
+
+  state.registerPollVoteUpdateCb((pollVoteCount: PollVoteCount) => {
+    io.to(room.name).emit('setVoteCount', pollVoteCount);
   });
 }
 

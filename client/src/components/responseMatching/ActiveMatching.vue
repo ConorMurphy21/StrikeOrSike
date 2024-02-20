@@ -59,9 +59,9 @@ const { t } = useI18n();
       v-tooltip.left.ds900="t('tooltip.noMatch', { response: gameStore.selectedResponse })"
       class="btn btn-primary w-50 fs-4 d-flex justify-content-center align-items-center"
       @click="noMatch">
-      <div class="d-flex justify-content-center align-items-center w-75">
+      <span class="w-75">
         <img class="my-auto w-75 w-sm-50 w-lg-25" src="@/assets/images/sike.png" :alt="t('sike')" />
-      </div>
+      </span>
     </button>
     <span v-t="'or'" />
     <response-list v-model="matchedResponse" :selectable="true" :height="40" />

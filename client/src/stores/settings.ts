@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia';
+import { acceptHMRUpdate, defineStore } from 'pinia';
 
 interface State {
   volume: number;
@@ -45,3 +45,8 @@ export const useSettingsStore = defineStore('settings', {
     }
   }
 });
+
+// allow hot-module reloading of the settings store
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useSettingsStore, import.meta.hot));
+}

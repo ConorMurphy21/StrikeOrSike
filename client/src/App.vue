@@ -37,6 +37,7 @@ function onLogoClick() {
       </div>
     </div>
   </div>
+  <portal-target name="modal" />
 </template>
 
 <style lang="scss">

@@ -16,21 +16,21 @@ $header-font: Pacifico, 'Brush Script MT', cursive;
 
 $border-radius: 0.7rem;
 
-$theme-colors: (
-  'primary': $primary,
-  'secondary': $secondary,
-  'orange': $orange,
-  'yellow': $yellow,
-  'blue': $blue,
-  'red': $red,
-  'burgundy': $burgundy,
-  'dark': $dark
-);
-
 // 3. Include remainder of required Bootstrap stylesheets
 @import '~bootstrap/scss/variables';
 
+$theme-colors: (
+        'primary': $primary,
+        'secondary': $secondary,
+        'orange': $orange,
+        'yellow': $yellow,
+        'blue': $blue,
+        'red': $red,
+        'burgundy': $burgundy,
+        'dark': $dark
+);
+
+@import '~bootstrap/scss/maps';
+
 $tooltip-bg: $gray-600;
 $tooltip-arrow-color: $tooltip-bg;
-
-@import '~bootstrap/scss/mixins';

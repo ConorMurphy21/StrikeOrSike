@@ -35,9 +35,9 @@ function onLogoClick() {
       <div class="mb-2">
         <portal-target name="banner" />
       </div>
+      <portal-target name="modal" class="m-0" />
     </div>
   </div>
-  <portal-target name="modal" />
 </template>
 
 <style lang="scss">

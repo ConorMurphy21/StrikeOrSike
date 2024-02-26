@@ -33,9 +33,9 @@ function onLogoClick() {
         @click="onLogoClick" />
       <router-view class="mt-2 mb-5" />
       <portal-target name="banner" class="mb-2" />
+      <portal-target name="modal" class="m-0" />
     </div>
   </div>
-  <portal-target name="modal" />
 </template>
 
 <style lang="scss">

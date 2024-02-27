@@ -8,7 +8,7 @@ import PortalVue from 'portal-vue';
 
 // only import bootstrap components that are used
 import { Collapse, Dropdown } from 'bootstrap';
-import 'bootstrap-icons/font/bootstrap-icons.css';
+import 'bootstrap-icons/font/bootstrap-icons.min.css';
 import { useGameStore } from '@/stores/game.js';
 import { useRoomStore } from '@/stores/room.js';
 import socket from '@/socket/socket.js';

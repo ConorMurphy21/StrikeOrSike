@@ -32,7 +32,9 @@ function onLogoClick() {
         :role="canNavigateHome ? 'button' : ''"
         @click="onLogoClick" />
       <router-view class="mt-2 mb-5" />
-      <portal-target name="banner" class="mb-2" />
+      <div class="mb-2">
+        <portal-target name="banner" />
+      </div>
     </div>
   </div>
 </template>

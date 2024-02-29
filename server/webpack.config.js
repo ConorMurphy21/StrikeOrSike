@@ -40,5 +40,8 @@ module.exports = {
         loader: 'node-loader'
       }
     ]
+  },
+  stats: {
+    warningsFilter: [/.*\/node_modules\/.*/]
   }
 };

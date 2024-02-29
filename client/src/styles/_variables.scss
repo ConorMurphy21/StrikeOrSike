@@ -1,6 +1,18 @@
 // 1. Include functions first (so you can manipulate colors, SVGs, calc, etc)
 @import '~bootstrap/scss/functions';
 
+$white:    #fff;
+$gray-100: #f8f9fa;
+$gray-200: #e9ecef;
+$gray-300: #dee2e6;
+$gray-400: #ced4da;
+$gray-500: #adb5bd;
+$gray-600: #6c757d;
+$gray-700: #495057;
+$gray-800: #343a40;
+$gray-900: #212529;
+$black:    #000;
+
 // 2. Include any default variable overrides here
 $orange: #ff6415;
 $blue: #165dcf;
@@ -10,6 +22,33 @@ $yellow: #dddd00;
 $primary: $orange;
 $secondary: #f6f3f0;
 $dark: #212529;
+
+$orange-text-emphasis: shade-color($orange, 60%);
+$blue-text-emphasis: shade-color($blue, 60%);
+$red-text-emphasis: shade-color($red, 60%);
+$burgundy-text-emphasis: shade-color($burgundy, 60%);
+$yellow-text-emphasis: shade-color($yellow, 60%);
+$primary-text-emphasis: $orange-text-emphasis;
+$secondary-text-emphasis: $gray-700;
+$dark-text-emphasis: $gray-700;
+
+$orange-bg-subtle: tint-color($orange, 80%);
+$blue-bg-subtle: tint-color($blue, 80%);
+$red-bg-subtle: tint-color($red, 80%);
+$burgundy-bg-subtle: tint-color($burgundy, 80%);
+$yellow-bg-subtle: tint-color($yellow, 80%);
+$primary-bg-subtle: $orange-bg-subtle;
+$secondary-bg-subtle: mix($gray-100, $white);
+$dark-bg-subtle: $gray-400;
+
+$orange-border-subtle: tint-color($orange, 60%);
+$blue-border-subtle: tint-color($blue, 60%);
+$red-border-subtle: tint-color($red, 60%);
+$burgundy-border-subtle: tint-color($burgundy, 60%);
+$yellow-border-subtle: tint-color($yellow, 60%);
+$primary-border-subtle: $orange-border-subtle;
+$secondary-border-subtle: $gray-200;
+$dark-border-subtle: $gray-500;
 
 $main-font: Quicksand, 'Lucida Handwriting', cursive;
 $header-font: Pacifico, 'Brush Script MT', cursive;
@@ -30,7 +69,40 @@ $theme-colors: (
 // 3. Include remainder of required Bootstrap stylesheets
 @import '~bootstrap/scss/variables';
 
+$theme-colors-text: (
+  'primary': $primary-text-emphasis,
+  'secondary': $secondary-text-emphasis,
+  'orange': $orange-text-emphasis,
+  'yellow': $yellow-text-emphasis,
+  'blue': $blue-text-emphasis,
+  'red': $red-text-emphasis,
+  'burgundy': $burgundy-text-emphasis,
+  'dark': $dark-text-emphasis
+);
+
+$theme-colors-bg-subtle: (
+  'primary': $primary-bg-subtle,
+  'secondary': $secondary-bg-subtle,
+  'orange': $orange-bg-subtle,
+  'yellow': $yellow-bg-subtle,
+  'blue': $blue-bg-subtle,
+  'red': $red-bg-subtle,
+  'burgundy': $burgundy-bg-subtle,
+  'dark': $dark-bg-subtle
+);
+
+$theme-colors-border-subtle: (
+  'primary': $primary-border-subtle,
+  'secondary': $secondary-border-subtle,
+  'orange': $orange-border-subtle,
+  'yellow': $yellow-border-subtle,
+  'blue': $blue-border-subtle,
+  'red': $red-border-subtle,
+  'burgundy': $burgundy-border-subtle,
+  'dark': $dark-border-subtle
+);
+
+@import '~bootstrap/scss/maps';
+
 $tooltip-bg: $gray-600;
 $tooltip-arrow-color: $tooltip-bg;
-
-@import '~bootstrap/scss/mixins';

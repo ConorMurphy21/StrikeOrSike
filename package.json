@@ -7,8 +7,8 @@
   ],
   "version": "1.0.0",
   "engines": {
-    "node": ">=20.11.1",
-    "npm": ">=10.2.4"
+    "node": ">=20.9.0",
+    "npm": ">=10.1.0"
   },
   "scripts": {
     "test:typecheck": "vue-tsc --build",

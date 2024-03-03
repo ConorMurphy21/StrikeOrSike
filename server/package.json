@@ -2,10 +2,6 @@
   "name": "strikeorsike-server",
   "version": "1.0.0",
   "private": true,
-  "engines": {
-    "node": ">=18.19.0",
-    "npm": ">=10.2.3"
-  },
   "scripts": {
     "build": "webpack",
     "dev": "ts-node-transpile-only -r tsconfig-paths/register src/index.ts",

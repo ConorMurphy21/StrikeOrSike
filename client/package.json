@@ -3,10 +3,6 @@
   "version": "1.0.0",
   "type": "module",
   "private": true,
-  "engines": {
-    "node": ">=18.19.4",
-    "npm": ">=10.2.3"
-  },
   "web-types": "./web-types.json",
   "scripts": {
     "dev": "vite",

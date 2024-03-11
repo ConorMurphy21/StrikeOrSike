@@ -7,7 +7,7 @@ import { AudioWrap } from '@/mixins/audiowrap.js';
 import ClickMp3 from '@/assets/audio/click2.mp3';
 import { useRoomStore } from '@/stores/room.js';
 import { useI18n } from 'vue-i18n';
-import { Portal, PortalTarget } from 'portal-vue';
+import { Portal } from 'portal-vue';
 import { Modal } from 'bootstrap';
 import { useGameStore } from '@/stores/game';
 const click = new AudioWrap(ClickMp3);

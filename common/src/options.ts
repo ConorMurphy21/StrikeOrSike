@@ -4,6 +4,7 @@ import { z } from 'zod';
 // good for hiding beta features, can be moved to exposed options schema if we want clients to be able to control it
 type ConfigFlags = {
   maxPlayers: number;
+  recPlayers: number;
   minPlayers: number;
   promptSkipping: boolean;
 };
@@ -65,6 +66,7 @@ export const defaultOptions: Options = {
   sikeRetries: 0,
   promptSkipping: true,
   minPlayers: 3,
+  recPlayers: 5,
   maxPlayers: 12,
   packs: {},
   customPrompts: []

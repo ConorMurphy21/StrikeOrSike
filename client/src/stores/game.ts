@@ -86,13 +86,13 @@ export const useGameStore = defineStore('game', {
   getters: {
     isSelector(): boolean {
       const room = useRoomStore();
-      return this.selector?.id === room.self!.id;
+      return this.selector?.id === room.self.id;
     },
     playerResponses() {
       const room = useRoomStore();
       return (id: string) => {
         // default to self if not provided
-        if (!id) id = room.self!.id;
+        if (!id) id = room.self.id;
         return this.responses[id];
       };
     },
@@ -117,7 +117,7 @@ export const useGameStore = defineStore('game', {
     },
     canEndRound() {
       const room = useRoomStore();
-      const self = room.self!.id;
+      const self = room.self.id;
       if (this.selector?.id !== self) return false;
 
       let finishedMatching = true;
@@ -145,7 +145,7 @@ export const useGameStore = defineStore('game', {
     },
     resetResponses() {
       const room = useRoomStore();
-      const selfId = room.self!.id;
+      const selfId = room.self.id;
       this.responses = {};
       this.responses[selfId] = {
         id: selfId,
@@ -157,20 +157,20 @@ export const useGameStore = defineStore('game', {
     },
     useResponse(response: string) {
       const room = useRoomStore();
-      this.responses[room.self!.id].used.push(response);
+      this.responses[room.self.id].used.push(response);
     },
     useSelectorResponse(response: string) {
       const room = useRoomStore();
-      this.responses[room.self!.id].used.push(response);
+      this.responses[room.self.id].used.push(response);
       if (this.selectionType === 'strike') {
-        this.responses[room.self!.id].selectedStrike = response;
+        this.responses[room.self.id].selectedStrike = response;
       } else {
-        this.responses[room.self!.id].selectedSike = response;
+        this.responses[room.self.id].selectedSike = response;
       }
     },
     unuseResponse(response: string) {
       const room = useRoomStore();
-      this.responses[room.self!.id].used = this.responses[room.self!.id].used.filter((r) => r !== response);
+      this.responses[room.self.id].used = this.responses[room.self.id].used.filter((r) => r !== response);
     },
     async startTimer() {
       if (this.timeoutId) {
@@ -205,7 +205,7 @@ export const useGameStore = defineStore('game', {
             exact: match.exact
           });
         }
-        if (match.player === room.self!.id) {
+        if (match.player === room.self.id) {
           this.useResponse(match.response);
           this.scene = 'MatchingSummary';
         }
@@ -213,7 +213,7 @@ export const useGameStore = defineStore('game', {
     },
     unmatch() {
       const room = useRoomStore();
-      const selfId = room.self!.id;
+      const selfId = room.self.id;
       const usedResponse = this.matches.find((match: Match) => match.player.id === selfId)!.response;
       this.unuseResponse(usedResponse);
       this.unmatched = true;
@@ -264,7 +264,7 @@ export const useGameStore = defineStore('game', {
 
       socket.on('promptResponse', (response: string) => {
         const room = useRoomStore();
-        this.responses[room.self!.id].all.push(response);
+        this.responses[room.self.id].all.push(response);
       });
 
       socket.on('nextSelection', (data: { selector: string; selectionType: string }) => {
@@ -272,7 +272,7 @@ export const useGameStore = defineStore('game', {
         const selector = room.players.find((player: Player) => player.id === data.selector);
         // before we clear matches, make sure we used our match, this can happen if a next selection happens between
         // unmatch and match
-        const selfId = room.self!.id;
+        const selfId = room.self.id;
         const selfMatch = this.matches.find((match: Match) => match.player.id === selfId);
         if (selfMatch && !this.responses[selfId].used.includes(selfMatch.response))
           this.useResponse(selfMatch.response);
@@ -337,7 +337,7 @@ export const useGameStore = defineStore('game', {
         if (data.timer) {
           void this.startTimer();
         }
-        const isSelector = this.selector?.id === room.self!.id;
+        const isSelector = this.selector?.id === room.self.id;
         let scene: Scene = 'Lobby';
         //'lobby', 'response', 'selection', 'matching'
         switch (data.stage) {

@@ -27,7 +27,7 @@ watch(selectedId, async (val: string) => {
 });
 
 onMounted(() => {
-  selectedId.value = roomStore.self!.id;
+  selectedId.value = roomStore.self.id;
 });
 
 function sendVote() {

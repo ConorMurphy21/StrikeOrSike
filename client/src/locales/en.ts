@@ -40,6 +40,9 @@ export default {
   startGame: 'Start',
   coffeeBannerLink: "I'd love a tea",
   optionsLabel: 'Game Options',
+  recPlayersModalLabel: 'Warning!',
+  recPlayersModalBody1: 'This lobby is a bit crowded (⚆ᗝ⚆)',
+  recPlayersModalBody2: 'Splitting up could make things more enjoyable!',
 
   /*** OPTIONS STRINGS ***/
   timerDurationLabel: 'Timer',

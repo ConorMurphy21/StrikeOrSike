@@ -18,7 +18,7 @@ const gameStore = useGameStore();
 const roomStore = useRoomStore();
 
 const matchers = computed<Player[]>(() => {
-  return roomStore.players.filter((player: Player) => player.active && player.id !== gameStore.selector.id);
+  return roomStore.players.filter((player: Player) => player.active && player.id !== gameStore.selector!.id);
 });
 
 function endRound(): void {

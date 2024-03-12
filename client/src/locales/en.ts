@@ -41,7 +41,8 @@ export default {
   coffeeBannerLink: "I'd love a tea",
   optionsLabel: 'Game Options',
   recPlayersModalLabel: 'Warning!',
-  recPlayersModalBody: 'This lobby is a bit crowded ( ・⌓・｀) Splitting up could make things more enjoyable!',
+  recPlayersModalBody1: 'This lobby is a bit crowded (⚆ᗝ⚆)',
+  recPlayersModalBody2: 'Splitting up could make things more enjoyable!',
 
   /*** OPTIONS STRINGS ***/
   timerDurationLabel: 'Timer',

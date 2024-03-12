@@ -66,8 +66,8 @@ export const defaultOptions: Options = {
   sikeRetries: 0,
   promptSkipping: true,
   minPlayers: 3,
-  recPlayers: 5,
-  maxPlayers: 12,
+  recPlayers: 8,
+  maxPlayers: 20,
   packs: {},
   customPrompts: []
 };

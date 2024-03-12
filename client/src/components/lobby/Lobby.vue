@@ -57,12 +57,12 @@ const { t } = useI18n();
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 id="recPlayersModalLabel" class="modal-title mx-auto font-fancy display-6">Warning!</h5>
+              <h5
+                id="recPlayersModalLabel"
+                v-t="'recPlayersModalLabel'"
+                class="modal-title mx-auto font-fancy display-6"></h5>
             </div>
-            <div class="modal-body">
-              This lobby is a bit crowded for the best game experience. Splitting into two groups could make things more
-              enjoyable!
-            </div>
+            <div v-t="'recPlayersModalBody'" class="modal-body"></div>
             <div class="modal-footer">
               <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
               <button type="button" class="btn btn-blue" @click="startGame">Start Game</button>

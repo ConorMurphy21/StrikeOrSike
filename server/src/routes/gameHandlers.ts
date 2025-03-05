@@ -179,7 +179,6 @@ const registerGameHandlers = (io: TypedServer, socket: TypedSocket) => {
     }
   });
 
-  // todo: change client side to accept Result type instead of this dumb ApiResult
   socket.on('getResponses', (id: string, callback: (result: Result<Responses>) => void) => {
     const validationResult = z.object({ id: z.string(), callback: z.function() }).safeParse({ id, callback });
     if (!validationResult.success) {

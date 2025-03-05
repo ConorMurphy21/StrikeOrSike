@@ -136,6 +136,12 @@ export function disconnectPlayer(id: string): void {
       player.leader = false;
       activePlayer.leader = true;
     }
+    if (room.state!.stage === 'lobby') {
+      // remove player from room permanently if it's the lobby phase of the game
+      // there is no state to save so rejoining and joining for the first time are identical
+      // so this allows us to clean up some stale players
+      room.players = room.players.filter((p: Player) => p.id !== id);
+    }
   }
 }
 

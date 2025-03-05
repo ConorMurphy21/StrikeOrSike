@@ -92,11 +92,22 @@ function disconnect(socket: TypedSocket): void {
 
   const room = getRoomByName(roomName);
   if (room) {
-    // safe because we know this player exists
-    const player = room.players.find((p) => p.id === socket.id)!;
+    // may be undefined if player was deleted instead of set to inactive
+    const player = room.players.find((p) => p.id === socket.id);
+
     // could be modified
     // safe because if there was no leader then there would be no room
     const leader = room.players.find((p) => p.leader)!;
-    socket.to(room.name).emit('updatePlayers', { modifies: [player, leader], deletes: [] });
+
+    const modifies = [leader];
+    const deletes: string[] = [];
+
+    // add player to modifies or deletes depending on if they exist or not
+    if (player !== undefined) {
+      modifies.push(player);
+    } else {
+      deletes.push(socket.id);
+    }
+    socket.to(room.name).emit('updatePlayers', { modifies: modifies, deletes: deletes });
   }
 }

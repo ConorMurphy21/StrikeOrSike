@@ -70,25 +70,26 @@ describe('lobby tests', () => {
     });
     let nupdates = 0;
     clientSocket1.on('updatePlayers', (arg: { modifies: Player[]; deletes: string[] }) => {
-      assert.deepEqual(arg.deletes, []);
-      assert.isOk(arg.modifies);
-      const modded: Partial<Player> = arg.modifies[0];
-      assert.isOk(modded);
-      delete modded['id'];
-      if (nupdates === 0) {
-        assert.deepEqual(modded, { name: 'name1', leader: true, active: true });
-      } else if (nupdates === 1) {
-        assert.deepEqual(modded, {
-          name: 'name2',
-          leader: false,
-          active: true
-        });
+      if (nupdates < 2) {
+        assert.isOk(arg.modifies);
+        const modded: Partial<Player> = arg.modifies[0];
+        assert.isOk(modded);
+        delete modded['id'];
+        if (nupdates === 0) {
+          assert.deepEqual(arg.deletes, []);
+          assert.deepEqual(modded, { name: 'name1', leader: true, active: true });
+        } else if (nupdates === 1) {
+          assert.deepEqual(arg.deletes, []);
+          assert.deepEqual(modded, {
+            name: 'name2',
+            leader: false,
+            active: true
+          });
+        }
       } else {
-        assert.deepEqual(modded, {
-          name: 'name2',
-          leader: false,
-          active: false
-        });
+        assert.isOk(arg.deletes);
+        assert.strictEqual(arg.deletes.length, 1);
+        assert.isOk(arg.modifies);
         done();
       }
       nupdates++;
@@ -106,19 +107,13 @@ describe('lobby tests', () => {
     let once = false;
     clientSocket2.on('updatePlayers', (arg: { modifies: Player[]; deletes: string[] }) => {
       if (once) {
-        assert.deepEqual(arg.deletes, []);
+        assert.isOk(arg.deletes);
+        assert.strictEqual(arg.deletes.length, 1);
         assert.isOk(arg.modifies);
-        assert.strictEqual(arg.modifies.length, 2);
-        const modded1: Partial<Player> = arg.modifies[0];
-        delete modded1['id'];
-        const modded2: Partial<Player> = arg.modifies[1];
-        delete modded2['id'];
-        assert.deepEqual(modded1, {
-          name: 'name1',
-          leader: false,
-          active: false
-        });
-        assert.deepEqual(modded2, {
+        assert.strictEqual(arg.modifies.length, 1);
+        const modded: Partial<Player> = arg.modifies[0];
+        delete modded['id'];
+        assert.deepEqual(modded, {
           name: 'name2',
           leader: true,
           active: true

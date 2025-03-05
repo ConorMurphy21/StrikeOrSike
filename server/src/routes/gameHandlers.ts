@@ -317,7 +317,7 @@ function midgameJoin(socket: TypedSocket, room: Room, oldId?: string) {
   socket.emit('midgameConnect', room.state!.midgameConnect(socket.id, oldId));
   if (room.state!.stage === 'matching') {
     const match = room.state!.getMatch(socket.id);
-    if (match) {
+    if (match !== undefined) {
       // exact only matters if it's the original user
       socket.to(room.name).emit('matchesFound', [{ player: socket.id, response: match, exact: true }]);
     }

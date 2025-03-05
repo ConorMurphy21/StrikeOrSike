@@ -17,11 +17,16 @@ const selectedName = computed<string>(() => {
   return name === undefined ? '' : name;
 });
 
+const activePlayers = computed<Player[]>(() => {
+  return roomStore.players.filter((player: Player) => player.active);
+});
+
 function nextPlayer(right: boolean) {
   const direction = right ? 1 : -1;
-  let index = roomStore.players.findIndex((player: Player) => player.id === model.value);
-  index = (index + direction + roomStore.players.length) % roomStore.players.length;
-  model.value = roomStore.players[index].id;
+  const players = activePlayers.value;
+  let index = players.findIndex((player: Player) => player.id === model.value);
+  index = (index + direction + players.length) % players.length;
+  model.value = players[index].id;
   new AudioWrap(Click2Mp3).play();
 }
 function clickOption(value: string) {
@@ -52,7 +57,7 @@ function clickDropdown() {
         {{ selectedName }}
       </button>
       <ul class="dropdown-menu w-100" aria-labelledby="playerChooser">
-        <li v-for="player in roomStore.players" :key="player.id">
+        <li v-for="player in activePlayers" :key="player.id">
           <button class="btn dropdown-item cutoff-text text-center" @click="clickOption(player.id)">
             {{ player.name }}
           </button>

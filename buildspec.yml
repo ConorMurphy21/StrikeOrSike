@@ -18,6 +18,7 @@ phases:
 artifacts:
   files:
     - '.ebextensions/**/*'
+    - '.platforms/**/*'
     - 'dist/**/*'
     - 'package.json'
     - 'package-lock.json'

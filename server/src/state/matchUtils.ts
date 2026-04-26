@@ -1,19 +1,24 @@
-import Spellchecker from 'spellchecker';
 import pluralize from 'pluralize';
 import path from 'path';
+import fs from 'fs';
+import nspell from 'nspell';
 
-const en = new Spellchecker.Spellchecker();
-en.setSpellcheckerType(Spellchecker.ALWAYS_USE_HUNSPELL);
-en.setDictionary('en_CA', path.join(__dirname, '../../resources/dictionaries'));
-const spellcheckers: Record<string, Spellchecker.Spellchecker> = {
+// Load dictionary files
+const aff = fs.readFileSync(path.join(__dirname, '../../resources/dictionaries/en_CA.aff'), 'utf-8');
+const dic = fs.readFileSync(path.join(__dirname, '../../resources/dictionaries/en_CA.dic'), 'utf-8');
+
+// Initialize nspell
+const en = nspell(aff, dic);
+
+const spellcheckers: Record<string, nspell> = {
   en_CA: en
 };
 
 export function getCorrections(string: string, lang: string): Promise<string[]> {
   if (string.includes(' ')) return Promise.resolve([]);
   const spellchecker = spellcheckers[lang] ?? en;
-  if (spellchecker.isMisspelled(string)) {
-    return Promise.resolve(spellchecker.getCorrectionsForMisspelling(string));
+  if (!spellchecker.correct(string)) {
+    return Promise.resolve(spellchecker.suggest(string));
   }
   return Promise.resolve([]);
 }

@@ -67,8 +67,8 @@ const { t } = useI18n();
               <div v-t="'recPlayersModalBody2'" />
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-blue" @click="startGame">Start Game</button>
+              <button v-t="'close'" type="button" class="btn btn-primary" data-bs-dismiss="modal" />
+              <button v-t="'startGame'" type="button" class="btn btn-blue" @click="startGame" />
             </div>
           </div>
         </div>

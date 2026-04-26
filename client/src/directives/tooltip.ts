@@ -62,6 +62,7 @@ function removeTooltip(el: Element) {
 export const CBSTooltip = {
   beforeMount(el: Element, bindings: DirectiveBinding) {
     const settings = useSettingsStore();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     settings.addTooltipUpdateFunc(bindings.instance!.$forceUpdate);
     applyTooltip(el, bindings);
   },
@@ -73,6 +74,7 @@ export const CBSTooltip = {
   },
   unmounted(el: Element, bindings: DirectiveBinding) {
     const settings = useSettingsStore();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     settings.removeTooltipUpdateFunc(bindings.instance!.$forceUpdate);
     removeTooltip(el);
   }

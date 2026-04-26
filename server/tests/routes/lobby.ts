@@ -24,7 +24,7 @@ describe('lobby tests', () => {
     });
   });
   afterEach(() => {
-    io.close();
+    void io.close();
     clientSocket1.close();
     clientSocket2.close();
   });

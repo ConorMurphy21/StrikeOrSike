@@ -25,7 +25,7 @@ describe('Validation tests', () => {
     });
   });
   afterEach(() => {
-    io.close();
+    void io.close();
     clientSocket1.close();
     clientSocket2.close();
   });
@@ -95,7 +95,7 @@ describe('create/join tests', () => {
     });
   });
   afterEach(() => {
-    io.close();
+    void io.close();
     clientSocket1.close();
     clientSocket2.close();
   });

@@ -37,7 +37,8 @@ export default {
 
   /*** LOBBY STRINGS ***/
   players: 'Players',
-  startGame: 'Start',
+  close: 'Close',
+  startGame: 'Start Game',
   coffeeBannerLink: "I'd love a tea",
   optionsLabel: 'Game Options',
   recPlayersModalLabel: 'Warning!',

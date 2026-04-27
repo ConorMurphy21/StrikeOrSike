@@ -4,14 +4,13 @@
   "exclude": ["src/**/__tests__/*", "**/node_modules/**/*"],
   "compilerOptions": {
     "module": "esnext",
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
+      "@/*": ["./src/*"],
       ":common/*": ["../common/src/*"]
     },
-    "types": ["vite/client", "@types/bootstrap", "@types/node"],
+    "types": ["vite/client", "bootstrap", "node"],
     "allowJs": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "importHelpers": true,
     "emitDeclarationOnly": false,
     "noEmit": true,

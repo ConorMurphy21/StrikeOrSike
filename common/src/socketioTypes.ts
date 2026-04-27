@@ -77,4 +77,4 @@ type ClientToServerEvents = ClientToServerRoomEvents & ClientToServerGameEvents;
 export class TypedServer extends Server<ClientToServerEvents, ServerToClientEvents> {}
 
 export class TypedSocket extends Socket<ClientToServerEvents, ServerToClientEvents> {}
-export class TypedClientSocket extends ClientSocket<ServerToClientEvents, ClientToServerEvents> {}
+export type TypedClientSocket = ClientSocket<ServerToClientEvents, ClientToServerEvents>;

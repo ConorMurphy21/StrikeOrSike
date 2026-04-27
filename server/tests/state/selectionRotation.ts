@@ -7,10 +7,9 @@ describe('Selection Rotation tests', () => {
   let players: Player[];
   let room: Room;
   let gameState: GameState;
-  let len: number;
+  const len = 8;
 
   beforeEach(() => {
-    const len = 8;
     players = [];
     for (let i = 0; i < len; i++) {
       players[i] = {
@@ -75,7 +74,7 @@ describe('Selection Rotation tests', () => {
   });
 
   it('Selection Rotation with kickedPlayers', () => {
-    players = players.filter((player) => parseInt(player.id) % 2 === 0);
+    room.players = players.filter((player) => parseInt(player.id) % 2 === 0);
     assertSelectsEvens();
   });
 

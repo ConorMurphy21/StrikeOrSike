@@ -3,8 +3,10 @@ import type { TypedClientSocket } from ':common/socketioTypes';
 
 let socket: TypedClientSocket;
 if (process.env.NODE_ENV !== 'production') {
-  socket = io('http://localhost:5000', { withCredentials: false });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  socket = io('http://localhost:5000', { withCredentials: false }) as any as TypedClientSocket;
 } else {
-  socket = io(location.origin, { withCredentials: false });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  socket = io(location.origin, { withCredentials: false }) as any as TypedClientSocket;
 }
 export default socket;
